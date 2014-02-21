@@ -1,0 +1,36 @@
+{
+  "name": "spinal",
+  "version": "0.0.1",
+  "description": "UI Framework built on top of BackboneJS",
+  "main": "run.js",
+  "dependencies": {
+    "underscore": ">=1.4.x",
+		"underscore.string": ">=2.3.3",
+    "backbone": "1.1.x"  
+  },
+  "devDependencies": {
+    "benchmark": "1.0.x",
+    "mocha": ">=1.10.0",
+    "should": ">=1.2.2",
+    "jscoverage": ">=0.3.7"
+  },
+  "scripts": {
+    "test": "none"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/3dimention/spinal.git"
+  },
+  "keywords": [
+    "Spinal",
+    "UI",
+    "Framework",
+    "BackboneJS"
+  ],
+  "author": "Patricio Ferreira <3dimentionar@gmail.com>",
+  "license": "MIT",
+  "readmeFilename": "README.md",
+  "bugs": {
+    "url": "https://github.com/3dimention/spinal/issues"
+  }
+}
