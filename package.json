@@ -2,20 +2,22 @@
   "name": "spinal",
   "version": "0.0.1",
   "description": "UI Framework built on top of BackboneJS",
-  "main": "run.js",
+  "main": "build.js",
   "dependencies": {
-    "underscore": ">=1.4.x",
-		"underscore.string": ">=2.3.3",
-    "backbone": "1.1.x"  
+    "underscore": "1.4.x",
+	"underscore.string": "2.3.x",
+    "backbone": "1.1.x"
   },
   "devDependencies": {
     "benchmark": "1.0.x",
-    "mocha": ">=1.10.0",
-    "should": ">=1.2.2",
-    "jscoverage": ">=0.3.7"
+	"uglify-js": "1.3.5",
+    "mocha": "1.10.x",
+    "should": "1.2.x",
+    "jscoverage": "0.3.7"
   },
   "scripts": {
-    "test": "none"
+    "build": "make build",
+    "test": "make test-all"
   },
   "repository": {
     "type": "git",
@@ -32,5 +34,8 @@
   "readmeFilename": "README.md",
   "bugs": {
     "url": "https://github.com/3dimention/spinal/issues"
+  },
+  "engines": {
+    "node": ">= 0.4.x"
   }
 }

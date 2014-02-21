@@ -4,8 +4,8 @@
 *  @author Patricio Ferrerira <3dimentionar@gmail.com>
 **/
 var Spinal = (function() {
-
-    var extend = function(proto, static) {
+    
+    var inherit = function(proto, static) {
         var Parent = this, Child;
     
         var F = function() { this.constructor = Child; };
@@ -15,19 +15,15 @@ var Spinal = (function() {
   
         // TODO: Implement Deep Object Cloning
         if(proto) for(var i in proto) Child.prototype[i] = proto[i];
-    
+        _.extend(child, parent, staticProps);  
+      
         Child.__super__ = Parent.constructor;
         return Child;
-    };
-    
-    var static = function(protoStatic) {
-        // TODO: Implement Extending statics
     };
 
     return {
         __VERSION__: '0.0.1',
-        extend: extend,
-        static: static
+        inherit: inherit,
     };
 
 }());
