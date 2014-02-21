@@ -1,39 +1,33 @@
 /**
-*    Spinal UI Framework
-*    Version: 1.0
-*    Closure Library by Google
-*    https://code.google.com/p/closure-library/wiki/NodeJS
+*  Spinal UI Framework
+*  Version: 0.0.1
+*  @author Patricio Ferrerira <3dimentionar@gmail.com>
 **/
 var Spinal = (function() {
 
-    var extend = function(proto, protoStatic) {
-        var Parent = this,
-            Child;
+    var extend = function(proto, static) {
+        var Parent = this, Child;
     
         var F = function() { this.constructor = Child; };
         F.prototype = Parent.prototype;
         Child = function() { Parent.apply(this, arguments); };
         Child.prototype = new F();
-
+  
+        // TODO: Implement Deep Object Cloning
         if(proto) for(var i in proto) Child.prototype[i] = proto[i];
-        if(protoStatic) for(var j in protoStatic) Child[j] = protoStatic[j];
     
         Child.__super__ = Parent.constructor;
-
         return Child;
     };
-
-    var Model = function(attrs) {
-        attrs || (attrs = {});
-        this.attributes = attrs;
-        if(this.initialize) this.initialize.apply(this, arguments);
+    
+    var static = function(protoStatic) {
+        // TODO: Implement Extending statics
     };
-    Model.extend = extend;
 
-    return { 
-        VERSION: '0.0.1',
-        DESCRIPTION: 'UI Framework',
-        Model: Model
+    return {
+        __VERSION__: '0.0.1',
+        extend: extend,
+        static: static
     };
 
 }());
