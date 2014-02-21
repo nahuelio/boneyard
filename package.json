@@ -1,0 +1,35 @@
+{
+  "name": "spinal",
+  "version": "0.0.1",
+  "description": "UI Framework built on top of BackboneJS",
+  "main": "index.js",
+  "dependencies": {
+    "underscore": ">=1.4.x",
+		"underscore.string": ">=2.3.3",
+    "backbone": "1.1.x"  
+  },
+  "devDependencies": {
+    "mocha": ">=1.10.0",
+    "should": ">=1.2.2",
+    "jscoverage": ">=0.3.7"
+  },
+  "scripts": {
+    "test": "none"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/kuakman/spinal.git"
+  },
+  "keywords": [
+    "Spinal",
+    "UI",
+    "Framework",
+    "BackboneJS"
+  ],
+  "author": "Patricio Ferreira",
+  "license": "MIT",
+  "readmeFilename": "README.md",
+  "bugs": {
+    "url": "https://github.com/kuakman/spinal/issues"
+  }
+}
