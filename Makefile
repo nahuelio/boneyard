@@ -22,7 +22,7 @@ test-cov:
 	@./bin/mocha \
 		--reporter $(REPORTER_COV) \
 		-c test/*.js \
-		--coverage > lib-cov
+		--coverage > lib-cov/coverage.html
 
 build:
 	@node build $(SRC)

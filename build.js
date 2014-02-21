@@ -6,8 +6,10 @@
 var fs = require('fs'),
     path = require('path'),
 	pkg = require('./package.json'),
-	ugf = require('uglify-js'),
-	_ = require('underscore');
+	jsp = require("uglify-js").parser,
+	pro = require("uglify-js").uglify,
+	_ = require('underscore'),
+	_s = require('underscore.string');
 
 var Build = {
 	
@@ -17,14 +19,13 @@ var Build = {
 	run: function() {
 		output = this.concat();
 		output = this.minify(output);
-		console.log(output);
-		//this.export(output);
+		this.export(output);
 	},
 	
-	banner: function(filename) {
+	banner: function(o) {
 		var b = '/*** SpinalJS UI Framework (<%= version %>) ***/\n\n';
-			b += fs.readFileSync('LICENSE', 'utf8') + '\n';
-		return fs.writeSync(filename, _.template(b, { version: pkg.version }), 0);
+		b += '/*** \n' + fs.readFileSync('LICENSE', 'utf8') + '***/\n';
+		return _s.insert(o, 0, _.template(b, { version: pkg.version }));
 	},
 	
 	/**
@@ -33,23 +34,26 @@ var Build = {
 	concat: function() {
 		var files = process.argv.slice(2), out = '';
 		files.forEach(function(f) { out += fs.readFileSync(f, 'utf8') + '\n'; });
-		return out;
+		return _.template(out, { version: pkg.version });
 	},
 	
 	/**
 	*	Minification Process
 	**/
 	minify: function(o) {
-		return o;
+		var ast = jsp.parse(o),
+			ast = pro.ast_mangle(ast),
+			ast = pro.ast_squeeze(ast),
+			minified = pro.gen_code(ast);
+		return this.banner(minified);
 	},
 	
 	/**
 	*	Export framework
 	**/
 	export: function(o) {
-		var filename = pkg.name + '-' + pkg.version + '-SNAPSHOT.js'
-		fs.writeSync(filename, o);
-		this.banner(filename);
+		var filename = './lib/' + pkg.name + '-' + pkg.version + '-SNAPSHOT.js';
+		fs.writeFileSync(filename, o, { mode: 0777, encoding: 'utf8', flags: 'w' });
 	}
 	
 };

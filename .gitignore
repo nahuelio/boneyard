@@ -1,5 +1,6 @@
 lib-cov
 lib/coverage
+*-SNAPSHOT.*
 *.seed
 *.log
 *.csv

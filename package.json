@@ -1,6 +1,6 @@
 {
   "name": "spinal",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "UI Framework built on top of BackboneJS",
   "main": "build.js",
   "dependencies": {
@@ -36,6 +36,6 @@
     "url": "https://github.com/3dimention/spinal/issues"
   },
   "engines": {
-    "node": ">= 0.4.x"
+    "node": ">=0.10.11"
   }
 }
