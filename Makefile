@@ -8,21 +8,22 @@ clean:
 	rm -f lib/coverage.html
 
 coverage:
-	@./bin/jscoverage \
+	@./node_modules/jscoverage/bin/jscoverage \
 		--no-highlight \
-		$(SRC) \
-		lib-cov
+		src lib-cov
 
 test:
-	@./bin/mocha \
+	@UT=1 \
+	./node_modules/mocha/bin/mocha \
 		--reporter $(REPORTER) \
 		-c test/*.js
 
 test-cov:
-	@./bin/mocha \
+	@UT=1 \
+	./node_modules/mocha/bin/mocha \
 		--reporter $(REPORTER_COV) \
 		-c test/*.js \
-		--coverage > lib-cov/coverage.html
+		--coverage > lib/coverage.html
 
 build:
 	@node build $(SRC)

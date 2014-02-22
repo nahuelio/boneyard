@@ -7,14 +7,16 @@ var Spinal = (function() {
 	/**
 	*	Namespacing Strategy
 	**/
-	var namespace: function(path, constructor) {
-		var parts = ns.split('.'), parent = c, pl, i;
+	var namespace = function(path, constructor) {
+		var parts = path.split('.'), parent = Spinal, pl, i;
+		if (parts[0] == "spinal") parts = parts.slice(1);
 		pl = parts.length;
-		for (i = 0; i < pl; i++) {
+		for (var i = 0; i < pl; i++) {
 			if (typeof parent[parts[i]] == 'undefined') parent[parts[i]] = {};
+			if(i == (pl-1)) parent[parts[i]] = constructor;
 			parent = parent[parts[i]];
 		}
-		this.packages = parent;
+		return parent;
 	};
 	
 	/**
@@ -43,10 +45,11 @@ var Spinal = (function() {
 
     return {
         __VERSION__: '<%= version %>',
-		packages: {},
 		namespace: namespace,
         inherit: inherit,
 		uses: uses
     };
 
 }());
+
+if(module) module.exports = Spinal;

@@ -1,5 +1,5 @@
 lib-cov
-lib/coverage
+lib/coverage.html
 *-SNAPSHOT.*
 *.seed
 *.log
