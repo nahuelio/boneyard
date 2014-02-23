@@ -23,8 +23,11 @@ var Build = {
 	},
 	
 	banner: function(o) {
-		var b = '/*** SpinalJS UI Framework (<%= version %>) ***/\n\n';
-		b += '/*** \n' + fs.readFileSync('LICENSE', 'utf8') + '***/\n';
+		var b = '//     Spinal.js <%= version %>\n\n \
+			//     (c) 2014 Patricio Ferreira, 3dimention.com\n \
+			//     SpinalJS may be freely distributed under the MIT license.\n \
+			//     For all details and documentation:\n \
+			//     http://3dimention.github.io/spinal';
 		return _s.insert(o, 0, _.template(b, { version: pkg.version }));
 	},
 	
