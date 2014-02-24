@@ -3,4 +3,6 @@
 **/
 
 var connect = require('connect');
-connect().use(connect.static(__dirname + '/lib')).listen(8080);
+connect().use(connect.static(__dirname + '/lib'))
+	.use(connect.static(__dirname + '/benchmark'))
+	.listen(8080);

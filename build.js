@@ -21,6 +21,7 @@ var Build = {
 			output = this.concat(files),
 			output = this.minify(output);
 		this.export(output);
+		this.benchmark(files);
 	},
 	
 	banner: function(o) {
@@ -58,6 +59,19 @@ var Build = {
 	export: function(o) {
 		var filename = './lib/' + pkg.name + '-' + pkg.version + '-SNAPSHOT.js';
 		fs.writeFileSync(filename, o, { mode: 0777, encoding: 'utf8', flags: 'w' });
+	},
+	
+	benchmark: function(files) {
+		var htmltpl = fs.readFileSync('./benchmark/templates/template.html', 'utf8');
+		var modules = _.map(files, function(f) {
+			var name = _s.strLeftBack(_s.strRightBack(f, '/'), '.');
+			return { name: name };
+		}, this);
+		var filename = './benchmark/spinal-' + pkg.version + '-benchmark.html';
+		fs.writeFileSync(filename, _.template(htmltpl, { 
+			version: pkg.version,
+			modules: modules
+		}), { mode: 0777, encoding: 'utf8', flags: 'w' });
 	}
 	
 };
