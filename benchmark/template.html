@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>SpinalJS - Benchmarking</title>
+		<script src="libs/benchmark.js"></script>
+		<script src="spinal-core-<%= version %>-SNAPSHOT.js"></script>
+	</head>
+	<body>
+		<h3>SpinalJS Benchmark Tool</h3>
+		<hr/>
+		<% for(var m in modules) { %>
+			<section class="<%= m.name %>">
+				<h4><% m.name %></h4>	
+			</section>
+		<% } %>
+	</body>
+</html>

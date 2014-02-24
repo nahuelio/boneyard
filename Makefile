@@ -28,8 +28,11 @@ test-cov:
 build:
 	@node build $(SRC)
 
+run:
+	@node run
+
 test-all: clean coverage test test-cov
 
-build-all: test-all build-lib
+build-all: test-all build
 
-.PHONY: clean coverage test test-cov build test-all build-all
+.PHONY: clean coverage test test-cov build run test-all build-all

@@ -17,8 +17,9 @@ var Build = {
 	*	Build Run
 	**/
 	run: function() {
-		output = this.concat();
-		output = this.minify(output);
+		var files = process.argv.slice(2),
+			output = this.concat(files),
+			output = this.minify(output);
 		this.export(output);
 	},
 	
@@ -34,8 +35,8 @@ var Build = {
 	/**
 	*	File Concatenation
 	**/
-	concat: function() {
-		var files = process.argv.slice(2), out = '';
+	concat: function(files) {
+		var out = '';
 		files.forEach(function(f) { out += fs.readFileSync(f, 'utf8') + '\n'; });
 		return _.template(out, { version: pkg.version });
 	},
