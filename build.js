@@ -25,11 +25,11 @@ var Build = {
 	},
 	
 	banner: function(o) {
-		var b = '//     Spinal.js <%= version %>\n\n \
-			//     (c) 2014 Patricio Ferreira, 3dimention.com\n \
-			//     SpinalJS may be freely distributed under the MIT license.\n \
-			//     For all details and documentation:\n \
-			//     http://3dimention.github.io/spinal';
+		var b = '//     Spinal.js <%= version %>\n\n';
+		b += '//     (c) 2014 Patricio Ferreira, 3dimention.com\n' +
+			'//     SpinalJS may be freely distributed under the MIT license.\n' +
+			'//     For all details and documentation:\n' +
+			'//     http://3dimention.github.io/spinal\n\n';
 		return _s.insert(o, 0, _.template(b, { version: pkg.version }));
 	},
 	
@@ -68,7 +68,7 @@ var Build = {
 			return { name: name };
 		}, this);
 		var filename = './benchmark/spinal-' + pkg.version + '-benchmark.html';
-		fs.writeFileSync(filename, _.template(htmltpl, { 
+		fs.writeFileSync(filename, _.template(htmltpl, {
 			version: pkg.version,
 			modules: modules
 		}), { mode: 0777, encoding: 'utf8', flags: 'w' });
