@@ -139,14 +139,41 @@ describe('Spinal', function() {
 	*	Spinal Inheritance strategy
 	**/
 	describe('#inherit()', function() {
-		it('Should Inherit Class', function() {
-			var SubClass = Spinal.Generic.inherit({
-				_string: 'sub',
-				_object: { _boolean: false, _date: new Date('2014-02-22T23:43:51.223Z') },
-				submethod: function() { return this._string + 'class'; }
+		/** Base Class Testing **/
+		var BaseClass = Spinal.Generic.inherit({
+			_string: 'BaseClass',
+			_object: { _boolean: false, _date: new Date('2014-02-22T23:43:51.223Z') },
+			submethod: function() { return this._string + 'Base'; }
+		}, { NAME: 'BaseClass', EXTRA: { p: 'Static1' } });
+
+		it('Should Inherit a Class from Spinal.Generic', function() {
+			var instance1 = new BaseClass();
+			instance1.get('_string').should.equal('BaseClass');
+			instance1.submethod().should.equal('BaseClassBase');
+			
+			var instance2 = new BaseClass({ _string: 'BaseClass2', _object: { _boolean: true } });
+			instance2.submethod().should.equal('BaseClass2Base');
+			instance2.get('_string').should.not.equal(instance1.get('_string'));
+			instance2.get('_object')._boolean.should.not.equal(instance1.get('_object')._boolean);
+		});
+		
+		it('Should Inherit SubClass of a BaseClass', function() {
+			var SubClass = BaseClass.inherit({
+				_string: 'SubClass',
+				_number: 100,
+				submethod: function() { return this._string + this._number.toString(); }
 			}, { NAME: 'SubClass' });
-			var instance = new SubClass;
-			console.log(instance);
+			should.exist(SubClass.EXTRA);
+			should.exist(SubClass.EXTRA.p);
+			SubClass.EXTRA.p.should.equal('Static1');
+			
+			var instance1 = new SubClass({ _string: 'SubClass-M' });
+			should.exist(instance1._object);
+			instance1._object._date.toISOString().should.equal('2014-02-22T23:43:51.223Z');
+			instance1._number.should.equal(100);
+			instance1._string.should.equal('SubClass-M');
+			// submethod() should be overriden in the subclass
+			instance1.submethod().should.equal('SubClass-M100');
 		});
 	});
 	
