@@ -2,15 +2,22 @@
 <html>
 	<head>
 		<title>SpinalJS - Benchmarking</title>
-		<script src="libs/benchmark.js"></script>
+		<link rel="stylesheet" type="text/css" href="css/benchmark.css">
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+		<script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min.js"></script>
 		<script src="spinal-<%= version %>-SNAPSHOT.js"></script>
+		<script src="libs/benchmark.js"></script>
+		<script src="libs/common.js"></script>
+		<% for(var m in modules) { %>
+			<script src="libs/<%= modules[m].name %>/<%= modules[m].name %>-bm.js"></script>
+		<% } %>
 	</head>
 	<body>
-		<h3>SpinalJS Benchmark Tool</h3>
-		<hr/>
+		<h3 class="title">SpinalJS Benchmark Tool</h3>
+		<h4 class="subtitle">Modules</h4>
 		<% for(var m in modules) { %>
-			<div class="<%= modules[m].name %>">
-				<h4><%= modules[m].name %></h4>	
+			<div class="<%= modules[m].name %> section">
+				<h5><%= modules[m].name %></h5>
 			</div>
 		<% } %>
 	</body>

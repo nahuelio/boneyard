@@ -6,8 +6,10 @@
 var config = (function(window) {
 	
 	this.tpls = {
-		bar: '<div class="<%= moduleName %>-<%= methodName %> bar"><span class="progress"></span></div>',
-		timer: '<p class="<%= moduleName %>-<%= methodName %> timer"></p>'
+		container: '<div class="<%= methodName %> method"></div>',
+		name: '<p class="name"></p>',
+		bar: '<div class="bar"><span class="progress"></span></div>',
+		timer: '<p class="timer"></p>'
 	};
 	
 	/**
@@ -17,17 +19,25 @@ var config = (function(window) {
 		var info = e.target.name.split('#'),
 			module = info[0], method = info[1];
 		if(module && method) {
-			$('.' + module).append(_.template(this.tpls.bar, { moduleName: module, methodName: method }));
-			$('.' + module).append(_.template(this.tpls.timer, { moduleName: module, methodName: method }));
-			$('.' + module + ' .timer').html('0 sec');
+			var $c = $(_.template(this.tpls.container, { methodName: method })).appendTo($('div.' + module)),
+				$name = $(this.tpls.name).appendTo($c),
+				$bar = $(this.tpls.bar).appendTo($c),
+				$timer = $(this.tpls.timer).appendTo($c);
+			$name.html('#' + method + '()');
+			$timer.html('0 sec');
+			e.target.on('setup', setup);
 		}
+	}, this);
+	
+	var setup = _.bind(function() {
+		
 	}, this);
 	
 	/**
 	*	Benchmark on cycle handler
 	**/
 	var onCycle = _.bind(function(e) {
-		console.log(e.target.name);
+		
 	}, this);
 	
 	/**
@@ -37,9 +47,12 @@ var config = (function(window) {
 		
 	};
 	
+	/** Benchmark Config **/
 	return {
-		onStart: onStart,
-		onCycle: onCycle,
-		onComplete: onComplete
-	}
+		_events: {
+			onStart: onStart,
+			onCycle: onCycle,
+			onComplete: onComplete
+		}
+	};
 }(window));

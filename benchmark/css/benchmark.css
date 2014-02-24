@@ -1,10 +1,15 @@
 /** Benchmark styles **/
-html,body,div,p,section,a,ul,li,h1,h2,h3,h4,h5 { font-family: Helvetica, Arial; font-size: 100%; margin: 0; padding: 0; }
+html,body,div,p,section,a,ul,li,h1,h2,h3,h4,h5 { font-family: Helvetica, Arial; font-size: 100%; margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+	background-color: #5f0000;
+	color: white;
+}
 
 h3.title {
-	background-color: #e1e1e1;
+	background-color: #9a0000;
 	padding: 10px;
-	border-bottom: 1px solid #d1d1d1;
+	border-bottom: 1px solid #3a0000;
 	margin-bottom: 10px;
 	font-size: 24px;
 	font-weight: bold;
@@ -16,12 +21,36 @@ h4.subtitle {
 	font-weight: bold;
 }
 
-div {
+div.section {
 	margin: 10px;
-	background-color: #e1e1e1;
 }
 
-div h5 {
+div.section h5 {
+	padding: 5px;
+	background-color: #9a0000;
+	border-bottom: 1px solid #3a0000;
 	font-size: 14px;
-	padding: 5px;	
+}
+
+div.section .method {
+	width: 100%;
+	background-color: #5f0000;
+	padding: 10px;
+	font-size: 12px;
+}
+
+div.section .method .name {
+	margin: 5px auto;
+	font-weight: bold;
+}
+
+div.section .method .bar {
+	background-color: #e1e1e1;
+	margin: 10px auto;
+	padding: 5px;
+	width: 100%;
+}
+
+div.section .method .timer {
+	
 }
