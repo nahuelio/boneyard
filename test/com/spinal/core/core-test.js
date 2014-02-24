@@ -7,7 +7,7 @@ var libpath = process.env['UT'] ? 'lib-cov' : 'lib',
     should = require('should'),
 	_ = require('underscore');
 
-var Spinal = require(path.resolve(libpath, 'spinal-core'));
+var Spinal = require(path.resolve(libpath, 'com/spinal/core/core'));
 
 /**
 *    @class Spinal

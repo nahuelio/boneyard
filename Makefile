@@ -6,6 +6,7 @@ clean:
 	rm -f lib/spinal*.js
 	rm -fr lib-cov
 	rm -f lib/coverage.html
+	rm -f benchmark/spinal-*.html
 
 coverage:
 	@./node_modules/jscoverage/bin/jscoverage \
@@ -16,13 +17,13 @@ test:
 	@UT=1 \
 	./node_modules/mocha/bin/mocha \
 		--reporter $(REPORTER) \
-		-c test/*.js
+		-c test/**/*.js
 
 test-cov:
 	@UT=1 \
 	./node_modules/mocha/bin/mocha \
 		--reporter $(REPORTER_COV) \
-		-c test/*.js \
+		-c test/**/*.js \
 		--coverage > lib/coverage.html
 
 build:
