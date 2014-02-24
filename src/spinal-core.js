@@ -57,7 +57,7 @@
 	*	Unsupported types: RegExp.
 	*	@BECHMARK See how performance diagnostic we get with this.
 	**/
-	exports._extend = function(o) {
+	var _extend = exports._extend = function(o) {
 		var args = Array.prototype.slice.call(arguments, 1);
 		for(var i = 0; i < args.length; i++) {
 			if(args[i]) _parse.call(o, args[i]);
@@ -72,7 +72,6 @@
 	**/
 	var _constructor = function(attrs) {
 		attrs || (attrs = {});
-		this.attributes = {};
 		this.set(attrs);
 		this.initialize.apply(this, arguments);
 	};
@@ -82,41 +81,53 @@
 	**/
 	var _interface = {
 		initialize: function() { return this; },
-		get: function(p) { return this.atributes[p]; },
+		get: function(p) { return this[p]; },
 		set: function(p, v) {
 			if(!p) throw new Error('set() requires 1 arguments (object or a key).');
-			if(p && p === Object(p)) {
-				exports._extend.call(this.attributes, p);
-			} else {
-				this.attributes[p] = v;
-			}
+			(p && p === Object(p)) ?
+				_extend.apply(this, [this, p]) :
+				this[p] = v;
 			return this;
 		}
 	};
 	
 	/**
-	*	Inheritance Strategy
-	*	FIXME (Not working right).
+	*	Filters inheritance Constructor function properties.
 	**/
-    exports.inherit = function(proto, protoStatic) {
+	var _filter = function(func) {
+		var obj = {};
+		for(var p in func) {
+			if(p == 'inherit' || p == '__super__') continue;
+			obj[p] = func[p];
+		}
+		return obj
+	};
+	
+	/**
+	*	Inheritance Strategy
+	**/
+    var inherit = exports.inherit = function(proto, protoStatic) {
+		protoStatic || (protoStatic = {});
         var Parent = this, Child = function() { return Parent.apply(this, arguments); };
 		
-		if(protoStatic) exports._extend(Child, Parent, protoStatic);
         var F = function() { this.constructor = Child; };
         F.prototype = Parent.prototype;
-        Child.prototype = new F();
-		Child.inherit = exports.inherit;
-      	if(proto) exports._extend(Child.prototype, proto);
+        Child.prototype = new F;
+		if(proto) {
+			_extend(Child.prototype, proto);
+			_extend(Child, protoStatic, _filter(Parent));
+		}
 		
+		Child.inherit = inherit;
         Child.__super__ = Parent.prototype;
         return Child;
     };
 	
 	// Default Generic Class
-	// See if we can reuse Backbone.Events
-	exports.Generic = _constructor;
-	exports._extend(exports.Generic.prototype, _interface);
-	exports.Generic.inherit = exports.inherit;
+	var Generic = exports.Generic = _constructor;
+	_extend(Generic.prototype, _interface);
+	Generic.inherit = inherit;
+	Generic.NAME = 'SpinalGeneric';
 			
 	exports.__VERSION__ = '<%= version %>';
 	
