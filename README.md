@@ -4,3 +4,12 @@ SpinalJS
 =====================
 
 UI framework built on top of BackboneJS
+
+TODO
+=====================
+
+* Benchmarking code
+* Adding AMD module support
+* Create Documentation (Usage instructions and so on).
+* JSDoc
+* Logo design needs more work
