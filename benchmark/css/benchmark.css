@@ -34,9 +34,14 @@ div.section h5 {
 
 div.section .method {
 	width: 100%;
-	background-color: #5f0000;
+	background-color: #f1f1f1;
 	padding: 10px;
 	font-size: 12px;
+	color: black;
+}
+
+div.section .method button {
+	float: right;
 }
 
 div.section .method .name {
@@ -45,12 +50,12 @@ div.section .method .name {
 }
 
 div.section .method .bar {
-	background-color: #e1e1e1;
+	background-color: #b1b1b1;
 	margin: 10px auto;
 	padding: 5px;
 	width: 100%;
 }
 
-div.section .method .timer {
-	
+div.section .method .timer span {
+	margin: 0 5px;
 }

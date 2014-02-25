@@ -13,10 +13,10 @@
 		<% } %>
 	</head>
 	<body>
-		<h3 class="title">SpinalJS Benchmark Tool</h3>
+		<h3 class="title">SpinalJS <%= version %> | Benchmark</h3>
 		<h4 class="subtitle">Modules</h4>
 		<% for(var m in modules) { %>
-			<div class="<%= modules[m].name %> section">
+			<div id="<%= modules[m].name %>" class="<%= modules[m].name %> section">
 				<h5><%= modules[m].name %></h5>
 			</div>
 		<% } %>
