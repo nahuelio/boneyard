@@ -13,7 +13,7 @@ var Bench = (function(window) {
 		name: '<p class="name"></p>',
 		button: '<button class="<%= id %> <%= methodName %>"><%= label %></button>',
 		bar: '<div class="bar"><span class="progress"></span></div>',
-		timer: '<p class="timer"></p>'
+		results: '<p class="results"></p>'
 	};
 	
 	/** Button Handlers **/
@@ -24,7 +24,7 @@ var Bench = (function(window) {
 		var b = Bench.suite.filter(function(b) {
 			if(b.name === methodName.replace('-', '#')) return b;
 		});
-		return b;
+		return b[0];
 	};
 	
 	/**
@@ -57,39 +57,52 @@ var Bench = (function(window) {
 	/** Benchmark Events **/
 	/**********************/
 	
+	this.$currentResults = null;
+	
+	this.getData = function(e) {
+		var info = e.target.name.split('#'), module = info[0], method = info[1];
+		return (module && method) ? { module: module, method: method } : null;
+	};
+	
 	/**
 	*	Benchmark Start handler
 	**/
 	var onStart = _.bind(function(e) {
-		var info = e.target.name.split('#'), module = info[0], method = info[1];
-		if(module && method) {
-			$('div#' + module + '-' + method + ' .timer').append('<span>Start: ' + e.target.times.elapsed + ' sec</span>');
+		var data = this.getData(e);
+		if(data) {
+			this.$currentResults = $('div#' + data.module + '-' + data.method + ' .results');
 		}
-		console.log('Bench on: ' + module + '#' + method + ' started');
 	}, this);
 	
 	/**
 	*	Benchmark Cycle handler
 	**/
 	var onCycle = _.bind(function(e) {
-	
+		
 	}, this);
 	
 	/**
 	*	Benchmark Complete handler
 	**/
 	var onComplete = _.bind(function(e) {
-		var info = e.target.name.split('#'), module = info[0], method = info[1];
-		if(module && method) {
-			$('div#' + module + '-' + method + ' .timer').append('<span>End: ' + e.target.times.elapsed + ' sec</span>');
+		var data = this.getData(e);
+		if(data) {
+			this.$currentResults.html('<span>' + e.target.toString() + '</span>');
+			// console.log('Bench on: ' + data.module + '#' + data.method + ' completed');
 		}
-		console.log('Bench on: ' + module + '#' + method + ' completed');
 	}, this);
 	
 	/**
 	*	Benchmarl Reset Handler
 	**/
-	var onReset = _.bind(function(e) { }, this);
+	this.onReset = _.bind(function(e) {
+		var data = this.getData(e);
+		if(data) {
+			this.$currentResults = $('div#' + data.module + '-' + data.method + ' .results');
+			this.$currentResults.html('');
+			// console.log('Bench on: ' + data.module + '#' + data.method + ' reset');
+		}
+	}, this);
 	
 	/******************/
 	/** Suite Events **/
@@ -123,8 +136,9 @@ var Bench = (function(window) {
 					$run = $(_.template(this.tpls.button, { methodName: method, id: 'run', label: 'Run' })).appendTo($c).on('click', this.onButtonRunClick),
 					$name = $(this.tpls.name).appendTo($c),
 					$bar = $(this.tpls.bar).appendTo($c),
-					$timer = $(this.tpls.timer).appendTo($c);
+					$results = $(this.tpls.results).appendTo($c);
 				$name.html('#' + method + '()');
+				b.on('reset', this.onReset);
 			}
 		}, this);
 	}, this);
@@ -138,14 +152,13 @@ var Bench = (function(window) {
 	suite.on('created', onCreate);
 	
 	/** Benchmark Config **/
-	
+	// FIXME: Add options here
 	return {
 		suite: suite,
 		_events: {
 			onStart: onStart,
 			onCycle: onCycle,
-			onComplete: onComplete,
-			onReset: onReset
+			onComplete: onComplete
 		}
 	};
 	
