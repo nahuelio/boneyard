@@ -4,28 +4,20 @@
 **/
 $(document).ready(function() {
 	
-	var suite = Benchmark.Suite();
-	
 	/** Spinal.namespace('a.b.c.d.e.f.g.h.i.j.k.l.m.n.o.p.q.r.s.t.u.v.w.y.z.End', function() { }); **/
 	
-	suite.add('core#namespace', function() {
+	Bench.suite.add('core#namespace', function() {
+		Spinal.namespace('a.b.c.d.e.f.g.h.i.j.k.l.m.n.o.p.q.r.s.t.u.v.w.y.z.End', function() { });
+	}, Bench._events);
+	
+	Bench.suite.add('core#_extend', function() {
 		
-	}, config._events);
+	}, Bench._events);
 	
-	suite.add('core#_extend', function() {
+	Bench.suite.add('core#inherit', function() {
 		
-	}, config._events);
+	}, Bench._events);
 	
-	suite.add('core#inherit', function() {
-		
-	}, config._events);
-	
-	/** Global Suite Events **/
-	
-	suite.on('start', function() { });
-	suite.on('cycle', function() { });
-	suite.on('complete', function() { });
-	
-	suite.run();
+	Bench.suite.emit('created');
 	
 });
