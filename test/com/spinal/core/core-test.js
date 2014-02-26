@@ -46,12 +46,12 @@ describe('Spinal', function() {
 	describe('#_extend()', function() {
 		
 		it('Should return a deep copy of an object (1 on 1)', function() {
-			var c = Spinal._extend({ _string: 'child_string' }, this.ds);
+			var c = Spinal.extend({ _string: 'child_string' }, this.ds);
 			should.exist(c);
 		});
 		
 		it('Should return a deep copy of an object (multiple to 1)', function() {
-			var c = Spinal._extend({ _string: 'child_string', _number: 2 }, this.ds, this.dn);
+			var c = Spinal.extend({ _string: 'child_string', _number: 2 }, this.ds, this.dn);
 			should.exist(c);
 			c._string.should.equal('child_string');
 			c._number.should.equal(2);
@@ -63,40 +63,40 @@ describe('Spinal', function() {
 		
 		// String Type
 		it('Should return a deep copy of an object having a String', function() {
-			var c = Spinal._extend({ _string: 'child_string' }, this.ds);
+			var c = Spinal.extend({ _string: 'child_string' }, this.ds);
 			c._string.should.not.equal(this.ds._string);
 		});
 		
 		// Number Type
 		it('Should return a deep copy of an object having a Number', function() {
-			var c = Spinal._extend({ _number: 1.10 }, this.dn);
+			var c = Spinal.extend({ _number: 1.10 }, this.dn);
 			c._number.should.not.equal(this.dn._number);
 		});
 		
 		// Boolean Type
 		it('Should return a deep copy of an object having a Boolean', function() {
-			var c = Spinal._extend({ _boolean: false }, this.db);
+			var c = Spinal.extend({ _boolean: false }, this.db);
 			c._boolean.should.be.false;
 			this.db._boolean.should.be.true;
 		});
 		
 		// Undefined Type
 		it('Should return a deep copy of an object having a Undefined', function() {
-			var c = Spinal._extend({ _undefined: 'notUndefined' }, this.du);
+			var c = Spinal.extend({ _undefined: 'notUndefined' }, this.du);
 			c._undefined.should.not.equal(this.du._undefined);
 			c._undefined.should.equal('notUndefined');
 		});
 		
 		// Null Type
 		it('Should return a deep copy of an object having a Null', function() {
-			var c = Spinal._extend({ _null: 'notNull' }, this.dnl);
+			var c = Spinal.extend({ _null: 'notNull' }, this.dnl);
 			c._null.should.not.equal(this.du._null);
 			c._null.should.equal('notNull');
 		});
 		
 		// Object Type
 		it('Should return a deep copy of an object having a Object', function() {
-			var c = Spinal._extend({ _object: { _string: 'myString', _function: function() { console.log('child.func()', this._string); } }}, this.do);
+			var c = Spinal.extend({ _object: { _string: 'myString', _function: function() { console.log('child.func()', this._string); } }}, this.do);
 			should.exist(c._object);
 			should.exist(c._object._string);
 			c._object._string.should.equal('myString');
@@ -105,7 +105,7 @@ describe('Spinal', function() {
 		
 		// Array Type
 		it('Should return a deep copy of an object having a Array', function() {
-			var c = Spinal._extend({ _array: [2, { _string: 'myString' }] }, this.da);
+			var c = Spinal.extend({ _array: [2, { _string: 'myString' }] }, this.da);
 			should.exist(c._array);
 			should.exist(c._array[1]);
 			c._array.length.should.not.equal(this.da._array.length);
@@ -114,7 +114,7 @@ describe('Spinal', function() {
 		
 		// Date Type
 		it('Should return a deep copy of an object having a Date', function() {
-			var c = Spinal._extend({ _date: new Date('2014-02-22T23:43:51.223Z') }, this.dd);
+			var c = Spinal.extend({ _date: new Date('2014-02-22T23:43:51.223Z') }, this.dd);
 			should.exist(c._date);
 			c._date.toISOString().should.equal('2014-02-22T23:43:51.223Z');
 			c._date.toISOString().should.not.equal(this.dd._date.toISOString());
@@ -122,7 +122,7 @@ describe('Spinal', function() {
 		
 		// Function Type
 		it('Should return a deep copy of an object having a Function', function() {
-			var c = Spinal._extend({ _prop: 1, _function: function() { var ls = 'local'; return { ls: ls, prop: this._prop, _string: this._string }; } }, this.df);
+			var c = Spinal.extend({ _prop: 1, _function: function() { var ls = 'local'; return { ls: ls, prop: this._prop, _string: this._string }; } }, this.df);
 			should.exist(c._function);
 			var childData = c._function(), parentData = this.df._function();
 			childData.ls.should.equal('local');
