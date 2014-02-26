@@ -9,8 +9,8 @@ TODOS
 =====================
 
 * Current Implementation handle dependencies between files inside the SAME modules: Implement Handling of dependencies across modules (Hook up this into the build process).
-* Benchmarking code (Improve UI)
-* Adding AMD module support
+* Benchmarking code (Improve UI).
+* Adding AMD module support and BachboneJS hook up.
 * Create Documentation (Usage instructions and so on).
-* Logo design needs more work
-* Add examples of usage
+* Logo design needs more work :)
+* Add examples of usage.
