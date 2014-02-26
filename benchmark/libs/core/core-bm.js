@@ -28,7 +28,31 @@ $(document).ready(function() {
 			});
 		}, Bench._events),
 		coreInherit: new Benchmark('core#inherit', function() {
-			
+			var C1 = Spinal.com.spinal.core.Class.inherit({
+				_string: 'C1-string',
+				_number: 1,
+				mymethod: function() { return this._string + ' - ' + this._number.toString(); }
+			}, { NAME: 'C1' });
+			var C2 = C1.inherit({
+				_string: 'C2-string',
+				_number: 2,
+				mymethod: function() { return this._string + ' - ' + this._number.toString(); }
+			}, { NAME: 'C2' });
+			var C3 = C2.inherit({
+				_string: 'C3-string',
+				_number: 3,
+				mymethod: function() { return this._string + ' - ' + this._number.toString(); }
+			}, { NAME: 'C3' });
+			var C4 = C3.inherit({
+				_string: 'C4-string',
+				_number: 4,
+				mymethod: function() { return this._string + ' - ' + this._number.toString(); }
+			}, { NAME: 'C4' });
+			var C5 = C4.inherit({
+				_string: 'C5-string',
+				_number: 5,
+				mymethod: function() { return this._string + ' - ' + this._number.toString(); }
+			}, { NAME: 'C5' });
 		}, Bench._events)
 	}
 	

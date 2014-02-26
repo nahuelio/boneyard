@@ -2,14 +2,13 @@
 *	Benchmark UI commons
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-
 var Bench = (function(window) {
 	
 	/**
 	*	UI templates
 	**/
 	this.tpls = {
-		container: '<div id="<%= moduleName %>-<%= methodName %>" class="<%= methodName %> method"></div>',
+		container: '<div id="<%= moduleName %>-<%= methodName %>" class="<%= methodName %> method" style="display: none;"></div>',
 		name: '<p class="name"></p>',
 		button: '<button class="<%= id %> <%= methodName %>"><%= label %></button>',
 		sample: '<div class="sample"></div>',
@@ -140,6 +139,7 @@ var Bench = (function(window) {
 				var funcString = _.str.strRightBack(_.str.strLeftBack(b.fn.toString(), '}'), 'function () {');
 				$sample.html('<p class="header">Sample Code to Benchmark</p><code class="prettyprint">' + this.convertStrToHTML(funcString) + '</code>');
 				b.on('reset', this.onReset);
+				Bench.suite.push(b);
 			}
 		}, this);
 	}, this);
@@ -167,3 +167,20 @@ var Bench = (function(window) {
 	};
 	
 }(window));
+
+$(document).ready(function() {
+	
+	/** Arrows **/
+	$('.arrow').on('click', _.bind(function(e) {
+		var $section = $(e.currentTarget).parent().parent(),
+			$arrow = $(e.currentTarget);
+		if($arrow.hasClass('arrow-down')) {
+			$section.children('div[class!="header"]').hide();
+			$arrow.removeClass('arrow-down').addClass('arrow-up');
+		} else {
+			$section.children('div[class!="header"]').show();
+			$arrow.removeClass('arrow-up').addClass('arrow-down');
+		}
+	}, this));
+	
+});

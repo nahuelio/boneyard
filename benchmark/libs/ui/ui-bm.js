@@ -5,6 +5,7 @@
 $(document).ready(function() {
 	
 	var benchs = {
+		uiView: new Benchmark('ui#View', function() { }, Bench._events),
 		uiContainer: new Benchmark('ui#Container', function() { }, Bench._events)
 	};
 	

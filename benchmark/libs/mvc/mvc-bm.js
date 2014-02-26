@@ -6,7 +6,6 @@ $(document).ready(function() {
 	
 	var benchs = {
 		mvcModel: new Benchmark('mvc#Model', function() { }, Bench._events),
-		mvcView: new Benchmark('mvc#View', function() { }, Bench._events),
 		mvcController: new Benchmark('mvc#Controller', function() { }, Bench._events),
 		mvcService: new Benchmark('mvc#Service', function() { }, Bench._events)
 	};

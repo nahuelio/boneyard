@@ -1,6 +1,9 @@
 REPORTER = spec
 REPORTER_COV = html-cov
-SRC = $(shell find src -name "*.js" -type f | sort)
+
+comma:= ,
+space:=
+space+=
 
 clean:
 	rm -f lib/spinal*.js
@@ -13,7 +16,7 @@ coverage:
 		--no-highlight \
 		src lib-cov
 
-test:
+test-all:
 	@UT=1 \
 	./node_modules/mocha/bin/mocha \
 		--reporter $(REPORTER) \
@@ -26,14 +29,20 @@ test-cov:
 		-c test/**/*.js \
 		--coverage > lib/coverage.html
 
-build:
-	@node build $(SRC)
+test: clean coverage test-all test-cov
+
+build-selective:
+	@node build selective $(subst $(comma),$(space),$(modules))
+
+build-all:
+	@node build all
+
+build: test build-all
+
+benchmark:
+	@node build benchmark
 
 run:
 	@node run
 
-test-all: clean coverage test test-cov
-
-build-all: test-all build
-
-.PHONY: clean coverage test test-cov build run test-all build-all
+.PHONY: clean coverage test-all test-cov build-selective build-all test build benchmark run

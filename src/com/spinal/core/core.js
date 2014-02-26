@@ -11,7 +11,7 @@
 	/**
 	*	Namespacing Strategy
 	**/
-	exports.namespace = function(path, constructor) {
+	var namespace = exports.namespace = function(path, constructor) {
 		var parts = path.split('.'), parent = exports, pl, i;
 		if (parts[0] == "spinal") parts = parts.slice(1);
 		pl = parts.length;
@@ -55,7 +55,6 @@
 	/**
 	*	Spinal Deep Copy strategy for inheritance.
 	*	Unsupported types: RegExp.
-	*	@BECHMARK See how performance diagnostic we get with this.
 	**/
 	var _extend = exports._extend = function(o) {
 		var args = Array.prototype.slice.call(arguments, 1);
@@ -124,10 +123,10 @@
     };
 	
 	// Default Generic Class
-	var Generic = exports.Generic = _constructor;
-	_extend(Generic.prototype, _interface);
-	Generic.inherit = inherit;
-	Generic.NAME = 'SpinalGeneric';
+	var Class = exports.Class = namespace('com.spinal.core.Class', _constructor);
+	_extend(Class.prototype, _interface);
+	Class.inherit = inherit;
+	Class.NAME = 'SpinalClass';
 			
 	exports.__VERSION__ = '<%= version %>';
 	
