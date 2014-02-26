@@ -6,17 +6,17 @@
 /**
 *	Define a generic view interface that extends classic Backbone.View
 *	@namespace com.spinal.ui
-*	@class com.spinal.ui.SpinalView
+*	@class com.spinal.ui.View
 *	@extends com.spinal.core.Class
 **/
-Spinal.namespace('com.spinal.ui.SpinalView', Spinal.com.spinal.core.Class.inherit({
+var View = Spinal.namespace('com.spinal.ui.View', Spinal.com.spinal.core.Class.inherit({
 	
 	/**
 	*	Initialize
 	*	@public
 	*	@chainable
 	*	@method initialize
-	*	@return {com.spinal.ui.SpinalView}
+	*	@return {com.spinal.ui.View}
 	**/
 	initialize: function() {
 		return this;
@@ -29,6 +29,6 @@ Spinal.namespace('com.spinal.ui.SpinalView', Spinal.com.spinal.core.Class.inheri
 	*	@property NAME
 	*	@type String
 	**/
-	NAME: 'SpinalView'
+	NAME: 'View'
 	
 }));

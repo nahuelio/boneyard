@@ -6,10 +6,10 @@
 /**
 *	Define a generic container interface to add/remove views
 *	@namespace com.spinal.ui
-*	@class com.spinal.ui.SpinalContainer
-*	@extends com.spinal.ui.SpinalView
+*	@class com.spinal.ui.Container
+*	@extends com.spinal.ui.View
 **/
-Spinal.namespace('com.spinal.ui.SpinalContainer', Spinal.com.spinal.ui.SpinalView.inherit({
+var Container = Spinal.namespace('com.spinal.ui.Container', View.inherit({
 	
 	/**
 	*	Initialize
@@ -19,7 +19,7 @@ Spinal.namespace('com.spinal.ui.SpinalContainer', Spinal.com.spinal.ui.SpinalVie
 	*	@return {com.spinal.ui.SpinalContainer}
 	**/
 	initialize: function() {
-		Spinal.com.spinal.ui.SpinalView.__super__.initialize.apply(this, arguments);
+		Container.__super__.initialize.apply(this, arguments);
 		return this;
 	}
 	
@@ -30,6 +30,6 @@ Spinal.namespace('com.spinal.ui.SpinalContainer', Spinal.com.spinal.ui.SpinalVie
 	*	@property NAME
 	*	@type String
 	**/
-	NAME: 'SpinalContainer'
+	NAME: 'Container'
 	
 }));
