@@ -1,15 +1,23 @@
 /** Benchmark styles **/
-html,body,div,p,section,a,ul,li,h1,h2,h3,h4,h5 { font-family: Helvetica, Arial; font-size: 100%; margin: 0; padding: 0; box-sizing: border-box; }
+html,body,div,p,section,a,ul,li,h1,h2,h3,h4,h5 {
+	font-family: Helvetica, Arial;
+	font-size: 100%;
+	margin: 0;
+	padding: 0;
+	-ms-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
 
 body {
-	background-color: #5f0000;
+	background-color: #1c004a;
 	color: white;
 }
 
 h3.title {
-	background-color: #9a0000;
+	background-color: #280069;
 	padding: 10px;
-	border-bottom: 1px solid #3a0000;
+	border-bottom: 1px solid #120030;
 	margin-bottom: 10px;
 	font-size: 24px;
 	font-weight: bold;
@@ -31,14 +39,36 @@ div.section .header {
 	float: left;
 	width: 100%;
 	padding: 5px;
-	background-color: #9a0000;
-	border-bottom: 1px solid #3a0000;
+	background-color: #280069;
+	border-bottom: 1px solid #120030;
 }
 
 div.section .header h5 {
 	float: left;
 	margin-left: 5px;
 	font-size: 14px;
+}
+
+div.section .header .arrow {
+	float: right;
+	margin: 7px 5px 0 0;
+	cursor: pointer;
+}
+
+div.section .header .arrow-up {
+	width: 0;
+	height: 0;
+	border-left: 5px solid transparent;
+	border-right: 5px solid transparent;
+	border-bottom: 5px solid white;
+}
+
+div.section .header .arrow-down {
+	width: 0;
+	height: 0;
+	border-left: 5px solid transparent;
+	border-right: 5px solid transparent;
+	border-top: 5px solid white;
 }
 
 div.section .header button {
@@ -52,7 +82,7 @@ div.section .method {
 	background-color: #f1f1f1;
 	padding: 10px;
 	font-size: 12px;
-	color: black;
+	color: white;
 }
 
 div.section .method button {
@@ -63,17 +93,17 @@ div.section .method .name {
 	font-size: 14px;
 	margin: 10px 0;
 	font-weight: bold;
+	color: black;
 }
 
 div.section .method .sample {
-	background-color: #f1f1f1;
-	border: 1px solid #e1e1e1;
+	background-color: #1c004a;
 	margin: 5px 0;
 	width: 100%;
 }
 
 div.section .method .sample p.header {
-	background-color: #d1d1d1;
+	background-color: #280069;
 	font-size: 12px;
 	font-weight: bold;
 	padding: 5px;
@@ -104,7 +134,7 @@ div.section .method .results p.header {
 div.section .method .results p.data {
 	float: left;
 	width: inherit;
-	background-color: #a10000;
+	background-color: #1c004a;
 	padding: 5px;
 }
 
