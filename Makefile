@@ -10,6 +10,7 @@ clean:
 	rm -fr lib-cov
 	rm -f lib/coverage.html
 	rm -f benchmark/spinal-*.html
+	rm -fr docs/**/*.*
 
 coverage:
 	@./node_modules/jscoverage/bin/jscoverage \
@@ -31,13 +32,18 @@ test-cov:
 
 test: clean coverage test-all test-cov
 
+doc-all:
+	@yuidoc -c ./yuidoc.json src
+	 
+doc: clean doc-all
+
 build-selective:
 	@node build selective $(subst $(comma),$(space),$(modules))
 
 build-all:
 	@node build all
 
-build: test build-all
+build: test doc-all build-all
 
 benchmark:
 	@node build benchmark
@@ -45,4 +51,4 @@ benchmark:
 run:
 	@node run
 
-.PHONY: clean coverage test-all test-cov build-selective build-all test build benchmark run
+.PHONY: clean coverage test-all test-cov build-selective build-all test doc-all doc build benchmark run

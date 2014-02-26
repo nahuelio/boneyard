@@ -1,15 +1,30 @@
 /**
-*  SpinalJS UI Framework
-*  @author Patricio Ferrerira <3dimentionar@gmail.com>
+*	SpinalJS UI Framework
+*	@module com/spinal/core
+*	@author Patricio Ferrerira <3dimentionar@gmail.com>
 **/
 
+/**
+*	Spinal Core
+*	@namespace com.spinal.core
+*	@class Spinal
+*	@main Spinal
+**/
 ;(function(exports) {
 	"use strict";
 	
-	var	dateiso = /(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+)|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d)|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d)/;
+	/**
+	*	@static
+	*	@property __VERSION__
+	*	@type String
+	**/
+	exports.__VERSION__ = '<%= version %>';
 	
 	/**
 	*	Namespacing Strategy
+	*	@static
+	*	@method namespace
+	*	@return Function
 	**/
 	var namespace = exports.namespace = function(path, constructor) {
 		var parts = path.split('.'), parent = exports, pl, i;
@@ -25,6 +40,9 @@
 	
 	/**
 	*	JSON Serialization Strategy
+	*	@private
+	*	@method _serialize
+	*	@return Any
 	**/
 	var _serialize = function(k, v) {
 		if(this[k] instanceof Date) return this[k].toJSON();
@@ -33,8 +51,13 @@
 		return v;
 	};
 	
+		var	dateiso = /(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+)|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d)|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d)/;
+	
 	/**
 	*	JSON Deserialization Strategy
+	*	@private
+	*	@method _deserialize
+	*	@return Any
 	**/
 	var _deserialize = function(k, v) {
 		if(dateiso.test(v)) return new Date(v);
@@ -44,6 +67,8 @@
 	
 	/**
 	*	Parse first level of properties
+	*	@private
+	*	@method _parse
 	**/
 	var _parse = function(from) {
 		var sd = JSON.parse(JSON.stringify(from, _serialize), _deserialize);
@@ -54,9 +79,11 @@
 		
 	/**
 	*	Spinal Deep Copy strategy for inheritance.
-	*	Unsupported types: RegExp.
+	*	@static
+	*	@method extend
+	*	@return Object
 	**/
-	var _extend = exports._extend = function(o) {
+	var extend = exports.extend = function(o) {
 		var args = Array.prototype.slice.call(arguments, 1);
 		for(var i = 0; i < args.length; i++) {
 			if(args[i]) _parse.call(o, args[i]);
@@ -64,34 +91,11 @@
 		return o;
 	};
 	
-	/** Generic Class Constructor & Interfaces **/
-	
-	/**
-	*	Basic Constructor Function
-	**/
-	var _constructor = function(attrs) {
-		attrs || (attrs = {});
-		this.set(attrs);
-		this.initialize.apply(this, arguments);
-	};
-	
-	/**
-	*	Basic Spinal Interface for Classes.
-	**/
-	var _interface = {
-		initialize: function() { return this; },
-		get: function(p) { return this[p]; },
-		set: function(p, v) {
-			if(!p) throw new Error('set() requires 1 arguments (object or a key).');
-			(p && p === Object(p)) ?
-				_extend.apply(this, [this, p]) :
-				this[p] = v;
-			return this;
-		}
-	};
-	
 	/**
 	*	Filters inheritance Constructor function properties.
+	*	@private
+	*	@method _filter
+	*	@return Object
 	**/
 	var _filter = function(func) {
 		var obj = {};
@@ -104,8 +108,11 @@
 	
 	/**
 	*	Inheritance Strategy
+	*	@private
+	*	@method _inherit
+	*	@return Function
 	**/
-    var inherit = exports.inherit = function(proto, protoStatic) {
+    var _inherit = exports._inherit = function(proto, protoStatic) {
 		protoStatic || (protoStatic = {});
         var Parent = this, Child = function() { return Parent.apply(this, arguments); };
 		
@@ -113,21 +120,68 @@
         F.prototype = Parent.prototype;
         Child.prototype = new F;
 		if(proto) {
-			_extend(Child.prototype, proto);
-			_extend(Child, protoStatic, _filter(Parent));
+			extend(Child.prototype, proto);
+			extend(Child, protoStatic, _filter(Parent));
 		}
 		
-		Child.inherit = inherit;
+		Child.inherit = _inherit;
         Child.__super__ = Parent.prototype;
         return Child;
     };
 	
-	// Default Generic Class
-	var Class = exports.Class = namespace('com.spinal.core.Class', _constructor);
-	_extend(Class.prototype, _interface);
-	Class.inherit = inherit;
+	/**
+	*	Provides a generic Class with a generic interface to set and get properties
+	*	@class com.spinal.core.Class
+	**/
+	var Class = exports.Class = namespace('com.spinal.core.Class', function(attrs) {
+		attrs || (attrs = {});
+		this.set(attrs);
+		this.initialize.apply(this, arguments);
+	});
+	
+	extend(Class.prototype, {
+		/**
+		*	Default initialize
+		*	@public
+		*	@method initialize
+		*	@return Class
+		**/
+		initialize: function() { return this; },
+		
+		/**
+		*	Default Getter
+		*	@public
+		*	@method get
+		*	@return Object
+		**/
+		get: function(p) { return this[p]; },
+		
+		/**
+		*	Default Setter
+		*	@public
+		*	@method set
+		**/
+		set: function(p, v) {
+			if(!p) throw new Error('set() requires 1 arguments (object or a key).');
+			(p && p === Object(p)) ?
+				extend.apply(this, [this, p]) :
+				this[p] = v;
+			return this;
+		}
+	});
+	
+	/**
+	*	@static
+	*	@method inherit
+	*	@return Function
+	**/
+	Class.inherit = _inherit;
+	
+	/**
+	*	@static
+	*	@property NAME
+	*	@type String
+	**/
 	Class.NAME = 'SpinalClass';
-			
-	exports.__VERSION__ = '<%= version %>';
 	
 }(typeof exports === 'undefined' ? (window.Spinal = {}) : exports));

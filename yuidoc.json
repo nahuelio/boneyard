@@ -1,0 +1,10 @@
+{
+    "name": "SpinalJS",
+    "description": "SpinalJS UI Framework built on top of BackboneJS",
+    "version": "0.0.1",
+    "url": "http://3dimention.github.io/spinal",
+	"logo": "http://3dimention.github.io/spinal/images/logo.png",
+    "options": {
+        "outdir": "docs"
+    }
+}
