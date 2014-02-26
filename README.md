@@ -5,11 +5,11 @@ SpinalJS
 
 UI framework built on top of BackboneJS
 
-TODO
+TODOS
 =====================
 
 * Current Implementation handle dependencies between files inside the SAME modules: Implement Handling of dependencies across modules (Hook up this into the build process).
-* Benchmarking code (In Progress)
+* Benchmarking code (Improve UI)
 * Adding AMD module support
 * Create Documentation (Usage instructions and so on).
 * Logo design needs more work
