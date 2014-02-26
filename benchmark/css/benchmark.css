@@ -22,17 +22,32 @@ h4.subtitle {
 }
 
 div.section {
-	margin: 10px;
+	padding: 10px;
+	float: left;
+	width: 100%;
 }
 
-div.section h5 {
+div.section .header {
+	float: left;
+	width: 100%;
 	padding: 5px;
 	background-color: #9a0000;
 	border-bottom: 1px solid #3a0000;
+}
+
+div.section .header h5 {
+	float: left;
+	margin-left: 5px;
 	font-size: 14px;
 }
 
+div.section .header button {
+	float: right;
+	margin-right: 5px;	
+}
+
 div.section .method {
+	float: left;
 	width: 100%;
 	background-color: #f1f1f1;
 	padding: 10px;
@@ -45,17 +60,55 @@ div.section .method button {
 }
 
 div.section .method .name {
-	margin: 5px auto;
+	font-size: 14px;
+	margin: 10px 0;
 	font-weight: bold;
 }
 
-div.section .method .bar {
-	background-color: #b1b1b1;
-	margin: 10px auto;
-	padding: 5px;
+div.section .method .sample {
+	background-color: #f1f1f1;
+	border: 1px solid #e1e1e1;
+	margin: 5px 0;
 	width: 100%;
 }
 
-div.section .method .timer span {
-	margin: 0 5px;
+div.section .method .sample p.header {
+	background-color: #d1d1d1;
+	font-size: 12px;
+	font-weight: bold;
+	padding: 5px;
+}
+
+div.section .method .sample code {
+	float: left;
+	width: inherit;
+	background-color: #e1e1e1;
+	font-size: 12px;
+	font-weight: bold;
+}
+
+div.section .method .results {
+	float: left;
+	width: inherit;
+	margin-top: 10px;
+	background-color: #710000;
+	color: white;
+}
+
+div.section .method .results p.header {
+	padding: 5px;
+	font-size: 12px;
+	font-weight: bold;
+}
+
+div.section .method .results p.data {
+	float: left;
+	width: inherit;
+	background-color: #a10000;
+	padding: 5px;
+}
+
+div.section .method .results p.data span {
+	display: block;
+	margin: 5px;
 }

@@ -12,8 +12,8 @@ var Bench = (function(window) {
 		container: '<div id="<%= moduleName %>-<%= methodName %>" class="<%= methodName %> method"></div>',
 		name: '<p class="name"></p>',
 		button: '<button class="<%= id %> <%= methodName %>"><%= label %></button>',
-		bar: '<div class="bar"><span class="progress"></span></div>',
-		results: '<p class="results"></p>'
+		sample: '<div class="sample"></div>',
+		results: '<div class="results"></div>'
 	};
 	
 	/** Button Handlers **/
@@ -77,9 +77,7 @@ var Bench = (function(window) {
 	/**
 	*	Benchmark Cycle handler
 	**/
-	var onCycle = _.bind(function(e) {
-		
-	}, this);
+	var onCycle = _.bind(function(e) { }, this);
 	
 	/**
 	*	Benchmark Complete handler
@@ -87,8 +85,10 @@ var Bench = (function(window) {
 	var onComplete = _.bind(function(e) {
 		var data = this.getData(e);
 		if(data) {
-			this.$currentResults.html('<span>' + e.target.toString() + '</span>');
-			// console.log('Bench on: ' + data.module + '#' + data.method + ' completed');
+			var output = '<p class="header">Results</p><p class="data"><span>Statistical: ' + e.target.toString() + '</span>';
+			output += '<span>Total Time: ' + e.target.times.elapsed + ' secs</span>',
+			output += '<span>Last Sample took: ' + e.target.times.cycle + ' secs</span>';
+            this.$currentResults.append(output);
 		}
 	}, this);
 	
@@ -100,7 +100,6 @@ var Bench = (function(window) {
 		if(data) {
 			this.$currentResults = $('div#' + data.module + '-' + data.method + ' .results');
 			this.$currentResults.html('');
-			// console.log('Bench on: ' + data.module + '#' + data.method + ' reset');
 		}
 	}, this);
 	
@@ -126,8 +125,8 @@ var Bench = (function(window) {
 	/**
 	*	Suite Benches were Created into the suite.
 	**/
-	var onCreate = _.bind(function(e) {
-		_.each(e.target, function(b) {
+	var onCreate = _.bind(function(e, benchmarks) {
+		_.each(benchmarks, function(b) {
 			var info = b.name.split('#'),
 				module = info[0], method = info[1];
 			if(module && method) {
@@ -135,24 +134,29 @@ var Bench = (function(window) {
 					$clear = $(_.template(this.tpls.button, { methodName: method, id: 'clear', label: 'Clear' })).appendTo($c).on('click', this.onButtonClearClick),
 					$run = $(_.template(this.tpls.button, { methodName: method, id: 'run', label: 'Run' })).appendTo($c).on('click', this.onButtonRunClick),
 					$name = $(this.tpls.name).appendTo($c),
-					$bar = $(this.tpls.bar).appendTo($c),
+					$sample = $(this.tpls.sample).appendTo($c),
 					$results = $(this.tpls.results).appendTo($c);
 				$name.html('#' + method + '()');
+				var funcString = _.str.strRightBack(_.str.strLeftBack(b.fn.toString(), '}'), 'function () {');
+				$sample.html('<p class="header">Sample Code to Benchmark</p><code class="prettyprint">' + this.convertStrToHTML(funcString) + '</code>');
 				b.on('reset', this.onReset);
 			}
 		}, this);
 	}, this);
 	
+	this.convertStrToHTML = function(str) {
+		return str.replace(/\n/g, '<br/>').replace(/\t/g, '&nbsp;&nbsp;');
+	}
+	
 	/** Create Suite and Event setup **/
 	
-	var suite = Benchmark.Suite();
+	var suite = Benchmark.Suite('spinaljs');
 	suite.on('start', onSuiteStart);
 	suite.on('cycle', onSuiteCycle);
 	suite.on('complete', onSuiteComplete);
 	suite.on('created', onCreate);
 	
 	/** Benchmark Config **/
-	// FIXME: Add options here
 	return {
 		suite: suite,
 		_events: {

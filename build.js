@@ -14,6 +14,11 @@ var fs = require('fs'),
 var Build = {
 	
 	/**
+	*	Modules Path
+	**/
+	modulesPath: './src/com/spinal',
+	
+	/**
 	*	Build Run
 	**/
 	run: function() {
@@ -21,7 +26,7 @@ var Build = {
 			output = this.concat(files),
 			output = this.minify(output);
 		this.export(output);
-		this.benchmark(files);
+		this.benchmark();
 	},
 	
 	banner: function(o) {
@@ -61,17 +66,23 @@ var Build = {
 		fs.writeFileSync(filename, o, { mode: 0777, encoding: 'utf8', flags: 'w' });
 	},
 	
-	benchmark: function(files) {
+	/**
+	*	Parse Modules
+	**/
+	parse: function() {
+		return _.compact(_.map(fs.readdirSync(this.modulesPath), function(fd) {
+			var st = fs.statSync(path.resolve(this.modulesPath, fd));
+			if(st && st.isDirectory()) return { name: fd };
+		}, this));
+	},
+	
+	/**
+	*	Build Benchmark tool based on modules available.
+	**/
+	benchmark: function() {
 		var htmltpl = fs.readFileSync('./benchmark/templates/template.html', 'utf8');
-		var modules = _.map(files, function(f) {
-			var name = _s.strLeftBack(_s.strRightBack(f, '/'), '.');
-			return { name: name };
-		}, this);
 		var filename = './benchmark/spinal-' + pkg.version + '-benchmark.html';
-		fs.writeFileSync(filename, _.template(htmltpl, {
-			version: pkg.version,
-			modules: modules
-		}), { mode: 0777, encoding: 'utf8', flags: 'w' });
+		fs.writeFileSync(filename, _.template(htmltpl, { version: pkg.version, modules: this.parse() }), { mode: 0777, encoding: 'utf8', flags: 'w' });
 	}
 	
 };

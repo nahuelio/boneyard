@@ -5,20 +5,23 @@
 		<link rel="stylesheet" type="text/css" href="css/benchmark.css">
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
 		<script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min.js"></script>
+		<script src="//cdnjs.cloudflare.com/ajax/libs/underscore.string/2.3.3/underscore.string.min.js"></script>
+		<script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
 		<script src="spinal-<%= version %>-SNAPSHOT.js"></script>
 		<script src="libs/benchmark.js"></script>
 		<script src="libs/common.js"></script>
-		<% for(var m in modules) { %>
-			<script src="libs/<%= modules[m].name %>/<%= modules[m].name %>-bm.js"></script>
-		<% } %>
-	</head>
+		<% for(var m in modules) {
+		%><script src="libs/<%= modules[m].name %>/<%= modules[m].name %>-bm.js"></script>
+		<% } %></head>
 	<body>
 		<h3 class="title">SpinalJS <%= version %> | Benchmark</h3>
 		<h4 class="subtitle">Modules</h4>
-		<% for(var m in modules) { %>
-			<div id="<%= modules[m].name %>" class="<%= modules[m].name %> section">
+		<% for(var m in modules) {
+		%><div id="<%= modules[m].name %>" class="<%= modules[m].name %> section">
+			<div class="header">
 				<h5><%= modules[m].name %></h5>
 			</div>
-		<% } %>
+		</div><% }
+		%>
 	</body>
 </html>

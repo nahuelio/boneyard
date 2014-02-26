@@ -1,10 +1,10 @@
 /**
-*  Spinal UI Framework
+*  SpinalJS UI Framework
 *  @author Patricio Ferrerira <3dimentionar@gmail.com>
 **/
-"use strict";
 
-(function(exports) {
+;(function(exports) {
+	"use strict";
 	
 	var	dateiso = /(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+)|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d)|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d)/;
 	
