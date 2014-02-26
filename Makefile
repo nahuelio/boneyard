@@ -1,6 +1,9 @@
 REPORTER = spec
 REPORTER_COV = html-cov
-SRC = $(shell find src -name "*.js" -type f | sort)
+
+comma:= ,
+space:=
+space+=
 
 clean:
 	rm -f lib/spinal*.js
@@ -28,15 +31,18 @@ test-cov:
 
 test: clean coverage test-all test-cov
 
-build-module:
-	@node build module $(mod)
+build-selective:
+	@node build selective $(subst $(comma),$(space),$(modules))
 
 build-all:
-	@node build all $(SRC)
+	@node build all
 
-build: test-all build-all
+build: test build-all
+
+benchmark:
+	@node build benchmark
 
 run:
 	@node run
 
-.PHONY: clean coverage test-all test-cov build-module build-all test build run
+.PHONY: clean coverage test-all test-cov build-selective build-all test build benchmark run
