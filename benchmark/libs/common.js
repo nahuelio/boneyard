@@ -125,8 +125,8 @@ var Bench = (function(window) {
 	/**
 	*	Suite Benches were Created into the suite.
 	**/
-	var onCreate = _.bind(function(e) {
-		_.each(e.target, function(b) {
+	var onCreate = _.bind(function(e, benchmarks) {
+		_.each(benchmarks, function(b) {
 			var info = b.name.split('#'),
 				module = info[0], method = info[1];
 			if(module && method) {
@@ -150,7 +150,7 @@ var Bench = (function(window) {
 	
 	/** Create Suite and Event setup **/
 	
-	var suite = Benchmark.Suite();
+	var suite = Benchmark.Suite('spinaljs');
 	suite.on('start', onSuiteStart);
 	suite.on('cycle', onSuiteCycle);
 	suite.on('complete', onSuiteComplete);

@@ -10,19 +10,18 @@
 		<script src="spinal-<%= version %>-SNAPSHOT.js"></script>
 		<script src="libs/benchmark.js"></script>
 		<script src="libs/common.js"></script>
-		<% for(var m in modules) { %>
-			<script src="libs/<%= modules[m].name %>/<%= modules[m].name %>-bm.js"></script>
-		<% } %>
-	</head>
+		<% for(var m in modules) {
+		%><script src="libs/<%= modules[m].name %>/<%= modules[m].name %>-bm.js"></script>
+		<% } %></head>
 	<body>
 		<h3 class="title">SpinalJS <%= version %> | Benchmark</h3>
 		<h4 class="subtitle">Modules</h4>
-		<% for(var m in modules) { %>
-			<div id="<%= modules[m].name %>" class="<%= modules[m].name %> section">
-				<div class="header">
-					<h5><%= modules[m].name %></h5>
-				</div>
+		<% for(var m in modules) {
+		%><div id="<%= modules[m].name %>" class="<%= modules[m].name %> section">
+			<div class="header">
+				<h5><%= modules[m].name %></h5>
 			</div>
-		<% } %>
+		</div><% }
+		%>
 	</body>
 </html>
