@@ -1,0 +1,13 @@
+/** Dependency Config Files **/
+{
+	core: { },
+	mvc: [
+		
+	],
+	ui: [
+		
+	],
+	util: [
+		
+	]
+}

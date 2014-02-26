@@ -9,7 +9,8 @@ var fs = require('fs'),
 	jsp = require("uglify-js").parser,
 	pro = require("uglify-js").uglify,
 	_ = require('underscore'),
-	_s = require('underscore.string');
+	_s = require('underscore.string'),
+	cmdParams = process.argv.slice(2);
 
 var Build = {
 	
@@ -19,14 +20,31 @@ var Build = {
 	modulesPath: './src/com/spinal',
 	
 	/**
-	*	Build Run
+	*	Execute command based on parameters
 	**/
-	run: function() {
-		var files = process.argv.slice(2),
+	exec: function() {
+		var action = cmdParams[0];
+		if(action == 'all') this.buildAll();
+		if(action == 'module') this.buildModule();
+	},
+	
+	/**
+	*	Build All
+	**/
+	buildAll: function() {
+		var files = process.argv.slice(3),
 			output = this.concat(files),
 			output = this.minify(output);
 		this.export(output);
 		this.benchmark();
+	},
+	
+	/**
+	*	Build specific module.
+	**/
+	buildModule: function() {
+		var module = process.argv.slice(3)[0];
+		// TODO: Build specific modules
 	},
 	
 	banner: function(o) {
@@ -87,4 +105,4 @@ var Build = {
 	
 };
 
-Build.run();
+Build.exec();

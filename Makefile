@@ -13,7 +13,7 @@ coverage:
 		--no-highlight \
 		src lib-cov
 
-test:
+test-all:
 	@UT=1 \
 	./node_modules/mocha/bin/mocha \
 		--reporter $(REPORTER) \
@@ -26,14 +26,17 @@ test-cov:
 		-c test/**/*.js \
 		--coverage > lib/coverage.html
 
-build:
-	@node build $(SRC)
+test: clean coverage test-all test-cov
+
+build-module:
+	@node build module $(mod)
+
+build-all:
+	@node build all $(SRC)
+
+build: test-all build-all
 
 run:
 	@node run
 
-test-all: clean coverage test test-cov
-
-build-all: test-all build
-
-.PHONY: clean coverage test test-cov build run test-all build-all
+.PHONY: clean coverage test-all test-cov build-module build-all test build run

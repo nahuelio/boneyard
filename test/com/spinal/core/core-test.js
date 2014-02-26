@@ -140,13 +140,13 @@ describe('Spinal', function() {
 	**/
 	describe('#inherit()', function() {
 		/** Base Class Testing **/
-		var BaseClass = Spinal.Generic.inherit({
+		var BaseClass = Spinal.com.spinal.core.Class.inherit({
 			_string: 'BaseClass',
 			_object: { _boolean: false, _date: new Date('2014-02-22T23:43:51.223Z') },
 			submethod: function() { return this._string + 'Base'; }
 		}, { NAME: 'BaseClass', EXTRA: { p: 'Static1' } });
 
-		it('Should Inherit a Class from Spinal.Generic', function() {
+		it('Should Inherit a Class from Spinal.com.spinal.core.Class', function() {
 			var instance1 = new BaseClass();
 			instance1.get('_string').should.equal('BaseClass');
 			instance1.submethod().should.equal('BaseClassBase');

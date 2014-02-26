@@ -140,6 +140,7 @@ var Bench = (function(window) {
 				var funcString = _.str.strRightBack(_.str.strLeftBack(b.fn.toString(), '}'), 'function () {');
 				$sample.html('<p class="header">Sample Code to Benchmark</p><code class="prettyprint">' + this.convertStrToHTML(funcString) + '</code>');
 				b.on('reset', this.onReset);
+				Bench.suite.push(b);
 			}
 		}, this);
 	}, this);
