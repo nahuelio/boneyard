@@ -12,6 +12,30 @@
 var View = Spinal.namespace('com.spinal.ui.View', Spinal.com.spinal.core.Class.inherit({
 	
 	/**
+	*	Id
+	*	@public
+	*	@property id
+	*	@type String
+	**/
+	id: null,
+	
+	/**
+	*	Class
+	*	@public
+	*	@property class
+	*	@type String
+	**/
+	class: 'spinal-view',
+	
+	/**
+	*	Template
+	*	@public
+	*	@property template
+	*	@type Function
+	**/
+	template: _.template('<div></div>'),
+	
+	/**
 	*	Succesor
 	*	@public
 	*	@property succesor
@@ -26,7 +50,9 @@ var View = Spinal.namespace('com.spinal.ui.View', Spinal.com.spinal.core.Class.i
 	*	@method initialize
 	*	@return {com.spinal.ui.View}
 	**/
-	initialize: function() {
+	initialize: function(attrs) {
+		View.__super__.initialize.apply(this, arguments);
+		if(attrs.succesor) this.set('el', succesor.get('el'));
 		return this;
 	},
 	

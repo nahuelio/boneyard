@@ -4,7 +4,7 @@
   "description": "UI Framework built on top of BackboneJS",
   "main": "build.js",
   "dependencies": {
-    "underscore": ">=1.5.x",
+    "underscore": "1.6.x",
 	"underscore.string": "2.3.x",
     "backbone": "1.1.x"
   },

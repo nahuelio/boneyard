@@ -35,11 +35,11 @@ var Build = {
 	*	Note: Automatically builds benchmark
 	**/
 	buildAll: function() {
-		var allFiles = _.uniq(_.flatten(_.map(modDeps, function(p, m) {
-			var files = this.filterFilesInModule(m);
+		var allFiles = _.uniq(_.flatten(_.compact(_.map(modDeps, function(p, m) {
+			var files = this.filterFilesInModule(this.modulesPath, m);
 			return this.sortByDependencies(m, files);
-		}, this)));
-		var output = this.concat(allFiles),
+		}, this))));
+		var output = this.concat(allFiles);
 			output = this.minify(output);
 		this.export(output);
 		this.benchmark();
@@ -51,7 +51,7 @@ var Build = {
 	buildSelective: function() {
 		var modules = cmdParams.slice(1);
 		var allFiles = _.flatten(_.map(modules, function(m) {
-			var files = this.filterFilesInModule(m);
+			var files = this.filterFilesInModule(this.modulesPath, m);
 			return this.sortByDependencies(m, files);
 		}, this));
 		allFiles.unshift(path.resolve(this.modulesPath, 'core/core.js')); // include core
@@ -60,12 +60,18 @@ var Build = {
 		this.export(output, true);
 	},
 	
-	filterFilesInModule: function(m) {
-		return _.compact(_.map(fs.readdirSync(path.resolve(this.modulesPath, m)), function(fd) {
-			var p = path.resolve(this.modulesPath, m + '/' + fd);
-			var st = fs.statSync(p);
-			if(st && st.isFile()) return p;
-		}, this));	
+	filterFilesInModule: function(pt, m) {
+		var files = fs.readdirSync(path.resolve(pt, m));
+		if(files.length == 0) return [];
+		return _.flatten(_.compact(_.map(files, function(fd) {
+			var p = path.resolve(pt, m);
+			var st = fs.statSync(p + '/' + fd);
+			if(st && st.isFile()) {
+				return (p + '/' + fd);
+			} else {
+				return this.filterFilesInModule(p, fd);
+			}
+		}, this)));	
 	},
 	
 	/**

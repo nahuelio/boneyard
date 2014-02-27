@@ -8,14 +8,13 @@
 *	@namespace com.spinal.ui
 *	@class com.spinal.ui.Container
 *	@extends com.spinal.ui.View
-*	@uses {com.spinal.util.tda.Collection}
 **/
 var Container = Spinal.namespace('com.spinal.ui.Container', View.inherit({
 	
 	/**
 	*	View Collection
 	*	@property views
-	*	@type {com.spinal.util.tda.Collection}
+	*	@type {com.spinal.util.adt.Collection}
 	**/
 	views: new Collection(),
 	
@@ -64,8 +63,8 @@ var Container = Spinal.namespace('com.spinal.ui.Container', View.inherit({
 	*	@param v {com.spinal.ui.View} View instance
 	*	@return {com.spinal.ui.View}
 	**/
-	find: function(v) {
-		return this.views.findById(v.id);
+	find: function(finder) {
+		return this.views.findBy(finder);
 	},
 	
 	/**
