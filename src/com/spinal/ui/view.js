@@ -12,6 +12,14 @@
 var View = Spinal.namespace('com.spinal.ui.View', Spinal.com.spinal.core.Class.inherit({
 	
 	/**
+	*	Succesor
+	*	@public
+	*	@property succesor
+	*	@type {com.spinal.ui.View}
+	**/
+	succesor: null,
+	
+	/**
 	*	Initialize
 	*	@public
 	*	@chainable
@@ -29,7 +37,9 @@ var View = Spinal.namespace('com.spinal.ui.View', Spinal.com.spinal.core.Class.i
 	*	@method render
 	*	@return {com.spinal.ui.View}
 	**/
-	render: function() { },
+	render: function() {
+		return this;
+	},
 	
 	/**
 	*	Update View
@@ -38,16 +48,21 @@ var View = Spinal.namespace('com.spinal.ui.View', Spinal.com.spinal.core.Class.i
 	*	@method update
 	*	@return {com.spinal.ui.View}
 	**/
-	update: function() { },
+	update: function() {
+		return this;
+	},
 	
 	/**
 	*	Lookup
 	*	@public
 	*	@chainable
 	*	@method lookup
-	*	@return Any
+	*	@param id {String} Succesor id
+	*	@return {com.spinal.ui.View}
 	**/
-	lookup: function() { },
+	lookup: function(id) {
+		return this._next(id);
+	},
 	
 	/**
 	*	Show View
@@ -56,7 +71,10 @@ var View = Spinal.namespace('com.spinal.ui.View', Spinal.com.spinal.core.Class.i
 	*	@method show
 	*	@return {com.spinal.ui.View}
 	**/
-	show: function() { },
+	show: function() {
+		if(this.$el) this.$el.show();
+		return this;
+	},
 	
 	/**
 	*	Hide View
@@ -65,7 +83,10 @@ var View = Spinal.namespace('com.spinal.ui.View', Spinal.com.spinal.core.Class.i
 	*	@method hide
 	*	@return {com.spinal.ui.View}
 	**/
-	hide: function() { },
+	hide: function() {
+		if(this.$el) this.$el.hide();
+		return this;
+	},
 	
 	/**
 	*	Enable View
@@ -74,7 +95,10 @@ var View = Spinal.namespace('com.spinal.ui.View', Spinal.com.spinal.core.Class.i
 	*	@method enable
 	*	@return {com.spinal.ui.View}
 	**/
-	enable: function() { },
+	enable: function() {
+		if(this.$el) this.$el.enable();
+		return this;
+	},
 	
 	/**
 	*	Disable View
@@ -83,7 +107,10 @@ var View = Spinal.namespace('com.spinal.ui.View', Spinal.com.spinal.core.Class.i
 	*	@method disable
 	*	@return {com.spinal.ui.View}
 	**/
-	disable: function() { },
+	disable: function() {
+		if(this.$el) this.$el.disable();
+		return this;
+	},
 	
 	/**
 	*	Clear View
@@ -92,7 +119,23 @@ var View = Spinal.namespace('com.spinal.ui.View', Spinal.com.spinal.core.Class.i
 	*	@method clear
 	*	@return {com.spinal.ui.View}
 	**/
-	clear: function() { }
+	clear: function() {
+		if(this.$el) this.$el.children().remove();
+		return this;
+	},
+	
+	/**
+	*	Try to Retrieve next succesor if possible (Chain of Responsability)
+	*	@private
+	*	@method _next
+	*	@param id {String} Succesor id
+	*	@return {com.spinal.ui.View}
+	**/
+	_next: function(id) {
+		if(this.id === id) return this;
+		if(this.successor) return this.successor.lookup(id);
+		return null;
+	}
 	
 }, {
 	
@@ -109,13 +152,45 @@ var View = Spinal.namespace('com.spinal.ui.View', Spinal.com.spinal.core.Class.i
 	*	@type Object
 	**/
 	EVENTS: {
+		/**
+		* @event shown
+		**/
 		shown: 'com:spinal:ui:view:shown',
+		/** 
+		*	@event hidden
+		**/
 		hidden: 'com:spinal:ui:view:hidden',
+		/**
+		*	@event enabled
+		**/
 		enabled: 'com:spinal:ui:view:enabled',
+		/**
+		*	@event disabled
+		**/
 		disabled: 'com:spinal:ui:view:disabled',
+		/**
+		*	@event clicked
+		**/
 		clicked: 'com:spinal:ui:view:clicked',
+		/**
+		*	@event focused
+		**/
 		focused: 'com:spinal:ui:view:focused',
+		/**
+		*	@event blurred
+		**/
 		blurred: 'com:spinal:ui:view:blurred',
+		/**
+		*	@event rendered
+		**/
+		rendered: 'com:spinal:ui:view:rendered',
+		/**
+		*	@event updated
+		**/
+		updated: 'com:spinal:ui:view:updated',
+		/**
+		*	@event cleared
+		**/
 		cleared: 'com:spinal:ui:view:cleared'
 	}
 	

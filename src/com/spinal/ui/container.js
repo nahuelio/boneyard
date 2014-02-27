@@ -8,8 +8,16 @@
 *	@namespace com.spinal.ui
 *	@class com.spinal.ui.Container
 *	@extends com.spinal.ui.View
+*	@uses {com.spinal.util.tda.Collection}
 **/
 var Container = Spinal.namespace('com.spinal.ui.Container', View.inherit({
+	
+	/**
+	*	View Collection
+	*	@property views
+	*	@type {com.spinal.util.tda.Collection}
+	**/
+	views: new Collection(),
 	
 	/**
 	*	Initialize
@@ -28,26 +36,48 @@ var Container = Spinal.namespace('com.spinal.ui.Container', View.inherit({
 	*	@public
 	*	@chainable
 	*	@method add
+	*	@param v {com.spinal.ui.View} View instance
 	*	@return {com.spinal.ui.Container}
 	**/
-	add: function() { },
+	add: function(v) {
+		if(!this.find(v)) this.views.add(v);
+		return this;
+	},
 	
 	/**
 	*	Remove View
 	*	@public
 	*	@chainable
 	*	@method lookup
+	*	@param v {com.spinal.ui.View} View instance
 	*	@return {com.spinal.ui.Container}
 	**/
-	remove: function() { },
+	remove: function(v) {
+		if(this.find(v)) this.views.remove(v);
+		return this;
+	},
 	
 	/**
 	*	Find View
 	*	@public
 	*	@method find
-	*	@return Any
+	*	@param v {com.spinal.ui.View} View instance
+	*	@return {com.spinal.ui.View}
 	**/
-	find: function() { },
+	find: function(v) {
+		return this.views.findById(v.id);
+	},
+	
+	/**
+	*	Find View by id
+	*	@public
+	*	@method findById
+	*	@param id {String} View id
+	*	@return {com.spinal.ui.View}
+	**/
+	findById: function(id) {
+		return this.views.findBy(function(v) { return (v.id && v.id == id); });
+	},
 	
 	/**
 	*	Show View
@@ -56,7 +86,11 @@ var Container = Spinal.namespace('com.spinal.ui.Container', View.inherit({
 	*	@method show
 	*	@return {com.spinal.ui.View}
 	**/
-	show: function() { },
+	show: function() {
+		this.views.invoke('show');
+		Container.__super__.show.apply(this, arguments);
+		return this;
+	},
 	
 	/**
 	*	Hide View
@@ -65,7 +99,11 @@ var Container = Spinal.namespace('com.spinal.ui.Container', View.inherit({
 	*	@method hide
 	*	@return {com.spinal.ui.View}
 	**/
-	hide: function() { },
+	hide: function() {
+		this.views.invoke('hide');
+		Container.__super__.hide.apply(this, arguments);
+		return this;
+	},
 	
 	/**
 	*	Enable View
@@ -74,7 +112,11 @@ var Container = Spinal.namespace('com.spinal.ui.Container', View.inherit({
 	*	@method enable
 	*	@return {com.spinal.ui.View}
 	**/
-	enable: function() { },
+	enable: function() {
+		this.views.invoke('enable');
+		Container.__super__.enable.apply(this, arguments);
+		return this;
+	},
 	
 	/**
 	*	Disable View
@@ -83,7 +125,11 @@ var Container = Spinal.namespace('com.spinal.ui.Container', View.inherit({
 	*	@method disable
 	*	@return {com.spinal.ui.View}
 	**/
-	disable: function() { },
+	disable: function() {
+		this.views.invoke('disable');
+		Container.__super__.disable.apply(this, arguments);
+		return this;
+	},
 	
 	/**
 	*	Clear View
@@ -92,7 +138,11 @@ var Container = Spinal.namespace('com.spinal.ui.Container', View.inherit({
 	*	@method clear
 	*	@return {com.spinal.ui.View}
 	**/
-	clear: function() { }
+	clear: function() {
+		this.views.invoke('clear');
+		Container.__super__.clear.apply(this, arguments);
+		return this;
+	}
 	
 }, {
 	
