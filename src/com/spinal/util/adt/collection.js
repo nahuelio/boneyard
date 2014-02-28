@@ -3,13 +3,15 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 
+if(typeof exports !== 'undefined') Spinal = require('../../core/core');
+
 /**
 *	Define a generic interface of a Collection
 *	@namespace com.spinal.util.adt
 *	@class com.spinal.util.adt.Collection
 *	@extends com.spinal.core.Class
 **/
-var Collection = Spinal.namespace('com.spinal.util.adt.Collection', Spinal.com.spinal.core.Class.inherit({
+Spinal.namespace('com.spinal.util.adt.Collection', Spinal.com.spinal.core.Class.inherit({
 	
 	/**
 	*	Internal Array
@@ -54,7 +56,7 @@ var Collection = Spinal.namespace('com.spinal.util.adt.Collection', Spinal.com.s
 	set: function(arr) {
 		if(!this._valid(arr)) return false;
 		this.reset({ silent: true });
-		this.collection = this.collection.concat(arr);
+		this.collection = new Array(arr);
 		return true;
 	},
 	
@@ -242,7 +244,7 @@ var Collection = Spinal.namespace('com.spinal.util.adt.Collection', Spinal.com.s
 	*	@return String
 	**/
 	toString: function() {
-		return '[ object ' + Collection.NAME + ']';
+		return '[object Collection]';
 	}
 	
 }, {

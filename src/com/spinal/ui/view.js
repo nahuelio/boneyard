@@ -3,13 +3,15 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 
+if(typeof exports !== 'undefined') Spinal = require('../core/core');
+
 /**
 *	Define a generic view interface that extends classic Backbone.View
 *	@namespace com.spinal.ui
 *	@class com.spinal.ui.View
 *	@extends com.spinal.core.Class
 **/
-var View = Spinal.namespace('com.spinal.ui.View', Spinal.com.spinal.core.Class.inherit({
+Spinal.namespace('com.spinal.ui.View', Spinal.com.spinal.core.Class.inherit({
 	
 	/**
 	*	Id
@@ -161,6 +163,16 @@ var View = Spinal.namespace('com.spinal.ui.View', Spinal.com.spinal.core.Class.i
 		if(this.id === id) return this;
 		if(this.successor) return this.successor.lookup(id);
 		return null;
+	},
+	
+	/**
+	*	String representation of an instance of this class
+	*	@public
+	*	@method toString
+	*	@return String
+	**/
+	toString: function() {
+		return '[object View]';
 	}
 	
 }, {

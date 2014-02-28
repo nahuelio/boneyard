@@ -33,7 +33,7 @@ test-cov:
 test: clean coverage test-all test-cov
 
 doc-all:
-	@yuidoc -c ./yuidoc.json src
+	@node ./node_modules/yuidocjs/lib/cli -c ./yuidoc.json ./src
 	 
 doc: clean doc-all
 

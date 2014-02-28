@@ -35,6 +35,8 @@
 			if(i == (pl-1)) parent[parts[i]] = constructor;
 			parent = parent[parts[i]];
 		}
+		// if NodeJS module is defined, export the module automatically
+		if(module) exports[parts[parts.length-1]] = parent;
 		return parent;
 	};
 	

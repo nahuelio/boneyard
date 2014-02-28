@@ -3,13 +3,15 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 
+if(typeof exports !== 'undefined') Spinal = require('../core/core');
+
 /**
 *	Define a generic interface of a middle man that helps with the Controller/Model communication
 *	@namespace com.spinal.mvc
 *	@class com.spinal.mvc.Service
 *	@extends com.spinal.core.Class
 **/
-var Service = Spinal.namespace('com.spinal.mvc.Service', Spinal.com.spinal.core.Class.inherit({
+Spinal.namespace('com.spinal.mvc.Service', Spinal.com.spinal.core.Class.inherit({
 	
 	/**
 	*	Initialize
@@ -40,6 +42,16 @@ var Service = Spinal.namespace('com.spinal.mvc.Service', Spinal.com.spinal.core.
 	**/
 	deserialize: function() {
 		return null;
+	},
+	
+	/**
+	*	String representation of an instance of this class
+	*	@public
+	*	@method toString
+	*	@return String
+	**/
+	toString: function() {
+		return '[object Service]';
 	}
 	
 }, {

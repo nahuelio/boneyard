@@ -1,5 +1,5 @@
 /**
-*	Spinal Test Class
+*	Spinal Core Tests
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 var libpath = process.env['UT'] ? 'lib-cov' : 'lib',
@@ -9,11 +9,7 @@ var libpath = process.env['UT'] ? 'lib-cov' : 'lib',
 
 var Spinal = require(path.resolve(libpath, 'com/spinal/core/core'));
 
-/**
-*    @class Spinal
-*    @classdesc Unit test for core Spinal operations
-**/
-describe('Spinal', function() {
+describe('Spinal.Core', function() {
 	
 	before(function() {
 		this.ds = { _string: 'string' };

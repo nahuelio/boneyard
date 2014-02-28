@@ -3,6 +3,8 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 
+if(typeof exports !== 'undefined') Spinal = require('../../core/core');
+
 /**
 *	Define a generic interface to communicate with a service in the cloud.
 *	@namespace com.spinal.util.adt
@@ -15,9 +17,8 @@
 *		myqueue.addAll([{ name: 1 }, { name: 2 }]); // using 'addAll' from com.spinal.util.adt.Collection
 *		myqueue.offer({ name: 3 }); // or adding one by one.
 *		myqueue.poll();
-*		myqueue.
 **/
-var Queue = Spinal.namespace('com.spinal.util.adt.Queue', Collection.inherit({
+Spinal.namespace('com.spinal.util.adt.Queue', Spinal.com.spinal.util.adt.Collection.inherit({
 	
 	/**
 	*	Queue capacity
@@ -90,7 +91,7 @@ var Queue = Spinal.namespace('com.spinal.util.adt.Queue', Collection.inherit({
 	*	@return String
 	**/
 	toString: function() {
-		return '[ object ' + Queue.NAME + ']';
+		return '[object Queue]';
 	}
 	
 }, {

@@ -3,13 +3,15 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 
+if(typeof exports !== 'undefined') Spinal = require('../../core/core');
+
 /**
 *	Define a generic interface to communicate with a service in the cloud.
 *	@namespace com.spinal.util.adt
 *	@class com.spinal.util.adt.Iterator
 *	@extends com.spinal.core.Class
 **/
-var Iterator = Spinal.namespace('com.spinal.util.adt.Iterator', Spinal.com.spinal.core.Class.inherit({
+Spinal.namespace('com.spinal.util.adt.Iterator', Spinal.com.spinal.core.Class.inherit({
 	
 	/**
 	*	Internal Array
@@ -85,7 +87,7 @@ var Iterator = Spinal.namespace('com.spinal.util.adt.Iterator', Spinal.com.spina
 	*	@return String
 	**/
 	toString: function() {
-		return '[ object ' + Iterator.NAME + ']';
+		return '[object Iterator]';
 	}
 	
 }, {

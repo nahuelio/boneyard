@@ -3,13 +3,15 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 
+if(typeof exports !== 'undefined') Spinal = require('../core/core');
+
 /**
 *	Define a generic interface to communicate with a service in the cloud.
 *	@namespace com.spinal.mvc
 *	@class com.spinal.mvc.Controller
 *	@extends com.spinal.core.Class
 **/
-var Controller = Spinal.namespace('com.spinal.mvc.Controller', Spinal.com.spinal.core.Class.inherit({
+Spinal.namespace('com.spinal.mvc.Controller', Spinal.com.spinal.core.Class.inherit({
 	
 	/**
 	*	Initialize
@@ -20,6 +22,16 @@ var Controller = Spinal.namespace('com.spinal.mvc.Controller', Spinal.com.spinal
 	**/
 	initialize: function() {
 		return this;
+	},
+	
+	/**
+	*	String representation of an instance of this class
+	*	@public
+	*	@method toString
+	*	@return String
+	**/
+	toString: function() {
+		return '[object Controller]';
 	}
 	
 }, {
