@@ -4,6 +4,7 @@
   "description": "UI Framework built on top of BackboneJS",
   "main": "build.js",
   "dependencies": {
+	"commander": "2.0.0",
     "underscore": "1.6.x",
 	"underscore.string": "2.3.x"
   },
@@ -17,6 +18,9 @@
     "should": "1.2.x",
     "jscoverage": "0.3.7",
 	"yuidocjs": "0.3.x"
+  },
+  "bin": {
+    "spinal": "./bin/spinal"
   },
   "scripts": {
 	"test": "make test",
@@ -39,7 +43,7 @@
     "url": "https://github.com/3dimention/spinal/issues"
   },
   "engines": {
-    "node": ">=0.10.11"
+    "node": ">=0.6.x"
   },
   "banner": "//\tSpinalJS <%= version %> (c) <%= year %> <%= author %>, 3dimention.com\n//\tSpinalJS may be freely distributed under the MIT license.\n//\tFor all details and documentation:\n//\thttp://3dimention.github.io/spinal\n\n"
 }

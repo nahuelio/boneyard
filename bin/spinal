@@ -1,0 +1,20 @@
+#!/usr/bin/env node
+
+var program = require('commander'),
+	pkg = require('../package.json'),
+	fs = require('fs'),
+	path = require('path'),
+	exists = fs.existsSync || path.existsSync,
+	resolve = path.resolve,
+	join = path.join;
+
+/**
+*	Compile Custom
+**/
+program
+	.version(pkg.version),
+	.usage('[options] configFile')
+	.option('-c, --config <path/to/config.json>', 'config file used to setup requirejs')
+	.option('-v, --verbose', 'Display useful messages while building the spinal packages');
+	
+program.name = 'spinal';
