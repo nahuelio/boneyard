@@ -1,9 +1,8 @@
 /**
 *	@module com/spinal/util/adt
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
+*	@requires [util/adt/collection]
 **/
-
-if(typeof exports !== 'undefined') Spinal = require('../../core/core');
 
 /**
 *	Define a generic interface to communicate with a service in the cloud.
@@ -18,7 +17,7 @@ if(typeof exports !== 'undefined') Spinal = require('../../core/core');
 *		myqueue.offer({ name: 3 }); // or adding one by one.
 *		myqueue.poll();
 **/
-Spinal.namespace('com.spinal.util.adt.Queue', Spinal.com.spinal.util.adt.Collection.inherit({
+Spinal.namespace('com.spinal.util.adt.Queue', Collection.inherit({
 	
 	/**
 	*	Queue capacity

@@ -1,9 +1,8 @@
 /**
 *	@module com/spinal/mvc
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
+*	@requires [core]
 **/
-
-if(typeof exports !== 'undefined') Spinal = require('../core/core');
 
 /**
 *	Define a generic interface to communicate with a service in the cloud.

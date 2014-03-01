@@ -1,6 +1,7 @@
 /**
 *	@module com/spinal/util/adt
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
+*	@requires [core]
 **/
 
 /**

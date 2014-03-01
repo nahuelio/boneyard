@@ -1,9 +1,8 @@
 /**
 *	@module com/spinal/ui
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
+*	@requires [ui/view]
 **/
-
-if(typeof exports !== 'undefined') Spinal = require('../core/core');
 
 /**
 *	Define a generic container interface to add/remove views

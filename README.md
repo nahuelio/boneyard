@@ -4,14 +4,39 @@ SpinalJS
 =====================
 
 UI framework built on top of BackboneJS
+Description goes here...
 
-TODOS
+INSTALATION AND SETUP
 =====================
 
-* Current Implementation handle dependencies between files inside the SAME modules: Implement Handling of dependencies across modules (Hook up this into the build process).
-* Benchmarking code (Improve UI).
-* Adding AMD module support and BachboneJS hook up.
-* Create Documentation (Usage instructions and so on).
+Build from source (master):
+
+* Run 'npm install'
+* Run 'make build'
+* spinal-[version]-SNAPSHOT.js file, as well as 'libraries' folder will be generated inside the ./lib folder
+
+Download latest stable release:
+
+* Go to http://3dimention.github.io/spinal and click on the links to download the tar/zip.
+
+USAGE
+=====================
+
+* TODO
+
+DEVELOPMENT ROADMAP
+=====================
+
+* RequireJS hook up as a dependency manager
+* UI Improvements in the Benchmark Tool needed
+
+DOCUMENTATION ROADMAP
+=====================
+
+* Generate Documentation for USAGE
+* Add Examples of usage.
+
+Micelaneous Todos
+=====================
+
 * Logo design needs more work :)
-* Add examples of usage.
-* Add Bower to include requirejs

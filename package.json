@@ -5,8 +5,7 @@
   "main": "build.js",
   "dependencies": {
     "underscore": "1.6.x",
-	"underscore.string": "2.3.x",
-    "backbone": "1.1.x"
+	"underscore.string": "2.3.x"
   },
   "devDependencies": {
 	"connect": "2.13.x",
@@ -41,5 +40,6 @@
   },
   "engines": {
     "node": ">=0.10.11"
-  }
+  },
+  "banner": "//\tSpinalJS <%= version %> (c) <%= year %> <%= author %>, 3dimention.com\n//\tSpinalJS may be freely distributed under the MIT license.\n//\tFor all details and documentation:\n//\thttp://3dimention.github.io/spinal\n\n"
 }

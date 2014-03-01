@@ -9,8 +9,9 @@
 *	@namespace com.spinal.core
 *	@class Spinal
 *	@main Spinal
+*	@requires [jquery, underscore, backbone]
 **/
-;(function(exports) {
+(function(exports) {
 	"use strict";
 	
 	/**

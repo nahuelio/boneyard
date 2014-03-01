@@ -1,5 +1,5 @@
 /**
-*	Basic Service that shows Benchmarking and Code Coverage results
+*	Basic Web Service that shows Benchmarking and Code Coverage results
 **/
 
 var connect = require('connect');

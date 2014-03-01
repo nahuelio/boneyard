@@ -1,9 +1,8 @@
 /**
 *	@module com/spinal/ui
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
+*	@requires [core]
 **/
-
-if(typeof exports !== 'undefined') Spinal = require('../core/core');
 
 /**
 *	Define a generic view interface that extends classic Backbone.View
@@ -11,7 +10,7 @@ if(typeof exports !== 'undefined') Spinal = require('../core/core');
 *	@class com.spinal.ui.View
 *	@extends com.spinal.core.Class
 **/
-Spinal.namespace('com.spinal.ui.View', Spinal.com.spinal.core.Class.inherit({
+Spinal.namespace('com.spinal.ui.View', Backbone.View.inherit({
 	
 	/**
 	*	Id

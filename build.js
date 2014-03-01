@@ -1,5 +1,5 @@
 /**
-*  Spinal Build
+*  Spinal Build Process
 *  @author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 
@@ -10,7 +10,6 @@ var fs = require('fs'),
 	pro = require("uglify-js").uglify,
 	_ = require('underscore'),
 	_s = require('underscore.string'),
-	modDeps = require('./src/dependencies.json'),
 	cmdParams = process.argv.slice(2);
 
 var Build = {
@@ -19,6 +18,16 @@ var Build = {
 	*	Modules Path
 	**/
 	modulesPath: './src/com/spinal',
+	
+	/**
+	*	Src Files
+	**/
+	srcFiles: fs.readdirSync(path.resolve(__dirname, 'src')),
+	
+	/**
+	*	RequireJS Config Template Path
+	**/
+	rcTpl: fs.readFileSync(path.resolve(__dirname, 'config/requirejs-config.tpl'), 'utf8'),
 	
 	/**
 	*	Execute command based on parameters
@@ -35,13 +44,8 @@ var Build = {
 	*	Note: Automatically builds benchmark
 	**/
 	buildAll: function() {
-		var allFiles = _.uniq(_.flatten(_.compact(_.map(modDeps, function(p, m) {
-			var files = this.filterFilesInModule(this.modulesPath, m);
-			return this.sortByDependencies(m, files);
-		}, this))));
-		var output = this.concat(allFiles);
-			output = this.minify(output);
-		this.export(output);
+		// TODO
+		this.buildRelease();
 		this.benchmark();
 	},
 	
@@ -49,49 +53,31 @@ var Build = {
 	*	Build specific modules.
 	**/
 	buildSelective: function() {
-		var modules = cmdParams.slice(1);
-		var allFiles = _.flatten(_.map(modules, function(m) {
-			var files = this.filterFilesInModule(this.modulesPath, m);
-			return this.sortByDependencies(m, files);
-		}, this));
-		allFiles.unshift(path.resolve(this.modulesPath, 'core/core.js')); // include core
-		var output = this.concat(allFiles);
-			output = this.minify(output);
-		this.export(output, true);
+		// TODO
+		this.buildRelease();
 	},
 	
+	/**
+	*	Filter Files inside a module.
+	**/
 	filterFilesInModule: function(pt, m) {
 		var files = fs.readdirSync(path.resolve(pt, m));
 		if(files.length == 0) return [];
 		return _.flatten(_.compact(_.map(files, function(fd) {
 			var p = path.resolve(pt, m);
 			var st = fs.statSync(p + '/' + fd);
-			if(st && st.isFile()) {
-				return (p + '/' + fd);
-			} else {
-				return this.filterFilesInModule(p, fd);
-			}
+			return (st && st.isFile()) ? (p + '/' + fd) : this.filterFilesInModule(p, fd);
 		}, this)));	
 	},
 	
 	/**
-	*	Sort by Dependency
+	*	Build Sass for Spinal
 	**/
-	sortByDependencies: function(m, files) {
-		var deps = modDeps[m];
-		return _.sortBy(files, function(f) {
-			return (_.find(deps, function(d) { return (f.indexOf(d) != -1); }, this)) ? -1 : 1;
-		}, this);
+	buildSass: function() {
+		// TODO
 	},
 	
-	banner: function(o) {
-		var b = '//     Spinal.js <%= version %>\n\n';
-		b += '//     (c) 2014 Patricio Ferreira, 3dimention.com\n' +
-			'//     SpinalJS may be freely distributed under the MIT license.\n' +
-			'//     For all details and documentation:\n' +
-			'//     http://3dimention.github.io/spinal\n\n';
-		return _s.insert(o, 0, _.template(b, { version: pkg.version }));
-	},
+	/** Export Build functions **/
 	
 	/**
 	*	File Concatenation
@@ -100,6 +86,13 @@ var Build = {
 		var out = '';
 		files.forEach(function(f) { out += fs.readFileSync(f, 'utf8') + '\n'; });
 		return _.template(out, { version: pkg.version });
+	},
+	
+	/**
+	*	Insert Banner
+	**/
+	banner: function(o) {
+		return _s.insert(o, 0, _.template(pkg.banner, { version: pkg.version, year: new Date().getYear(), author: pkg.author }));
 	},
 	
 	/**
@@ -116,17 +109,27 @@ var Build = {
 	/**
 	*	Export framework
 	**/
-	export: function(o, custom) {
-		var filename = './lib/' + pkg.name + '-' + pkg.version + ((custom) ? '-custom' : '');
-		filename += '-SNAPSHOT.js';
+	export: function(o) {
+		var filename = './lib/' + pkg.name + '-' + pkg.version + '-SNAPSHOT.js';
 		fs.writeFileSync(filename, o, { mode: 0777, encoding: 'utf8', flags: 'w' });
 	},
+	
+	/**
+	*	Build Release
+	**/
+	buildRelease: function(files) {
+		var output = this.concat(files);
+		output = this.minify(output);
+		this.export(output);
+	},
+	
+	/** Benchmarking Code **/
 	
 	/**
 	*	Parse Modules
 	**/
 	parse: function() {
-		return _.compact(_.map(fs.readdirSync(this.modulesPath), function(fd) {
+		return _.compact(_.map(srcFiles, function(fd) {
 			var st = fs.statSync(path.resolve(this.modulesPath, fd));
 			if(st && st.isDirectory()) return { name: fd };
 		}, this));
