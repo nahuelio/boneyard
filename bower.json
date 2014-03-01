@@ -1,0 +1,32 @@
+{
+  "name": "spinal",
+  "version": "0.0.1",
+  "homepage": "http://3dimention.github.io/spinal",
+  "authors": [
+    "kuakman <3dimentionar@gmail.com>"
+  ],
+  "description": "UI Framework built on top of BackboneJS",
+  "dependencies": {
+    "backbone": "1.1.x",
+    "requirejs": "2.1.x",
+	"modernizr": "2.7.x"
+  },
+  "main": "build.js",
+  "keywords": [
+    "SpinalJS",
+    "ui",
+    "framework",
+    "backbone"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+	"lib-cov",
+	"benchmark",
+	"docs"
+  ]
+}

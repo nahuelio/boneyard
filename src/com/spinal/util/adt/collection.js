@@ -3,8 +3,6 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 
-if(typeof exports !== 'undefined') Spinal = require('../../core/core');
-
 /**
 *	Define a generic interface of a Collection
 *	@namespace com.spinal.util.adt

@@ -16,6 +16,10 @@ coverage:
 	@./node_modules/jscoverage/bin/jscoverage \
 		--no-highlight \
 		src lib-cov
+		
+check-dependencies:
+	@./node_modules/bower/bin/bower \
+		install
 
 test-all:
 	@UT=1 \
@@ -30,7 +34,7 @@ test-cov:
 		-c test/**/*.js \
 		--coverage > lib/coverage.html
 
-test: clean coverage test-all test-cov
+test: clean coverage check-dependencies test-all test-cov
 
 doc-all:
 	@node ./node_modules/yuidocjs/lib/cli -c ./yuidoc.json ./src
@@ -51,4 +55,4 @@ benchmark:
 run:
 	@node run
 
-.PHONY: clean coverage test-all test-cov build-selective build-all test doc-all doc build benchmark run
+.PHONY: clean coverage check-dependencies test-all test-cov build-selective build-all test doc-all doc build benchmark run

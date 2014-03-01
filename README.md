@@ -14,3 +14,4 @@ TODOS
 * Create Documentation (Usage instructions and so on).
 * Logo design needs more work :)
 * Add examples of usage.
+* Add Bower to include requirejs
