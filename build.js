@@ -10,7 +10,7 @@ var fs = require('fs'),
 	pro = require("uglify-js").uglify,
 	_ = require('underscore'),
 	_s = require('underscore.string'),
-	cmdParams = process.argv.slice(2);
+	args = process.argv;
 
 var Build = {
 	
@@ -32,29 +32,17 @@ var Build = {
 	/**
 	*	Execute command based on parameters
 	**/
-	exec: function() {
-		var action = cmdParams[0];
-		if(action == 'all') this.buildAll();
-		if(action == 'selective') this.buildSelective();
+	exec: function(action, options) {
+		if(action == 'build') this.build();
 		if(action == 'benchmark') this.benchmark();
 	},
 	
 	/**
-	*	Build All
-	*	Note: Automatically builds benchmark
+	*	Build Framework
 	**/
-	buildAll: function() {
+	build: function() {
 		// TODO
-		this.buildRelease();
-		this.benchmark();
-	},
-	
-	/**
-	*	Build specific modules.
-	**/
-	buildSelective: function() {
-		// TODO
-		this.buildRelease();
+		//this.buildRelease();
 	},
 	
 	/**
@@ -70,14 +58,16 @@ var Build = {
 		}, this)));	
 	},
 	
-	/**
-	*	Build Sass for Spinal
-	**/
-	buildSass: function() {
-		// TODO
-	},
-	
 	/** Export Build functions **/
+	
+	/**
+	*	Build Release
+	**/
+	buildRelease: function(files) {
+		var output = this.concat(files);
+		output = this.minify(output);
+		this.export(output);
+	},
 	
 	/**
 	*	File Concatenation
@@ -89,7 +79,7 @@ var Build = {
 	},
 	
 	/**
-	*	Insert Banner
+	*	Banner Insertion
 	**/
 	banner: function(o) {
 		return _s.insert(o, 0, _.template(pkg.banner, { version: pkg.version, year: new Date().getYear(), author: pkg.author }));
@@ -112,15 +102,6 @@ var Build = {
 	export: function(o) {
 		var filename = './lib/' + pkg.name + '-' + pkg.version + '-SNAPSHOT.js';
 		fs.writeFileSync(filename, o, { mode: 0777, encoding: 'utf8', flags: 'w' });
-	},
-	
-	/**
-	*	Build Release
-	**/
-	buildRelease: function(files) {
-		var output = this.concat(files);
-		output = this.minify(output);
-		this.export(output);
 	},
 	
 	/** Benchmarking Code **/
@@ -146,4 +127,4 @@ var Build = {
 	
 };
 
-Build.exec();
+module.exports = Build;

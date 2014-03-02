@@ -4,17 +4,27 @@ var program = require('commander'),
 	pkg = require('../package.json'),
 	fs = require('fs'),
 	path = require('path'),
-	exists = fs.existsSync || path.existsSync,
-	resolve = path.resolve,
-	join = path.join;
+	lib = path.join(path.dirname(fs.realpathSync(__filename)), '../'),
+	build = require(lib + 'build');
 
 /**
-*	Compile Custom
+*	Spinal Compile Tool
 **/
 program
-	.version(pkg.version),
+	.version(pkg.version)
 	.usage('[options] configFile')
-	.option('-c, --config <path/to/config.json>', 'config file used to setup requirejs')
-	.option('-v, --verbose', 'Display useful messages while building the spinal packages');
-	
-program.name = 'spinal';
+	.option('-p, --package', 'Packages all files into a bundle')
+	.option('-m, --minify', 'Minify and ofuscate files')
+	.option('-v, --verbose', 'Display useful messages while building project files.')
+	.option(-b, --benchmark', 'Generates Benchmark page to evaluate performance of SpinalJS framework.')
+	.parse(process.argv)
+	.name = 'spinal';
+
+if(program.args.length == 1) {
+	var options = { p: program.package, m: program.minify, v: program.verbose };
+	build.exec('build-all', { configFilePath: program.args[0], options: options });
+} else {
+	if(program.benchmark) return build.exec('benchmark');
+	console.log('spinal compiler err: Invalid number of arguments, please see help section');
+	program.help();
+}
