@@ -9,7 +9,6 @@ var fs = require('fs'),
 	pkg = require('./package.json'),
 	jsp = require("uglify-js").parser,
 	pro = require("uglify-js").uglify,
-	annotation = require('annotation'),
 	_ = require('underscore'),
 	_s = require('underscore.string'),
 	args = process.argv;

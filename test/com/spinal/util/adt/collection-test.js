@@ -3,7 +3,6 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 var libpath = process.env['UT'] ? 'lib-cov' : 'lib',
-	amd = require('amd-loader'),
     path = require('path'),
     should = require('should'),
 	_ = require('underscore');
