@@ -1,8 +1,9 @@
 /**
 *	@module com/spinal/mvc
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
-*	@requires [core]
 **/
+
+var Spinal = require('../core/core');
 
 /**
 *	Define a generic interface of a middle man that helps with the Controller/Model communication
@@ -10,7 +11,7 @@
 *	@class com.spinal.mvc.Service
 *	@extends com.spinal.core.Class
 **/
-Spinal.namespace('com.spinal.mvc.Service', Spinal.com.spinal.core.Class.inherit({
+var Service = Spinal.namespace('com.spinal.mvc.Service', Spinal.com.spinal.core.Class.inherit({
 	
 	/**
 	*	Initialize
@@ -63,3 +64,5 @@ Spinal.namespace('com.spinal.mvc.Service', Spinal.com.spinal.core.Class.inherit(
 	NAME: 'Service'
 	
 }));
+
+module.exports = Service;

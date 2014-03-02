@@ -37,9 +37,9 @@ test: clean coverage test-all test-cov
 
 doc-all:
 	@echo "\nGenerating JS Docs..."
-	@node ./node_modules/yuidocjs/lib/cli -c ./yuidoc.json ./src
+	@node ./node_modules/yuidocjs/lib/cli -c ./yuidoc.json --exclude lib ./src
 	 
-doc: clean docs-all
+doc: clean doc-all
 
 build-all:
 	@echo "\nBuilding Spinal..."

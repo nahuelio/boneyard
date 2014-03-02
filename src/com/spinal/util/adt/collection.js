@@ -1,8 +1,9 @@
 /**
 *	@module com/spinal/util/adt
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
-*	@requires [core]
 **/
+
+var Spinal = require('../../core/core');
 
 /**
 *	Define a generic interface of a Collection
@@ -10,7 +11,7 @@
 *	@class com.spinal.util.adt.Collection
 *	@extends com.spinal.core.Class
 **/
-Spinal.namespace('com.spinal.util.adt.Collection', Spinal.com.spinal.core.Class.inherit({
+var Collection = Spinal.namespace('com.spinal.util.adt.Collection', Spinal.com.spinal.core.Class.inherit({
 	
 	/**
 	*	Internal Array
@@ -276,3 +277,5 @@ Spinal.namespace('com.spinal.util.adt.Collection', Spinal.com.spinal.core.Class.
 	}
 	
 }));
+
+module.exports = Collection;

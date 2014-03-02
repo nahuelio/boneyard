@@ -1,8 +1,9 @@
 /**
 *	@module com/spinal/util/adt
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
-*	@requires [core]
 **/
+
+var Spinal = require('../../core/core');
 
 /**
 *	Define a generic interface to communicate with a service in the cloud.
@@ -10,7 +11,7 @@
 *	@class com.spinal.util.adt.Iterator
 *	@extends com.spinal.core.Class
 **/
-Spinal.namespace('com.spinal.util.adt.Iterator', Spinal.com.spinal.core.Class.inherit({
+var Iterator = Spinal.namespace('com.spinal.util.adt.Iterator', Spinal.com.spinal.core.Class.inherit({
 	
 	/**
 	*	Internal Array
@@ -111,3 +112,5 @@ Spinal.namespace('com.spinal.util.adt.Iterator', Spinal.com.spinal.core.Class.in
 	}
 	
 }));
+
+module.exports = Iterator;

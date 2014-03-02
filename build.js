@@ -5,9 +5,11 @@
 
 var fs = require('fs'),
     path = require('path'),
+	resolve = path.resolve,
 	pkg = require('./package.json'),
 	jsp = require("uglify-js").parser,
 	pro = require("uglify-js").uglify,
+	annotation = require('annotation'),
 	_ = require('underscore'),
 	_s = require('underscore.string'),
 	args = process.argv;
@@ -17,57 +19,55 @@ var Build = {
 	/**
 	*	Modules Path
 	**/
-	modulesPath: './src/com/spinal',
+	modulesPath: resolve(__dirname, './src/com/spinal'),
 	
 	/**
 	*	Src Files
 	**/
-	srcFiles: fs.readdirSync(path.resolve(__dirname, 'src')),
+	srcFiles: fs.readdirSync(resolve(__dirname, 'src')),
 	
 	/**
 	*	RequireJS Config Template Path
 	**/
-	rcTpl: fs.readFileSync(path.resolve(__dirname, 'config/requirejs-config.tpl'), 'utf8'),
+	rcTpl: fs.readFileSync(resolve(__dirname, 'templates/requirejs-config.tpl'), 'utf8'),
 	
 	/**
 	*	Execute command based on parameters
 	**/
-	exec: function(action, options) {
-		if(action == 'build') this.build();
+	exec: function(action, opts) {
+		if(action == 'build') this.build(opts);
 		if(action == 'benchmark') this.benchmark();
 	},
 	
 	/**
-	*	Build Framework
+	*	Export and release framework
 	**/
-	build: function() {
-		// TODO
-		//this.buildRelease();
+	build: function(opts) {
+		opts || (opts = {});
+		var output = '';
+		// Operations
+		output = (opts.package) ? this.concat(files) : this.buildFiles(files);
+		output = this.minify((opts.minify) ? output : files);
+		output = this.banner(output);
+		// FIXME
+		var filename = resolve(__dirname, './lib/' + pkg.name + '-' + pkg.version + '-SNAPSHOT.js');
+		fs.writeFileSync(filename, o, { mode: 0777, encoding: 'utf8', flags: 'w' });
 	},
 	
 	/**
 	*	Filter Files inside a module.
 	**/
 	filterFilesInModule: function(pt, m) {
-		var files = fs.readdirSync(path.resolve(pt, m));
+		var files = fs.readdirSync(resolve(pt, m));
 		if(files.length == 0) return [];
 		return _.flatten(_.compact(_.map(files, function(fd) {
-			var p = path.resolve(pt, m);
+			var p = resolve(pt, m);
 			var st = fs.statSync(p + '/' + fd);
 			return (st && st.isFile()) ? (p + '/' + fd) : this.filterFilesInModule(p, fd);
 		}, this)));	
 	},
 	
 	/** Export Build functions **/
-	
-	/**
-	*	Build Release
-	**/
-	buildRelease: function(files) {
-		var output = this.concat(files);
-		output = this.minify(output);
-		this.export(output);
-	},
 	
 	/**
 	*	File Concatenation
@@ -93,25 +93,19 @@ var Build = {
 			ast = pro.ast_mangle(ast),
 			ast = pro.ast_squeeze(ast),
 			minified = pro.gen_code(ast);
-		return this.banner(minified);
+		return minified;
 	},
 	
-	/**
-	*	Export framework
-	**/
-	export: function(o) {
-		var filename = './lib/' + pkg.name + '-' + pkg.version + '-SNAPSHOT.js';
-		fs.writeFileSync(filename, o, { mode: 0777, encoding: 'utf8', flags: 'w' });
-	},
-	
-	/** Benchmarking Code **/
+	/***********************/
+	/**	Benchmarking Code **/
+	/***********************/
 	
 	/**
 	*	Parse Modules
 	**/
 	parse: function() {
-		return _.compact(_.map(srcFiles, function(fd) {
-			var st = fs.statSync(path.resolve(this.modulesPath, fd));
+		return _.compact(_.map(this.srcFiles, function(fd) {
+			var st = fs.statSync(this.modulesPath, fd);
 			if(st && st.isDirectory()) return { name: fd };
 		}, this));
 	},
@@ -120,8 +114,8 @@ var Build = {
 	*	Build Benchmark tool based on modules available.
 	**/
 	benchmark: function() {
-		var htmltpl = fs.readFileSync('./benchmark/templates/template.html', 'utf8');
-		var filename = './benchmark/spinal-' + pkg.version + '-benchmark.html';
+		var htmltpl = fs.readFileSync(resolve(__dirname, './benchmark/templates/template.html'), 'utf8');
+		var filename = resolve(__dirname, './benchmark/spinal-' + pkg.version + '-benchmark.html');
 		fs.writeFileSync(filename, _.template(htmltpl, { version: pkg.version, modules: this.parse() }), { mode: 0777, encoding: 'utf8', flags: 'w' });
 	}
 	

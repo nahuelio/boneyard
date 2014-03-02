@@ -1,8 +1,10 @@
 /**
 *	@module com/spinal/ui
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
-*	@requires [ui/view]
 **/
+
+var Spinal = require('../core/core'),
+	View = require('./view');
 
 /**
 *	Define a generic container interface to add/remove views
@@ -10,7 +12,7 @@
 *	@class com.spinal.ui.Container
 *	@extends com.spinal.ui.View
 **/
-Spinal.namespace('com.spinal.ui.Container', Spinal.com.spinal.ui.View.inherit({
+var Container = Spinal.namespace('com.spinal.ui.Container', View.inherit({
 	
 	/**
 	*	View Collection
@@ -164,3 +166,5 @@ Spinal.namespace('com.spinal.ui.Container', Spinal.com.spinal.ui.View.inherit({
 	NAME: 'Container'
 	
 }));
+
+module.exports = Container;

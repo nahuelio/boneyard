@@ -9,10 +9,18 @@
 *	@namespace com.spinal.core
 *	@class Spinal
 *	@main Spinal
-*	@requires [jquery, underscore, backbone]
 **/
-(function(exports) {
-	"use strict";
+(function (root, factory) {
+    'use strict';
+    // Support AMD, CommonJS/Node.js, Rhino and Brower,
+    if (typeof define === 'function' && define.amd) {
+        define(['exports'], factory);
+    } else if (typeof exports !== 'undefined') {
+        factory(exports);
+    } else {
+        factory((root.Spinal = {}));
+    }
+}(this, function(exports) {
 	
 	/**
 	*	@static
@@ -36,8 +44,6 @@
 			if(i == (pl-1)) parent[parts[i]] = constructor;
 			parent = parent[parts[i]];
 		}
-		// if NodeJS module is defined, export the module automatically
-		if(module) exports[parts[parts.length-1]] = parent;
 		return parent;
 	};
 	
@@ -187,4 +193,4 @@
 	**/
 	Class.NAME = 'SpinalClass';
 	
-}(typeof exports === 'undefined' ? (window.Spinal = {}) : exports));
+}));
