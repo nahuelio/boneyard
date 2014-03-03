@@ -5,7 +5,7 @@ var program = require('commander'),
 	fs = require('fs'),
 	path = require('path'),
 	lib = path.join(path.dirname(fs.realpathSync(__filename)), '../'),
-	build = require(lib + 'build');
+	build = require(lib + 'config/build');
 
 /**
 *	Spinal Compile Tool
@@ -20,11 +20,9 @@ program
 	.parse(process.argv)
 	.name = 'spinal';
 
-if(program.args.length == 1) {
-	var options = { p: program.package, m: program.minify, v: program.verbose };
-	build.exec('build-all', { configFilePath: program.args[0], options: options });
+if(program.benchmark) {
+	build.exec('benchmark');
 } else {
-	if(program.benchmark) return build.exec('benchmark');
-	console.log('spinal compiler err: Invalid number of arguments, please see help section');
-	program.help();
+	var options = { p: program.package, m: program.minify, v: program.verbose };
+	build.exec('build', { configFilePath: program.args[0], options: options });
 }

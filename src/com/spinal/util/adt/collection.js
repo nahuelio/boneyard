@@ -11,7 +11,7 @@ var Spinal = require('../../core/core');
 *	@class com.spinal.util.adt.Collection
 *	@extends com.spinal.core.Class
 **/
-var Collection = Spinal.namespace('com.spinal.util.adt.Collection', Spinal.com.spinal.core.Class.inherit({
+Spinal.namespace('com.spinal.util.adt.Collection', Spinal.com.spinal.core.Class.inherit({
 	
 	/**
 	*	Internal Array
@@ -277,5 +277,3 @@ var Collection = Spinal.namespace('com.spinal.util.adt.Collection', Spinal.com.s
 	}
 	
 }));
-
-module.exports = Collection;

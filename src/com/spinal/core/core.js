@@ -4,6 +4,9 @@
 *	@author Patricio Ferrerira <3dimentionar@gmail.com>
 **/
 
+var _ = require('../../../../src/lib/underscore/underscore'),
+	Backbone = require('../../../../src/lib/backbone/backbone');
+
 /**
 *	Spinal Core
 *	@namespace com.spinal.core
@@ -21,6 +24,10 @@
         factory((root.Spinal = {}));
     }
 }(this, function(exports) {
+	
+	/** SpinalJS Library dependencies **/
+	if(_) exports._ = _;
+	if(Backbone) exports.Backbone = Backbone;
 	
 	/**
 	*	@static

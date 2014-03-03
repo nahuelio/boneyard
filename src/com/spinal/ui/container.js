@@ -12,7 +12,7 @@ var Spinal = require('../core/core'),
 *	@class com.spinal.ui.Container
 *	@extends com.spinal.ui.View
 **/
-var Container = Spinal.namespace('com.spinal.ui.Container', View.inherit({
+Spinal.namespace('com.spinal.ui.Container', View.inherit({
 	
 	/**
 	*	View Collection
@@ -166,5 +166,3 @@ var Container = Spinal.namespace('com.spinal.ui.Container', View.inherit({
 	NAME: 'Container'
 	
 }));
-
-module.exports = Container;

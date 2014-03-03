@@ -11,7 +11,7 @@ var Spinal = require('../../core/core');
 *	@class com.spinal.util.adt.Iterator
 *	@extends com.spinal.core.Class
 **/
-var Iterator = Spinal.namespace('com.spinal.util.adt.Iterator', Spinal.com.spinal.core.Class.inherit({
+Spinal.namespace('com.spinal.util.adt.Iterator', Spinal.com.spinal.core.Class.inherit({
 	
 	/**
 	*	Internal Array
@@ -112,5 +112,3 @@ var Iterator = Spinal.namespace('com.spinal.util.adt.Iterator', Spinal.com.spina
 	}
 	
 }));
-
-module.exports = Iterator;

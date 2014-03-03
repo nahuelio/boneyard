@@ -11,7 +11,7 @@ var Spinal = require('../core/core');
 *	@class com.spinal.ui.View
 *	@extends Spinal.Backbone.View
 **/
-var View = Spinal.namespace('com.spinal.ui.View', Spinal.Backbone.View.inherit({
+Spinal.namespace('com.spinal.ui.View', Spinal.Backbone.View.inherit({
 	
 	/**
 	*	Id
@@ -233,5 +233,3 @@ var View = Spinal.namespace('com.spinal.ui.View', Spinal.Backbone.View.inherit({
 	}
 	
 }));
-
-module.exports = View;

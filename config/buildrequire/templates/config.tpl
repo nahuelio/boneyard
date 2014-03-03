@@ -1,19 +1,19 @@
 /**
 *	RequireJS Config
-*	@author Patricio Ferreira <3dimentionar@gmail.com>
+*	@author <%= author %>
 **/
 require.config({
 	
 	paths: {
 		lib: 'lib/libraries',
 		<% for(var i = 0; i < mods.length; i++) { %>
-			<%= mods[i].ns : mods[i].target %><% if(i != (mods.length-1)) { %>,<% } %>
+			<%= mods[i].path %>: '<%= mods[i].target %>'<% if(i != (mods.length-1)) { %>,<% } %>
 		<% } %>
 	},
 	
 	shim: {
 		<% for(var j = 0; j < libs.length; j++) { %>
-			'<%= libs[j].ns %>': [<%= libs[j].deps %>]
+			'lib/<%= libs[j].path %>': [<%= libs[j].deps %>]<% if(j != (libs.length-1)) { %>,<% } %>
 		<% } %>
 	}
 	

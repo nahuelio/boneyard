@@ -19,7 +19,7 @@ var Spinal = require('../core/core'),
 *		myqueue.offer({ name: 3 }); // or adding one by one.
 *		myqueue.poll();
 **/
-var Queue = Spinal.namespace('com.spinal.util.adt.Queue', Collection.inherit({
+Spinal.namespace('com.spinal.util.adt.Queue', Collection.inherit({
 	
 	/**
 	*	Queue capacity
@@ -105,5 +105,3 @@ var Queue = Spinal.namespace('com.spinal.util.adt.Queue', Collection.inherit({
 	NAME: 'Queue'
 	
 }));
-
-module.exports = Queue;

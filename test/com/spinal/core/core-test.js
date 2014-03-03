@@ -3,11 +3,11 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 var libpath = process.env['UT'] ? 'lib-cov' : 'lib',
-    path = require('path'),
+    resolve = require('path').resolve,
     should = require('should'),
 	_ = require('underscore');
 
-var Spinal = require(path.resolve(libpath, 'com/spinal/core/core'));
+var Spinal = require(resolve(libpath, 'com/spinal/core/core'));
 
 describe('Spinal.Core', function() {
 	
