@@ -24,9 +24,8 @@ var RequireJS = {
 	*	Build Final RequireJS Config and export it into the lib folder.
 	**/
 	build: function(cfg) {
-		this.libs(cfg.libraries, function(err, results) {
-			console.log('End Results: ', results);
-			//console.log(_.template(this.rcTpl, { mods: this.modules(cfg.source), libs: this.libs(cfg.libraries) }));
+		this.libs(cfg.libraries, function(libs) {
+			console.log(_.template(this.rcTpl, { mods: this.modules(cfg.source), libs: this.libs(cfg.libraries) }));
 			//return this.release(_.template(rcTpl, { mods: this.modules(cfg.src), libs: this.libs(cfg.libs), author: cfg.author }), cfg);
 		});
 	},
@@ -35,12 +34,11 @@ var RequireJS = {
 	*	Check Which Libraries are not Installed
 	**/
 	checkLibrariesNotInstalled: function(libraries, cb) {
-		console.log('[BUILD-RequireJS] Checking Installed Libraries...'.green);
+		Utils.log('[BUILD-RequireJS] Checking Installed Libraries...'.green);
+		var libs = _.map(libraries.libs, function(v, n) { return { n: n, v: v }; });
 		bower.config.directory = libraries.root;
 		bower.commands.list({}).on('end', function(results) {
-			var requireInstall = (!_.isEmpty(results.dependencies)) ?
-				 _.filter(_.keys(results.dependencies), function(d) { return !_.contains(_.keys(libraries.libs), d); }, this) :
-				_.map(libraries.libs, function(v, n) { return { n: n, v: v }; });
+			var requireInstall = (!_.isEmpty(results.dependencies)) ? _.filter(libs, function(l) { return !_.contains(_.keys(results.dependencies), l.n); }, this) : libs;
 			cb(null, requireInstall);
 		});
 	},
@@ -57,16 +55,13 @@ var RequireJS = {
 				var libList = [];
 				if(!_.isEmpty(libs)) {
 					libList = (!_.isEmpty(libs[l.n].dependencies)) ?
-						_.map(libs[l.n].dependencies, function(v, p) { return p }) :
-						[l.n];
-					cb(null, libList);
-				} else {
-					console.log(('[BUILD-RequireJS] ' + qlibrary + ' already installed').yellow);
-					cb(null, qlibrary);
+						[{ name: l.n, version: l.v, deps: _.map(libs[l.n].dependencies, function(v, p) { return { name: p, version: v }; }) }] :
+						[{ name: l.n, version: l.v, deps: [] }];
 				}
+				cb(null, libList);
 			});
 		} catch(ex) {
-			console.log('[BUILD-RequireJS] Error ocurred while installing Dependency [' + qlibrary + ']'.red);
+			Utils.log('[BUILD-RequireJS] Error ocurred while installing Dependency [' + qlibrary + ']'.red);
 		}
 	},
 	
@@ -81,7 +76,7 @@ var RequireJS = {
 			}, this));
 			return mods;
 		} catch(ex) {
-			console.log('[BUILD-RequireJS] Error proccesing modules'.red);
+			Utils.log('[BUILD-RequireJS] Error proccesing modules'.red);
 			return [];
 		}
 	},
@@ -93,12 +88,19 @@ var RequireJS = {
 		async.map([libraries], this.checkLibrariesNotInstalled, _.bind(function(err, results) {
 			var r = _.flatten(results);
 			if(_.some(r)) {
-				console.log(('[BUILD-RequireJS] Found ' + r.length + ' library/es not installed.').yellow);
-				async.mapSeries(r, _.bind(this.installLibrary, this, libraries.root), callback);
+				Utils.log(('[BUILD-RequireJS] Found ' + r.length + ' library/es not installed.').yellow);
+				async.mapSeries(r, _.bind(this.installLibrary, this, libraries.root), function(err, results) { callback(r); });
 			} else {
-				callback(null, r);
+				callback(r);
 			}
 		}, this));
+	},
+	
+	/**
+	*	Format Full Libraries list
+	**/
+	fullLibList: function(libs, deps) {
+		return _.map(libs, function(v, n) { return { path: (n + '/' + n), deps: deps }; });
 	},
 	
 	/**

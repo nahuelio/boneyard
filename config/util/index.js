@@ -13,6 +13,11 @@ var fs = require('fs'),
 var Utils = {
 	
 	/**
+	*	Verbosity activated
+	**/
+	verbose: false,
+	
+	/**
 	*	Filter Files inside a path.
 	**/
 	filterFiles: function(path, excl) {
@@ -36,6 +41,13 @@ var Utils = {
 			return (result.length > 0);
 		});
 	},
+	
+	/**
+	*	Log messages into the console.stdout
+	**/
+	log: function(message) {
+		if(!this.verbose) console.log(message);
+	}
 	
 };
 

@@ -48,7 +48,6 @@ build-all:
 build: check-dependencies test doc-all build-all
 
 benchmark:
-	@echo "\nGenerating Benchmark Tool..."
 	@node ./bin/spinal -b
 
 run:

@@ -54,7 +54,7 @@ var Build = {
 	**/
 	build: function(opts) {
 		opts || (opts = {});
-		this.processCustom(opts.configFilePath); // lets skip it for now.
+		this.processCustom(opts.c); // lets skip it for now.
 		this.processCore(); // Process Config Core
 		this.release(opts); // Release Everything
 	},
@@ -62,8 +62,8 @@ var Build = {
 	/**
 	*	Process Custom build based on a config file (if exist).
 	**/
-	processCustom: function(cfg) {
-		var custom = this.loadConfig(cfg);
+	processCustom: function(cfgFile) {
+		var custom = this.loadConfig(cfgFile);
 		if(!custom) return;
 		// add 'src' and 'libs' to the config. And resolve 'dest' if custom config file is provided.
 	},
@@ -71,14 +71,14 @@ var Build = {
 	/**
 	*	Load Config File.
 	**/
-	loadConfig: function(cfg) {
+	loadConfig: function(cfgFile) {
 		try { // try the one provided by the user
-			return require(resolve(__dirname, cfg));
+			return require(resolve(__dirname, cfgFile));
 		} catch(ex) { // Try default one
 			try {
 				return require(resolve(__dirname, '../spinal.json'));
 			} catch(ex) {
-				console.log('[BUILD] Config File doesn\'t exists, Using default settings...'.yellow);	
+				Utils.log('[BUILD] Config File doesn\'t exists, Using default settings...'.yellow);	
 			}
 		}
 	},
@@ -118,7 +118,7 @@ var Build = {
 	**/
 	parse: function() {
 		return _.compact(_.map(fs.readdirSync(resolve(__dirname, '../src')), function(fd) {
-			var st = fs.statSync(this.modulesPath, fd);
+			var st = fs.statSync(resolve(__dirname, '../src/' + fd));
 			if(st && st.isDirectory()) return { name: fd };
 		}, this));
 	},
@@ -127,8 +127,9 @@ var Build = {
 	*	Build Benchmark tool based on modules available.
 	**/
 	benchmark: function() {
-		var htmltpl = fs.readFileSync(resolve(__dirname, './benchmark/templates/template.html'), 'utf8');
-		var filename = resolve(__dirname, './benchmark/spinal-' + pkg.version + '-benchmark.html');
+		Utils.log('[BUILD-Benchmark] Generating Benchmark tool for SpinalJS Framework'.green);
+		var htmltpl = fs.readFileSync(resolve(__dirname, '../benchmark/templates/template.html'), 'utf8');
+		var filename = resolve(__dirname, '../benchmark/spinal-' + pkg.version + '-benchmark.html');
 		fs.writeFileSync(filename, _.template(htmltpl, { version: pkg.version, modules: this.parse() }), { mode: 0777, encoding: 'utf8', flags: 'w' });
 	}
 	
