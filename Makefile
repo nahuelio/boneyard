@@ -17,7 +17,7 @@ clean:
 coverage:
 	@echo "\nGenerating Code Coverage..."
 	@./node_modules/jscoverage/bin/jscoverage \
-		src lib-cov --exclude lib
+		src lib-cov --exclude libraries
 
 test-all:
 	@echo "\nRunning Unit Testing..."
@@ -37,13 +37,13 @@ test: clean coverage test-all test-cov
 
 doc-all:
 	@echo "\nGenerating JS Docs..."
-	@node ./node_modules/yuidocjs/lib/cli -c ./yuidoc.json --exclude lib ./src
+	@node ./node_modules/yuidocjs/lib/cli -c ./yuidoc.json --exclude libraries ./src
 	 
 doc: clean doc-all
 
 build-all:
 	@echo "\nBuilding Spinal..."
-	@node ./bin/spinal -p -m
+	@node ./bin/spinal -p -m -v
 
 build: check-dependencies test doc-all build-all
 

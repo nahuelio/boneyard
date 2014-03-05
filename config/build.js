@@ -35,7 +35,7 @@ var Build = {
 				'com/spinal/util']
 		},
 		libraries: {
-			root: '../src/lib',
+			root: '../src/libraries',
 			libs: bowerPkg.dependencies
 		},
 		dest: resolve(__dirname, '../lib')

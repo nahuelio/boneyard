@@ -1,6 +1,6 @@
 lib-cov
 lib/coverage.html
-src/lib
+src/libraries
 benchmark/spinal-*.html
 docs
 *-SNAPSHOT.*
