@@ -7,7 +7,7 @@ var fs = require('fs'),
     path = require('path'),
 	resolve = path.resolve,
 	join = path.join,
-	browserify = require('browserify'),
+	builder = require('browserify')(),
 	_ = require('underscore'),
 	_s = require('underscore.string'),
 	colors = require('colors');
@@ -31,7 +31,13 @@ var Build = {
 			root: '../src/libraries',
 			libs: bowerPkg.dependencies
 		},
-		options: { }
+		options: {
+			minify: true,
+			bundle: true,
+			banner: "//\tSpinalJS <%= version %> (c) <%= year %> <%= author %>, 3dimention.com\n \
+				//\tSpinalJS may be freely distributed under the MIT license.\n \
+				//\tFor all details and documentation:\n//\thttp://3dimention.github.io/spinal\n\n";
+		}
 	},
 	
 	/**
@@ -48,7 +54,7 @@ var Build = {
 	build: function(opts) {
 		opts || (opts = {});
 		this.processCustom(opts.c); // lets skip it for now.
-		this.processCore(opts); // Process Config Core
+		this.processCore(); // Process Config Core
 	},
 	
 	/**
@@ -57,6 +63,7 @@ var Build = {
 	processCustom: function(cfgFile) {
 		var custom = this.loadConfig(cfgFile);
 		if(!custom) return;
+		// Validate Config file options
 		// add 'src' and 'libs' to the config. And resolve 'dest' if custom config file is provided.
 	},
 	
@@ -78,10 +85,8 @@ var Build = {
 	/**
 	*	Processing Modules
 	**/
-	processCore: function(opts) {
-		Dependencies.run(this.config, _.bind(function(result) {
-			this.release(result, opts); // Release Everything
-		}, this));
+	processCore: function() {
+		Dependencies.run(this.config, _.bind(function(result) { this.release(this.config.options); }, this));
 	},
 	
 	/**
@@ -90,11 +95,33 @@ var Build = {
 	release: function(opts) {
 		console.log('\nCreating Release...\n');
 		Utils.log('[RELEASE] Exporting framework...'.green);
-		console.log(browserify);
-		/**output = this.banner(output);
-		// FIXME
-		var filename = resolve(__dirname, './lib/' + pkg.name + '-' + pkg.version + '-SNAPSHOT.js');
-		fs.writeFileSync(filename, o, { mode: 0777, encoding: 'utf8', flags: 'w' }); **/
+		this.addFiles();
+		if(opts.bundle) this.bundle();
+		if(opts.minify) this.minify();
+		//this.banner(opts.banner);
+		Utils.log('[RELEASE] Build Process DONE.'.green);
+		// Add Information at the end.
+	},
+	
+	/**
+	*	Add Framework files
+	**/
+	addFiles: function() {
+		
+	},
+	
+	/**
+	*	Package files and generate a single bundle file into the target directory.
+	**/
+	bundle: function() {
+		
+	},
+	
+	/**
+	*	Minify Bundle File
+	**/
+	minify: function() {
+		
 	},
 	
 	/**

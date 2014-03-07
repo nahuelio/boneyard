@@ -51,6 +51,5 @@
 	"bin",
 	"docs",
 	"examples"
-  ],
-  "banner": "//\tSpinalJS <%= version %> (c) <%= year %> <%= author %>, 3dimention.com\n//\tSpinalJS may be freely distributed under the MIT license.\n//\tFor all details and documentation:\n//\thttp://3dimention.github.io/spinal\n\n"
+  ]
 }
