@@ -70,7 +70,7 @@ var Build = {
 			try {
 				return require(resolve(__dirname, '../spinal.json'));
 			} catch(ex) {
-				Utils.log('[BUILD] Config File doesn\'t exists, Using default settings...'.yellow);	
+				Utils.log('[BUILD] Config File doesn\'t exists, Using default settings instead.'.yellow);	
 			}
 		}
 	},
@@ -88,6 +88,7 @@ var Build = {
 	*	Release Final Files
 	**/
 	release: function(opts) {
+		console.log('\nCreating Release...\n');
 		Utils.log('[RELEASE] Exporting framework...'.green);
 		console.log(browserify);
 		/**output = this.banner(output);

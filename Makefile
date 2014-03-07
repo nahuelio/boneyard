@@ -7,7 +7,7 @@ check-dependencies:
 		install
 
 clean:
-	@echo "\nCleanning files..."
+	@echo "\nCleanning Environment..."
 	@rm -f lib/spinal*.js
 	@rm -fr lib-cov
 	@rm -f lib/coverage.html
@@ -15,12 +15,11 @@ clean:
 	@rm -fr docs/**/*.*
 
 coverage:
-	@echo "\nGenerating Code Coverage..."
 	@./node_modules/jscoverage/bin/jscoverage \
 		src lib-cov --exclude libraries
 
 test-all:
-	@echo "\nRunning Unit Testing..."
+	@echo "\nRunning Unit Testing and Code Coverage..."
 	@UT=1 \
 	./node_modules/mocha/bin/mocha \
 		--reporter $(REPORTER) \
@@ -36,13 +35,13 @@ test-cov:
 test: clean check-dependencies coverage test-all test-cov
 
 doc-all:
-	@echo "\nGenerating JS Docs..."
+	@echo "\nCreating Documentation (YUIDOC)...\n"
 	@node ./node_modules/yuidocjs/lib/cli -c ./yuidoc.json --exclude libraries ./src
 	 
 doc: clean doc-all
 
 build-all:
-	@echo "\nBuilding Spinal..."
+	@echo "\nBuilding Spinal...\n"
 	@node ./bin/spinal -v
 
 build: check-dependencies test doc-all build-all
