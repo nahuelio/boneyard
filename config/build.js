@@ -8,6 +8,7 @@ var fs = require('fs'),
 	resolve = path.resolve,
 	join = path.join,
 	builder = require('browserify')(),
+	async = require('async'),
 	_ = require('underscore'),
 	_s = require('underscore.string'),
 	colors = require('colors');
@@ -31,12 +32,16 @@ var Build = {
 			root: '../src/libraries',
 			libs: bowerPkg.dependencies
 		},
-		options: {
+		build: {
+			outfile: '../lib/spinal-<%= version %>.js',
 			minify: true,
 			bundle: true,
+			options: {
+				debug: true
+			},
 			banner: "//\tSpinalJS <%= version %> (c) <%= year %> <%= author %>, 3dimention.com\n \
 				//\tSpinalJS may be freely distributed under the MIT license.\n \
-				//\tFor all details and documentation:\n//\thttp://3dimention.github.io/spinal\n\n";
+				//\tFor all details and documentation:\n//\thttp://3dimention.github.io/spinal\n\n"
 		}
 	},
 	
@@ -86,35 +91,45 @@ var Build = {
 	*	Processing Modules
 	**/
 	processCore: function() {
-		Dependencies.run(this.config, _.bind(function(result) { this.release(this.config.options); }, this));
+		Dependencies.run(this.config, _.bind(function(result) { this.release(); }, this));
 	},
 	
 	/**
 	*	Release Final Files
 	**/
-	release: function(opts) {
+	release: function() {
 		console.log('\nCreating Release...\n');
 		Utils.log('[RELEASE] Exporting framework...'.green);
-		this.addFiles();
-		if(opts.bundle) this.bundle();
-		if(opts.minify) this.minify();
-		//this.banner(opts.banner);
-		Utils.log('[RELEASE] Build Process DONE.'.green);
-		// Add Information at the end.
+		async.series([_.bind(this.addFiles, this), _.bind(this.export, this, this.config.build)], _.bind(function(err, stream) {
+			//this.banner(opts.banner);
+			var target = resolve(__dirname, _.template(this.config.build.outfile, { version: this.config.version }));
+			fs.writeFileSync(target, stream[1], { mode: 0777, encoding: 'utf8', flags: 'w' });
+			Utils.log('[RELEASE] Build Process DONE.'.green);
+			// Add Information at the end.
+		}, this));
 	},
 	
 	/**
 	*	Add Framework files
 	**/
-	addFiles: function() {
-		
+	addFiles: function(cb) {
+		try {
+			var files = Utils.filterFiles(resolve(__dirname, this.config.source), ['libraries']);
+			_.each(files, function(f) { builder.add(f); }, this);
+			cb(null);
+		} catch(ex) {
+			Utils.log(('Error parsing files: ' + ex.message).red);	
+		}
+		return this;
 	},
 	
 	/**
 	*	Package files and generate a single bundle file into the target directory.
 	**/
-	bundle: function() {
-		
+	export: function(build, cb) {
+		builder.on('file', _.bind(this.onFile, this, build));
+		builder.on('bundle', _.bind(this.onBundle, this, build));
+		builder.bundle(build.options, cb);
 	},
 	
 	/**
@@ -129,6 +144,16 @@ var Build = {
 	**/
 	banner: function(o) {
 		return _s.insert(o, 0, _.template(pkg.banner, { version: pkg.version, year: new Date().getYear(), author: pkg.author }));
+	},
+	
+	/** Handlers **/
+	
+	onBundle: function(opts, bundle) {
+		//console.log('bundle: ');
+	},
+		
+	onFile: function(opts, file, id, parent) {
+		//console.log('File: ', file);
 	},
 	
 	/***********************/

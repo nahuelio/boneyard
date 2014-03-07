@@ -3,7 +3,7 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 
-var Spinal = require('../core/core'),
+var Spinal = require('../../core/core'),
 	Collection = require('./collection');
 
 /**
@@ -105,3 +105,5 @@ Spinal.namespace('com.spinal.util.adt.Queue', Collection.inherit({
 	NAME: 'Queue'
 	
 }));
+
+module.exports = Spinal.com.spinal.util.adt.Queue;

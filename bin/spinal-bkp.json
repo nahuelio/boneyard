@@ -7,5 +7,10 @@
 		"root": "project/libraries",
 		"libs": { "boostrap": "3.1.1" }
 	},
-	"options" : { }
+	"build" : {
+		"minify": true,
+		"bundle": true,
+		"options": { },
+		"banner": "/** MyProject Library **/"
+	}
 }

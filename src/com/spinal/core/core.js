@@ -3,9 +3,10 @@
 *	@module com/spinal/core
 *	@author Patricio Ferrerira <3dimentionar@gmail.com>
 **/
-var $ = require('../../../../src/libraries/jquery/dist/jquery'),
-	_ = require('../../../../src/libraries/underscore/underscore'),
-	Backbone = require('../../../../src/libraries/backbone/backbone');
+var path = require('path'),
+	$ = require(path.resolve(__dirname, '../../../../src/libraries/jquery/dist/jquery')),
+	_ = require(path.resolve(__dirname, '../../../../src/libraries/underscore/underscore')),
+	Backbone = require(path.resolve(__dirname, '../../../../src/libraries/backbone/backbone'));
 
 /**
 *	Spinal Core

@@ -112,3 +112,5 @@ Spinal.namespace('com.spinal.util.adt.Iterator', Spinal.com.spinal.core.Class.in
 	}
 	
 }));
+
+module.exports = Spinal.com.spinal.util.adt.Iterator;

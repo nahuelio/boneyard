@@ -20,13 +20,13 @@ var Utils = {
 	/**
 	*	Filter Files inside a path.
 	**/
-	filterFiles: function(path, excl) {
+	filterFiles: function(path, excl, onlyFilename) {
 		var files = this.excludePaths(path, fs.readdirSync(path), excl);
 		if(files.length == 0) return [];
 		return _.flatten(_.compact(_.map(files, function(fd) {
 			var p = resolve(path, fd);
 			var st = fs.statSync(p);
-			return (st && st.isFile()) ? (p) : this.filterFiles(p, excl);
+			return (st && st.isFile()) ? ((onlyFilename) ? fd : p) : this.filterFiles(p, excl, onlyFilename);
 		}, this)));	
 	},
 	
