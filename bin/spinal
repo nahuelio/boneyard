@@ -14,8 +14,6 @@ program
 	.version(pkg.version)
 	.usage('[options]')
 	.option('-c, --config', 'Custom Config File')
-	.option('-p, --package', 'Packages all files into a bundle')
-	.option('-m, --minify', 'Minify and ofuscate files')
 	.option('-v, --verbose', 'Display useful messages while building project files.')
 	.option('-b, --benchmark', 'Generates Benchmark page to evaluate performance of SpinalJS framework.')
 	.parse(process.argv)
@@ -24,5 +22,5 @@ program
 if(program.benchmark) {
 	build.exec('benchmark');
 } else {
-	build.exec('build', { c: program.config, p: program.package, m: program.minify, v: program.verbose });
+	build.exec('build', { c: program.config, v: program.verbose });
 }

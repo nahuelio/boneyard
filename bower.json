@@ -7,6 +7,7 @@
   ],
   "description": "UI Framework built on top of BackboneJS",
   "dependencies": {
+	"jquery": "2.1.x",
     "backbone": "1.1.x",
     "requirejs": "2.1.x",
 	"modernizr": "2.7.x"

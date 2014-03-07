@@ -7,7 +7,7 @@ var libpath = process.env['UT'] ? 'lib-cov' : 'lib',
     should = require('should'),
 	_ = require('underscore');
 
-var Spinal = require(resolve(libpath, 'com/spinal/core/core'));
+var Spinal = require(resolve(libpath + '/com/spinal/core/core'));
 
 describe('Spinal.Core', function() {
 	
@@ -141,7 +141,7 @@ describe('Spinal.Core', function() {
 			_object: { _boolean: false, _date: new Date('2014-02-22T23:43:51.223Z') },
 			submethod: function() { return this._string + 'Base'; }
 		}, { NAME: 'BaseClass', EXTRA: { p: 'Static1' } });
-
+		
 		it('Should Inherit a Class from Spinal.com.spinal.core.Class', function() {
 			var instance1 = new BaseClass();
 			instance1.get('_string').should.equal('BaseClass');

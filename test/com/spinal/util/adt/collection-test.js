@@ -7,11 +7,10 @@ var libpath = process.env['UT'] ? 'lib-cov' : 'lib',
     should = require('should'),
 	_ = require('underscore');
 
-var Spinal = require(resolve(libpath, 'com/spinal/core/core'));
-	require(resolve(libpath, 'com/spinal/util/adt/collection'));
+var Collection = require(resolve(libpath, '/com/spinal/util/adt/collection'));
 
 describe('com.spinal.util.adt.Collection', function() {
-	
+		
 	/**
 	*	Constructor test
 	**/
@@ -22,7 +21,7 @@ describe('com.spinal.util.adt.Collection', function() {
 		});
 		
 	});
-	
+		
 	/**
 	*	Collection#_valid() test
 	**/
@@ -123,8 +122,8 @@ describe('com.spinal.util.adt.Collection', function() {
 	});
 	
 	/**
-	*	Collection#reset() test
-	**/
+		*	Collection#reset() test
+		**/
 	describe('#reset()', function() {
 		
 	});
@@ -156,5 +155,5 @@ describe('com.spinal.util.adt.Collection', function() {
 	describe('#toString()', function() {
 		
 	});
-	
+		
 });

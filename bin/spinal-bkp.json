@@ -2,13 +2,10 @@
 	"name": "MyProject",
 	"version": "0.0.1",
 	"author": "John Doe <john.doe@company.com>",
-	"source": {
-		"root": "project/src",
-		"modules": ['com/project/model', 'com/project/controller', 'com/project/service', 'com/project/view']
-	},
+	"src": "project/src",
 	"libraries": {
 		"root": "project/libraries",
 		"libs": { "boostrap": "3.1.1" }
 	},
-	"dest": "project/target"
+	"options" : { }
 }

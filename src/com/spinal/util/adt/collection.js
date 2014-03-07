@@ -12,7 +12,7 @@ var Spinal = require('../../core/core');
 *	@extends com.spinal.core.Class
 **/
 Spinal.namespace('com.spinal.util.adt.Collection', Spinal.com.spinal.core.Class.inherit({
-	
+		
 	/**
 	*	Internal Array
 	*	@public
@@ -31,7 +31,7 @@ Spinal.namespace('com.spinal.util.adt.Collection', Spinal.com.spinal.core.Class.
 	initialize: function() {
 		return this;
 	},
-	
+		
 	/**
 	*	Validate that the element is an Object.
 	*	@private
@@ -45,7 +45,7 @@ Spinal.namespace('com.spinal.util.adt.Collection', Spinal.com.spinal.core.Class.
 		if(_.isArray(element)) return !(_.reject(element, function(e) { return _.isObject(element); }).length > 0);
 		return true;
 	},
-	
+		
 	/**
 	*	Set a new collection of elements
 	*	@public
@@ -223,7 +223,7 @@ Spinal.namespace('com.spinal.util.adt.Collection', Spinal.com.spinal.core.Class.
 	size: function() {
 		return this.collection.length;		
 	},
-		
+	
 	/**
 	*	Sort the collection
 	*	@public
@@ -246,9 +246,9 @@ Spinal.namespace('com.spinal.util.adt.Collection', Spinal.com.spinal.core.Class.
 	toString: function() {
 		return '[object Collection]';
 	}
-	
+		
 }, {
-	
+		
 	/**
 	*	@static
 	*	@property NAME
@@ -275,5 +275,7 @@ Spinal.namespace('com.spinal.util.adt.Collection', Spinal.com.spinal.core.Class.
 		**/
 		reset: 'com:spinal:util:adt:collection:reset'
 	}
-	
+		
 }));
+
+module.exports = Spinal.com.spinal.util.adt.Collection;

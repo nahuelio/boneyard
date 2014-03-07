@@ -7,15 +7,13 @@ var fs = require('fs'),
     path = require('path'),
 	resolve = path.resolve,
 	join = path.join,
-	child = require('child_process').spawn,
 	_ = require('underscore'),
 	_s = require('underscore.string'),
-	optimizer = require('requirejs/bin/r'),
 	colors = require('colors');
 
 var pkg = require('../package.json'),
 	bowerPkg = require('../bower.json'),
-	BuildRequire = require('./buildrequire'),
+	Dependencies = require('./dependencies'),
 	Utils = require('./util');
 
 var Build = {
@@ -27,18 +25,12 @@ var Build = {
 		name: pkg.name,
 		version: pkg.version,
 		author: pkg.author,
-		source: {
-			root: '../src',
-			modules: ['com/spinal/core',
-				'com/spinal/mvc',
-				'com/spinal/ui',
-				'com/spinal/util']
-		},
+		source: '../src',
 		libraries: {
 			root: '../src/libraries',
 			libs: bowerPkg.dependencies
 		},
-		dest: resolve(__dirname, '../lib')
+		options: { }
 	},
 	
 	/**
@@ -55,8 +47,7 @@ var Build = {
 	build: function(opts) {
 		opts || (opts = {});
 		this.processCustom(opts.c); // lets skip it for now.
-		this.processCore(); // Process Config Core
-		this.release(opts); // Release Everything
+		this.processCore(opts); // Process Config Core
 	},
 	
 	/**
@@ -86,20 +77,22 @@ var Build = {
 	/**
 	*	Processing Modules
 	**/
-	processCore: function() {
-		var r = BuildRequire.build(this.config);
+	processCore: function(opts) {
+		Dependencies.build(this.config, _.bind(function(result) {
+			this.release(result, opts); // Release Everything
+		}, this));
 	},
 	
 	/**
 	*	Release Final Files
 	**/
 	release: function(opts) {
-		/**output = (opts.package) ? this.concat(files) : this.buildFiles(files);
-		output = this.minify((opts.minify) ? output : files);
-		output = this.banner(output);
+		Utils.log('[RELEASE] Exporting framework...'.green);
+		//requirejs.optimize();
+		/**output = this.banner(output);
 		// FIXME
 		var filename = resolve(__dirname, './lib/' + pkg.name + '-' + pkg.version + '-SNAPSHOT.js');
-		fs.writeFileSync(filename, o, { mode: 0777, encoding: 'utf8', flags: 'w' }); **/	
+		fs.writeFileSync(filename, o, { mode: 0777, encoding: 'utf8', flags: 'w' }); **/
 	},
 	
 	/**

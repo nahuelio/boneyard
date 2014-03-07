@@ -15,6 +15,9 @@ var fs = require('fs'),
 
 var RequireJS = {
 	
+	/**
+	*	Dependencies
+	**/
 	dependencies: [],
 	
 	/**

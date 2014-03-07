@@ -3,9 +3,10 @@
 *	@module com/spinal/core
 *	@author Patricio Ferrerira <3dimentionar@gmail.com>
 **/
-
-var _ = require('../../../../src/lib/underscore/underscore'),
-	Backbone = require('../../../../src/lib/backbone/backbone');
+var $ = require('jquery'),
+	Modernizr = require('modernizr'),
+	_ = require('underscore'),
+	Backbone = require('backbone');
 
 /**
 *	Spinal Core
@@ -14,20 +15,24 @@ var _ = require('../../../../src/lib/underscore/underscore'),
 *	@main Spinal
 **/
 (function (root, factory) {
-    'use strict';
-    // Support AMD, CommonJS/Node.js, Rhino and Brower,
-    if (typeof define === 'function' && define.amd) {
-        define(['exports'], factory);
-    } else if (typeof exports !== 'undefined') {
-        factory(exports);
-    } else {
-        factory((root.Spinal = {}));
-    }
+	'use strict';
+	// Support AMD, CommonJS/Node.js, Rhino and Brower,
+	if (typeof define === 'function' && define.amd) {
+		define(['exports'], factory);
+	} else if (typeof exports !== 'undefined') {
+		factory(exports);
+	} else {
+		factory((root.Spinal = {}));
+	}
 }(this, function(exports) {
 	
-	/** SpinalJS Library dependencies **/
+	/**
+	*	SpinalJS Minimum Library dependencies Injection
+	**/
+	if($) exports.$ = $;
 	if(_) exports._ = _;
 	if(Backbone) exports.Backbone = Backbone;
+	if(Modernizr) exports.Modernizr = Modernizr;
 	
 	/**
 	*	@static
@@ -67,7 +72,7 @@ var _ = require('../../../../src/lib/underscore/underscore'),
 		return v;
 	};
 	
-		var	dateiso = /(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+)|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d)|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d)/;
+	var	dateiso = /(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+)|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d)|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d)/;
 	
 	/**
 	*	JSON Deserialization Strategy
@@ -92,7 +97,7 @@ var _ = require('../../../../src/lib/underscore/underscore'),
 			if(!this.hasOwnProperty(p)) this[p] = sd[p];
 		}
 	};
-		
+	
 	/**
 	*	Spinal Deep Copy strategy for inheritance.
 	*	@static
@@ -128,22 +133,22 @@ var _ = require('../../../../src/lib/underscore/underscore'),
 	*	@method _inherit
 	*	@return Function
 	**/
-    var _inherit = exports._inherit = function(proto, protoStatic) {
+	var _inherit = exports._inherit = function(proto, protoStatic) {
 		protoStatic || (protoStatic = {});
-        var Parent = this, Child = function() { return Parent.apply(this, arguments); };
+		var Parent = this, Child = function() { return Parent.apply(this, arguments); };
 		
-        var F = function() { this.constructor = Child; };
-        F.prototype = Parent.prototype;
-        Child.prototype = new F;
+		var F = function() { this.constructor = Child; };
+		F.prototype = Parent.prototype;
+		Child.prototype = new F;
 		if(proto) {
 			extend(Child.prototype, proto);
 			extend(Child, protoStatic, _filter(Parent));
 		}
 		
 		Child.inherit = _inherit;
-        Child.__super__ = Parent.prototype;
-        return Child;
-    };
+		Child.__super__ = Parent.prototype;
+		return Child;
+	};
 	
 	/**
 	*	Provides a generic Class with a generic interface to set and get properties
@@ -181,7 +186,7 @@ var _ = require('../../../../src/lib/underscore/underscore'),
 			if(!p) throw new Error('set() requires 1 arguments (object or a key).');
 			(p && p === Object(p)) ?
 				extend.apply(this, [this, p]) :
-				this[p] = v;
+			this[p] = v;
 			return this;
 		}
 	});

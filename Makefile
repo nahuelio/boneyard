@@ -33,7 +33,7 @@ test-cov:
 		-c test/**/*.js \
 		--coverage > lib/coverage.html
 
-test: clean coverage test-all test-cov
+test: clean check-dependencies coverage test-all test-cov
 
 doc-all:
 	@echo "\nGenerating JS Docs..."
