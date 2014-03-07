@@ -3,10 +3,9 @@
 *	@module com/spinal/core
 *	@author Patricio Ferrerira <3dimentionar@gmail.com>
 **/
-var $ = require('jquery'),
-	Modernizr = require('modernizr'),
-	_ = require('underscore'),
-	Backbone = require('backbone');
+var $ = require('../../../../src/libraries/jquery/dist/jquery'),
+	_ = require('../../../../src/libraries/underscore/underscore'),
+	Backbone = require('../../../../src/libraries/backbone/backbone');
 
 /**
 *	Spinal Core
@@ -22,17 +21,19 @@ var $ = require('jquery'),
 	} else if (typeof exports !== 'undefined') {
 		factory(exports);
 	} else {
-		factory((root.Spinal = {}));
+		factory((root.Spinal = {}), root);
 	}
-}(this, function(exports) {
+}(this, function(exports, root) {
 	
 	/**
 	*	SpinalJS Minimum Library dependencies Injection
 	**/
-	if($) exports.$ = $;
-	if(_) exports._ = _;
-	if(Backbone) exports.Backbone = Backbone;
-	if(Modernizr) exports.Modernizr = Modernizr;
+	if(root) { // Window Browser's reference
+		if(root.$) exports.$ = $;
+		if(root._) exports._ = _;
+		if(root.Backbone) exports.Backbone = Backbone;
+		if(root.Modernizr) exports.Modernizr = Modernizr;
+	}
 	
 	/**
 	*	@static

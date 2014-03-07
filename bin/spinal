@@ -22,5 +22,5 @@ program
 if(program.benchmark) {
 	build.exec('benchmark');
 } else {
-	build.exec('build', { c: program.config, v: program.verbose });
+	build.exec('build', { c: program.config, m: program.minify, v: program.verbose });
 }

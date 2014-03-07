@@ -43,7 +43,7 @@ doc: clean doc-all
 
 build-all:
 	@echo "\nBuilding Spinal..."
-	@node ./bin/spinal -p -m -v
+	@node ./bin/spinal -v
 
 build: check-dependencies test doc-all build-all
 

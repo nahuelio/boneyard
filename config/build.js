@@ -7,6 +7,7 @@ var fs = require('fs'),
     path = require('path'),
 	resolve = path.resolve,
 	join = path.join,
+	browserify = require('browserify'),
 	_ = require('underscore'),
 	_s = require('underscore.string'),
 	colors = require('colors');
@@ -78,7 +79,7 @@ var Build = {
 	*	Processing Modules
 	**/
 	processCore: function(opts) {
-		Dependencies.build(this.config, _.bind(function(result) {
+		Dependencies.run(this.config, _.bind(function(result) {
 			this.release(result, opts); // Release Everything
 		}, this));
 	},
@@ -88,7 +89,7 @@ var Build = {
 	**/
 	release: function(opts) {
 		Utils.log('[RELEASE] Exporting framework...'.green);
-		//requirejs.optimize();
+		console.log(browserify);
 		/**output = this.banner(output);
 		// FIXME
 		var filename = resolve(__dirname, './lib/' + pkg.name + '-' + pkg.version + '-SNAPSHOT.js');
