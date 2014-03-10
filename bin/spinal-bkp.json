@@ -1,16 +1,10 @@
 {
-	"name": "MyProject",
-	"version": "0.0.1",
-	"author": "John Doe <john.doe@company.com>",
-	"src": "project/src",
-	"libraries": {
-		"root": "project/libraries",
-		"libs": { "boostrap": "3.1.1" }
-	},
-	"build" : {
+	"source": "project/src",
+	"output": "project/target",
+	"options" : {
 		"minify": true,
-		"bundle": true,
-		"options": { },
+		"debug": true,
+		"live": false,
 		"banner": "/** MyProject Library **/"
 	}
 }

@@ -3,10 +3,9 @@
 *	@module com/spinal/core
 *	@author Patricio Ferrerira <3dimentionar@gmail.com>
 **/
-var path = require('path'),
-	$ = require(path.resolve(__dirname, '../../../../src/libraries/jquery/dist/jquery')),
-	_ = require(path.resolve(__dirname, '../../../../src/libraries/underscore/underscore')),
-	Backbone = require(path.resolve(__dirname, '../../../../src/libraries/backbone/backbone'));
+var $ = require('jquery/'),
+	_ = require('underscore'),
+	Backbone = require('backbone');
 
 /**
 *	Spinal Core
@@ -19,22 +18,22 @@ var path = require('path'),
 	// Support AMD, CommonJS/Node.js, Rhino and Brower,
 	if (typeof define === 'function' && define.amd) {
 		define(['exports'], factory);
-	} else if (typeof exports !== 'undefined') {
-		factory(exports);
+	} else if(typeof exports !== 'undefined') {
+		factory(exports, root);
 	} else {
 		factory((root.Spinal = {}), root);
 	}
 }(this, function(exports, root) {
 	
 	/**
-	*	SpinalJS Minimum Library dependencies Injection
+	*	SpinalJS Expose Third Party Libraries into Spinal Namespace
 	**/
-	if(root) { // Window Browser's reference
-		if(root.$) exports.$ = $;
-		if(root._) exports._ = _;
-		if(root.Backbone) exports.Backbone = Backbone;
-		if(root.Modernizr) exports.Modernizr = Modernizr;
-	}
+	exports.$ = $;
+	exports._ = _;
+	exports.Backbone = Backbone;
+	
+	// Modernizr will be hook up if exist.
+	if(root.Modernizr) exports.Modernizr = Modernizr;
 	
 	/**
 	*	@static

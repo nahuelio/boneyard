@@ -1,16 +1,11 @@
 REPORTER = spec
 REPORTER_COV = html-cov
 
-check-dependencies:
-	@echo "\nChecking Dependencies..."
-	@./node_modules/bower/bin/bower \
-		install
-
 clean:
 	@echo "\nCleanning Environment..."
-	@rm -f lib/spinal*.js
+	@rm -f target/spinal*.js
 	@rm -fr lib-cov
-	@rm -f lib/coverage.html
+	@rm -f target/coverage.html
 	@rm -f benchmark/spinal-*.html
 	@rm -fr docs/**/*.*
 
@@ -30,9 +25,9 @@ test-cov:
 	./node_modules/mocha/bin/mocha \
 		--reporter $(REPORTER_COV) \
 		-c test/**/*.js \
-		--coverage > lib/coverage.html
+		--coverage > target/coverage.html
 
-test: clean check-dependencies coverage test-all test-cov
+test: clean coverage test-all test-cov
 
 doc-all:
 	@echo "\nCreating Documentation (YUIDOC)...\n"
@@ -44,7 +39,7 @@ build-all:
 	@echo "\nBuilding Spinal...\n"
 	@node ./bin/spinal -v
 
-build: check-dependencies test doc-all build-all
+build: test doc-all build-all
 
 benchmark:
 	@node ./bin/spinal -b
@@ -53,4 +48,4 @@ run:
 	@echo "\nRunning server..."
 	@node run
 
-.PHONY: clean coverage check-dependencies test-all test-cov build-all test doc-all doc build benchmark run
+.PHONY: clean coverage test-all test-cov build-all test doc-all doc build benchmark run

@@ -7,6 +7,7 @@ var fs = require('fs'),
 	path = require('path'),
 	resolve = path.resolve,
 	join = path.join,
+	glob = require('glob'),
 	_ = require('underscore'),
 	_s = require('underscore.string');
 
@@ -40,6 +41,13 @@ var Utils = {
 			var result = _.compact(_.map(excl, function(e) { return (p.indexOf(e) == -1) ? true : null; }));
 			return (result.length > 0);
 		});
+	},
+	
+	/**
+	*	Look up file/s using the matching pattern.
+	**/
+	findFiles: function(pattern, opts) {
+		return glob.sync(pattern, opts);
 	},
 	
 	/**

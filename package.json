@@ -4,14 +4,16 @@
   "description": "UI Framework built on top of BackboneJS",
   "main": "run.js",
   "dependencies": {
-	"commander": "2.0.0",
+	"backbone": "1.1.x",
     "underscore": "1.6.x",
-	"underscore.string": "2.3.x"
+	"jquery": "2.1.0"
   },
   "devDependencies": {
 	"connect": "2.13.x",
+	"commander": "2.0.0",
 	"async": "*",
-	"bower": "1.2.x",
+	"glob": "3.2.9",
+	"underscore.string": "2.3.x",
 	"browserify": ">=3.32.x",
 	"colors": "~0.6.2",
     "benchmark": "1.0.x",
@@ -49,6 +51,7 @@
   },
   "files": [
 	"bin",
+	"target",
 	"docs",
 	"examples"
   ]

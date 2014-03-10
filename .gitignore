@@ -1,6 +1,5 @@
 lib-cov
-lib
-src/libraries
+target
 benchmark/spinal-*.html
 docs
 *-SNAPSHOT.*

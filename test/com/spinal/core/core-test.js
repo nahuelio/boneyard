@@ -37,6 +37,17 @@ describe('Spinal.Core', function() {
 	});
 	
 	/**
+	*	Third Party Libraries Verification
+	**/
+	describe('#Availability of Third Party Libs (jQuery, Underscore, Backbone)', function() {
+		it('Should be available and hooked up into Spinal Core', function() {
+			should.exist(Spinal.$);
+			should.exist(Spinal._);
+			should.exist(Spinal.Backbone);
+		});
+	});
+	
+	/**
 	*	Spinal Deep Copy strategy
 	**/
 	describe('#_extend()', function() {
