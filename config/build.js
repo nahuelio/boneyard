@@ -26,12 +26,12 @@ var Build = {
 		source: '../src',
 		output: '../target/',
 		options: {
-			minify: true,
+			minify: false,
 			debug: true,
 			live: false,
-			banner: "//\tSpinalJS <%= version %> (c) <%= year %> <%= author %>, 3dimention.com\n \
-				//\tSpinalJS may be freely distributed under the MIT license.\n \
-				//\tFor all details and documentation:\n//\thttp://3dimention.github.io/spinal\n\n"
+			banner: "//\tSpinalJS <%= version %> (c) <%= year %> <%= author %>, 3dimention.com\n" +
+				"//\tSpinalJS may be freely distributed under the MIT license.\n" +
+				"//\tFor all details and documentation:\n//\thttp://3dimention.github.io/spinal\n\n"
 		}
 	},
 	
@@ -82,18 +82,17 @@ var Build = {
 	*	Release Final Files
 	**/
 	release: function() {
-		console.log('\nCreating Release...\n');
-		Utils.log('[RELEASE] Exporting framework...'.green);
+		console.log('\nCreating Release...');
 		async.series([_.bind(this.processLibs, this), _.bind(this.processFiles, this), _.bind(this.export, this)], _.bind(function(err, stream) {
-			console.log('Stream: ', stream[2]);
 			if(err) {
 				Utils.log(('[RELEASE] Error ocurred while building modules: ' + err).red);
 				process.exit();
 			}
-			/** var target = resolve(__dirname, this.config.output, (pkg.name + '-' + pkg.version));
+			var target = resolve(__dirname, this.config.output, (pkg.name + '-' + pkg.version + '.js'));
+			//var output = _.template(stream[2], { version: pkg.version });
 			var minified = (this.config.options.minify) ? this.minify(stream[2]) : stream[2];
 			var bannered = this.banner(minified);
-			fs.writeFileSync(target, bannered, { mode: 0777, encoding: 'utf8', flags: 'w' }); **/
+			fs.writeFileSync(target, bannered, { mode: 0777, encoding: 'utf8', flags: 'w' });
 			Utils.log('[RELEASE] Build Process DONE.'.green);
 		}, this));
 	},
@@ -101,8 +100,9 @@ var Build = {
 	/**
 	*	Export External Libraries in different
 	**/
-	processLibs: function() {
+	processLibs: function(cb) {
 		Utils.log('\n[RELEASE] Building Dependencies...'.green);
+		Utils.createDir(this.config.output, 'lib');
 		_.each(pkg.dependencies, function(version, name) {
 			try {
 				var filename = 'lib/' + name + '.min.js';
@@ -110,8 +110,8 @@ var Build = {
 				var files = Utils.findFiles('node_modules/' + name + '/**/' + name + '.js', {});
 				if(files.length > 0) {
 					var o = fs.readFileSync(files[0], 'utf8');
-					builder.external(filename, { expose: name }); // mark dependency as 'external' in the builder.
 					fs.writeFileSync(exportpath, this.minify(o), { mode: 0777, encoding: 'utf8', flags: 'w' }); // minify and save.
+					builder.external(exportpath); // mark dependency as 'external' in the builder.
 					Utils.log(('[RELEASE] Exported [' + name + ']').cyan);
 				} else {
 					Utils.log('Error while exporting library dependency. Skipping...'.yellow);
@@ -121,21 +121,25 @@ var Build = {
 				Utils.log('Skipping...'.yellow);
 			}
 		}, this);
+		cb(null);
 	},
 	
 	/**
 	*	Add Framework files
 	**/
 	processFiles: function(cb) {
-		Utils.log('\n[RELEASE] Building Modules...'.green);
+		Utils.log('\n[RELEASE] Building Core Files...'.green);
 		try {
 			var files = Utils.filterFiles(resolve(__dirname, this.config.source));
-			_.each(files, function(f) { builder.add(f); },this);
+			_.each(files, function(f) { 
+				builder.add(f);
+				Utils.log(('[RELEASE] Class File [' + f + '] processed.').cyan);
+			}, this);
 			cb(null);
 		} catch(ex) {
 			Utils.log(('Error parsing files: ' + ex.message).red);	
+			cb(ex.message, null);
 		}
-		return this;
 	},
 	
 	/**
@@ -160,7 +164,7 @@ var Build = {
 	*	Banner Insertion
 	**/
 	banner: function(o) {
-		return _s.insert(o, 0, _.template(pkg.banner, { version: pkg.version, year: new Date().getYear(), author: pkg.author }));
+		return _s.insert(o, 0, _.template(this.config.options.banner, { version: pkg.version, year: new Date().getFullYear(), author: pkg.author }));
 	},
 	
 	/***********************/

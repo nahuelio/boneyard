@@ -11,7 +11,7 @@ var Spinal = require('../core/core');
 *	@class com.spinal.mvc.Controller
 *	@extends com.spinal.core.Class
 **/
-var Controller = Spinal.namespace('com.spinal.mvc.Controller', Spinal.com.spinal.core.Class.inherit({
+Spinal.namespace('com.spinal.mvc.Controller', Spinal.com.spinal.core.Class.inherit({
 	
 	/**
 	*	Initialize
@@ -45,4 +45,4 @@ var Controller = Spinal.namespace('com.spinal.mvc.Controller', Spinal.com.spinal
 	
 }));
 
-module.exports = Controller;
+module.exports = Spinal.com.spinal.mvc.Controller;

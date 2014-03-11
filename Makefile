@@ -4,8 +4,9 @@ REPORTER_COV = html-cov
 clean:
 	@echo "\nCleanning Environment..."
 	@rm -f target/spinal*.js
-	@rm -fr lib-cov
+	@rm -fr target/lib
 	@rm -f target/coverage.html
+	@rm -fr lib-cov
 	@rm -f benchmark/spinal-*.html
 	@rm -fr docs/**/*.*
 

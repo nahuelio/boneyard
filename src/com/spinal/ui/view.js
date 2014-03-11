@@ -233,3 +233,5 @@ Spinal.namespace('com.spinal.ui.View', Spinal.Backbone.View.inherit({
 	}
 	
 }));
+
+module.exports = Spinal.com.spinal.ui.View;

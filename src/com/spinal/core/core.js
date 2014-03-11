@@ -3,7 +3,7 @@
 *	@module com/spinal/core
 *	@author Patricio Ferrerira <3dimentionar@gmail.com>
 **/
-var $ = require('jquery/'),
+var $ = require('jquery'),
 	_ = require('underscore'),
 	Backbone = require('backbone');
 
@@ -150,6 +150,9 @@ var $ = require('jquery/'),
 		Child.__super__ = Parent.prototype;
 		return Child;
 	};
+	
+	// If Backbone exists, inject new Inherit method
+	if(exports.Backbone) Backbone.View.inherit = _inherit;
 	
 	/**
 	*	Provides a generic Class with a generic interface to set and get properties

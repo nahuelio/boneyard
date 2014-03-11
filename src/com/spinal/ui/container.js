@@ -4,6 +4,7 @@
 **/
 
 var Spinal = require('../core/core'),
+	Collection = require('../util/adt/collection'),
 	View = require('./view');
 
 /**
@@ -166,3 +167,5 @@ Spinal.namespace('com.spinal.ui.Container', View.inherit({
 	NAME: 'Container'
 	
 }));
+
+module.exports = Spinal.com.spinal.ui.Collection;

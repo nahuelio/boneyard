@@ -19,6 +19,15 @@ var Utils = {
 	verbose: false,
 	
 	/**
+	*	Create Directory in the BasePath specified as parameter.
+	**/
+	createDir: function(basePath, dirname) {
+		var p = resolve(__dirname, ('../' + basePath), dirname);
+		if(!fs.existsSync(path)) fs.mkdirSync(p, 0777);
+		return p;
+	},
+	
+	/**
 	*	Filter Files inside a path.
 	**/
 	filterFiles: function(path, excl, onlyFilename) {
