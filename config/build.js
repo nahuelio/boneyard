@@ -175,8 +175,8 @@ var Build = {
 	*	Parse Modules
 	**/
 	parse: function() {
-		return _.compact(_.map(fs.readdirSync(resolve(__dirname, '../src')), function(fd) {
-			var st = fs.statSync(resolve(__dirname, '../src/' + fd));
+		return _.compact(_.map(fs.readdirSync(resolve(__dirname, '../src/com/spinal')), function(fd) {
+			var st = fs.statSync(resolve(__dirname, '../src/com/spinal/' + fd));
 			if(st && st.isDirectory()) return { name: fd };
 		}, this));
 	},
