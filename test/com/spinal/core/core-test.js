@@ -4,7 +4,6 @@
 **/
 var libpath = process.env['UT'] ? 'lib-cov' : 'lib',
     resolve = require('path').resolve,
-    should = require('should'),
 	_ = require('underscore');
 
 var Spinal = require(resolve(libpath, 'com/spinal/core/core'));

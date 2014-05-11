@@ -2,7 +2,7 @@
 
 # SpinalJS
 
-UI framework built on top of BackboneJS
+HighLevel UI framework built on top of BackboneJS
 
 Status: Work in Progress
 
@@ -14,7 +14,7 @@ Build from source (master):
 
 1. Run 'npm install'
 2. Run 'make build'
-3. spinal-[version]-SNAPSHOT.js file and his dependencies will be generated inside the ./lib folder
+3. spinal-[version]-SNAPSHOT.js file and his dependencies will be generated inside the ./target folder
 
 Download latest stable release:
 
@@ -28,10 +28,15 @@ Download latest stable release:
 
 * TODO
 
+### API Docs
+
+* Yuidoc already hooked up into the build system
+
 =========================
 
 ### Development Roadmap
 
+* Unit Testing phase need to be setup to use karma, mocha, expect and coverage (high priority).
 * RequireJS hook up as a dependency manager
 * UI Improvements in the Benchmark Tool needed
 

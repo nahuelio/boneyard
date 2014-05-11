@@ -22,8 +22,8 @@ var Utils = {
 	*	Create Directory in the BasePath specified as parameter.
 	**/
 	createDir: function(basePath, dirname) {
-		var p = resolve(__dirname, ('../' + basePath), dirname);
-		if(!fs.existsSync(path)) fs.mkdirSync(p, 0777);
+		var p = resolve(basePath, dirname);
+		if(!fs.existsSync(p)) fs.mkdirSync(p, 0777);
 		return p;
 	},
 	

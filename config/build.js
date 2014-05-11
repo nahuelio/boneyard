@@ -8,7 +8,8 @@ var fs = require('fs'),
 	resolve = path.resolve,
 	join = path.join,
 	pkg = require('../package.json'),
-	builder = require('browserify')(),
+	bowerpkg = require('../bower.json'),
+	requirejs = require('requirejs'),
 	jsp = require("uglify-js").parser,
   	pro = require("uglify-js").uglify,
 	async = require('async'),
@@ -23,16 +24,40 @@ var Build = {
 	*	Default Configuration for Spinal Framework
 	**/
 	config: {
-		source: '../src',
-		output: '../target/',
-		options: {
+		project: {
+			baseURL: '',
+			appDir: '../src',
+			paths: {
+				'libs': 'libs',
+				'core': 'com/spinal/core',
+				'mvc': 'com/spinal/mvc',
+				'ui': 'com/spinal/ui',
+				'util': 'com/spinal/util'
+			},
+			shim: {
+				'libs/bootstrap': ['libs/jquery', 'libs/modernizr'],
+				'libs/underscore': ['libs/bootstrap'],
+				'libs/backbone': ['libs/underscore']
+			},
+			modules: [
+				{ name: 'src/com/spinal/core/core' },
+				{ name: 'src/com/spinal/util/package', exclude: ['core'] },
+				{ name: 'src/com/spinal/mvc/package', exclude: ['core'] },
+				{ name: 'src/com/spinal/ui/package', exclude: ['core', 'util'] }
+			],
+			fileExclusionRegExp: /^libs$/,
+    		findNestedDependencies: true,
+			optimize: 'uglify2',
+			dir: '../target'
+		},
+		libs: {
 			minify: false,
-			debug: true,
-			live: false,
 			banner: "//\tSpinalJS <%= version %> (c) <%= year %> <%= author %>, 3dimention.com\n" +
 				"//\tSpinalJS may be freely distributed under the MIT license.\n" +
 				"//\tFor all details and documentation:\n//\thttp://3dimention.github.io/spinal\n\n"
-		}
+		},
+		debug: true,
+		live: false
 	},
 	
 	/**
@@ -48,7 +73,7 @@ var Build = {
 	**/
 	build: function(opts) {
 		opts || (opts = {});
-		this.processCustom(opts.c); // lets skip it for now.
+		//this.processCustom(opts.c); // lets skip it for now.
 		this.release(); // Process Config Core
 	},
 	
@@ -83,35 +108,35 @@ var Build = {
 	**/
 	release: function() {
 		console.log('\nCreating Release...');
-		async.series([_.bind(this.processLibs, this), _.bind(this.processFiles, this), _.bind(this.export, this)], _.bind(function(err, stream) {
-			if(err) {
-				Utils.log(('[RELEASE] Error ocurred while building modules: ' + err).red);
-				process.exit();
-			}
-			var target = resolve(__dirname, this.config.output, (pkg.name + '-' + pkg.version + '.js'));
-			//var output = _.template(stream[2], { version: pkg.version });
-			var minified = (this.config.options.minify) ? this.minify(stream[2]) : stream[2];
-			var bannered = this.banner(minified);
-			fs.writeFileSync(target, bannered, { mode: 0777, encoding: 'utf8', flags: 'w' });
+		try {
+			Utils.createDir(resolve(__dirname, '../'), this.config.project.dir);
+			requirejs.optimize(this.config.project, _.bind(function(result) {
+				console.log('Optimize Resut: ', arguments);
+				fs.writeFileSync(target, this.banner(result), { mode: 0777, encoding: 'utf8', flags: 'w' });
+				this.processLibs();
+			}, this), function() { console.log('errors: ', arguments); });
 			Utils.log('[RELEASE] Build Process DONE.'.green);
-		}, this));
+		} catch(ex) {
+			Utils.log(('[RELEASE] Error ocurred while building modules: ' + ex.message).red);
+			process.exit();
+		}
 	},
 	
 	/**
 	*	Export External Libraries in different
 	**/
-	processLibs: function(cb) {
+	processLibs: function() {
 		Utils.log('\n[RELEASE] Building Dependencies...'.green);
-		Utils.createDir(this.config.output, 'lib');
-		_.each(pkg.dependencies, function(version, name) {
+		var libPath = resolve(__dirname, '../' + this.config.project.dir);
+		Utils.createDir(libPath, 'libs');
+		_.each(bowerpkg.dependencies, function(version, name) {
 			try {
-				var filename = 'lib/' + name + '.min.js';
-				var exportpath = resolve(__dirname, this.config.output, filename);
-				var files = Utils.findFiles('node_modules/' + name + '/**/' + name + '.js', {});
+				var filename = 'libs/' + name + '.js';
+				var exportpath = resolve(libPath, filename);
+				var files = Utils.findFiles('src/libs/**/' + name + '.js', {});
 				if(files.length > 0) {
 					var o = fs.readFileSync(files[0], 'utf8');
 					fs.writeFileSync(exportpath, this.minify(o), { mode: 0777, encoding: 'utf8', flags: 'w' }); // minify and save.
-					builder.external(exportpath); // mark dependency as 'external' in the builder.
 					Utils.log(('[RELEASE] Exported [' + name + ']').cyan);
 				} else {
 					Utils.log('Error while exporting library dependency. Skipping...'.yellow);
@@ -121,32 +146,6 @@ var Build = {
 				Utils.log('Skipping...'.yellow);
 			}
 		}, this);
-		cb(null);
-	},
-	
-	/**
-	*	Add Framework files
-	**/
-	processFiles: function(cb) {
-		Utils.log('\n[RELEASE] Building Core Files...'.green);
-		try {
-			var files = Utils.filterFiles(resolve(__dirname, this.config.source));
-			_.each(files, function(f) { 
-				builder.add(f);
-				Utils.log(('[RELEASE] Class File [' + f + '] processed.').cyan);
-			}, this);
-			cb(null);
-		} catch(ex) {
-			Utils.log(('Error parsing files: ' + ex.message).red);	
-			cb(ex.message, null);
-		}
-	},
-	
-	/**
-	*	Package files and generate a single bundle file into the target directory.
-	**/
-	export: function(cb) {
-		builder.bundle({ debug: this.config.debug }, cb);
 	},
 	
 	/**

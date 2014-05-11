@@ -1,10 +1,16 @@
 {
-	"source": "project/src",
-	"output": "project/target",
+	"project": {
+		"baseURL": "src",
+		"paths": {
+			"libs": "libs"	
+		},
+		"mainConfigFile": "project/target/project.js',
+		"out": "project/target"	
+	},
 	"options" : {
 		"minify": true,
 		"debug": true,
 		"live": false,
-		"banner": "/** MyProject Library **/"
+		"banner": "/** MyProject Library Custom Config **/"
 	}
 }
