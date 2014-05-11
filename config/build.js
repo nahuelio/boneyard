@@ -19,36 +19,24 @@ var fs = require('fs'),
 	Utils = require('./util');
 
 var Build = {
-	
+
 	/**
 	*	Default Configuration for Spinal Framework
 	**/
 	config: {
 		project: {
-			baseURL: '',
-			appDir: '../src',
-			paths: {
-				'libs': 'libs',
-				'core': 'com/spinal/core',
-				'mvc': 'com/spinal/mvc',
-				'ui': 'com/spinal/ui',
-				'util': 'com/spinal/util'
-			},
-			shim: {
-				'libs/bootstrap': ['libs/jquery', 'libs/modernizr'],
-				'libs/underscore': ['libs/bootstrap'],
-				'libs/backbone': ['libs/underscore']
-			},
+            mainConfigFile: 'src/main.js',
 			modules: [
-				{ name: 'src/com/spinal/core/core' },
-				{ name: 'src/com/spinal/util/package', exclude: ['core'] },
-				{ name: 'src/com/spinal/mvc/package', exclude: ['core'] },
-				{ name: 'src/com/spinal/ui/package', exclude: ['core', 'util'] }
+                { name: 'libs/libs' },
+				{ name: 'com/spinal/core/package', exclude: ['libs'] },
+				{ name: 'com/spinal/util/package', exclude: ['libs', 'core'] },
+				{ name: 'com/spinal/mvc/package', exclude: ['libs', 'core'] },
+				{ name: 'com/spinal/ui/package', exclude: ['libs', 'core', 'util'] }
 			],
-			fileExclusionRegExp: /^libs$/,
-    		findNestedDependencies: true,
+            findNestedDependencies: true,
+            removeCombined: true,
 			optimize: 'uglify2',
-			dir: '../target'
+			dir: 'target'
 		},
 		libs: {
 			minify: false,
@@ -59,7 +47,7 @@ var Build = {
 		debug: true,
 		live: false
 	},
-	
+
 	/**
 	*	Execute command based on parameters
 	**/
@@ -67,16 +55,17 @@ var Build = {
 		if(action == 'build') this.build(opts);
 		if(action == 'benchmark') this.benchmark();
 	},
-	
+
 	/**
 	*	Export and release framework
 	**/
 	build: function(opts) {
 		opts || (opts = {});
 		//this.processCustom(opts.c); // lets skip it for now.
+        this.processLibs();
 		this.release(); // Process Config Core
 	},
-	
+
 	/**
 	*	Process Custom build based on a config file (if exist).
 	**/
@@ -87,7 +76,7 @@ var Build = {
 		// Validate Config file options
 		// add 'src' and 'libs' to the config. And resolve 'dest' if custom config file is provided.
 	},
-	
+
 	/**
 	*	Load Config File.
 	**/
@@ -98,11 +87,11 @@ var Build = {
 			try {
 				return require(resolve(__dirname, '../spinal.json'));
 			} catch(ex) {
-				Utils.log('[BUILD] Config File doesn\'t exists, Using default settings instead.'.yellow);	
+				Utils.log('[BUILD] Config File doesn\'t exists, Using default settings instead.'.yellow);
 			}
 		}
 	},
-	
+
 	/**
 	*	Release Final Files
 	**/
@@ -111,32 +100,30 @@ var Build = {
 		try {
 			Utils.createDir(resolve(__dirname, '../'), this.config.project.dir);
 			requirejs.optimize(this.config.project, _.bind(function(result) {
-				console.log('Optimize Resut: ', arguments);
+				console.log('Optimize Result: ', arguments);
 				fs.writeFileSync(target, this.banner(result), { mode: 0777, encoding: 'utf8', flags: 'w' });
-				this.processLibs();
-			}, this), function() { console.log('errors: ', arguments); });
+			}, this), function(err) { console.log(err); });
 			Utils.log('[RELEASE] Build Process DONE.'.green);
 		} catch(ex) {
 			Utils.log(('[RELEASE] Error ocurred while building modules: ' + ex.message).red);
 			process.exit();
 		}
 	},
-	
+
 	/**
 	*	Export External Libraries in different
 	**/
 	processLibs: function() {
 		Utils.log('\n[RELEASE] Building Dependencies...'.green);
-		var libPath = resolve(__dirname, '../' + this.config.project.dir);
-		Utils.createDir(libPath, 'libs');
+		var libPath = Utils.createDir(resolve(__dirname, '../src'), 'libs');
+        this.exportLibPackage(libPath);
 		_.each(bowerpkg.dependencies, function(version, name) {
 			try {
-				var filename = 'libs/' + name + '.js';
-				var exportpath = resolve(libPath, filename);
-				var files = Utils.findFiles('src/libs/**/' + name + '.js', {});
+				var filename = libPath + '/' + name + '.js';
+                var files = Utils.findFiles('dependencies/**/' + name + '.js', {});
 				if(files.length > 0) {
 					var o = fs.readFileSync(files[0], 'utf8');
-					fs.writeFileSync(exportpath, this.minify(o), { mode: 0777, encoding: 'utf8', flags: 'w' }); // minify and save.
+				    Utils.createFile(filename, this.minify(o), { mode: 0777, encoding: 'utf8', flags: 'w' }); // minify and save.
 					Utils.log(('[RELEASE] Exported [' + name + ']').cyan);
 				} else {
 					Utils.log('Error while exporting library dependency. Skipping...'.yellow);
@@ -147,29 +134,35 @@ var Build = {
 			}
 		}, this);
 	},
-	
+
+    exportLibPackage: function(libpath) {
+        var packageTpl = fs.readFileSync(resolve(__dirname, './templates/libs.tpl'), 'utf8');
+        var content = _.template(packageTpl, { deps: '\'libs/' + _.keys(bowerpkg.dependencies).join('\',\'libs/') + '\'' });
+        Utils.createFile(resolve(libpath, 'libs.js'), content, { mode: 0777, encoding: 'utf8', flags: 'w' });
+    },
+
 	/**
 	*	Minify Bundle File
 	**/
 	minify: function(stream) {
 		var ast = jsp.parse(stream),
-  			ast = pro.ast_mangle(ast),
-  			ast = pro.ast_squeeze(ast),
-  			minified = pro.gen_code(ast);
+            ast = pro.ast_mangle(ast),
+            ast = pro.ast_squeeze(ast),
+            minified = pro.gen_code(ast);
 		return minified;
 	},
-	
+
 	/**
 	*	Banner Insertion
 	**/
 	banner: function(o) {
 		return _s.insert(o, 0, _.template(this.config.options.banner, { version: pkg.version, year: new Date().getFullYear(), author: pkg.author }));
 	},
-	
+
 	/***********************/
-	/**	Benchmarking Code **/
+	/** Benchmarking Code **/
 	/***********************/
-	
+
 	/**
 	*	Parse Modules
 	**/
@@ -179,7 +172,7 @@ var Build = {
 			if(st && st.isDirectory()) return { name: fd };
 		}, this));
 	},
-	
+
 	/**
 	*	Build Benchmark tool based on modules available.
 	**/
@@ -189,7 +182,7 @@ var Build = {
 		var filename = resolve(__dirname, '../benchmark/spinal-' + pkg.version + '-benchmark.html');
 		fs.writeFileSync(filename, _.template(htmltpl, { version: pkg.version, modules: this.parse() }), { mode: 0777, encoding: 'utf8', flags: 'w' });
 	}
-	
+
 };
 
 module.exports = Build;

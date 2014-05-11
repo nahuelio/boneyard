@@ -22,21 +22,20 @@ define(['libs/backbone'], function() {
 			return factory((root.Spinal = {}), root);
 		}
 	}(this, function(exports, root) {
-		
+
 		/**
 		*	@static
 		*	@property __VERSION__
 		*	@type String
 		**/
 		exports.__VERSION__ = '<%= version %>';
-		
+
 		// Expose Backbone hard dependency into Spinal Namespace
 		exports.Backbone = root.Backbone;
-		
-		
+
 		// SpinalJS Expose Third Party Libraries into Spinal Namespace when available.
 		if(root.Modernizr) exports.Modernizr = Modernizr;
-		
+
 		/**
 		*	Namespacing Strategy
 		*	@static
@@ -54,7 +53,7 @@ define(['libs/backbone'], function() {
 			}
 			return parent;
 		};
-		
+
 		/**
 		*	JSON Serialization Strategy
 		*	@private
@@ -67,9 +66,9 @@ define(['libs/backbone'], function() {
 			if(this[k] instanceof Function) return v.toString();
 			return v;
 		};
-		
+
 		var	dateiso = /(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+)|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d)|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d)/;
-		
+
 		/**
 		*	JSON Deserialization Strategy
 		*	@private
@@ -81,7 +80,7 @@ define(['libs/backbone'], function() {
 			if(v && v.substring && v.substring(0, 8) === 'function') return eval('(' + v + ')');
 			return v;
 		};
-		
+
 		/**
 		*	Parse first level of properties
 		*	@private
@@ -93,7 +92,7 @@ define(['libs/backbone'], function() {
 				if(!this.hasOwnProperty(p)) this[p] = sd[p];
 			}
 		};
-		
+
 		/**
 		*	Spinal Deep Copy strategy for inheritance.
 		*	@static
@@ -107,7 +106,7 @@ define(['libs/backbone'], function() {
 			}
 			return o;
 		};
-		
+
 		/**
 		*	Filters inheritance Constructor function properties.
 		*	@private
@@ -122,7 +121,7 @@ define(['libs/backbone'], function() {
 			}
 			return obj
 		};
-		
+
 		/**
 		*	Inheritance Strategy
 		*	@private
@@ -132,7 +131,7 @@ define(['libs/backbone'], function() {
 		var _inherit = exports._inherit = function(proto, protoStatic) {
 			protoStatic || (protoStatic = {});
 			var Parent = this, Child = function() { return Parent.apply(this, arguments); };
-			
+
 			var F = function() { this.constructor = Child; };
 			F.prototype = Parent.prototype;
 			Child.prototype = new F;
@@ -140,15 +139,15 @@ define(['libs/backbone'], function() {
 				extend(Child.prototype, proto);
 				extend(Child, protoStatic, _filter(Parent));
 			}
-			
+
 			Child.inherit = _inherit;
 			Child.__super__ = Parent.prototype;
 			return Child;
 		};
-		
+
 		// If Backbone exists, inject new Inherit method
 		if(exports.Backbone) Backbone.View.inherit = _inherit;
-		
+
 		/**
 		*	Provides a generic Class with a generic interface to set and get properties
 		*	@class com.spinal.core.Class
@@ -158,7 +157,7 @@ define(['libs/backbone'], function() {
 			this.set(attrs);
 			this.initialize.apply(this, arguments);
 		});
-		
+
 		extend(Class.prototype, {
 			/**
 			*	Default initialize
@@ -167,7 +166,7 @@ define(['libs/backbone'], function() {
 			*	@return Class
 			**/
 			initialize: function() { return this; },
-			
+
 			/**
 			*	Default Getter
 			*	@public
@@ -175,7 +174,7 @@ define(['libs/backbone'], function() {
 			*	@return Object
 			**/
 			get: function(p) { return this[p]; },
-			
+
 			/**
 			*	Default Setter
 			*	@public
@@ -189,23 +188,23 @@ define(['libs/backbone'], function() {
 				return this;
 			}
 		});
-		
+
 		/**
 		*	@static
 		*	@method inherit
 		*	@return Function
 		**/
 		Class.inherit = _inherit;
-		
+
 		/**
 		*	@static
 		*	@property NAME
 		*	@type String
 		**/
 		Class.NAME = 'SpinalClass';
-		
+
 	}));
-	
+
 	return exports;
-	
+
 });

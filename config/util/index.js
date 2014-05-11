@@ -12,12 +12,12 @@ var fs = require('fs'),
 	_s = require('underscore.string');
 
 var Utils = {
-	
+
 	/**
 	*	Verbosity activated
 	**/
 	verbose: false,
-	
+
 	/**
 	*	Create Directory in the BasePath specified as parameter.
 	**/
@@ -26,7 +26,15 @@ var Utils = {
 		if(!fs.existsSync(p)) fs.mkdirSync(p, 0777);
 		return p;
 	},
-	
+
+	/**
+	*	Create a file in the filename specified as parameter with a given content (stream).
+	**/
+	createFile: function(filename, stream, opts) {
+		fs.writeFileSync(filename, stream, opts);
+		return filename;
+	},
+
 	/**
 	*	Filter Files inside a path.
 	**/
@@ -37,9 +45,9 @@ var Utils = {
 			var p = resolve(path, fd);
 			var st = fs.statSync(p);
 			return (st && st.isFile()) ? ((onlyFilename) ? fd : p) : this.filterFiles(p, excl, onlyFilename);
-		}, this)));	
+		}, this)));
 	},
-	
+
 	/**
 	*	Exclude from the list the exclu array.
 	**/
@@ -51,21 +59,21 @@ var Utils = {
 			return (result.length > 0);
 		});
 	},
-	
+
 	/**
 	*	Look up file/s using the matching pattern.
 	**/
 	findFiles: function(pattern, opts) {
 		return glob.sync(pattern, opts);
 	},
-	
+
 	/**
 	*	Log messages into the console.stdout
 	**/
 	log: function(message) {
 		if(!this.verbose) console.log(message);
 	}
-	
+
 };
 
 module.exports = Utils;
