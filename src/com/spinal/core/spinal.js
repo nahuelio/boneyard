@@ -30,8 +30,12 @@ define(['libs/backbone'], function() {
 		**/
 		exports.__VERSION__ = '<%= version %>';
 
-		// Expose Backbone hard dependency into Spinal Namespace
+		// Expose Backbone and Underscore hard dependency into Spinal Namespace
 		exports.Backbone = root.Backbone;
+		exports._ = root._;
+
+		// Expose jQuery hard dependency into Spinal Namespace
+		if(exports.Backbone && exports.Backbone.$) exports.$ = exports.Backbone.$;
 
 		// SpinalJS Expose Third Party Libraries into Spinal Namespace when available.
 		if(root.Modernizr) exports.Modernizr = Modernizr;
