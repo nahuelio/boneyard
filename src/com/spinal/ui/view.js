@@ -2,7 +2,7 @@
 *	@module com/spinal/ui
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define(['core/core'], function(Spinal) {
+define(['core/spinal'], function(Spinal) {
 
 	/**
 	*	Define a generic view interface that extends classic Backbone.View
@@ -11,7 +11,7 @@ define(['core/core'], function(Spinal) {
 	*	@extends Spinal.Backbone.View
 	**/
 	var View = Spinal.namespace('com.spinal.ui.View', Spinal.Backbone.View.inherit({
-		
+
 		/**
 		*	Id
 		*	@public
@@ -19,7 +19,7 @@ define(['core/core'], function(Spinal) {
 		*	@type String
 		**/
 		id: null,
-		
+
 		/**
 		*	Class
 		*	@public
@@ -27,7 +27,7 @@ define(['core/core'], function(Spinal) {
 		*	@type String
 		**/
 		class: 'spinal-view',
-		
+
 		/**
 		*	Template
 		*	@public
@@ -35,7 +35,7 @@ define(['core/core'], function(Spinal) {
 		*	@type Function
 		**/
 		template: _.template('<div></div>'),
-		
+
 		/**
 		*	Succesor
 		*	@public
@@ -43,7 +43,7 @@ define(['core/core'], function(Spinal) {
 		*	@type {com.spinal.ui.View}
 		**/
 		succesor: null,
-		
+
 		/**
 		*	Initialize
 		*	@public
@@ -56,7 +56,7 @@ define(['core/core'], function(Spinal) {
 			if(attrs.succesor) this.set('el', succesor.get('el'));
 			return this;
 		},
-		
+
 		/**
 		*	Render View
 		*	@public
@@ -67,7 +67,7 @@ define(['core/core'], function(Spinal) {
 		render: function() {
 			return this;
 		},
-		
+
 		/**
 		*	Update View
 		*	@public
@@ -78,7 +78,7 @@ define(['core/core'], function(Spinal) {
 		update: function() {
 			return this;
 		},
-		
+
 		/**
 		*	Lookup
 		*	@public
@@ -90,7 +90,7 @@ define(['core/core'], function(Spinal) {
 		lookup: function(id) {
 			return this._next(id);
 		},
-		
+
 		/**
 		*	Show View
 		*	@public
@@ -102,7 +102,7 @@ define(['core/core'], function(Spinal) {
 			if(this.$el) this.$el.show();
 			return this;
 		},
-		
+
 		/**
 		*	Hide View
 		*	@public
@@ -114,7 +114,7 @@ define(['core/core'], function(Spinal) {
 			if(this.$el) this.$el.hide();
 			return this;
 		},
-		
+
 		/**
 		*	Enable View
 		*	@public
@@ -126,7 +126,7 @@ define(['core/core'], function(Spinal) {
 			if(this.$el) this.$el.enable();
 			return this;
 		},
-		
+
 		/**
 		*	Disable View
 		*	@public
@@ -138,7 +138,7 @@ define(['core/core'], function(Spinal) {
 			if(this.$el) this.$el.disable();
 			return this;
 		},
-		
+
 		/**
 		*	Clear View
 		*	@public
@@ -150,7 +150,7 @@ define(['core/core'], function(Spinal) {
 			if(this.$el) this.$el.children().remove();
 			return this;
 		},
-		
+
 		/**
 		*	Try to Retrieve next succesor if possible (Chain of Responsability)
 		*	@private
@@ -163,7 +163,7 @@ define(['core/core'], function(Spinal) {
 			if(this.successor) return this.successor.lookup(id);
 			return null;
 		},
-		
+
 		/**
 		*	String representation of an instance of this class
 		*	@public
@@ -173,16 +173,16 @@ define(['core/core'], function(Spinal) {
 		toString: function() {
 			return '[object View]';
 		}
-		
+
 	}, {
-		
+
 		/**
 		*	@static
 		*	@property NAME
 		*	@type String
 		**/
 		NAME: 'View',
-		
+
 		/**
 		*	@static
 		*	@property EVENTS
@@ -193,7 +193,7 @@ define(['core/core'], function(Spinal) {
 			* @event shown
 			**/
 			shown: 'com:spinal:ui:view:shown',
-			/** 
+			/**
 			*	@event hidden
 			**/
 			hidden: 'com:spinal:ui:view:hidden',
@@ -230,9 +230,9 @@ define(['core/core'], function(Spinal) {
 			**/
 			cleared: 'com:spinal:ui:view:cleared'
 		}
-		
+
 	}));
-	
+
 	return View;
-	
+
 });

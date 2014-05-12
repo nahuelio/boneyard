@@ -7,6 +7,7 @@ requirejs.config({
 	baseURL: '/',
 
 	paths: {
+		'libs': 'libs',
 		'core': 'com/spinal/core',
 		'mvc': 'com/spinal/mvc',
 		'ui': 'com/spinal/ui',

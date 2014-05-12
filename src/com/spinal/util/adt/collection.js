@@ -2,7 +2,7 @@
 *	@module com/spinal/util/adt
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define(['core/core'], function(Spinal) {
+define(['core/spinal'], function(Spinal) {
 
 	/**
 	*	Define a generic interface of a Collection
@@ -11,7 +11,7 @@ define(['core/core'], function(Spinal) {
 	*	@extends com.spinal.core.Class
 	**/
 	var Collection = Spinal.namespace('com.spinal.util.adt.Collection', Spinal.com.spinal.core.Class.inherit({
-			
+
 		/**
 		*	Internal Array
 		*	@public
@@ -19,7 +19,7 @@ define(['core/core'], function(Spinal) {
 		*	@type Array
 		**/
 		collection: [],
-		
+
 		/**
 		*	Initialize
 		*	@public
@@ -30,7 +30,7 @@ define(['core/core'], function(Spinal) {
 		initialize: function() {
 			return this;
 		},
-			
+
 		/**
 		*	Validate that the element is an Object.
 		*	@private
@@ -44,7 +44,7 @@ define(['core/core'], function(Spinal) {
 			if(_.isArray(element)) return !(_.reject(element, function(e) { return _.isObject(element); }).length > 0);
 			return true;
 		},
-			
+
 		/**
 		*	Set a new collection of elements
 		*	@public
@@ -58,7 +58,7 @@ define(['core/core'], function(Spinal) {
 			this.collection = new Array(arr);
 			return true;
 		},
-		
+
 		/**
 		*	Returns the element in the index specified as parameter. If it's not found, returns null.
 		*	@public
@@ -70,7 +70,7 @@ define(['core/core'], function(Spinal) {
 			if(this.size() < ix) return this.collection[ix];
 			return null;
 		},
-		
+
 		/**
 		*	Add an object element and returns it
 		*	@public
@@ -83,7 +83,7 @@ define(['core/core'], function(Spinal) {
 			this.collection.push(element);
 			return element;
 		},
-		
+
 		/**
 		*	Add collection of elements to the current collection of elements.
 		*	@public
@@ -96,7 +96,7 @@ define(['core/core'], function(Spinal) {
 			this.collection = this.collection.concat(elements);
 			return true;
 		},
-		
+
 		/**
 		*	Returns true if this collection contains the specified element.
 		*	@public
@@ -108,7 +108,7 @@ define(['core/core'], function(Spinal) {
 			if(!this._valid(element)) return false;
 			return (_.filter(this.collection, _.matches(element)).length > 0);
 		},
-		
+
 		/**
 		*	Returns true if this collection contains all elements of the collection specified as parameter
 		*	@public
@@ -120,7 +120,7 @@ define(['core/core'], function(Spinal) {
 			if(!elements) return false;
 			return _.some(_.map(elements, function(e) { return this.contains(e); }));
 		},
-		
+
 		/**
 		*	Returns an iterator over the elements of this collection.
 		*	@public
@@ -130,7 +130,7 @@ define(['core/core'], function(Spinal) {
 		iterator: function() {
 			return new Iterator({ collection: this.collection });
 		},
-		
+
 		/**
 		*	Remove an existent element
 		*	@public
@@ -142,7 +142,7 @@ define(['core/core'], function(Spinal) {
 			if(this.size() < ix) return this.collection.splice(ix, 1);
 			return null;
 		},
-		
+
 		/**
 		*	Remove element/s that match the evaluation in finder
 		*	@public
@@ -157,7 +157,7 @@ define(['core/core'], function(Spinal) {
 			}
 			return removed;
 		},
-		
+
 		/**
 		*	Removes all of this collection's elements that are also contained in the specified collection.
 		*	@public
@@ -167,11 +167,11 @@ define(['core/core'], function(Spinal) {
 		**/
 		removeAll: function(elements) {
 			if(!this._valid(elements)) return false;
-			return (this.removeBy(_.bind(function(element) { 
+			return (this.removeBy(_.bind(function(element) {
 				return (_.filter(elements, _.matches(element)).length > 0);
 			}, this)).length > 0);
 		},
-		
+
 		/**
 		*	Find element/s by evaluation defined in finder.
 		*	@public
@@ -184,8 +184,8 @@ define(['core/core'], function(Spinal) {
 				if(finder(this.collection[i])) found.push(this.collection[i]);
 			}
 			return found;
-		},	
-		
+		},
+
 		/**
 		*	Clears the collection
 		*	@public
@@ -200,7 +200,7 @@ define(['core/core'], function(Spinal) {
 			this.collection = [];
 			return this;
 		},
-		
+
 		/**
 		*	Returns true if the collection is empty.
 		*	@public
@@ -211,7 +211,7 @@ define(['core/core'], function(Spinal) {
 		isEmpty: function() {
 			return (this.size() === 0);
 		},
-		
+
 		/**
 		*	Returns the size of the collection.
 		*	@public
@@ -220,9 +220,9 @@ define(['core/core'], function(Spinal) {
 		*	@return Number
 		**/
 		size: function() {
-			return this.collection.length;		
+			return this.collection.length;
 		},
-		
+
 		/**
 		*	Sort the collection
 		*	@public
@@ -235,7 +235,7 @@ define(['core/core'], function(Spinal) {
 			this.collection.sort(comparator);
 			return this;
 		},
-		
+
 		/**
 		*	String representation of an instance of this class
 		*	@public
@@ -245,16 +245,16 @@ define(['core/core'], function(Spinal) {
 		toString: function() {
 			return '[object Collection]';
 		}
-			
+
 	}, {
-			
+
 		/**
 		*	@static
 		*	@property NAME
 		*	@type String
 		**/
 		NAME: 'Collection',
-		
+
 		/**
 		*	@static
 		*	@property EVENTS
@@ -274,9 +274,9 @@ define(['core/core'], function(Spinal) {
 			**/
 			reset: 'com:spinal:util:adt:collection:reset'
 		}
-			
+
 	}));
-	
+
 	return Collection;
-	
+
 });

@@ -27,11 +27,11 @@ var Build = {
 		project: {
             mainConfigFile: 'src/main.js',
 			modules: [
-                { name: 'libs/libs' },
-				{ name: 'com/spinal/core/package', exclude: ['libs'] },
-				{ name: 'com/spinal/util/package', exclude: ['libs', 'core'] },
-				{ name: 'com/spinal/mvc/package', exclude: ['libs', 'core'] },
-				{ name: 'com/spinal/ui/package', exclude: ['libs', 'core', 'util'] }
+                { name: 'libs' },
+				{ name: 'spinal-core', exclude: ['libs'] },
+				{ name: 'spinal-util', exclude: ['libs', 'spinal-core'] },
+				{ name: 'spinal-mvc', exclude: ['libs', 'spinal-core'] },
+				{ name: 'spinal-ui', exclude: ['libs', 'spinal-core', 'spinal-util'] }
 			],
             findNestedDependencies: true,
             removeCombined: true,
@@ -99,10 +99,7 @@ var Build = {
 		console.log('\nCreating Release...');
 		try {
 			Utils.createDir(resolve(__dirname, '../'), this.config.project.dir);
-			requirejs.optimize(this.config.project, _.bind(function(result) {
-				console.log('Optimize Result: ', arguments);
-				fs.writeFileSync(target, this.banner(result), { mode: 0777, encoding: 'utf8', flags: 'w' });
-			}, this), function(err) { console.log(err); });
+			requirejs.optimize(this.config.project, _.bind(function(result) {}, this), function(err) { console.log(err); });
 			Utils.log('[RELEASE] Build Process DONE.'.green);
 		} catch(ex) {
 			Utils.log(('[RELEASE] Error ocurred while building modules: ' + ex.message).red);
@@ -116,7 +113,6 @@ var Build = {
 	processLibs: function() {
 		Utils.log('\n[RELEASE] Building Dependencies...'.green);
 		var libPath = Utils.createDir(resolve(__dirname, '../src'), 'libs');
-        this.exportLibPackage(libPath);
 		_.each(bowerpkg.dependencies, function(version, name) {
 			try {
 				var filename = libPath + '/' + name + '.js';
@@ -134,12 +130,6 @@ var Build = {
 			}
 		}, this);
 	},
-
-    exportLibPackage: function(libpath) {
-        var packageTpl = fs.readFileSync(resolve(__dirname, './templates/libs.tpl'), 'utf8');
-        var content = _.template(packageTpl, { deps: '\'libs/' + _.keys(bowerpkg.dependencies).join('\',\'libs/') + '\'' });
-        Utils.createFile(resolve(libpath, 'libs.js'), content, { mode: 0777, encoding: 'utf8', flags: 'w' });
-    },
 
 	/**
 	*	Minify Bundle File

@@ -2,7 +2,7 @@
 *	@module com/spinal/mvc
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define(['core/core'], function(Spinal) {
+define(['core/spinal'], function(Spinal) {
 
 	/**
 	*	Define a generic interface to communicate with a service in the cloud.
@@ -11,7 +11,7 @@ define(['core/core'], function(Spinal) {
 	*	@extends com.spinal.core.Class
 	**/
 	var Controller = Spinal.namespace('com.spinal.mvc.Controller', Spinal.com.spinal.core.Class.inherit({
-		
+
 		/**
 		*	Initialize
 		*	@public
@@ -22,7 +22,7 @@ define(['core/core'], function(Spinal) {
 		initialize: function() {
 			return this;
 		},
-		
+
 		/**
 		*	String representation of an instance of this class
 		*	@public
@@ -32,18 +32,18 @@ define(['core/core'], function(Spinal) {
 		toString: function() {
 			return '[object Controller]';
 		}
-		
+
 	}, {
-		
+
 		/**
 		*	@static
 		*	@property NAME
 		*	@type String
 		**/
 		NAME: 'Controller'
-		
+
 	}));
-	
+
 	return Controller;
-	
+
 });

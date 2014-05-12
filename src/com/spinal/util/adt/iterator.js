@@ -2,7 +2,7 @@
 *	@module com/spinal/util/adt
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define(['core/core'], function(Spinal) {
+define(['core/spinal'], function(Spinal) {
 
 	/**
 	*	Define a generic interface to communicate with a service in the cloud.
@@ -11,7 +11,7 @@ define(['core/core'], function(Spinal) {
 	*	@extends com.spinal.core.Class
 	**/
 	var Iterator = Spinal.namespace('com.spinal.util.adt.Iterator', Spinal.com.spinal.core.Class.inherit({
-		
+
 		/**
 		*	Internal Array
 		*	@public
@@ -19,7 +19,7 @@ define(['core/core'], function(Spinal) {
 		*	@type Array
 		**/
 		collection: [],
-		
+
 		/**
 		*	Cursor that points to an index inside the collection.
 		*	@public
@@ -27,7 +27,7 @@ define(['core/core'], function(Spinal) {
 		*	@type Number
 		**/
 		_cur: 0,
-		
+
 		/**
 		*	Initialize
 		*	@public
@@ -36,7 +36,7 @@ define(['core/core'], function(Spinal) {
 		*	@return {com.spinal.util.adt.Iterator}
 		**/
 		initialize: function() { return this; },
-		
+
 		/**
 		*	Returns true if there is still an element in the list at the current cursor position.
 		*	@public
@@ -46,7 +46,7 @@ define(['core/core'], function(Spinal) {
 		hasNext: function() {
 			return ((this.collection.length-1) > this._cur);
 		},
-		
+
 		/**
 		*	Returns the current element in the collection and move the cursor position 1 step forward.
 		*	@public
@@ -56,7 +56,7 @@ define(['core/core'], function(Spinal) {
 		next: function() {
 			return this.collection[++this._cur];
 		},
-		
+
 		/**
 		*	Reset the cursor to the beginning to the index 0.
 		*	@public
@@ -68,7 +68,7 @@ define(['core/core'], function(Spinal) {
 			this._cur = 0;
 			return this;
 		},
-		
+
 		/**
 		*	Removes from the underlying collection the last element returned by this iterator
 		*	@public
@@ -78,7 +78,7 @@ define(['core/core'], function(Spinal) {
 		remove: function() {
 			return (this.collection.length > 0) ? this.collection.splice(this._cur, 1) : null;
 		},
-		
+
 		/**
 		*	String representation of an instance of this class
 		*	@public
@@ -88,16 +88,16 @@ define(['core/core'], function(Spinal) {
 		toString: function() {
 			return '[object Iterator]';
 		}
-		
+
 	}, {
-		
+
 		/**
 		*	@static
 		*	@property NAME
 		*	@type String
 		**/
 		NAME: 'Iterator',
-		
+
 		/**
 		*	@static
 		*	@property EVENTS
@@ -107,11 +107,11 @@ define(['core/core'], function(Spinal) {
 			/**
 			*	@event removed
 			**/
-			removed: 'com:spinal:util:adt:interator:removed'	
+			removed: 'com:spinal:util:adt:interator:removed'
 		}
-		
+
 	}));
-	
+
 	return Iterator;
-	
+
 });

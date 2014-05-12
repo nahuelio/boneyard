@@ -2,7 +2,7 @@
 *	@module com/spinal/ui
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define(['core/core',
+define(['core/spinal',
 		'util/adt/collection',
 		'ui/view'], function(Spinal, Collection, View) {
 
@@ -13,14 +13,14 @@ define(['core/core',
 	*	@extends com.spinal.ui.View
 	**/
 	var Container = Spinal.namespace('com.spinal.ui.Container', View.inherit({
-		
+
 		/**
 		*	View Collection
 		*	@property views
 		*	@type {com.spinal.util.adt.Collection}
 		**/
 		views: new Collection(),
-		
+
 		/**
 		*	Initialize
 		*	@public
@@ -32,7 +32,7 @@ define(['core/core',
 			Container.__super__.initialize.apply(this, arguments);
 			return this;
 		},
-		
+
 		/**
 		*	Add View
 		*	@public
@@ -45,7 +45,7 @@ define(['core/core',
 			if(!this.find(v)) this.views.add(v);
 			return this;
 		},
-		
+
 		/**
 		*	Remove View
 		*	@public
@@ -58,7 +58,7 @@ define(['core/core',
 			if(this.find(v)) this.views.remove(v);
 			return this;
 		},
-		
+
 		/**
 		*	Find View
 		*	@public
@@ -69,7 +69,7 @@ define(['core/core',
 		find: function(finder) {
 			return this.views.findBy(finder);
 		},
-		
+
 		/**
 		*	Find View by id
 		*	@public
@@ -80,7 +80,7 @@ define(['core/core',
 		findById: function(id) {
 			return this.views.findBy(function(v) { return (v.id && v.id == id); });
 		},
-		
+
 		/**
 		*	Show View
 		*	@public
@@ -93,7 +93,7 @@ define(['core/core',
 			Container.__super__.show.apply(this, arguments);
 			return this;
 		},
-		
+
 		/**
 		*	Hide View
 		*	@public
@@ -106,7 +106,7 @@ define(['core/core',
 			Container.__super__.hide.apply(this, arguments);
 			return this;
 		},
-		
+
 		/**
 		*	Enable View
 		*	@public
@@ -119,7 +119,7 @@ define(['core/core',
 			Container.__super__.enable.apply(this, arguments);
 			return this;
 		},
-		
+
 		/**
 		*	Disable View
 		*	@public
@@ -132,7 +132,7 @@ define(['core/core',
 			Container.__super__.disable.apply(this, arguments);
 			return this;
 		},
-		
+
 		/**
 		*	Clear View
 		*	@public
@@ -145,7 +145,7 @@ define(['core/core',
 			Container.__super__.clear.apply(this, arguments);
 			return this;
 		},
-		
+
 		/**
 		*	String representation of an instance of this class
 		*	@public
@@ -155,18 +155,18 @@ define(['core/core',
 		toString: function() {
 			return '[object Container]';
 		}
-		
+
 	}, {
-		
+
 		/**
 		*	@static
 		*	@property NAME
 		*	@type String
 		**/
 		NAME: 'Container'
-		
+
 	}));
-	
+
 	return Container;
-	
+
 });
