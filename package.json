@@ -33,7 +33,6 @@
 		"spinal": "./bin/spinal"
 	},
 	"scripts": {
-		"preinstall": "npm install -g karma-cli && npm install -g bower@~1.3.x",
 		"test": "make test",
 		"install": "make build"
 	},
