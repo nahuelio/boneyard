@@ -116,7 +116,7 @@ var Build = {
 		_.each(bowerpkg.dependencies, function(version, name) {
 			try {
 				var filename = libPath + '/' + name + '.js';
-                var files = Utils.findFiles('dependencies/**/' + name + '.js', {});
+                var files = Utils.findFiles('bower_components/**/' + name + '.js', {});
 				if(files.length > 0) {
 					var o = fs.readFileSync(files[0], 'utf8');
 				    Utils.createFile(filename, this.minify(o), { mode: 0777, encoding: 'utf8', flags: 'w' }); // minify and save.
