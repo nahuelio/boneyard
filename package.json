@@ -20,6 +20,7 @@
 		"karma": "~0.12.x",
 		"karma-mocha": "*",
 		"karma-mocha-reporter": "0.2.2",
+		"karma-spec-reporter": "0.0.12",
 		"karma-expect": "*",
 		"karma-coverage": "*",
 	    "karma-requirejs": "*",
