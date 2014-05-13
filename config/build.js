@@ -35,7 +35,7 @@ var Build = {
 			],
             findNestedDependencies: true,
             removeCombined: true,
-			optimize: 'none',
+			optimize: 'uglify2',
 			dir: 'target'
 		},
 		libs: {
