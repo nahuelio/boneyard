@@ -29,11 +29,14 @@ module.exports = function(config) {
         'target/**/*.js': ['coverage']
     },
 
-
     // test results reporter to use
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: ['spec', 'coverage'],
+    reporters: ['spec', 'html', 'coverage'],
+
+    htmlReporter: {
+        outputFile: 'coverage/unit-test-results.html'
+    },
 
     // optionally, configure the reporter
     coverageReporter: {
