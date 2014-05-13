@@ -5,7 +5,7 @@ module.exports = function(config) {
   config.set({
 
     // base path that will be used to resolve all patterns (eg. files, exclude)
-    basePath: '',
+    basePath: './',
 
     // frameworks to use
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
@@ -14,24 +14,30 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-      'test/test-main.js',
-      { pattern: 'test/**/*.js', included: false }
+        'test/test-main.js',
+        { pattern: 'target/**/*.js', included: false },
+        { pattern: 'test/**/*.js', included: false }
     ],
 
 
     // list of files to exclude
-    exclude: [],
+    exclude: ['target/main.js', 'target/libs/require.js'],
 
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
-    preprocessors: { '*.js': ['lib-cov'] },
+    preprocessors: { '*.js': ['covergae'] },
 
 
     // test results reporter to use
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: ['progress'],
+    reporters: ['progress', 'coverage'],
 
+    // optionally, configure the reporter
+    coverageReporter: {
+        type : 'html',
+        dir : 'coverage/'
+    },
 
     // web server port
     port: 9876,
@@ -47,12 +53,12 @@ module.exports = function(config) {
 
 
     // enable / disable watching file and executing tests whenever any file changes
-    autoWatch: false,
+    autoWatch: true,
 
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ['Chrome', 'Firefox', 'Safari'],
+    browsers: ['Chrome'],
 
 
     // Continuous Integration mode

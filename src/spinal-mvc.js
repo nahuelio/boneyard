@@ -3,4 +3,4 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['mvc/controller',
-		'mvc/service'], function() { });
+		'mvc/service'], function() {});

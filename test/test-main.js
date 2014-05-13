@@ -14,23 +14,25 @@ Object.keys(window.__karma__.files).forEach(function(file) {
 
 require.config({
   // Karma serves files under /base, which is the basePath from your config file
-  baseUrl: '/base',
+  baseUrl: 'base',
 
   // dynamically load all test files
   deps: allTestFiles,
 
   paths: {
-      'libs': 'libs',
-      'core': 'com/spinal/core',
-      'mvc': 'com/spinal/mvc',
-      'ui': 'com/spinal/ui',
-      'util': 'com/spinal/util'
+      'libs': 'target/libs',
+      'spinal-core': 'target/spinal-core',
+      'spinal-mvc': 'target/spinal-mvc',
+      'spinal-ui': 'target/spinal-ui',
+      'spinal-util': 'target/spinal-util',
   },
 
-  shim: {
-      'libs/bootstrap': ['libs/jquery', 'libs/modernizr'],
-      'libs/underscore': ['libs/bootstrap'],
-      'libs/backbone': ['libs/underscore']
+  bundles: {
+      'libs': ['libs/backbone'],
+      'spinal-core': ['core/spinal'],
+      'spinal-mvc': ['mvc/controller', 'mvc/service'],
+      'spinal-ui': ['ui/view', 'ui/container'],
+      'spinal-util': ['util/adt/collection', 'util/adt/iterator', 'util/adt/queue'],
   },
 
   // we have to kickoff jasmine, as it is asynchronous

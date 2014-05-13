@@ -63,7 +63,8 @@ doc:
 
 build:
 	@echo "\nBuilding SpinalJS..."
-	@make test && make doc
+	## @make test && make doc
+	@make clean-build
 	@node ./bin/spinal -v
 
 ## Benchmark

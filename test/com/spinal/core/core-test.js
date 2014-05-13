@@ -83,58 +83,57 @@ define(['core/spinal'], function(Spinal) {
     		});
 
     		// Undefined Type
-            // TODO: CONTINUE migrating should to expect here...
     		it('Should return a deep copy of an object having a Undefined', function() {
     			var c = Spinal.extend({ _undefined: 'notUndefined' }, this.du);
-    			c._undefined.should.not.equal(this.du._undefined);
-    			c._undefined.should.equal('notUndefined');
+    			expect(c._undefined).not.to.equal(this.du._undefined);
+    			expect(c._undefined).to.be.equal('notUndefined');
     		});
 
     		// Null Type
     		it('Should return a deep copy of an object having a Null', function() {
     			var c = Spinal.extend({ _null: 'notNull' }, this.dnl);
-    			c._null.should.not.equal(this.du._null);
-    			c._null.should.equal('notNull');
+    			expect(c._null).not.to.equal(this.du._null);
+    			expect(c._null).to.be.equal('notNull');
     		});
 
     		// Object Type
     		it('Should return a deep copy of an object having a Object', function() {
     			var c = Spinal.extend({ _object: { _string: 'myString', _function: function() { console.log('child.func()', this._string); } }}, this.do);
-    			should.exist(c._object);
-    			should.exist(c._object._string);
-    			c._object._string.should.equal('myString');
-    			this.do._object._string.should.not.equal(c._object._string);
+    			expect(c._object).to.be.ok();
+    			expect(c._object._string).to.be.ok();
+    			expect(c._object._string).to.be.equal('myString');
+    			expect(this.do._object._string).not.be.equal(c._object._string);
     		});
 
     		// Array Type
     		it('Should return a deep copy of an object having a Array', function() {
     			var c = Spinal.extend({ _array: [2, { _string: 'myString' }] }, this.da);
-    			should.exist(c._array);
-    			should.exist(c._array[1]);
-    			c._array.length.should.not.equal(this.da._array.length);
-    			c._array[0].should.not.equal(this.da._array[0]);
+    			expect(c._array).to.be.ok();
+    			expect(c._array[1]).to.be.ok();
+    			expect(c._array.length).not.be.equal(this.da._array.length);
+    			expect(c._array[0]).not.be.equal(this.da._array[0]);
     		});
 
     		// Date Type
     		it('Should return a deep copy of an object having a Date', function() {
     			var c = Spinal.extend({ _date: new Date('2014-02-22T23:43:51.223Z') }, this.dd);
-    			should.exist(c._date);
-    			c._date.toISOString().should.equal('2014-02-22T23:43:51.223Z');
-    			c._date.toISOString().should.not.equal(this.dd._date.toISOString());
+    			expect(c._date).to.be.ok();
+    			expect(c._date.toISOString()).to.be.equal('2014-02-22T23:43:51.223Z');
+    			expect(c._date.toISOString()).not.be.equal(this.dd._date.toISOString());
     		});
 
     		// Function Type
     		it('Should return a deep copy of an object having a Function', function() {
     			var c = Spinal.extend({ _prop: 1, _function: function() { var ls = 'local'; return { ls: ls, prop: this._prop, _string: this._string }; } }, this.df);
-    			should.exist(c._function);
+    			expect(c._function).to.be.ok();
     			var childData = c._function(), parentData = this.df._function();
-    			childData.ls.should.equal('local');
-    			childData.prop.should.equal(1);
-    			childData._string.should.equal(parentData._string);
+    			expect(childData.ls).to.be.equal('local');
+    			expect(childData.prop).to.be.equal(1);
+    			expect(childData._string).to.be.equal(parentData._string);
     			// Scope verification
     			c._string = 'changed'; // Change of variable _string in the subclass
     			childData = c._function(); // call the function to extract this._string (scope of the function).
-    			childData._string.should.not.equal(parentData._string); // verification if c._string is not a reference of this.df._string after deep copy.
+    			expect(childData._string).not.be.equal(parentData._string); // verification if c._string is not a reference of this.df._string after deep copy.
     		});
     	});
 
@@ -151,13 +150,13 @@ define(['core/spinal'], function(Spinal) {
 
     		it('Should Inherit a Class from Spinal.com.spinal.core.Class', function() {
     			var instance1 = new BaseClass();
-    			instance1.get('_string').should.equal('BaseClass');
-    			instance1.submethod().should.equal('BaseClassBase');
+    			expect(instance1.get('_string')).to.be.equal('BaseClass');
+    			expect(instance1.submethod()).to.be.equal('BaseClassBase');
 
     			var instance2 = new BaseClass({ _string: 'BaseClass2', _object: { _boolean: true } });
-    			instance2.submethod().should.equal('BaseClass2Base');
-    			instance2.get('_string').should.not.equal(instance1.get('_string'));
-    			instance2.get('_object')._boolean.should.not.equal(instance1.get('_object')._boolean);
+    			expect(instance2.submethod()).to.be.equal('BaseClass2Base');
+    			expect(instance2.get('_string')).not.be.equal(instance1.get('_string'));
+    			expect(instance2.get('_object')._boolean).not.be.equal(instance1.get('_object')._boolean);
     		});
 
     		it('Should Inherit SubClass of a BaseClass', function() {
@@ -166,17 +165,17 @@ define(['core/spinal'], function(Spinal) {
     				_number: 100,
     				submethod: function() { return this._string + this._number.toString(); }
     			}, { NAME: 'SubClass' });
-    			should.exist(SubClass.EXTRA);
-    			should.exist(SubClass.EXTRA.p);
-    			SubClass.EXTRA.p.should.equal('Static1');
+    			expect(SubClass.EXTRA).to.be.ok();
+    			expect(SubClass.EXTRA.p).to.be.ok();
+    			expect(SubClass.EXTRA.p).to.be.equal('Static1');
 
     			var instance1 = new SubClass({ _string: 'SubClass-M' });
-    			should.exist(instance1._object);
-    			instance1._object._date.toISOString().should.equal('2014-02-22T23:43:51.223Z');
-    			instance1._number.should.equal(100);
-    			instance1._string.should.equal('SubClass-M');
+    			expect(instance1._object).to.be.ok();
+    			expect(instance1._object._date.toISOString()).to.be.equal('2014-02-22T23:43:51.223Z');
+    			expect(instance1._number).to.be.equal(100);
+    			expect(instance1._string).to.be.equal('SubClass-M');
     			// submethod() should be overriden in the subclass
-    			instance1.submethod().should.equal('SubClass-M100');
+    			expect(instance1.submethod()).to.be.equal('SubClass-M100');
     		});
     	});
 

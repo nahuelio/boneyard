@@ -1,5 +1,5 @@
 src/libs
-lib-cov
+coverage
 target
 benchmark/spinal-*.html
 docs

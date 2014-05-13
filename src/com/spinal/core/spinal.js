@@ -11,17 +11,9 @@ define(['libs/backbone'], function() {
 	*	@class Spinal
 	*	@main Spinal
 	**/
-	(function (root, factory) {
-		'use strict';
-		// Support AMD, CommonJS/Node.js, Rhino and Brower,
-		if (typeof define === 'function' && define.amd) {
-			define(['exports'], factory);
-		} else if(typeof exports !== 'undefined') {
-			return factory(exports, root);
-		} else {
-			return factory((root.Spinal = {}), root);
-		}
-	}(this, function(exports, root) {
+	return (function(root) {
+
+		var exports = root.Spinal = {};
 
 		/**
 		*	@static
@@ -207,8 +199,8 @@ define(['libs/backbone'], function() {
 		**/
 		Class.NAME = 'SpinalClass';
 
-	}));
+		return exports;
 
-	return exports;
+	}(window));
 
 });
