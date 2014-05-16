@@ -57,8 +57,8 @@ define(['core/spinal'], function(Spinal) {
     			expect(c).to.be.ok();
     			expect(c._string).to.be.equal('child_string');
     			expect(c._number).to.be.equal(2);
-    			expect(this.ds._number).to.not.be.ok();
-    			expect(this.dn._string).to.not.be.ok();
+    			expect(this.ds._string).to.be.ok();
+    			expect(this.dn._number).to.be.ok();
     			expect(this.ds._string).to.be.equal('string');
     			expect(this.dn._number).to.be.equal(1);
     		});
@@ -124,7 +124,10 @@ define(['core/spinal'], function(Spinal) {
 
     		// Function Type
     		it('Should return a deep copy of an object having a Function', function() {
-    			var c = Spinal.extend({ _prop: 1, _function: function() { var ls = 'local'; return { ls: ls, prop: this._prop, _string: this._string }; } }, this.df);
+    			var c = Spinal.extend({
+                    _prop: 1,
+                    _function: function() { var ls = 'local'; return { ls: ls, prop: this._prop, _string: this._string }; }
+                }, this.df);
     			expect(c._function).to.be.ok();
     			var childData = c._function(), parentData = this.df._function();
     			expect(childData.ls).to.be.equal('local');
@@ -135,6 +138,7 @@ define(['core/spinal'], function(Spinal) {
     			childData = c._function(); // call the function to extract this._string (scope of the function).
     			expect(childData._string).not.be.equal(parentData._string); // verification if c._string is not a reference of this.df._string after deep copy.
     		});
+
     	});
 
     	/**
@@ -142,13 +146,13 @@ define(['core/spinal'], function(Spinal) {
     	**/
     	describe('#inherit()', function() {
     		/** Base Class Testing **/
-    		var BaseClass = Spinal.com.spinal.core.Class.inherit({
+    		var BaseClass = Spinal.com.spinal.core.SpinalClass.inherit({
     			_string: 'BaseClass',
     			_object: { _boolean: false, _date: new Date('2014-02-22T23:43:51.223Z') },
     			submethod: function() { return this._string + 'Base'; }
     		}, { NAME: 'BaseClass', EXTRA: { p: 'Static1' } });
 
-    		it('Should Inherit a Class from Spinal.com.spinal.core.Class', function() {
+    		it('Should Inherit a Class from Spinal.com.spinal.core.SpinalClass', function() {
     			var instance1 = new BaseClass();
     			expect(instance1.get('_string')).to.be.equal('BaseClass');
     			expect(instance1.submethod()).to.be.equal('BaseClassBase');

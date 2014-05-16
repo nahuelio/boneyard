@@ -11,7 +11,7 @@ var fs = require('fs'),
 	bowerpkg = require('../bower.json'),
 	requirejs = require('requirejs'),
 	jsp = require("uglify-js").parser,
-  	pro = require("uglify-js").uglify,
+	pro = require("uglify-js").uglify,
 	async = require('async'),
 	_ = require('underscore'),
 	_s = require('underscore.string'),
@@ -23,30 +23,37 @@ var Build = {
 	/**
 	*	Default Configuration for Spinal Framework
 	**/
-	config: {
-		project: {
+    config: {
+        project: {
             mainConfigFile: 'src/main.js',
-			modules: [
+            modules: [
                 { name: 'libs' },
-				{ name: 'spinal-core', exclude: ['libs'] },
-				{ name: 'spinal-util', exclude: ['libs', 'spinal-core'] },
-				{ name: 'spinal-mvc', exclude: ['libs', 'spinal-core'] },
-				{ name: 'spinal-ui', exclude: ['libs', 'spinal-core', 'spinal-util'] }
-			],
+                { name: 'spinal-core', exclude: ['libs'] },
+                { name: 'spinal-util', exclude: ['libs', 'spinal-core'] },
+                { name: 'spinal-mvc', exclude: ['libs', 'spinal-core'] },
+                { name: 'spinal-ui', exclude: ['libs', 'spinal-core', 'spinal-util'] }
+            ],
             findNestedDependencies: true,
             removeCombined: true,
-			optimize: 'uglify2',
-			dir: 'target'
-		},
-		libs: {
-			minify: false,
-			banner: "//\tSpinalJS <%= version %> (c) <%= year %> <%= author %>, 3dimention.com\n" +
-				"//\tSpinalJS may be freely distributed under the MIT license.\n" +
-				"//\tFor all details and documentation:\n//\thttp://3dimention.github.io/spinal\n\n"
-		},
-		debug: true,
-		live: false
-	},
+            optimize: 'uglify',
+            uglify: {
+                toplevel: false,
+                ascii_only: true,
+                beautify: true,
+                max_line_length: 1000,
+                no_mangle: true
+            },
+            dir: 'target'
+        },
+        libs: {
+            minify: false,
+            banner: "//\tSpinalJS <%= version %> (c) <%= year %> <%= author %>, 3dimention.com\n" +
+                "//\tSpinalJS may be freely distributed under the MIT license.\n" +
+                "//\tFor all details and documentation:\n//\thttp://3dimention.github.io/spinal\n\n"
+        },
+        debug: true,
+        live: false
+    },
 
 	/**
 	*	Execute command based on parameters

@@ -1,6 +1,7 @@
 /**
 *	SpinalJS UI Framework
 *	@module com/spinal/core
+*	@requires Backbone
 *	@author Patricio Ferrerira <3dimentionar@gmail.com>
 **/
 define(['libs/backbone'], function() {
@@ -23,6 +24,7 @@ define(['libs/backbone'], function() {
 		exports.__VERSION__ = '<%= version %>';
 
 		// Expose Backbone and Underscore hard dependency into Spinal Namespace
+		if(!root.Backbone || !root._) throw new Error('[Spinal Error] Backbone or Underscore haven\'t being loaded.');
 		exports.Backbone = root.Backbone;
 		exports._ = root._;
 
@@ -36,6 +38,7 @@ define(['libs/backbone'], function() {
 		*	Namespacing Strategy
 		*	@static
 		*	@method namespace
+
 		*	@return Function
 		**/
 		var namespace = exports.namespace = function(path, constructor) {
@@ -51,42 +54,73 @@ define(['libs/backbone'], function() {
 		};
 
 		/**
-		*	JSON Serialization Strategy
+		*	Validate if obj is an instance of the Browser's Windows Object.
 		*	@private
-		*	@method _serialize
-		*	@return Any
+		*	@method _isWindow
+		*	@param obj {Object} object to evaluate
+		*	@returns Boolean
 		**/
-		var _serialize = function(k, v) {
-			if(this[k] instanceof Date) return this[k].toJSON();
-			if(this[k] === undefined) return null;
-			if(this[k] instanceof Function) return v.toString();
-			return v;
-		};
-
-		var	dateiso = /(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+)|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d)|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d)/;
-
-		/**
-		*	JSON Deserialization Strategy
-		*	@private
-		*	@method _deserialize
-		*	@return Any
-		**/
-		var _deserialize = function(k, v) {
-			if(dateiso.test(v)) return new Date(v);
-			if(v && v.substring && v.substring(0, 8) === 'function') return eval('(' + v + ')');
-			return v;
+		var _isWindow = function(obj) {
+			return obj && obj.document && obj.location && obj.alert && obj.setInterval;
 		};
 
 		/**
-		*	Parse first level of properties
+		*	Creates object through Object.create or polyfill for IE <= 8
 		*	@private
-		*	@method _parse
+		*	@param {Object} proto - The object representing the prototype of the new object to create
+		*	@returns Object Newly created object with proto as prototype
 		**/
-		var _parse = function(from) {
-			var sd = JSON.parse(JSON.stringify(from, _serialize), _deserialize);
-			for(var p in from) {
-				if(!this.hasOwnProperty(p)) this[p] = sd[p];
+		var _createObject = (function() {
+			function Constructor() {};
+			if(typeof Object.create === "function") return Object.create;
+		    return function(proto) {
+				Constructor.prototype = proto;
+				return new Constructor();
+			};
+		}());
+
+		/**
+		*	Creates a deep copy of source by extracting his properties (preserving protoype chain) and copying to
+		*	the destination object if it's specified.
+		*	Thanks to the angular Team to provide it!
+		*	AngularJS Original implementation: https://github.com/angular/angular.js/blob/master/src/Angular.js#L760
+		*	AngularJS MIT License: https://github.com/angular/angular.js/blob/master/LICENSE
+		*
+		*	@private
+		*	@method _deepCopy
+		*	@param source {Object} source object to create the copy with
+		*	@param destination {Object} destination object
+		*	@return Object
+		**/
+		var _deepCopy = function (source, destination) {
+			if (_isWindow(source)) {
+				throw new Error("Can't copy! Making copies of Window or Scope instances is not supported.");
 			}
+			if(!destination) {
+				destination = source;
+				if(source) {
+					if(_.isArray(source)) {
+						destination = _deepCopy(source, []);
+					} else if(_.isDate(source)) {
+						destination = new Date(source.getTime());
+					} else if(_.isRegExp(source)) {
+						destination = new RegExp(source.source);
+					} else if(_.isObject(source) && !_.isFunction(source)) {
+						destination = _deepCopy(source, _createObject(Object.getPrototypeOf(source)));
+					}
+				}
+			} else {
+				if(source === destination) throw new Error("Can't copy! Source and destination are identical.");
+				if(_.isArray(source)) {
+					destination.length = 0;
+					for(var i = 0; i < source.length; i++) destination.push(_deepCopy(source[i]));
+	    		} else {
+					for(var key in source) {
+						if(!destination.hasOwnProperty(key)) destination[key] = _deepCopy(source[key]);
+					}
+				}
+			}
+			return destination;
 		};
 
 		/**
@@ -98,7 +132,7 @@ define(['libs/backbone'], function() {
 		var extend = exports.extend = function(o) {
 			var args = Array.prototype.slice.call(arguments, 1);
 			for(var i = 0; i < args.length; i++) {
-				if(args[i]) _parse.call(o, args[i]);
+				if(args[i]) _deepCopy(args[i], o);
 			}
 			return o;
 		};
@@ -141,20 +175,23 @@ define(['libs/backbone'], function() {
 			return Child;
 		};
 
-		// If Backbone exists, inject new Inherit method
-		if(exports.Backbone) Backbone.View.inherit = _inherit;
+		// If Backbone exists, expose new inherit method to Backbone Classes
+		if(exports.Backbone) {
+			Backbone.View.inherit = _inherit;
+			Backbone.Collection.inherit = _inherit;
+			Backbone.Model.inherit = _inherit;
+		}
 
 		/**
 		*	Provides a generic Class with a generic interface to set and get properties
 		*	@class com.spinal.core.Class
 		**/
-		var Class = exports.Class = namespace('com.spinal.core.Class', function(attrs) {
-			attrs || (attrs = {});
-			this.set(attrs);
+		var SpinalClass = exports.SpinalClass = namespace('com.spinal.core.SpinalClass', function(attrs) {
+			if(attrs) this.set(attrs);
 			this.initialize.apply(this, arguments);
 		});
 
-		extend(Class.prototype, {
+		extend(SpinalClass.prototype, exports.Backbone.Events, {
 			/**
 			*	Default initialize
 			*	@public
@@ -167,6 +204,7 @@ define(['libs/backbone'], function() {
 			*	Default Getter
 			*	@public
 			*	@method get
+			*	@param p {String} Key string to retrieve the value from.
 			*	@return Object
 			**/
 			get: function(p) { return this[p]; },
@@ -175,13 +213,34 @@ define(['libs/backbone'], function() {
 			*	Default Setter
 			*	@public
 			*	@method set
+			*	@param p {Object} Key String or Object (haskmap) to be set as properties.
+			*	@param v {Object} Value to be set for the key property specified in p
+			*	@return Object
 			**/
 			set: function(p, v) {
-				if(!p) throw new Error('set() requires 1 arguments (object or a key).');
-				(p && p === Object(p)) ?
-					extend.apply(this, [this, p]) :
-				this[p] = v;
+				if(!p) throw new Error('set() requires at least 1 argument (an object or a key).');
+				(p && p === Object(p)) ? extend.apply(this, [this, p]) : this[p] = v;
 				return this;
+			},
+
+			/**
+			*	Serializes the Class instance into a plain javascript object.
+			*	@public
+			*	@method toJSON
+			*	@return Object
+			**/
+			toJSON: function() {
+				return JSON.parse(JSON.stringify(this));
+			},
+
+			/**
+			*	Default toString implementation
+			*	@public
+			*	@method set
+			*	@return String
+			**/
+			toString: function() {
+				return '[object ' + ((this.constructor.NAME) ? this.constructor.NAME : 'SpinalClass') + ']';
 			}
 		});
 
@@ -190,14 +249,14 @@ define(['libs/backbone'], function() {
 		*	@method inherit
 		*	@return Function
 		**/
-		Class.inherit = _inherit;
+		SpinalClass.inherit = _inherit;
 
 		/**
 		*	@static
 		*	@property NAME
 		*	@type String
 		**/
-		Class.NAME = 'SpinalClass';
+		SpinalClass.NAME = 'SpinalClass';
 
 		return exports;
 

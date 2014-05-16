@@ -10,7 +10,7 @@ define(['core/spinal'], function(Spinal) {
 	*	@class com.spinal.mvc.Controller
 	*	@extends com.spinal.core.Class
 	**/
-	var Controller = Spinal.namespace('com.spinal.mvc.Controller', Spinal.com.spinal.core.Class.inherit({
+	var Controller = Spinal.namespace('com.spinal.mvc.Controller', Spinal.com.spinal.core.SpinalClass.inherit({
 
 		/**
 		*	Initialize

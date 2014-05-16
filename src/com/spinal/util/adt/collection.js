@@ -10,7 +10,7 @@ define(['core/spinal'], function(Spinal) {
 	*	@class com.spinal.util.adt.Collection
 	*	@extends com.spinal.core.Class
 	**/
-	var Collection = Spinal.namespace('com.spinal.util.adt.Collection', Spinal.com.spinal.core.Class.inherit({
+	var Collection = Spinal.namespace('com.spinal.util.adt.Collection', Spinal.com.spinal.core.SpinalClass.inherit({
 
 		/**
 		*	Internal Array
@@ -21,13 +21,26 @@ define(['core/spinal'], function(Spinal) {
 		collection: [],
 
 		/**
+		*	Interface reference, usually a constructor function that identifies
+		*	the types of object that this collection can contain.
+		*	@private
+		*	@property interface
+		*	@type Function
+		**/
+		_interface: null,
+
+		/**
 		*	Initialize
 		*	@public
 		*	@chainable
 		*	@method initialize
+		*	@param attrs {Array} initial elements in the collection.
+		*	@param opts {Object} Additional options.
 		*	@return {com.spinal.util.adt.Collection}
 		**/
-		initialize: function() {
+		initialize: function(attrs, opts) {
+			opts || (opts = {});
+			if(opts.interface) this._interface = opts.interface;
 			return this;
 		},
 
@@ -40,8 +53,6 @@ define(['core/spinal'], function(Spinal) {
 		**/
 		_valid: function(element) {
 			if(!element) return false;
-			if(!_.isObject(element)) return false;
-			if(_.isArray(element)) return !(_.reject(element, function(e) { return _.isObject(element); }).length > 0);
 			return true;
 		},
 
@@ -53,9 +64,11 @@ define(['core/spinal'], function(Spinal) {
 		*	@return Boolean
 		**/
 		set: function(arr) {
-			if(!this._valid(arr)) return false;
+			if(!this._valid(arr) || !_.isArray(arr)) return false;
 			this.reset({ silent: true });
-			this.collection = new Array(arr);
+			(!_.isNull(this._interface)) ?
+				this.collection = _.compact(_.map(arr, function(ele) { if(ele) return new this._interface(ele); })) :
+				this.collection = arr.slice(0); // build new array from array (clone method).
 			return true;
 		},
 
@@ -64,10 +77,10 @@ define(['core/spinal'], function(Spinal) {
 		*	@public
 		*	@method get
 		*	@param ix {Number} index
-		*	@return {Object}
+		*	@return Object
 		**/
 		get: function(ix) {
-			if(this.size() < ix) return this.collection[ix];
+			if(ix < this.size()) return this.collection[ix];
 			return null;
 		},
 
@@ -76,11 +89,17 @@ define(['core/spinal'], function(Spinal) {
 		*	@public
 		*	@method add
 		*	@param element {Object} element
+		*	@param opts {Object} extra options
+		*	@optional
 		*	@return Object
 		**/
-		add: function(element) {
+		add: function(element, opts) {
+			opts || (opts = {});
 			if(!this._valid(element)) return null;
-			this.collection.push(element);
+			(!_.isNull(this._interface)) ?
+				this.collection.push(new this._interface(element)) :
+				this.collection.push(element);
+			if(!opts.silent) this.trigger(Collection.EVENTS.added, { added: element, collection: this });
 			return element;
 		},
 
@@ -89,11 +108,18 @@ define(['core/spinal'], function(Spinal) {
 		*	@public
 		*	@method addAll
 		*	@param elements {Array} Array of elements (Objects)
+		*	@param opts {Object} extra options
+		*	@optional
 		*	@return Boolean
 		**/
-		addAll: function(elements) {
-			if(!this._valid(elements)) return false;
+		addAll: function(elements, opts) {
+			opts || (opts = {});
+			if(!this._valid(elements) || !_.isArray(elements)) return false;
+			if(!_.isNull(this._interface)) {
+				elements = _.compact(_.map(elements, function(ele) { if(ele) return new this._interface(ele); }));
+			}
 			this.collection = this.collection.concat(elements);
+			if(!opts.silent) this.trigger(Collection.EVENTS.addedAll, { addedAll: elements, collection: this });
 			return true;
 		},
 
@@ -106,7 +132,7 @@ define(['core/spinal'], function(Spinal) {
 		**/
 		contains: function(element) {
 			if(!this._valid(element)) return false;
-			return (_.filter(this.collection, _.matches(element)).length > 0);
+			return (_.filter((!_.isNull(this._interface)) ? _.invoke(this.collection, 'toJSON') : this.collection, _.matches(element)).length > 0);
 		},
 
 		/**
@@ -136,10 +162,17 @@ define(['core/spinal'], function(Spinal) {
 		*	@public
 		*	@method remove
 		*	@param ix {Number} index
+		*	@param opts {Object} extra options
+		*	@optional
 		*	@return Object
 		**/
-		remove: function(ix) {
-			if(this.size() < ix) return this.collection.splice(ix, 1);
+		remove: function(ix, opts) {
+			opts || (opts = {});
+			if(ix && _.isNumber(ix) && this.size() < ix) {
+				var rmArr = this.collection.splice(ix, 1);
+				if(!opts.silent) this.trigger(Collection.EVENTS.removed, { removed: rmArr[0], collection: this });
+				return rmArr[0];
+			}
 			return null;
 		},
 
@@ -148,28 +181,36 @@ define(['core/spinal'], function(Spinal) {
 		*	@public
 		*	@method removeBy
 		*	@param finder {Function} matcher function
+		*	@param opts {Object} extra options
+		*	@optional
 		*	@return {Array}
 		**/
-		removeBy: function(finder) {
+		removeBy: function(finder, opts) {
+			opts || (opts = {});
 			var len = this.size();
 			for(var i = 0, removed = []; i < len; i++) {
-				if(finder(this.collection[i])) removed.push(this.collection.splice(i, 1));
+				if(finder(this.collection[i])) removed.push(this.remove(i, opts));
 			}
 			return removed;
 		},
 
 		/**
-		*	Removes all of this collection's elements that are also contained in the specified collection.
+		*	Removes all collection's elements that are also contained in the collection specified by parameter.
 		*	@public
 		*	@method removeAll
 		*	@param elements {Array} Collection of elements to be removed.
+		*	@param opts {Object} extra options
+		*	@optional
 		*	@return Boolean
 		**/
-		removeAll: function(elements) {
-			if(!this._valid(elements)) return false;
-			return (this.removeBy(_.bind(function(element) {
+		removeAll: function(elements, opts) {
+			opts || (opts = {});
+			if(!this._valid(elements) || !_.isArray(elements)) return false;
+			var removed = (this.removeBy(_.bind(function(element) {
 				return (_.filter(elements, _.matches(element)).length > 0);
 			}, this)).length > 0);
+			if(!opts.silent && removed) this.trigger(Collection.EVENTS.removedAll, { collection: this });
+			return removed;
 		},
 
 		/**
@@ -198,6 +239,7 @@ define(['core/spinal'], function(Spinal) {
 		reset: function(opts) {
 			opts || (opts = {});
 			this.collection = [];
+			if(!opts.silent) this.trigger(Collection.EVENTS.reset, { collection: this });
 			return this;
 		},
 
@@ -234,16 +276,6 @@ define(['core/spinal'], function(Spinal) {
 		sort: function(comparator) {
 			this.collection.sort(comparator);
 			return this;
-		},
-
-		/**
-		*	String representation of an instance of this class
-		*	@public
-		*	@method toString
-		*	@return String
-		**/
-		toString: function() {
-			return '[object Collection]';
 		}
 
 	}, {
@@ -269,6 +301,14 @@ define(['core/spinal'], function(Spinal) {
 			* @event removed
 			**/
 			removed: 'com:spinal:util:adt:collection:removed',
+			/**
+			* @event addedAll
+			**/
+			addedAll: 'com:spinal:util:adt:collection:addedAll',
+			/**
+			* @event addedAll
+			**/
+			removedAll: 'com:spinal:util:adt:collection:removedAll',
 			/**
 			* @event reset
 			**/
