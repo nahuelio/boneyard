@@ -108,9 +108,9 @@ define(['util/adt/collection'], function(Collection) {
                 var added = this.testInterface.add({ model: new Backbone.Model({ name: 'foo' }) });
                 expect(added).to.be.ok();
                 expect(this.testInterface._interface).to.be.ok();
-                expect(this.testInterface.get(0)).to.be.an(Backbone.View);
-                expect(this.testInterface.get(0).model).to.be.ok();
-                expect(this.testInterface.get(0).model.get('name')).to.be.equal('foo');
+                expect(this.testInterface.get(1)).to.be.an(Backbone.View);
+                expect(this.testInterface.get(1).model).to.be.ok();
+                expect(this.testInterface.get(1).model.get('name')).to.be.equal('foo');
             });
 
     		it('Should NOT add a new element', function() {
@@ -125,12 +125,71 @@ define(['util/adt/collection'], function(Collection) {
     	**/
     	describe('#addAll()', function() {
 
+            it('Should add all the items (No Interface)', function() {
+                this.testSimple.reset();
+                var added = this.testSimple.addAll([{ name: 'foo'}, { name: 'bar' }]);
+                expect(added).to.be.equal(true);
+                expect(this.testSimple.size()).to.be.equal(2);
+                expect(this.testSimple.get(1).name).to.be.equal('bar');
+            });
+
+            it('Should NOT add an empty Array of elements (No Interface)', function() {
+                this.testSimple.reset();
+                var added = this.testSimple.addAll([]);
+                expect(added).to.be.equal(true);
+                expect(this.testSimple.size()).to.be.equal(0);
+            });
+
+            it('Should add an array with an \'undefined\' value (No Interface)', function() {
+                this.testSimple.reset();
+                var added = this.testSimple.addAll([undefined]);
+                expect(added).to.be.equal(true);
+                expect(this.testSimple.size()).to.be.equal(0);
+            });
+
+            it('Should add all the items (With Interface)', function() {
+                this.testInterface.reset();
+                var added = this.testInterface.addAll([
+                    { model: new Backbone.Model({ name: 'foo' }) },
+                    { model: new Backbone.Model({ name: 'bar' }) }
+                ]);
+                expect(added).to.be.equal(true);
+                expect(this.testInterface.size()).to.be.equal(2);
+                expect(this.testInterface.get(1).model.get('name')).to.be.equal('bar');
+            });
+
+            it('Should NOT add an empty Array of elements (With Interface)', function() {
+                var added = this.testInterface.addAll([undefined]);
+                expect(added).to.be.equal(true);
+                expect(this.testInterface.size()).to.be.equal(2);
+            });
+
     	});
 
     	/**
     	*	Collection#contains() test
     	**/
     	describe('#contains()', function() {
+
+            it('Should return true/false if contains (or not) a element (No interface)', function() {
+                this.testSimple.reset().addAll([{ name: 'foo' }, { name: 'bar' }, { name: 'zoo' }]);
+                var result = this.testSimple.contains({ name: 'bar' });
+                expect(result).to.be.equal(true);
+                result = this.testSimple.contains({ name: 'non-existent'});
+                expect(result).to.be.equal(false);
+                result = this.testSimple.contains();
+                expect(result).to.be.equal(false);
+            });
+
+            it('Should return true/false if contains (or not) a element (With interface)', function() {
+                this.testInterface.reset().addAll([
+                    { model: new Backbone.Model({ name: 'foo' } )},
+                    { model: new Backbone.Model({ name: 'bar' } )}
+                ]);
+                console.log(this.testInterface.get(0));
+                console.log(this.testInterface.get(0).model.get('name'));
+                var result = this.testInterface.contains(this.testInterface.get(0).model);
+            });
 
     	});
 

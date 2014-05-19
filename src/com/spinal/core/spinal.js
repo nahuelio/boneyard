@@ -180,6 +180,7 @@ define(['libs/backbone'], function() {
 			Backbone.View.inherit = _inherit;
 			Backbone.Collection.inherit = _inherit;
 			Backbone.Model.inherit = _inherit;
+			Backbone.Router.inherit = _inherit;
 		}
 
 		/**

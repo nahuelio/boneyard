@@ -66,9 +66,13 @@ define(['core/spinal'], function(Spinal) {
 		set: function(arr) {
 			if(!this._valid(arr) || !_.isArray(arr)) return false;
 			this.reset({ silent: true });
-			(!_.isNull(this._interface)) ?
-				this.collection = _.compact(_.map(arr, function(ele) { if(ele) return new this._interface(ele); })) :
+			if(!_.isNull(this._interface)) {
+				this.collection = _.compact(_.map(arr, function(ele) {
+					if(ele) return new this._interface(ele);
+				}, this));
+			} else {
 				this.collection = arr.slice(0); // build new array from array (clone method).
+			}
 			return true;
 		},
 
@@ -115,9 +119,9 @@ define(['core/spinal'], function(Spinal) {
 		addAll: function(elements, opts) {
 			opts || (opts = {});
 			if(!this._valid(elements) || !_.isArray(elements)) return false;
-			if(!_.isNull(this._interface)) {
-				elements = _.compact(_.map(elements, function(ele) { if(ele) return new this._interface(ele); }));
-			}
+			elements = _.compact(_.map(elements, function(ele) {
+				if(ele) return (!_.isNull(this._interface)) ? new this._interface(ele) : ele;
+			}, this));
 			this.collection = this.collection.concat(elements);
 			if(!opts.silent) this.trigger(Collection.EVENTS.addedAll, { addedAll: elements, collection: this });
 			return true;
@@ -132,7 +136,13 @@ define(['core/spinal'], function(Spinal) {
 		**/
 		contains: function(element) {
 			if(!this._valid(element)) return false;
-			return (_.filter((!_.isNull(this._interface)) ? _.invoke(this.collection, 'toJSON') : this.collection, _.matches(element)).length > 0);
+			if(!_.isNull(this._interface)) {
+				var attrs = (!_.isNull(this._interface.toJSON)) ? _.invoke(this.collection, 'toJSON') : this.collection;
+				return (_.filter(attrs, _.matches(element)).length > 0);
+			} else {
+				return (_.filter(this.collection, _.matches(element)).length > 0);
+			}
+			return false;
 		},
 
 		/**
@@ -144,7 +154,7 @@ define(['core/spinal'], function(Spinal) {
 		**/
 		containsAll: function(elements) {
 			if(!elements) return false;
-			return _.some(_.map(elements, function(e) { return this.contains(e); }));
+			return _.some(_.map(elements, function(e) { return this.contains(e); }, this));
 		},
 
 		/**
