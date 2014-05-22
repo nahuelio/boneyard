@@ -2,7 +2,7 @@
 *	@module com/spinal/util/adt
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define(['core/spinal'], function(Spinal) {
+define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 
 	/**
 	*	Define a generic interface of a Collection
@@ -154,9 +154,7 @@ define(['core/spinal'], function(Spinal) {
 		**/
 		containsAll: function(elements) {
 			if(!elements) return false;
-			// continue here...
-			console.log(_.map(elements, function(e) { return this.contains(e); }, this));
-			return _.some(_.map(elements, function(e) { return this.contains(e); }, this));
+			return _.every(_.map(elements, function(e) { return this.contains(e); }, this));
 		},
 
 		/**
@@ -180,7 +178,7 @@ define(['core/spinal'], function(Spinal) {
 		**/
 		remove: function(ix, opts) {
 			opts || (opts = {});
-			if(ix && _.isNumber(ix) && this.size() < ix) {
+			if(ix && _.isNumber(ix) && ix < this.size()) {
 				var rmArr = this.collection.splice(ix, 1);
 				if(!opts.silent) this.trigger(Collection.EVENTS.removed, { removed: rmArr[0], collection: this });
 				return rmArr[0];
@@ -201,7 +199,10 @@ define(['core/spinal'], function(Spinal) {
 			opts || (opts = {});
 			var len = this.size();
 			for(var i = 0, removed = []; i < len; i++) {
-				if(finder(this.collection[i])) removed.push(this.remove(i, opts));
+				if(this.collection[i] && finder(this.collection[i])) {
+					removed.push(this.remove(i, opts));
+					i--; len--;
+				}
 			}
 			return removed;
 		},
