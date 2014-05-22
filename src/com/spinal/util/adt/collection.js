@@ -137,7 +137,7 @@ define(['core/spinal'], function(Spinal) {
 		contains: function(element) {
 			if(!this._valid(element)) return false;
 			if(!_.isNull(this._interface)) {
-				var attrs = (!_.isNull(this._interface.toJSON)) ? _.invoke(this.collection, 'toJSON') : this.collection;
+				var attrs = (this._interface.toJSON) ? _.invoke(this.collection, 'toJSON') : this.collection;
 				return (_.filter(attrs, _.matches(element)).length > 0);
 			} else {
 				return (_.filter(this.collection, _.matches(element)).length > 0);

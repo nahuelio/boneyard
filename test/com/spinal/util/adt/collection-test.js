@@ -186,9 +186,10 @@ define(['util/adt/collection'], function(Collection) {
                     { model: new Backbone.Model({ name: 'foo' } )},
                     { model: new Backbone.Model({ name: 'bar' } )}
                 ]);
-                console.log(this.testInterface.get(0));
-                console.log(this.testInterface.get(0).model.get('name'));
-                var result = this.testInterface.contains(this.testInterface.get(0).model);
+                var result = this.testInterface.contains({ cid: this.testInterface.get(0).cid });
+                expect(result).to.be.equal(true);
+                result = this.testInterface.contains({ model: new Backbone.Model({ nonexistent: '1' }) });
+                expect(result).to.be.equal(false);
             });
 
     	});
