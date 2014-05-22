@@ -154,6 +154,8 @@ define(['core/spinal'], function(Spinal) {
 		**/
 		containsAll: function(elements) {
 			if(!elements) return false;
+			// continue here...
+			console.log(_.map(elements, function(e) { return this.contains(e); }, this));
 			return _.some(_.map(elements, function(e) { return this.contains(e); }, this));
 		},
 

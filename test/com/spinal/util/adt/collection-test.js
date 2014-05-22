@@ -199,6 +199,22 @@ define(['util/adt/collection'], function(Collection) {
     	**/
     	describe('#containsAll()', function() {
 
+            it('Should return true/false if contains (or not) a collection of elements (No Interface)', function() {
+                this.testSimple.reset().addAll([{ name: 'foo' }, { name: 'bar' }, { name: 'zoo' }]);
+                var result = this.testSimple.containsAll([{ name: 'foo' }, { name: 'zoo' }]);
+                expect(result).to.be.equal(true);
+                result = this.testSimple.containsAll([{ name: 'foo' }, { name: 'non-existent' }]);
+                expect(result).to.be.equal(false);
+                result = this.testSimple.containsAll([{ non_existent: 'nothing' }, { name: 'bar' }]);
+                expect(result).to.be.equal(false);
+                result = this.testSimple.containsAll();
+                expect(result).to.be.equal(false);
+            });
+
+            it('Should return true/false if contains (or not) a collection of elements (With interface)', function() {
+
+            });
+
     	});
 
     	/**
