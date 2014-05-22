@@ -348,7 +348,7 @@ define(['util/adt/collection'], function(Collection) {
             });
 
             it('Should remove all the elements in the collection (With Interface)', function() {
-                
+
             });
 
     	});
@@ -357,6 +357,14 @@ define(['util/adt/collection'], function(Collection) {
     	*	Collection#findBy() test
     	**/
     	describe('#findBy()', function() {
+
+            it('Should find elements by a function predicate (No Interface)', function() {
+
+            });
+
+            it('Should find elements by a function predicate (With Interface)', function() {
+
+            });
 
     	});
 
@@ -408,7 +416,15 @@ define(['util/adt/collection'], function(Collection) {
     	*	Collection#sort() test
     	**/
     	describe('#sort()', function() {
-            // TODO: Write UT for this.
+
+            it('Should sort the collection (No Interface)', function() {
+
+            });
+
+            it('Should sort the collection (With Interface)', function() {
+                
+            });
+
     	});
 
     	/**
