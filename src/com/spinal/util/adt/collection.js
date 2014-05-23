@@ -39,8 +39,7 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 		*	@return {com.spinal.util.adt.Collection}
 		**/
 		initialize: function(attrs, opts) {
-			opts || (opts = {});
-			if(opts.interface) this._interface = opts.interface;
+			Collection.__super__.initialize.apply(this, arguments);
 			return this;
 		},
 
@@ -63,9 +62,11 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 		*	@param arr {Array} new collection to be replaced
 		*	@return Boolean
 		**/
-		set: function(arr) {
+		set: function(arr, opts) {
+			opts || (opts = {});
 			if(!this._valid(arr) || !_.isArray(arr)) return false;
 			this.reset({ silent: true });
+			if(opts.interface) this._interface = opts.interface;
 			if(!_.isNull(this._interface)) {
 				this.collection = _.compact(_.map(arr, function(ele) {
 					if(ele) return new this._interface(ele);
@@ -137,7 +138,7 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 		contains: function(element) {
 			if(!this._valid(element)) return false;
 			if(!_.isNull(this._interface)) {
-				var attrs = (this._interface.toJSON) ? _.invoke(this.collection, 'toJSON') : this.collection;
+				var attrs = (this._interface.prototype.toJSON) ? _.invoke(this.collection, 'toJSON') : this.collection;
 				return (_.filter(attrs, _.matches(element)).length > 0);
 			} else {
 				return (_.filter(this.collection, _.matches(element)).length > 0);
@@ -162,6 +163,7 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 		*	@public
 		*	@method iterator
 		*	@return {com.spinal.util.adt.Iterator}
+		*	@TODO: Review cloning of the original collection (this.collection) passed to the Iterator (Reference??)
 		**/
 		iterator: function() {
 			return new Iterator({ collection: this.collection });
@@ -178,7 +180,7 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 		**/
 		remove: function(ix, opts) {
 			opts || (opts = {});
-			if(ix && _.isNumber(ix) && ix < this.size()) {
+			if(!_.isUndefined(ix) && _.isNumber(ix) && ix < this.size()) {
 				var rmArr = this.collection.splice(ix, 1);
 				if(!opts.silent) this.trigger(Collection.EVENTS.removed, { removed: rmArr[0], collection: this });
 				return rmArr[0];
@@ -208,21 +210,26 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 		},
 
 		/**
-		*	Removes all collection's elements that are also contained in the collection specified by parameter.
+		*	Removes all collection's elements that are also strictly contained in the collection specified by parameter.
 		*	@public
 		*	@method removeAll
 		*	@param elements {Array} Collection of elements to be removed.
 		*	@param opts {Object} extra options
 		*	@optional
-		*	@return Boolean
+		*	@return Array
 		**/
 		removeAll: function(elements, opts) {
 			opts || (opts = {});
-			if(!this._valid(elements) || !_.isArray(elements)) return false;
-			var removed = (this.removeBy(_.bind(function(element) {
-				return (_.filter(elements, _.matches(element)).length > 0);
-			}, this)).length > 0);
-			if(!opts.silent && removed) this.trigger(Collection.EVENTS.removedAll, { collection: this });
+			if(!this._valid(elements) || !_.isArray(elements)) return [];
+			var len = this.size(), removed = [];
+			for(var i = 0; i < len; i++) {
+				if(_.filter(elements, _.matches(this.collection[i])).length > 0) {
+					removed.push(this.remove(i, { silent: true }));
+					if(i > 0) i--;
+					len--;
+				}
+			}
+			if(!opts.silent && removed.length > 0) this.trigger(Collection.EVENTS.removedAll, { removed: removed, collection: this });
 			return removed;
 		},
 
@@ -287,7 +294,9 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 		*	@return {com.spinal.util.adt.Collection}
 		**/
 		sort: function(comparator) {
-			this.collection.sort(comparator);
+			(!_.isUndefined(comparator) && _.isFunction(comparator)) ?
+				this.collection.sort(comparator) :
+				this.collection.sort();
 			return this;
 		}
 

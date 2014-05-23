@@ -2,7 +2,7 @@
 *	com.spinal.util.adt.Collection Class Tests
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define(['util/adt/collection'], function(Collection) {
+define(['core/spinal', 'util/adt/collection'], function(Spinal, Collection) {
 
     describe('com.spinal.util.adt.Collection', function() {
 
@@ -28,6 +28,11 @@ define(['util/adt/collection'], function(Collection) {
                 expect(this.testInterface._interface).to.be.ok();
                 expect(this.testInterface).to.be.ok();
                 expect(this.testInterface.collection).to.be.a('array');
+                this.testGeneric = new Collection([
+                    { name: 'foo' },
+                    { name: 'bar' },
+                    { name: 'zoo' }
+                ], { interface: Spinal.SpinalClass });
             });
 
     	});
@@ -187,6 +192,10 @@ define(['util/adt/collection'], function(Collection) {
                 expect(result).to.be.equal(true);
                 result = this.testInterface.contains({ model: new Backbone.Model({ nonexistent: '1' }) });
                 expect(result).to.be.equal(false);
+
+                // Interface with toJSON method
+                result = this.testGeneric.contains({ name: 'bar' });
+                expect(result).to.be.equal(true);
             });
 
     	});
@@ -232,6 +241,7 @@ define(['util/adt/collection'], function(Collection) {
 
     	/**
     	*	Collection#iterator() test
+        *    @TODO: Check collection clonning passed to the Iterator constructor.
     	**/
     	describe('#iterator()', function() {
 
@@ -300,11 +310,11 @@ define(['util/adt/collection'], function(Collection) {
                     expect(result.collection).to.be.ok();
                 }, this);
                 var removed = this.testSimple.removeBy(function(ele) {
-                    return (ele.value && ele.value > 1);
+                    return (ele.value && ele.value < 3);
                 });
                 expect(removed).to.be.ok();
                 expect(removed.length).to.be.equal(2);
-                expect(removed[1].value).to.be.equal(3);
+                expect(removed[1].value).to.be.equal(2);
                 expect(this.testSimple.size()).to.be.equal(1);
                 removed = this.testSimple.removeBy(function(ele) {
                     return (ele.value && ele.value === 5);
@@ -344,11 +354,49 @@ define(['util/adt/collection'], function(Collection) {
     	describe('#removeAll()', function() {
 
             it('Should remove all the elements in the collection (No Interface)', function() {
-
+                this.testSimple.reset().addAll([
+                    { name: 'foo' },
+                    { name: 'bar' },
+                    { name: 'zoo' }
+                ]);
+                this.testSimple.off().on(Collection.EVENTS.removedAll, function(result) {
+                    expect(result).to.be.ok();
+                    expect(result.removed).to.be.ok();
+                    expect(result.collection).to.be.ok();
+                    expect(result.collection.size()).to.be.equal(1);
+                }, this);
+                var removed = this.testSimple.removeAll([{ name: 'foo' }, { name: 'zoo' }]);
+                expect(removed.length).to.be.equal(2);
+                expect(removed[1].name).to.be.equal('zoo');
+                expect(this.testSimple.size()).to.be.equal(1);
+                removed = this.testSimple.removeAll([{ name: 'non-existant' }]);
+                expect(removed.length).to.be.equal(0);
+                removed = this.testSimple.removeAll();
+                expect(removed.length).to.be.equal(0);
             });
 
             it('Should remove all the elements in the collection (With Interface)', function() {
-
+                this.testInterface.reset().addAll([
+                    { model: new Backbone.Model({ name: 'foo' }) },
+                    { model: new Backbone.Model({ name: 'bar' }) },
+                    { model: new Backbone.Model({ name: 'zoo' }) }
+                ]);
+                this.testInterface.off().on(Collection.EVENTS.removed, function(result) {
+                    expect(result).to.be.ok();
+                    expect(result.removed).to.be.ok();
+                    expect(result.collection).to.be.ok();
+                }, this);
+                var removed = this.testInterface.removeAll([
+                    this.testInterface.get(0),
+                    this.testInterface.get(2)
+                ]);
+                expect(removed.length).to.be.equal(2);
+                expect(removed[1].model.get('name')).to.be.equal('zoo');
+                expect(this.testInterface.size()).to.be.equal(1);
+                removed = this.testInterface.removeAll([{ model: new Backbone.Model({ name: 'non-existant'}) }]);
+                expect(removed.length).to.be.equal(0);
+                removed = this.testInterface.removeAll();
+                expect(removed.length).to.be.equal(0);
             });
 
     	});
@@ -359,11 +407,31 @@ define(['util/adt/collection'], function(Collection) {
     	describe('#findBy()', function() {
 
             it('Should find elements by a function predicate (No Interface)', function() {
-
+                this.testSimple.reset().addAll([
+                    { name: 'foo' },
+                    { name: 'bar' },
+                    { name: 'zoo' }
+                ]);
+                var result = this.testSimple.findBy(function(ele) {
+                    return (ele.name && /(?=oo)/g.test(ele.name));
+                });
+                expect(result).to.be.ok();
+                expect(result.length).to.be.equal(2);
+                expect(result[1].name).to.be.equal('zoo');
             });
 
             it('Should find elements by a function predicate (With Interface)', function() {
-
+                this.testInterface.reset().addAll([
+                    { model: new Backbone.Model({ name: 'foo' }) },
+                    { model: new Backbone.Model({ name: 'bar' }) },
+                    { model: new Backbone.Model({ name: 'zoo' }) }
+                ]);
+                var result = this.testInterface.findBy(function(ele) {
+                    return (ele.model && /(?=oo)/g.test(ele.model.get('name')));
+                });
+                expect(result).to.be.ok();
+                expect(result.length).to.be.equal(2);
+                expect(result[1].model.get('name')).to.be.equal('zoo');
             });
 
     	});
@@ -417,12 +485,24 @@ define(['util/adt/collection'], function(Collection) {
     	**/
     	describe('#sort()', function() {
 
-            it('Should sort the collection (No Interface)', function() {
-
-            });
-
-            it('Should sort the collection (With Interface)', function() {
-                
+            it('Should sort the collection', function() {
+                // standard sort
+                this.testSimple.reset().addAll(['z', 'a', 'd', 'w']);
+                this.testSimple.sort();
+                expect(this.testSimple.get(0)).to.be.equal('a');
+                expect(this.testSimple.get(this.testSimple.size()-1)).to.be.equal('z');
+                // with comparator function
+                this.testSimple.reset().addAll([
+                    { v: 100 },
+                    { v: 1 },
+                    { v: 50 },
+                    { v: 25 }
+                ]);
+                this.testSimple.sort(function(a, b) {
+                    return (a.v && b.v) ? (b.v < a.v) : false;
+                });
+                expect(this.testSimple.get(0).v).to.be.equal(1);
+                expect(this.testSimple.get(this.testSimple.size()-1).v).to.be.equal(100);
             });
 
     	});

@@ -187,8 +187,7 @@ define(['libs/backbone'], function() {
 		*	Provides a generic Class with a generic interface to set and get properties
 		*	@class com.spinal.core.Class
 		**/
-		var SpinalClass = exports.SpinalClass = namespace('com.spinal.core.SpinalClass', function(attrs) {
-			if(attrs) this.set(attrs);
+		var SpinalClass = exports.SpinalClass = namespace('com.spinal.core.SpinalClass', function() {
 			this.initialize.apply(this, arguments);
 		});
 
@@ -199,7 +198,10 @@ define(['libs/backbone'], function() {
 			*	@method initialize
 			*	@return Class
 			**/
-			initialize: function() { return this; },
+			initialize: function() {
+				this.set.apply(this, arguments);
+				return this;
+			},
 
 			/**
 			*	Default Getter
@@ -219,8 +221,8 @@ define(['libs/backbone'], function() {
 			*	@return Object
 			**/
 			set: function(p, v) {
-				if(!p) throw new Error('set() requires at least 1 argument (an object or a key).');
-				(p && p === Object(p)) ? extend.apply(this, [this, p]) : this[p] = v;
+				if(_.isUndefined(p)) return this;
+				(p === Object(p)) ? extend.apply(this, [this, p]) : this[p] = v;
 				return this;
 			},
 
@@ -231,7 +233,7 @@ define(['libs/backbone'], function() {
 			*	@return Object
 			**/
 			toJSON: function() {
-				return JSON.parse(JSON.stringify(this));
+				return JSON.parse(JSON.stringify(_.omit(this, _.functions(this))));
 			},
 
 			/**
