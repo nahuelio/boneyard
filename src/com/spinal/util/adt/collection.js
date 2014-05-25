@@ -34,13 +34,12 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 		*	@public
 		*	@chainable
 		*	@method initialize
-		*	@param attrs {Array} initial elements in the collection.
+		*	@param initial {Array} initial elements in the collection.
 		*	@param opts {Object} Additional options.
 		*	@return {com.spinal.util.adt.Collection}
 		**/
-		initialize: function(attrs, opts) {
-			Collection.__super__.initialize.apply(this, arguments);
-			return this;
+		initialize: function(initial, opts) {
+			return Collection.__super__.initialize.apply(this, arguments);
 		},
 
 		/**
@@ -143,7 +142,6 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 			} else {
 				return (_.filter(this.collection, _.matches(element)).length > 0);
 			}
-			return false;
 		},
 
 		/**

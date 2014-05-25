@@ -13,7 +13,14 @@ define(['core/spinal',
 	*	@example
 	*	Usage:
 	*
-	*	var myqueue = new Queue({ capacity: 5 }); // capacity was set to 5
+	*	var myqueue = new Queue([], { capacity: 5 }); // initial is set tocapacity was set to 5
+	*		myqueue.addAll([{ name: 1 }, { name: 2 }]); // using 'addAll' from com.spinal.util.adt.Collection
+	*		myqueue.offer({ name: 3 }); // or adding one by one.
+	*		myqueue.poll();
+	*
+	*	OR (Using an interface)
+	*
+	*	var myqueue = new Queue([], { capacity: 3, interface: Spinal.SpinalClass });
 	*		myqueue.addAll([{ name: 1 }, { name: 2 }]); // using 'addAll' from com.spinal.util.adt.Collection
 	*		myqueue.offer({ name: 3 }); // or adding one by one.
 	*		myqueue.poll();
@@ -33,10 +40,12 @@ define(['core/spinal',
 		*	@public
 		*	@chainable
 		*	@method initialize
+		*	@param initial {Array} initial collection of elements in the queue.
+		*	@param opts {Object} Additional options.
 		*	@return {com.spinal.util.adt.Queue}
 		**/
-		initialize: function() {
-			return this;
+		initialize: function(initial, opts) {
+			return Queue.__super__.initialize.apply(this, arguments);
 		},
 
 		/**
@@ -52,6 +61,23 @@ define(['core/spinal',
 		},
 
 		/**
+		*	Set the initial state of the queue
+		*	@public
+		*	@method set
+		*	@param arr {Array} initial elements in the collection.
+		*	@param opts {Object} Additional options.
+		*	@return {com.spinal.util.adt.Queue}
+		**/
+		set: function(arr, opts) {
+			opts || (opts = {});
+			if(_.isUndefined(opts.capacity)) throw new Error('Queue requires a \'capacity\' property in order to be instanciate it.');
+			if(arr.length > opts.capacity) throw new Error('Queue element\'s collection passed overflows the current capacity [' + opts.capacity + '].');
+			this.capacity = opts.capacity;
+			Queue.__super__.set.apply(this, arguments);
+			return this;
+		},
+
+		/**
 		*	Inserts the specified element into this queue if it is possible to do so immediately without violating capacity restrictions.
 		*	@public
 		*	@method remove
@@ -60,7 +86,9 @@ define(['core/spinal',
 		**/
 		offer: function(element) {
 			if(!this._valid(element)) return false;
-			this.collection.unshift(element);
+			(!_.isNull(this._interface)) ?
+				this.collection.unshift(new this._interface(element)) :
+				this.collection.unshift(element);
 			return true;
 		},
 

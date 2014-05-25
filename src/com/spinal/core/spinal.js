@@ -4,7 +4,7 @@
 *	@requires Backbone
 *	@author Patricio Ferrerira <3dimentionar@gmail.com>
 **/
-define(['libs/backbone'], function() {
+define(['libs/backbone', 'libs/bootstrap'], function() {
 
 	/**
 	*	Spinal Core

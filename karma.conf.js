@@ -15,18 +15,18 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
         'test/test-main.js',
-        { pattern: 'target/**/*.js', included: false },
+        { pattern: 'src/**/*.js', included: false },
         { pattern: 'test/**/*.js', included: false }
     ],
 
 
     // list of files to exclude
-    exclude: ['target/main.js', 'target/libs/require.js'],
+    exclude: ['src/main.js', 'src/libs/require.js'],
 
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-        'target/**/*.js': ['coverage']
+        'src/**/*.js': ['coverage']
     },
 
     // test results reporter to use
@@ -63,7 +63,7 @@ module.exports = function(config) {
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ['Chrome'],
+    browsers: ['PhantomJS'],
 
 
     // Continuous Integration mode

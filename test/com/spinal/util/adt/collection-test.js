@@ -499,7 +499,7 @@ define(['core/spinal', 'util/adt/collection'], function(Spinal, Collection) {
                     { v: 25 }
                 ]);
                 this.testSimple.sort(function(a, b) {
-                    return (a.v && b.v) ? (b.v < a.v) : false;
+                    return (a.v && b.v) ? (a.v-b.v) : 0;
                 });
                 expect(this.testSimple.get(0).v).to.be.equal(1);
                 expect(this.testSimple.get(this.testSimple.size()-1).v).to.be.equal(100);
