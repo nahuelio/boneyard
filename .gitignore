@@ -1,5 +1,6 @@
-lib-cov
-lib/coverage.html
+src/libs
+coverage
+target
 benchmark/spinal-*.html
 docs
 *-SNAPSHOT.*
@@ -11,8 +12,10 @@ docs
 *.pid
 *.gz
 
+.DS_Store
 pids
 logs
 results
 npm-debug.log
 node_modules
+bower_components

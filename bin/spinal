@@ -1,0 +1,26 @@
+#!/usr/bin/env node
+
+var program = require('commander'),
+	pkg = require('../package.json'),
+	fs = require('fs'),
+	path = require('path'),
+	lib = path.join(path.dirname(fs.realpathSync(__filename)), '../'),
+	build = require(lib + 'config/build');
+
+/**
+*	Spinal Compile Tool
+**/
+program
+	.version(pkg.version)
+	.usage('[options]')
+	.option('-c, --config', 'Custom Config File')
+	.option('-v, --verbose', 'Display useful messages while building project files.')
+	.option('-b, --benchmark', 'Generates Benchmark page to evaluate performance of SpinalJS framework.')
+	.parse(process.argv)
+	.name = 'spinal';
+
+if(program.benchmark) {
+	build.exec('benchmark');
+} else {
+	build.exec('build', { c: program.config, v: program.verbose });
+}

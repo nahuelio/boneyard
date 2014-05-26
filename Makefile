@@ -1,54 +1,64 @@
-REPORTER = spec
-REPORTER_COV = html-cov
-
-comma:= ,
-space:=
-space+=
+## Clean
 
 clean:
-	rm -f lib/spinal*.js
-	rm -fr lib-cov
-	rm -f lib/coverage.html
-	rm -f benchmark/spinal-*.html
-	rm -fr docs/**/*.*
+	@echo "\nCleanning Environment..."
+	@make clean-coverage && make clean-benchmark && make clean-docs && make clean-build
 
-coverage:
-	@./node_modules/jscoverage/bin/jscoverage \
-		--no-highlight \
-		src lib-cov
+clean-coverage:
+	@echo "\nCleanning Coverage Reports..."
+	@rm -fr coverage
 
-test-all:
-	@UT=1 \
-	./node_modules/mocha/bin/mocha \
-		--reporter $(REPORTER) \
-		-c test/**/*.js
+clean-benchmark:
+	@echo "\nCleanning Benchmark..."
+	@rm -f benchmark/spinal-*.html
 
-test-cov:
-	@UT=1 \
-	./node_modules/mocha/bin/mocha \
-		--reporter $(REPORTER_COV) \
-		-c test/**/*.js \
-		--coverage > lib/coverage.html
+clean-docs:
+	@echo "\nCleanning API Docs..."
+	@rm -fr docs/*
 
-test: clean coverage test-all test-cov
+clean-build:
+	@echo "\nCleanning Build..."
+	@rm -fr target/*
 
-doc-all:
-	@yuidoc -c ./yuidoc.json src
-	 
-doc: clean doc-all
+## Dependencies
 
-build-selective:
-	@node build selective $(subst $(comma),$(space),$(modules))
+install-dependencies:
+	@echo "\nInstalling Dependencies..."
+	@bower install
 
-build-all:
-	@node build all
+## Test & CodeCoverage via Karma
 
-build: test doc-all build-all
+test:
+	@make install-dependencies && make clean-coverage
+	@echo "\nKarma executing Unit Tests...\n"
+	@karma start karma.conf.js --single-run
+
+## Documentation
+
+doc:
+	@make clean-docs
+	@echo "\nCreating API DOCS (YUIDOC)...\n"
+	@node ./node_modules/yuidocjs/lib/cli -c ./yuidoc.json --exclude libs ./src
+
+## Build
+
+build:
+	@echo "\nBuilding SpinalJS..."
+	@make test && make doc
+	@make clean-build
+	@node ./bin/spinal -v
+
+## Benchmark
 
 benchmark:
-	@node build benchmark
+	@echo "\nBenchmark SpinalJS..."
+	@make clean-benchmark
+	@node ./bin/spinal -b
+
+## Spin Server
 
 run:
+	@echo "\nRunning server..."
 	@node run
 
-.PHONY: clean coverage test-all test-cov build-selective build-all test doc-all doc build benchmark run
+.PHONY: clean clean-coverage clean-benchmark clean-docs clean-build install-dependencies test doc build benchmark run
