@@ -7,23 +7,21 @@ define(['core/spinal',
 
 	/**
 	*	Define a generic interface to communicate with a service in the cloud.
+	*	<h5>Usages:</h5>
+	*
+	*		var myqueue = new Queue([], { capacity: 5 }); // initial is set to capacity was set to 5
+	*			myqueue.addAll([{ name: 1 }, { name: 2 }]); // using 'addAll' from com.spinal.util.adt.Collection
+	*			myqueue.offer({ name: 3 }); // or adding one by one.
+	*			myqueue.poll();
+	*
+	*		var myqueue = new Queue([], { capacity: 3, interface: Spinal.SpinalClass });
+	*			myqueue.addAll([{ name: 1 }, { name: 2 }]); // using 'addAll' from com.spinal.util.adt.Collection
+	*			myqueue.offer({ name: 3 }); // or adding one by one.
+	*			myqueue.poll();
+	*
 	*	@namespace com.spinal.util.adt
 	*	@class com.spinal.util.adt.Queue
 	*	@extends com.spinal.util.adt.Collection
-	*	@example
-	*	Usage:
-	*
-	*	var myqueue = new Queue([], { capacity: 5 }); // initial is set tocapacity was set to 5
-	*		myqueue.addAll([{ name: 1 }, { name: 2 }]); // using 'addAll' from com.spinal.util.adt.Collection
-	*		myqueue.offer({ name: 3 }); // or adding one by one.
-	*		myqueue.poll();
-	*
-	*	OR (Using an interface)
-	*
-	*	var myqueue = new Queue([], { capacity: 3, interface: Spinal.SpinalClass });
-	*		myqueue.addAll([{ name: 1 }, { name: 2 }]); // using 'addAll' from com.spinal.util.adt.Collection
-	*		myqueue.offer({ name: 3 }); // or adding one by one.
-	*		myqueue.poll();
 	**/
 	var Queue = Spinal.namespace('com.spinal.util.adt.Queue', Collection.inherit({
 

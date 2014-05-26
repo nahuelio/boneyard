@@ -8,7 +8,7 @@ define(['core/spinal'], function(Spinal) {
 	*	Define a generic interface of a middle man that helps with the Controller/Model communication
 	*	@namespace com.spinal.mvc
 	*	@class com.spinal.mvc.Service
-	*	@extends com.spinal.core.Class
+	*	@extends com.spinal.core.SpinalClass
 	**/
 	var Service = Spinal.namespace('com.spinal.mvc.Service', Spinal.com.spinal.core.SpinalClass.inherit({
 

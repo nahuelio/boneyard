@@ -1,6 +1,3 @@
-REPORTER = spec
-REPORTER_COV = html-cov
-
 ## Clean
 
 clean:
@@ -9,7 +6,7 @@ clean:
 
 clean-coverage:
 	@echo "\nCleanning Coverage Reports..."
-	@rm -fr lib-cov
+	@rm -fr coverage
 
 clean-benchmark:
 	@echo "\nCleanning Benchmark..."
@@ -29,41 +26,25 @@ install-dependencies:
 	@echo "\nInstalling Dependencies..."
 	@bower install
 
-## Test & CodeCoverage
+## Test & CodeCoverage via Karma
 
-coverage:
-	@echo "\nInstrumenting Code Coverage..."
-	@./node_modules/jscoverage/bin/jscoverage \
-		src lib-cov --exclude libs
-
-test-mocha:
-	@echo "\nRunning Unit Testing and Code Coverage..."
-	@UT=1 \
-	./node_modules/mocha/bin/mocha \
-		--reporter $(REPORTER) \
-		-c test/**/*.js
-
-test-cov:
-	@UT=1 \
-	./node_modules/mocha/bin/mocha \
-		--reporter $(REPORTER_COV) \
-		-c test/**/*.js \
-		--coverage > target/coverage.html
-
-test: install-dependencies clean-coverage coverage test-mocha test-cov
+test:
+	@make install-dependencies && make clean-coverage
+	@echo "\nKarma executing Unit Tests...\n"
+	@karma start karma.conf.js --single-run
 
 ## Documentation
 
 doc:
 	@make clean-docs
-	@echo "\nCreating Documentation (YUIDOC)...\n"
+	@echo "\nCreating API DOCS (YUIDOC)...\n"
 	@node ./node_modules/yuidocjs/lib/cli -c ./yuidoc.json --exclude libs ./src
 
 ## Build
 
 build:
 	@echo "\nBuilding SpinalJS..."
-	## @make test && make doc
+	@make test && make doc
 	@make clean-build
 	@node ./bin/spinal -v
 
@@ -80,4 +61,4 @@ run:
 	@echo "\nRunning server..."
 	@node run
 
-.PHONY: clean clean-coverage clean-coverage clean-benchmark clean-docs clean-build install-dependencies coverage test-mocha test-cov test doc build benchmark run
+.PHONY: clean clean-coverage clean-benchmark clean-docs clean-build install-dependencies test doc build benchmark run

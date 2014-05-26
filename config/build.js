@@ -103,7 +103,7 @@ var Build = {
 	*	Release Final Files
 	**/
 	release: function() {
-		console.log('\nCreating Release...');
+		Utils.log('\nCreating Release...\n');
 		try {
 			Utils.createDir(resolve(__dirname, '../'), this.config.project.dir);
 			requirejs.optimize(this.config.project, _.bind(function(result) {}, this), function(err) { console.log(err); });

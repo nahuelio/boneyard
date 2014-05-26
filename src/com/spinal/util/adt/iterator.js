@@ -8,7 +8,7 @@ define(['core/spinal'], function(Spinal) {
 	*	Define a generic interface to communicate with a service in the cloud.
 	*	@namespace com.spinal.util.adt
 	*	@class com.spinal.util.adt.Iterator
-	*	@extends com.spinal.core.Class
+	*	@extends com.spinal.core.SpinalClass
 	**/
 	var Iterator = Spinal.namespace('com.spinal.util.adt.Iterator', Spinal.com.spinal.core.SpinalClass.inherit({
 

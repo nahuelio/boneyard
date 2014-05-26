@@ -8,7 +8,7 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 	*	Define a generic interface of a Collection
 	*	@namespace com.spinal.util.adt
 	*	@class com.spinal.util.adt.Collection
-	*	@extends com.spinal.core.Class
+	*	@extends com.spinal.core.SpinalClass
 	**/
 	var Collection = Spinal.namespace('com.spinal.util.adt.Collection', Spinal.com.spinal.core.SpinalClass.inherit({
 
@@ -325,7 +325,7 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 			**/
 			addedAll: 'com:spinal:util:adt:collection:addedAll',
 			/**
-			* @event addedAll
+			* @event removedAll
 			**/
 			removedAll: 'com:spinal:util:adt:collection:removedAll',
 			/**

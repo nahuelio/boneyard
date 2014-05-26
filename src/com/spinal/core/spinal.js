@@ -39,7 +39,7 @@ define(['libs/backbone', 'libs/bootstrap'], function() {
 		*	@static
 		*	@method namespace
 		*	@param path {String} namespace path
-		*	@param
+		*	@param constructor {Function} constructor function
 		*	@return Function
 		**/
 		var namespace = exports.namespace = function(path, constructor) {
@@ -61,7 +61,7 @@ define(['libs/backbone', 'libs/bootstrap'], function() {
 		*	@private
 		*	@method _isWindow
 		*	@param obj {Object} object to evaluate
-		*	@returns Boolean
+		*	@return Boolean
 		**/
 		var _isWindow = function(obj) {
 			return obj && obj.document && obj.location && obj.alert && obj.setInterval;
@@ -70,8 +70,8 @@ define(['libs/backbone', 'libs/bootstrap'], function() {
 		/**
 		*	Creates object through Object.create or polyfill for IE <= 8
 		*	@private
-		*	@param {Object} proto - The object representing the prototype of the new object to create
-		*	@returns Object Newly created object with proto as prototype
+		*	@param proto{Object} - The object representing the prototype of the new object to create
+		*	@return Object
 		**/
 		var _createObject = (function() {
 			function Constructor() {};
@@ -188,7 +188,7 @@ define(['libs/backbone', 'libs/bootstrap'], function() {
 
 		/**
 		*	Provides a generic Class with a generic interface to set and get properties
-		*	@class com.spinal.core.Class
+		*	@class com.spinal.core.SpinalClass
 		**/
 		var SpinalClass = exports.SpinalClass = namespace('com.spinal.core.SpinalClass', function() {
 			this.initialize.apply(this, arguments);
