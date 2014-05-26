@@ -35,7 +35,21 @@ define(['core/spinal'], function(Spinal) {
 		*	@method initialize
 		*	@return {com.spinal.util.adt.Iterator}
 		**/
-		initialize: function() { return this; },
+		initialize: function() {
+			return Iterator.__super__.initialize.apply(this, arguments);
+		},
+
+		/**
+		*	Set a new collection of elements
+		*	@public
+		*	@method set
+		*	@param attrs {Object} attribu
+		*	@return {com.spinal.util.adt.Iterator}
+		**/
+		set: function(arr) {
+			if(!_.isArray(arr)) throw new Error(this.toString() + ' requires an array in order to be instanciate it.');
+			return Iterator.__super__.set.apply(this, [{ collection: arr }]);
+		},
 
 		/**
 		*	Returns true if there is still an element in the list at the current cursor position.
@@ -44,17 +58,17 @@ define(['core/spinal'], function(Spinal) {
 		*	@return Boolean
 		**/
 		hasNext: function() {
-			return ((this.collection.length-1) > this._cur);
+			return (this._cur <= (this.collection.length-1));
 		},
 
 		/**
 		*	Returns the current element in the collection and move the cursor position 1 step forward.
 		*	@public
 		*	@method next
-		*	@return Any
+		*	@return Object
 		**/
 		next: function() {
-			return this.collection[++this._cur];
+			return (this._cur <= this.collection.length-1) ? this.collection[this._cur++] : null;
 		},
 
 		/**
@@ -73,20 +87,14 @@ define(['core/spinal'], function(Spinal) {
 		*	Removes from the underlying collection the last element returned by this iterator
 		*	@public
 		*	@method remove
-		*	@return Any
+		*	@return Object
 		**/
 		remove: function() {
-			return (this.collection.length > 0) ? this.collection.splice(this._cur, 1) : null;
-		},
-
-		/**
-		*	String representation of an instance of this class
-		*	@public
-		*	@method toString
-		*	@return String
-		**/
-		toString: function() {
-			return '[object Iterator]';
+			if(this.collection.length > 0) {
+				var removed = this.collection.splice(this._cur, 1)[0];
+				this.trigger(Iterator.EVENTS.removed, { removed: removed, iterator: this });
+			}
+			return removed;
 		}
 
 	}, {
@@ -107,7 +115,7 @@ define(['core/spinal'], function(Spinal) {
 			/**
 			*	@event removed
 			**/
-			removed: 'com:spinal:util:adt:interator:removed'
+			removed: 'com:spinal:util:adt:iterator:removed'
 		}
 
 	}));

@@ -38,10 +38,13 @@ define(['libs/backbone', 'libs/bootstrap'], function() {
 		*	Namespacing Strategy
 		*	@static
 		*	@method namespace
-
+		*	@param path {String} namespace path
+		*	@param
 		*	@return Function
 		**/
 		var namespace = exports.namespace = function(path, constructor) {
+			if(!path || !_.isString(path) || !constructor || !_.isFunction(constructor))
+				throw new Error('Spinal.namespace accepts 2 arguments: path (string) and constructor (function).');
 			var parts = path.split('.'), parent = exports, pl, i;
 			if (parts[0] == "spinal") parts = parts.slice(1);
 			pl = parts.length;

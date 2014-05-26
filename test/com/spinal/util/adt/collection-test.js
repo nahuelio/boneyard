@@ -2,7 +2,9 @@
 *	com.spinal.util.adt.Collection Class Tests
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define(['core/spinal', 'util/adt/collection'], function(Spinal, Collection) {
+define(['core/spinal',
+        'util/adt/collection',
+        'util/adt/iterator'], function(Spinal, Collection, Iterator) {
 
     describe('com.spinal.util.adt.Collection', function() {
 
@@ -74,8 +76,14 @@ define(['core/spinal', 'util/adt/collection'], function(Spinal, Collection) {
                 expect(this.testInterface.size()).to.be.equal(1);
             });
 
-            it('Should not set a new collection (undefined object)', function() {
+            it('Should NOT set a new collection (undefined object with No Interface)', function() {
                 expect(this.testSimple.set()).to.be.equal(false);
+            });
+
+            it('Should NOT set a new collection (undefined object with Interface)', function() {
+                expect(this.testInterface.set()).to.be.equal(false);
+                expect(this.testInterface.set([undefined])).to.be.equal(true);
+                expect(this.testInterface.size()).to.be.equal(0);
             });
 
     	});
@@ -103,7 +111,7 @@ define(['core/spinal', 'util/adt/collection'], function(Spinal, Collection) {
     	describe('#add()', function() {
 
     		it('Should add a new element', function() {
-                var added = this.testSimple.add({ name: 'foo' });
+                var added = this.testSimple.add({ name: 'foo' }, { silent: true });
                 expect(added).to.be.ok();
                 expect(added.name).to.be.equal('foo');
                 expect(this.testSimple.size()).to.be.equal(2);
@@ -113,9 +121,9 @@ define(['core/spinal', 'util/adt/collection'], function(Spinal, Collection) {
                 var added = this.testInterface.add({ model: new Backbone.Model({ name: 'foo' }) });
                 expect(added).to.be.ok();
                 expect(this.testInterface._interface).to.be.ok();
-                expect(this.testInterface.get(1)).to.be.an(Backbone.View);
-                expect(this.testInterface.get(1).model).to.be.ok();
-                expect(this.testInterface.get(1).model.get('name')).to.be.equal('foo');
+                expect(this.testInterface.get(0)).to.be.an(Backbone.View);
+                expect(this.testInterface.get(0).model).to.be.ok();
+                expect(this.testInterface.get(0).model.get('name')).to.be.equal('foo');
             });
 
     		it('Should NOT add a new element', function() {
@@ -131,7 +139,7 @@ define(['core/spinal', 'util/adt/collection'], function(Spinal, Collection) {
     	describe('#addAll()', function() {
 
             it('Should add all the items (No Interface)', function() {
-                var added = this.testSimple.reset().addAll([{ name: 'foo'}, { name: 'bar' }]);
+                var added = this.testSimple.reset().addAll([{ name: 'foo'}, { name: 'bar' }], { silent: true });
                 expect(added).to.be.equal(true);
                 expect(this.testSimple.size()).to.be.equal(2);
                 expect(this.testSimple.get(1).name).to.be.equal('bar');
@@ -140,6 +148,8 @@ define(['core/spinal', 'util/adt/collection'], function(Spinal, Collection) {
             it('Should NOT add an empty Array of elements (No Interface)', function() {
                 var added = this.testSimple.reset().addAll([]);
                 expect(added).to.be.equal(true);
+                added = this.testSimple.addAll();
+                expect(added).to.be.equal(false);
                 expect(this.testSimple.size()).to.be.equal(0);
             });
 
@@ -177,7 +187,7 @@ define(['core/spinal', 'util/adt/collection'], function(Spinal, Collection) {
                 this.testSimple.reset().addAll([{ name: 'foo' }, { name: 'bar' }, { name: 'zoo' }]);
                 var result = this.testSimple.contains({ name: 'bar' });
                 expect(result).to.be.equal(true);
-                result = this.testSimple.contains({ name: 'non-existent'});
+                result = this.testSimple.contains({ name: 'non-existent' });
                 expect(result).to.be.equal(false);
                 result = this.testSimple.contains();
                 expect(result).to.be.equal(false);
@@ -241,14 +251,19 @@ define(['core/spinal', 'util/adt/collection'], function(Spinal, Collection) {
 
     	/**
     	*	Collection#iterator() test
-        *    @TODO: Check collection clonning passed to the Iterator constructor.
     	**/
     	describe('#iterator()', function() {
 
             it('Should return an Iterator Instance from a Collection', function() {
-                var testIteratorSimple = this.testSimple.iterator();
-                expect(testIteratorSimple.hasNext).to.be.ok();
-                expect(testIteratorSimple.toString()).to.be.equal('[object Iterator]');
+                this.testIteratorSimple = this.testSimple.iterator();
+                expect(this.testIteratorSimple.hasNext).to.be.ok();
+                expect(this.testIteratorSimple.toString()).to.be.equal('[object Iterator]');
+                // check original collection reference.
+                this.testIteratorSimple.off().on(Iterator.EVENTS.removed, function(result) {
+                    expect(this.testIteratorSimple.collection.length).to.be.equal(2);
+                    expect(this.testSimple.collection.length).to.be.equal(3);
+                }, this);
+                this.testIteratorSimple.remove();
             });
 
     	});

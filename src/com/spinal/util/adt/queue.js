@@ -110,16 +110,6 @@ define(['core/spinal',
 		**/
 		poll: function() {
 			return (this.size() > 0) ? this.remove(0) : null;
-		},
-
-		/**
-		*	String representation of an instance of this class
-		*	@public
-		*	@method toString
-		*	@return String
-		**/
-		toString: function() {
-			return '[object Queue]';
 		}
 
 	}, {

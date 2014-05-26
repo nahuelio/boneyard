@@ -120,7 +120,7 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 			opts || (opts = {});
 			if(!this._valid(elements) || !_.isArray(elements)) return false;
 			elements = _.compact(_.map(elements, function(ele) {
-				if(ele) return (!_.isNull(this._interface)) ? new this._interface(ele) : ele;
+				if(!_.isUndefined(ele)) return (!_.isNull(this._interface)) ? new this._interface(ele) : ele;
 			}, this));
 			this.collection = this.collection.concat(elements);
 			if(!opts.silent) this.trigger(Collection.EVENTS.addedAll, { addedAll: elements, collection: this });
@@ -161,10 +161,9 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 		*	@public
 		*	@method iterator
 		*	@return {com.spinal.util.adt.Iterator}
-		*	@TODO: Review cloning of the original collection (this.collection) passed to the Iterator (Reference??)
 		**/
 		iterator: function() {
-			return new Iterator({ collection: this.collection });
+			return new Iterator(_.clone(this.collection));
 		},
 
 		/**

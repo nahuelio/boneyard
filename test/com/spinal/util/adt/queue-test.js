@@ -1,5 +1,5 @@
 /**
-*	com.spinal.util.adt.Collection Class Tests
+*	com.spinal.util.adt.Queue Class Tests
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['core/spinal', 'util/adt/queue'], function(Spinal, Queue) {
@@ -82,6 +82,55 @@ define(['core/spinal', 'util/adt/queue'], function(Spinal, Queue) {
 				this.testSimple.reset();
 				expect(this.testSimple.offer()).to.be.equal(false);
 			});
+
+		});
+
+		describe('#peek()', function() {
+
+			it('Should retrieve the head (element) from the queue without removing it', function() {
+				this.testSimple = new Queue([], { capacity: 4 });
+				this.testSimple.offer({ name: 'zoo' });
+				this.testSimple.offer({ name: 'bar' });
+				this.testSimple.offer({ name: 'foo' });
+				var result = this.testSimple.peek();
+				expect(result).to.be.ok();
+				expect(result.name).to.be.equal('foo');
+				expect(this.testSimple.size()).to.be.equal(3);
+			});
+
+			it('Should NOT retrieve the head (empty queue)', function() {
+				this.testSimple = new Queue([], { capacity: 1 });
+				expect(this.testSimple.peek()).to.be.equal(null);
+			});
+
+		});
+
+		describe('#poll()', function() {
+
+			it('Should retrieve and remove the head (element) from the queue', function() {
+				this.testSimple = new Queue([], { capacity: 3 });
+				this.testSimple.offer({ name: 'zoo' });
+				this.testSimple.offer({ name: 'bar' });
+				this.testSimple.offer({ name: 'foo' });
+				var result = this.testSimple.poll();
+				expect(result).to.be.ok();
+				expect(result.name).to.be.equal('foo');
+				expect(this.testSimple.size()).to.be.equal(2);
+			});
+
+			it('Should NOT retriebe and remove the head (element) from the queue', function() {
+				this.testSimple = new Queue([], { capacity: 1 });
+				expect(this.testSimple.poll()).to.be.equal(null);
+			});
+
+		});
+
+		describe('#toString()', function() {
+
+			it('Should return String representation of a Queue instance', function() {
+				expect(this.testSimple.toString()).to.be.equal('[object Queue]');
+			});
+
 		});
 
 	});
