@@ -25,14 +25,7 @@ define(['libs/backbone', 'libs/bootstrap'], function() {
 
 		// Expose Backbone and Underscore hard dependency into Spinal Namespace
 		if(!root.Backbone || !root._) throw new Error('[Spinal Error] Backbone or Underscore haven\'t being loaded.');
-		exports.Backbone = root.Backbone;
-		exports._ = root._;
-
-		// Expose jQuery hard dependency into Spinal Namespace
-		if(exports.Backbone && exports.Backbone.$) exports.$ = exports.Backbone.$;
-
-		// SpinalJS Expose Third Party Libraries into Spinal Namespace when available.
-		if(root.Modernizr) exports.Modernizr = Modernizr;
+		exports.Backbone = root.Backbone; exports._ = root._;
 
 		/**
 		*	Namespacing Strategy

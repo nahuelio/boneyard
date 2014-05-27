@@ -13,22 +13,6 @@ define(['core/spinal'], function(Spinal) {
 	var View = Spinal.namespace('com.spinal.ui.View', Spinal.Backbone.View.inherit({
 
 		/**
-		*	Id
-		*	@public
-		*	@property id
-		*	@type String
-		**/
-		id: null,
-
-		/**
-		*	Class
-		*	@public
-		*	@property class
-		*	@type String
-		**/
-		class: 'spinal-view',
-
-		/**
 		*	Template
 		*	@public
 		*	@property template
@@ -45,6 +29,22 @@ define(['core/spinal'], function(Spinal) {
 		succesor: null,
 
 		/**
+		*	Events
+		*	@public
+		*	@property events
+		*	@type Object
+		**/
+		events: {},
+
+		/**
+		*	Internal CSS className
+		*	@private
+		*	@property _className
+		*	@type String
+		**/
+		_className: 'ui:view',
+
+		/**
 		*	Initialize
 		*	@public
 		*	@chainable
@@ -53,8 +53,24 @@ define(['core/spinal'], function(Spinal) {
 		**/
 		initialize: function(attrs) {
 			View.__super__.initialize.apply(this, arguments);
-			if(attrs.succesor) this.set('el', succesor.get('el'));
+			this._valid(attrs);
+			if(attrs.tpl) this.template = _.template(attrs.tpl);
+			this.setElement(this.template({}));
 			return this;
+		},
+
+		/**
+		*	Validate Parameters
+		*	@private
+		*	@method _valid
+		*	@param attrs {Object} attributes
+		*	@return Boolean
+		**/
+		_valid: function(attrs) {
+			if(!attrs.succesor) throw new Error(this.toString() + ' \'succesor\' must be passed to to constructor.');
+			if(attrs.succesor instanceof Backbone.View)
+				throw new Error(this.toString() + ' \'succesor\' must be an instance of Backbone.View.');
+			return true;
 		},
 
 		/**
@@ -65,6 +81,8 @@ define(['core/spinal'], function(Spinal) {
 		*	@return {com.spinal.ui.View}
 		**/
 		render: function() {
+			this.clear();
+			this.trigger(View.EVENTS.rendered, { view: this });
 			return this;
 		},
 
@@ -76,6 +94,7 @@ define(['core/spinal'], function(Spinal) {
 		*	@return {com.spinal.ui.View}
 		**/
 		update: function() {
+			this.trigger(View.EVENTS.updated, { view: this });
 			return this;
 		},
 
@@ -100,6 +119,7 @@ define(['core/spinal'], function(Spinal) {
 		**/
 		show: function() {
 			if(this.$el) this.$el.show();
+			this.trigger(View.EVENTS.shown, { view: this });
 			return this;
 		},
 
@@ -112,6 +132,7 @@ define(['core/spinal'], function(Spinal) {
 		**/
 		hide: function() {
 			if(this.$el) this.$el.hide();
+			this.trigger(View.EVENTS.hidden, { view: this });
 			return this;
 		},
 
@@ -124,6 +145,7 @@ define(['core/spinal'], function(Spinal) {
 		**/
 		enable: function() {
 			if(this.$el) this.$el.enable();
+			this.trigger(View.EVENTS.enabled, { view: this });
 			return this;
 		},
 
@@ -136,6 +158,7 @@ define(['core/spinal'], function(Spinal) {
 		**/
 		disable: function() {
 			if(this.$el) this.$el.disable();
+			this.trigger(View.EVENTS.disabled, { view: this });
 			return this;
 		},
 
@@ -144,10 +167,15 @@ define(['core/spinal'], function(Spinal) {
 		*	@public
 		*	@chainable
 		*	@method clear
+		*	@param opts {Object} additional options
 		*	@return {com.spinal.ui.View}
 		**/
-		clear: function() {
-			if(this.$el) this.$el.children().remove();
+		clear: function(opts) {
+			opts || (opts = {});
+			if(this.$el) {
+				this.$el.children().remove();
+				if(!opts.silent) this.trigger(View.EVENTS.cleared, { view: this });
+			}
 			return this;
 		},
 
@@ -205,18 +233,6 @@ define(['core/spinal'], function(Spinal) {
 			*	@event disabled
 			**/
 			disabled: 'com:spinal:ui:view:disabled',
-			/**
-			*	@event clicked
-			**/
-			clicked: 'com:spinal:ui:view:clicked',
-			/**
-			*	@event focused
-			**/
-			focused: 'com:spinal:ui:view:focused',
-			/**
-			*	@event blurred
-			**/
-			blurred: 'com:spinal:ui:view:blurred',
 			/**
 			*	@event rendered
 			**/
