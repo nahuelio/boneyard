@@ -34,9 +34,8 @@ define(['core/spinal'], function(Spinal) {
     	/**
     	*	Third Party Libraries Verification
     	**/
-    	describe('#Availability of Third Party Libs (jQuery, Underscore, Backbone)', function() {
+    	describe('#Availability of Third Party Libs (Underscore, Backbone)', function() {
     		it('Should be available and hooked up into Spinal Core', function() {
-    			expect(Spinal.$).to.be.ok();
     			expect(Spinal._).to.be.ok();
     			expect(Spinal.Backbone).to.be.ok();
     		});

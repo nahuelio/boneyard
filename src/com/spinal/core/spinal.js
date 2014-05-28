@@ -4,7 +4,7 @@
 *	@requires Backbone
 *	@author Patricio Ferrerira <3dimentionar@gmail.com>
 **/
-define(['libs/backbone', 'libs/bootstrap'], function() {
+define(['libs/backbone'], function() {
 
 	/**
 	*	Spinal Core
@@ -26,6 +26,12 @@ define(['libs/backbone', 'libs/bootstrap'], function() {
 		// Expose Backbone and Underscore hard dependency into Spinal Namespace
 		if(!root.Backbone || !root._) throw new Error('[Spinal Error] Backbone or Underscore haven\'t being loaded.');
 		exports.Backbone = root.Backbone; exports._ = root._;
+
+		// Change Setting to Mustache Style
+		_.templateSettings = {
+			interpolate: /\{\{(.+?)\}\}/g,
+			escape: /\{\{-(.*?)\}\}/g
+		};
 
 		/**
 		*	Namespacing Strategy
@@ -192,7 +198,7 @@ define(['libs/backbone', 'libs/bootstrap'], function() {
 			*	Default initialize
 			*	@public
 			*	@method initialize
-			*	@return Class
+			*	@return {com.spinal.core.SpinalClass}
 			**/
 			initialize: function() {
 				this.set.apply(this, arguments);
@@ -235,7 +241,7 @@ define(['libs/backbone', 'libs/bootstrap'], function() {
 			/**
 			*	Default toString implementation
 			*	@public
-			*	@method set
+			*	@method toString
 			*	@return String
 			**/
 			toString: function() {
