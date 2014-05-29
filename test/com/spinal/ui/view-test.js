@@ -37,6 +37,15 @@ define(['core/spinal', 'ui/view'], function(Spinal, View) {
                 expect(this.testView.model.get('name')).to.be.equal('foo');
     		});
 
+            it('Should return instance of View (succesor + valid render method)', function() {
+                this.testView = new View({
+                    succesor: new Backbone.View({ el: 'div' }),
+                    method: View.RENDER.prependTo
+                });
+                expect(this.testView).to.be.ok();
+                expect(this.testView.method).to.be.equal(View.RENDER.prependTo);
+    		});
+
     		it('Should throw an Error: new View() no parameters', function() {
                 expect(function() {
                     new View();
@@ -67,6 +76,29 @@ define(['core/spinal', 'ui/view'], function(Spinal, View) {
                 });
             });
 
+            it('Should throw an Error: Passed method \'html\' (and unsupported method) as parameter to the View constructor', function() {
+                // HTML method
+                expect(function() {
+                    new View({
+                        succesor: new Backbone.View({ el: 'div' }),
+                        method: View.RENDER.html
+                    });
+                }).to.throwException(function(e) {
+                    expect(e).to.be.ok();
+                    expect(e.message).to.be.equal('[object View] html render method is unsupported for instances of View Class.');
+                });
+                // Null as method
+                expect(function() {
+                    new View({
+                        succesor: new Backbone.View({ el: 'div' }),
+                        method: 'non-existent'
+                    });
+                }).to.throwException(function(e) {
+                    expect(e).to.be.ok();
+                    expect(e.message).to.be.equal('[object View] unsupported render \'method -> non-existent\'.');
+                });
+            });
+
         });
 
         describe('#render()', function() {
@@ -76,14 +108,59 @@ define(['core/spinal', 'ui/view'], function(Spinal, View) {
                 this.testView.off().on(View.EVENTS.rendered, function(ev) {
                     expect(ev).to.be.ok();
                     expect(ev.view).to.be.ok();
+                    expect(ev.view.$el.attr('class')).to.be.equal('com:spinal:ui:view');
                 });
                 var result = this.testView.render();
                 expect(result).to.be.ok();
                 expect(result).to.be.a(View);
-                //console.log(result.$el);
+                // Methods: appendTo (default), append, prependTo, prepend, html
+                this.testView.render({ method: View.RENDER.append }); // defaults to appendTo
+                this.testView.render({ method: View.RENDER.appendTo });
+                this.testView.render({ method: View.RENDER.prependTo });
+                this.testView.render({ method: View.RENDER.prepend }); // defaults to prependTo
+                this.testView.render({ method: View.RENDER.html }); // defaults to appendTo
+                // Silent (No event triggering)
+                this.testView.render({ silent: true });
             });
 
         });
+
+        describe('#update()', function() {
+
+        });
+
+        describe('#lookup()', function() {
+
+        });
+
+        describe('#show()', function() {
+
+        });
+
+        describe('#hide()', function() {
+
+        });
+
+        describe('#enable()', function() {
+
+        });
+
+        describe('#disable()', function() {
+
+        });
+
+        describe('#clear()', function() {
+
+        });
+
+        describe('#_next()', function() {
+
+        });
+
+        describe('#toString()', function() {
+
+        });
+
 	});
 
 });

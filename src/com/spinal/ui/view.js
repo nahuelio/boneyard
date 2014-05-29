@@ -45,6 +45,14 @@ define(['core/spinal', 'libs/bootstrap'], function(Spinal) {
 		className: 'com:spinal:ui:view',
 
 		/**
+		*	Internal CSS className
+		*	@public
+		*	@property className
+		*	@type String
+		**/
+		method: 'appendTo',
+
+		/**
 		*	Initialize
 		*	@public
 		*	@chainable
@@ -54,9 +62,11 @@ define(['core/spinal', 'libs/bootstrap'], function(Spinal) {
 		**/
 		initialize: function(attrs) {
 			View.__super__.initialize.apply(this, arguments);
-			if(this._valid(attrs)) this.succesor = attrs.succesor;
+			this._valid(attrs);
 			if(!attrs.model) this.model = new Backbone.Model();
+			if(attrs.method) this.method = attrs.method;
 			if(attrs.tpl) this.template = _.template($('<div/>').append($(attrs.tpl).addClass('{{className}}')).html());
+			this.succesor = attrs.succesor;
 			return this;
 		},
 
@@ -69,11 +79,13 @@ define(['core/spinal', 'libs/bootstrap'], function(Spinal) {
 		**/
 		_valid: function(attrs) {
 			attrs || (attrs = {});
+			var err;
 			if(!attrs.succesor) throw new Error(this.toString() + ' requires a \'succesor\' attribute passed to the constructor.');
-			if(!(attrs.succesor instanceof Backbone.View))
-				throw new Error(this.toString() + ' \'succesor\' must be an instance of Backbone.View.');
-			if(attrs.model && !(attrs.model instanceof Backbone.Model))
-				throw new Error(this.toString() + ' \'model\' must be an instance of Backbone.Model.');
+			if(!(attrs.succesor instanceof Backbone.View)) err = ' \'succesor\' must be an instance of Backbone.View.';
+			if(attrs.model && !(attrs.model instanceof Backbone.Model)) err = ' \'model\' must be an instance of Backbone.Model.';
+			if(attrs.method && !(View.RENDER[attrs.method])) err = ' unsupported render \'method -> ' + attrs.method + '\'.';
+			if(attrs.method && attrs.method === View.RENDER.html) err = ' html render method is unsupported for instances of View Class.';
+			if(err) throw new Error(this.toString() + err);
 			return true;
 		},
 
@@ -88,7 +100,14 @@ define(['core/spinal', 'libs/bootstrap'], function(Spinal) {
 		render: function(opts) {
 			opts || (opts = {});
 			this.clear();
-			this.setElement(this.succesor.$el[View.RENDER.html](this.template(_.extend({ className: this.className }, this.model.toJSON()))));
+			var m = this.method;
+			if(opts.method && _.contains(_.values(View.RENDER), opts.method)) {
+				m = opts.method;
+				if(opts.method === View.RENDER.html || opts.method === View.RENDER.append) m = View.RENDER.appendTo;
+				if(opts.method === View.RENDER.prepend) m = View.RENDER.prependTo;
+			}
+			var tpl = this.template(_.extend({ className: this.className }, this.model.toJSON()));
+			this.setElement($(tpl)[m](this.succesor.$el));
 			if(!opts.silent) this.trigger(View.EVENTS.rendered, { view: this });
 			return this;
 		},
@@ -184,7 +203,7 @@ define(['core/spinal', 'libs/bootstrap'], function(Spinal) {
 		**/
 		clear: function(opts) {
 			if(this.$el) {
-				this.$el.children().remove();
+				this.$el.remove();
 				if(!opts || !opts.silent) this.trigger(View.EVENTS.cleared, { view: this });
 			}
 			return this;
