@@ -2,7 +2,10 @@
 *	@module com/spinal/ui
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define(['core/spinal', 'libs/bootstrap'], function(Spinal) {
+define(['core/spinal',
+		'util/string-utils',
+		'util/error/types/ui-exception',
+		'libs/bootstrap'], function(Spinal, StringUtils, UIException) {
 
 	/**
 	*	Define a generic view interface that extends classic Backbone.View
@@ -11,6 +14,14 @@ define(['core/spinal', 'libs/bootstrap'], function(Spinal) {
 	*	@extends Spinal.Backbone.View
 	**/
 	var View = Spinal.namespace('com.spinal.ui.View', Spinal.Backbone.View.inherit({
+
+		/**
+		*	Identifier
+		*	@public
+		*	@property id
+		*	@type String
+		**/
+		id: StringUtils.uuid(),
 
 		/**
 		*	Template
@@ -63,6 +74,7 @@ define(['core/spinal', 'libs/bootstrap'], function(Spinal) {
 		initialize: function(attrs) {
 			View.__super__.initialize.apply(this, arguments);
 			this._valid(attrs);
+			if(attrs.id) this.id = attrs.id;
 			if(!attrs.model) this.model = new Backbone.Model();
 			if(attrs.method) this.method = attrs.method;
 			if(attrs.tpl) this.template = _.template($('<div/>').append($(attrs.tpl).addClass('{{className}}')).html());
@@ -71,7 +83,7 @@ define(['core/spinal', 'libs/bootstrap'], function(Spinal) {
 		},
 
 		/**
-		*	Validate Parameters
+		*	Validates parameters passed to the contructor function of this class.
 		*	@private
 		*	@method _valid
 		*	@param attrs {Object} attributes
@@ -79,13 +91,11 @@ define(['core/spinal', 'libs/bootstrap'], function(Spinal) {
 		**/
 		_valid: function(attrs) {
 			attrs || (attrs = {});
-			var err;
-			if(!attrs.succesor) throw new Error(this.toString() + ' requires a \'succesor\' attribute passed to the constructor.');
-			if(!(attrs.succesor instanceof Backbone.View)) err = ' \'succesor\' must be an instance of Backbone.View.';
-			if(attrs.model && !(attrs.model instanceof Backbone.Model)) err = ' \'model\' must be an instance of Backbone.Model.';
-			if(attrs.method && !(View.RENDER[attrs.method])) err = ' unsupported render \'method -> ' + attrs.method + '\'.';
-			if(attrs.method && attrs.method === View.RENDER.html) err = ' html render method is unsupported for instances of View Class.';
-			if(err) throw new Error(this.toString() + err);
+			if(_.isUndefined(attrs.succesor)) throw new UIException('SuccesorNotSpecified');
+			if(attrs.succesor && (attrs.succesor instanceof Spinal.com.spinal.ui.Container)) throw new UIException('InvalidSuccesorType');
+			if(attrs.id && !_.isString(attrs.id)) throw new UIException('InvalidIDType');
+			if(attrs.model && !(attrs.model instanceof Backbone.Model)) throw new UIException('InvalidModelType');
+			if(attrs.method && !(View.RENDER[attrs.method])) throw new UIException('UnsupportedRenderMethod');
 			return true;
 		},
 
@@ -126,7 +136,8 @@ define(['core/spinal', 'libs/bootstrap'], function(Spinal) {
 		},
 
 		/**
-		*	Lookup
+		*	Perform a look up of the closest succesor in the view hierarchery using the id passed as parameter.
+		*	If the succesor is not found, the method will give up returning null.
 		*	@public
 		*	@chainable
 		*	@method lookup
@@ -134,6 +145,7 @@ define(['core/spinal', 'libs/bootstrap'], function(Spinal) {
 		*	@return {com.spinal.ui.View}
 		**/
 		lookup: function(id) {
+			if(!id) return null;
 			return this._next(id);
 		},
 

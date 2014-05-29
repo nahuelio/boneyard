@@ -3,8 +3,9 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['core/spinal',
+		'ui/view',
 		'util/adt/collection',
-		'ui/view'], function(Spinal, Collection, View) {
+		'util/error/ui-exception'], function(Spinal, View, Collection, UIException) {
 
 	/**
 	*	Define a generic container interface to add/remove views
@@ -31,6 +32,23 @@ define(['core/spinal',
 		initialize: function() {
 			Container.__super__.initialize.apply(this, arguments);
 			return this;
+		},
+
+		/**
+		*	Validates parameters passed to the contructor function of this class.
+		*	@private
+		*	@method _valid
+		*	@param attrs {Object} attributes
+		*	@return Boolean
+		**/
+		_valid: function(attrs) {
+			try {
+				if(!Container.__super__._valid.apply(this, arguments) return false;
+			} catch(ex) {
+				(ex.type.name === ex.getType() || ex.type.name === ex.getType()) ?
+					console.log(ex) : throw ex;
+			}
+			return true;
 		},
 
 		/**

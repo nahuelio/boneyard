@@ -2,12 +2,12 @@
 *	com.spinal.ui.View Class Tests
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define(['core/spinal', 'ui/view'], function(Spinal, View) {
+define(['core/spinal', 'ui/view', 'ui/container'], function(Spinal, View, Container) {
 
     describe('com.spinal.ui.View', function() {
 
         before(function() {
-            this.container = new Backbone.View({ el: 'body' });
+            this.container = new Container({});
         });
 
         describe('#new()', function() {
@@ -55,12 +55,12 @@ define(['core/spinal', 'ui/view'], function(Spinal, View) {
                 });
     		});
 
-            it('Should throw an Error: succesor is not an instance of Backbone.View', function() {
+            it('Should throw an Error: succesor is not an instance of com.spinal.ui.Container', function() {
                 expect(function() {
-                    new View({ succesor: new Spinal.SpinalClass({ name: 'foo' }) });
+                    new View({ succesor: new Backbone.View({ name: 'foo' }) });
                 }).to.throwException(function(e) {
                     expect(e).to.be.ok();
-                    expect(e.message).to.be.equal('[object View] \'succesor\' must be an instance of Backbone.View.');
+                    expect(e.message).to.be.equal('[object View] \'succesor\' must be an instance of com.spinal.ui.Container.');
                 });
             });
 
@@ -127,9 +127,35 @@ define(['core/spinal', 'ui/view'], function(Spinal, View) {
 
         describe('#update()', function() {
 
+            it('Should update the View and return the instance', function() {
+                this.testView = new View({ succesor: this.container });
+                this.testView.off().on(View.EVENTS.updated, function(ev) {
+                    expect(ev).to.be.ok();
+                    expect(ev.view).to.be.ok();
+                });
+                var result = this.testView.update();
+                expect(result).to.be.a(View);
+                result = this.testView.update({ silent: true });
+            });
+
         });
 
         describe('#lookup()', function() {
+
+            it('Should return the succesor instance', function() {
+                this.testView = new View({ succesor: this.container });
+                var result = this.testView.lookup('global');
+                //console.log(this.testView.succesor.lookup);
+                //console.log(result);
+            });
+
+            it('Should NOT return the succesor instance (null)', function() {
+                this.testView = new View({ succesor: this.container });
+                var result = this.testView.lookup('non-existent');
+                expect(result).to.be.equal(null);
+                result = this.testView.lookup();
+                expect(result).to.be.equal(null);
+            });
 
         });
 
