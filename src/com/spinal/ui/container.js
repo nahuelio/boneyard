@@ -43,10 +43,12 @@ define(['core/spinal',
 		**/
 		_valid: function(attrs) {
 			try {
-				if(!Container.__super__._valid.apply(this, arguments) return false;
+				if(!Container.__super__._valid.apply(this, arguments)) return false;
 			} catch(ex) {
-				(ex.type.name === ex.getType() || ex.type.name === ex.getType()) ?
-					console.log(ex) : throw ex;
+				if(_.contains([UIException.TYPES.SuccesorNotSpecified,
+					UIException.TYPES.InvalidSuccesorType], ex.type)) {
+					// TODO: Continue here...
+				}
 			}
 			return true;
 		},

@@ -56,9 +56,9 @@ define(['core/spinal',
 		className: 'com:spinal:ui:view',
 
 		/**
-		*	Internal CSS className
+		*	Render Method
 		*	@public
-		*	@property className
+		*	@property method
 		*	@type String
 		**/
 		method: 'appendTo',

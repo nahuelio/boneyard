@@ -12,9 +12,8 @@ define(['core/spinal'], function(Spinal) {
 	**/
 	var SpinalException = Spinal.namespace('com.spinal.util.error.SpinalException', function(type, message) {
 		this.name = (this.constructor.NAME) ? this.constructor.NAME : 'SpinalException';
-		this.type = this.getType(type);
-		if(!this.type) this.type = this.getType('Generic');
-		this.message = (message || this.type.message); // see notes above.
+		this.type = (!this.constructor.TYPES[type]) ? type : this.contructor.TYPES.Generic;
+		this.message = (message || this.getMessage(this.type));
 		if(this.initialize) this.initialize.apply(this, arguments);
 		return this;
 	});
@@ -37,8 +36,9 @@ define(['core/spinal'], function(Spinal) {
 		*	@param type {String} exception type
 		*	@return String
 		**/
-		getType: function(type) {
-			return _.find(SpinalException.TYPES, function(t) { return (t.name === t); });
+		getMessage: function(type) {
+			var type = _.find(this.constructor.TYPES, function(v, k) { return (k === type); });
+			return (!type) ? 'Unknown Exception Message' : type.message; // FIXME: see notes above.
 		}
 
 	});
@@ -46,11 +46,11 @@ define(['core/spinal'], function(Spinal) {
 	/**
 	*	@static
 	*	@property TYPES
-	*	@type Array
+	*	@type Object
 	**/
-	SpinalException.TYPES = [
-		{ name: 'Generic', message: 'Generic Exception' }
-	];
+	SpinalException.TYPES = {
+		Generic: { message: 'Generic Exception' }
+	};
 
 	/**
 	*	@static
