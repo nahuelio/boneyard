@@ -12,9 +12,9 @@ define(['core/spinal'], function(Spinal) {
 	**/
 	var SpinalException = Spinal.namespace('com.spinal.util.error.SpinalException', function(type, message) {
 		this.name = (this.constructor.NAME) ? this.constructor.NAME : 'SpinalException';
-		this.type = (!this.constructor.TYPES[type]) ? type : this.contructor.TYPES.Generic;
+		this.type = (!_.isUndefined(this.constructor.TYPES[type])) ? type : 'Generic';
 		this.message = (message || this.getMessage(this.type));
-		if(this.initialize) this.initialize.apply(this, arguments);
+		this.initialize.apply(this, arguments);
 		return this;
 	});
 
@@ -32,16 +32,34 @@ define(['core/spinal'], function(Spinal) {
 
 		/**
 		*	@public
+		*	@method matches
+		*	@param types {Array} collection of exception types
+		*	@return Boolean
+		**/
+		matches: function(types) {
+			if(_.isEmpty(_.pick(this.constructor.TYPES, types))) return false;
+			return _.contains(types, this.type);
+		},
+
+		/**
+		*	@public
 		*	@method getMessage
 		*	@param type {String} exception type
 		*	@return String
 		**/
 		getMessage: function(type) {
-			var type = _.find(this.constructor.TYPES, function(v, k) { return (k === type); });
-			return (!type) ? 'Unknown Exception Message' : type.message; // FIXME: see notes above.
+			// FIXME: see notes above.
+			return (!this.constructor.TYPES[type]) ? 'Unknown Exception Message' : this.constructor.TYPES[type];
 		}
 
 	});
+
+	/**
+	*	@static
+	*	@property NAME
+	*	@type String
+	**/
+	SpinalException.NAME = 'SpinalException';
 
 	/**
 	*	@static
@@ -49,7 +67,7 @@ define(['core/spinal'], function(Spinal) {
 	*	@type Object
 	**/
 	SpinalException.TYPES = {
-		Generic: { message: 'Generic Exception' }
+		Generic: 'Generic Exception'
 	};
 
 	/**

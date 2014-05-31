@@ -75,7 +75,7 @@ define(['libs/backbone'], function() {
 		var _createObject = (function() {
 			function Constructor() {};
 			if(typeof Object.create === "function") return Object.create;
-		    return function(proto) {
+			return function(proto) {
 				Constructor.prototype = proto;
 				return new Constructor();
 			};
@@ -94,7 +94,7 @@ define(['libs/backbone'], function() {
 		*	@param destination {Object} destination object
 		*	@return Object
 		**/
-		var _deepCopy = function (source, destination) {
+		var _deepCopy = function (source, destination, existing) {
 			if (_isWindow(source)) {
 				throw new Error("Can't copy! Making copies of Window or Scope instances is not supported.");
 			}
@@ -108,7 +108,12 @@ define(['libs/backbone'], function() {
 					} else if(_.isRegExp(source)) {
 						destination = new RegExp(source.source);
 					} else if(_.isObject(source) && !_.isFunction(source)) {
-						destination = _deepCopy(source, _createObject(Object.getPrototypeOf(source)));
+						if(!existing) {
+							destination = _deepCopy(source, _createObject(Object.getPrototypeOf(source)));
+						} else {
+							source = _.omit(source, _.keys(existing));
+							destination = _.extend(existing, _deepCopy(source, _createObject(Object.getPrototypeOf(source))));
+						}
 					}
 				}
 			} else {
@@ -116,9 +121,15 @@ define(['libs/backbone'], function() {
 				if(_.isArray(source)) {
 					destination.length = 0;
 					for(var i = 0; i < source.length; i++) destination.push(_deepCopy(source[i]));
-	    		} else {
+				} else {
 					for(var key in source) {
-						if(!destination.hasOwnProperty(key)) destination[key] = _deepCopy(source[key]);
+						if(!destination.hasOwnProperty(key)) {
+							destination[key] = _deepCopy(source[key]);
+						} else if(_.isObject(source[key]) && !_.isDate(source[key]) &&
+							!_.isRegExp(source[key]) && !_.isFunction(source[key]) &&
+							!_.isArray(source[key])) {
+								destination[key] = _deepCopy(source[key], null, destination[key]);
+						}
 					}
 				}
 			}
@@ -140,21 +151,6 @@ define(['libs/backbone'], function() {
 		};
 
 		/**
-		*	Filters inheritance Constructor function properties.
-		*	@private
-		*	@method _filter
-		*	@return Object
-		**/
-		var _filter = function(func) {
-			var obj = {};
-			for(var p in func) {
-				if(p == 'inherit' || p == '__super__') continue;
-				obj[p] = func[p];
-			}
-			return obj
-		};
-
-		/**
 		*	Inheritance Strategy
 		*	@private
 		*	@method _inherit
@@ -162,14 +158,18 @@ define(['libs/backbone'], function() {
 		**/
 		var _inherit = exports._inherit = function(proto, protoStatic) {
 			protoStatic || (protoStatic = {});
-			var Parent = this, Child = function() { return Parent.apply(this, arguments); };
+			var Parent = this;
+
+			Child = (proto && _.has(proto, 'constructor')) ? proto.constructor : function() {
+				return Parent.apply(this, arguments);
+			};
 
 			var F = function() { this.constructor = Child; };
 			F.prototype = Parent.prototype;
 			Child.prototype = new F;
 			if(proto) {
 				extend(Child.prototype, proto);
-				extend(Child, protoStatic, _filter(Parent));
+				extend(Child, protoStatic, _.omit(Parent, 'inherit', '__super__'));
 			}
 
 			Child.inherit = _inherit;

@@ -38,11 +38,11 @@ define(['core/spinal',
 		*	@type Object
 		**/
 		TYPES: {
-			InvalidIDType: { message: '\'id\' parameter must be a String in the constructor.' },
-			SuccesorNotSpecified: { message: '\'succesor\' parameter was not speficied in the constructor.' },
-			InvalidSuccesorType: { message: '\'succesor\' must be an instance of com.spinal.ui.Container.' },
-			InvalidModelType: { message: '\'model\' must be an instance of Backbone.Model.' },
-			UnsupportedRenderMethod: { message: 'unsupported render method -> \'{{method}}\'.' }
+			InvalidIDType: '\'id\' parameter must be a String in the constructor.',
+			SuccessorNotSpecified: '\'successor\' parameter was not speficied in the constructor.',
+			InvalidSuccessorType: '\'successor\' must be an instance of com.spinal.ui.Container.',
+			InvalidModelType: '\'model\' must be an instance of Backbone.Model.',
+			UnsupportedRenderMethod: 'unsupported render method -> \'{{method}}\'.'
 		}
 
 	}));

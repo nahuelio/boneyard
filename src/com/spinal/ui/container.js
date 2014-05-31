@@ -5,7 +5,7 @@
 define(['core/spinal',
 		'ui/view',
 		'util/adt/collection',
-		'util/error/ui-exception'], function(Spinal, View, Collection, UIException) {
+		'util/error/types/ui-exception'], function(Spinal, View, Collection, UIException) {
 
 	/**
 	*	Define a generic container interface to add/remove views
@@ -16,11 +16,28 @@ define(['core/spinal',
 	var Container = Spinal.namespace('com.spinal.ui.Container', View.inherit({
 
 		/**
+		*	Internal CSS className
+		*	@public
+		*	@property className
+		*	@type String
+		**/
+		className: 'com:spinal:ui:container',
+
+		/**
 		*	View Collection
 		*	@property views
 		*	@type {com.spinal.util.adt.Collection}
 		**/
 		views: new Collection(),
+
+		/**
+		*	Constructor
+		*	@constructor
+		*	@param [options] {Object} view options
+		**/
+		constructor: function(options) {
+			View.apply(this, arguments);
+		},
 
 		/**
 		*	Initialize
@@ -30,8 +47,7 @@ define(['core/spinal',
 		*	@return {com.spinal.ui.Container}
 		**/
 		initialize: function() {
-			Container.__super__.initialize.apply(this, arguments);
-			return this;
+			return Container.__super__.initialize.apply(this, arguments);
 		},
 
 		/**
@@ -45,10 +61,7 @@ define(['core/spinal',
 			try {
 				if(!Container.__super__._valid.apply(this, arguments)) return false;
 			} catch(ex) {
-				if(_.contains([UIException.TYPES.SuccesorNotSpecified,
-					UIException.TYPES.InvalidSuccesorType], ex.type)) {
-					// TODO: Continue here...
-				}
+				if(!ex.matches(['SuccessorNotSpecified', 'InvalidSuccessorType'])) throw ex;
 			}
 			return true;
 		},

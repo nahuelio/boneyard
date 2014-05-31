@@ -24,20 +24,12 @@ define(['core/spinal',
 		id: StringUtils.uuid(),
 
 		/**
-		*	Template
+		*	Successor
 		*	@public
-		*	@property template
-		*	@type Function
-		**/
-		template: _.template('<div class="{{className}}"></div>'),
-
-		/**
-		*	Succesor
-		*	@public
-		*	@property succesor
+		*	@property successor
 		*	@type {com.spinal.ui.View}
 		**/
-		succesor: null,
+		successor: null,
 
 		/**
 		*	Events
@@ -61,24 +53,37 @@ define(['core/spinal',
 		*	@property method
 		*	@type String
 		**/
-		method: 'appendTo',
+		method: 'append',
+
+		/**
+		*	Constructor
+		*	@constructor
+		*	@param [options] {Object} view options
+		**/
+		constructor: function(options) {
+			options || (options = {});
+			if(options.el) {
+				if(_.isString(options.el)) this.tagName = _.clone(options.el);
+				if(options.el instanceof Backbone.$) this.tagName = options.el[0].nodeName.toLowerCase();
+			}
+			delete options.el;
+			Backbone.View.apply(this, arguments);
+		},
 
 		/**
 		*	Initialize
 		*	@public
 		*	@chainable
 		*	@method initialize
-		*	@param attrs {Object} view options
+		*	@param options {Object} view options
 		*	@return {com.spinal.ui.View}
 		**/
-		initialize: function(attrs) {
-			View.__super__.initialize.apply(this, arguments);
-			this._valid(attrs);
-			if(attrs.id) this.id = attrs.id;
-			if(!attrs.model) this.model = new Backbone.Model();
-			if(attrs.method) this.method = attrs.method;
-			if(attrs.tpl) this.template = _.template($('<div/>').append($(attrs.tpl).addClass('{{className}}')).html());
-			this.succesor = attrs.succesor;
+		initialize: function(options) {
+			this._valid(options);
+			if(options.id) this.id = options.id;
+			if(options.method) this.method = options.method;
+			if(options.template) this.template = _.template(options.template);
+			this.successor = options.successor;
 			return this;
 		},
 
@@ -91,11 +96,11 @@ define(['core/spinal',
 		**/
 		_valid: function(attrs) {
 			attrs || (attrs = {});
-			if(_.isUndefined(attrs.succesor)) throw new UIException('SuccesorNotSpecified');
-			if(attrs.succesor && (attrs.succesor instanceof Spinal.com.spinal.ui.Container)) throw new UIException('InvalidSuccesorType');
 			if(attrs.id && !_.isString(attrs.id)) throw new UIException('InvalidIDType');
 			if(attrs.model && !(attrs.model instanceof Backbone.Model)) throw new UIException('InvalidModelType');
 			if(attrs.method && !(View.RENDER[attrs.method])) throw new UIException('UnsupportedRenderMethod');
+			if(_.isUndefined(attrs.successor)) throw new UIException('SuccessorNotSpecified');
+			if(attrs.successor && !(attrs.successor instanceof Spinal.com.spinal.ui.Container)) throw new UIException('InvalidSuccessorType');
 			return true;
 		},
 
@@ -110,14 +115,12 @@ define(['core/spinal',
 		render: function(opts) {
 			opts || (opts = {});
 			this.clear();
-			var m = this.method;
-			if(opts.method && _.contains(_.values(View.RENDER), opts.method)) {
-				m = opts.method;
-				if(opts.method === View.RENDER.html || opts.method === View.RENDER.append) m = View.RENDER.appendTo;
-				if(opts.method === View.RENDER.prepend) m = View.RENDER.prependTo;
-			}
-			var tpl = this.template(_.extend({ className: this.className }, this.model.toJSON()));
-			this.setElement($(tpl)[m](this.succesor.$el));
+			var m = (opts.method && (View.RENDER[opts.method])) ? opts.method : this.method,
+				data = (this.model) ? this.model.toJSON() : {};
+			this.successor.$el[m]((!this.template) ?
+				_.template($('<div/>').append(this.el).html(), data) :
+				this.template(data));
+			// FIXME: template + model.
 			if(!opts.silent) this.trigger(View.EVENTS.rendered, { view: this });
 			return this;
 		},
@@ -136,12 +139,12 @@ define(['core/spinal',
 		},
 
 		/**
-		*	Perform a look up of the closest succesor in the view hierarchery using the id passed as parameter.
-		*	If the succesor is not found, the method will give up returning null.
+		*	Perform a look up of the closest successor in the view hierarchery using the id passed as parameter.
+		*	If the successor is not found, the method will give up returning null.
 		*	@public
 		*	@chainable
 		*	@method lookup
-		*	@param id {String} Succesor id
+		*	@param id {String} Successor id
 		*	@return {com.spinal.ui.View}
 		**/
 		lookup: function(id) {
@@ -158,7 +161,7 @@ define(['core/spinal',
 		*	@return {com.spinal.ui.View}
 		**/
 		show: function(opts) {
-			if(this.$el) this.$el.show();
+			this.$el.show();
 			if(!opts || !opts.silent) this.trigger(View.EVENTS.shown, { view: this });
 			return this;
 		},
@@ -172,7 +175,7 @@ define(['core/spinal',
 		*	@return {com.spinal.ui.View}
 		**/
 		hide: function(opts) {
-			if(this.$el) this.$el.hide();
+			this.$el.hide();
 			if(!opts || !opts.silent) this.trigger(View.EVENTS.hidden, { view: this });
 			return this;
 		},
@@ -186,7 +189,7 @@ define(['core/spinal',
 		*	@return {com.spinal.ui.View}
 		**/
 		enable: function(opts) {
-			if(this.$el) this.$el.enable();
+			// FIXME: this.$el.enable();
 			if(!opts || !opts.silent) this.trigger(View.EVENTS.enabled, { view: this });
 			return this;
 		},
@@ -200,7 +203,7 @@ define(['core/spinal',
 		*	@return {com.spinal.ui.View}
 		**/
 		disable: function(opts) {
-			if(this.$el) this.$el.disable();
+			// FIXME: this.$el.disable();
 			if(!opts || !opts.silent) this.trigger(View.EVENTS.disabled, { view: this });
 			return this;
 		},
@@ -214,18 +217,16 @@ define(['core/spinal',
 		*	@return {com.spinal.ui.View}
 		**/
 		clear: function(opts) {
-			if(this.$el) {
-				this.$el.remove();
-				if(!opts || !opts.silent) this.trigger(View.EVENTS.cleared, { view: this });
-			}
+			this.$el.remove();
+			if(!opts || !opts.silent) this.trigger(View.EVENTS.cleared, { view: this });
 			return this;
 		},
 
 		/**
-		*	Try to Retrieve next succesor if possible (Chain of Responsability)
+		*	Try to Retrieve next successor if possible (Chain of Responsability)
 		*	@private
 		*	@method _next
-		*	@param id {String} Succesor id
+		*	@param id {String} Successor id
 		*	@return {com.spinal.ui.View}
 		**/
 		_next: function(id) {
