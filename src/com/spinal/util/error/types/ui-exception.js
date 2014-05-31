@@ -33,6 +33,14 @@ define(['core/spinal',
 		NAME: 'UIException',
 
 		/**
+		*	__Type List__
+		*		
+		*		Generic (inherited from com.spinal.util.error.exception)
+		*		InvalidIDType
+		*		SuccessorNotSpecified
+		*		InvalidSuccessorType
+		*		InvalidModelType
+		*		UnsupportedRenderMethod
 		*	@static
 		*	@property TYPES
 		*	@type Object

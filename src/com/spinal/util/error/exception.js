@@ -1,6 +1,7 @@
 /**
 *	@module com/spinal/util/error
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
+*	[ENHANCEMENT]: Add support for {{mustache}} in exception messages
 **/
 define(['core/spinal'], function(Spinal) {
 
@@ -8,7 +9,6 @@ define(['core/spinal'], function(Spinal) {
 	*	Extend functionality of Spinal Core to create custom exceptions (Errors)
 	*	@namespace com.spinal.util.error
 	*	@class com.spinal.util.error.SpinalException
-	*	[ENHANCEMENT]: Add support for {{mustache}} in exception messages
 	**/
 	var SpinalException = Spinal.namespace('com.spinal.util.error.SpinalException', function(type, message) {
 		this.name = (this.constructor.NAME) ? this.constructor.NAME : 'SpinalException';
@@ -62,6 +62,9 @@ define(['core/spinal'], function(Spinal) {
 	SpinalException.NAME = 'SpinalException';
 
 	/**
+	*	__Type List__
+	*		
+	*		Generic
 	*	@static
 	*	@property TYPES
 	*	@type Object
