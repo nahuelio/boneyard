@@ -150,7 +150,7 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 		contains: function(element) {
 			if(!this._valid(element)) return false;
 			if(!_.isNull(this._interface)) {
-				var attrs = (this._interface.prototype.toJSON) ? _.invoke(this.collection, 'toJSON') : this.collection;
+				var attrs = (this._interface.prototype.toJSON) ? this.invoke('toJSON') : this.collection;
 				return (_.filter(attrs, _.matches(element)).length > 0);
 			} else {
 				return (_.filter(this.collection, _.matches(element)).length > 0);
@@ -244,7 +244,19 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 		},
 
 		/**
-		*	Find element/s by evaluation defined in finder.
+		*	Find an element by evaluation defined in finder.
+		*	@public
+		*	@method find
+		*	@param finder {Function} matcher function
+		*	@return Object
+		**/
+		find: function(finder) {
+			if(!finder || !_.isFunction(finder)) return null;
+			return _.find(this.collection, finder);
+		},
+
+		/**
+		*	Find elements by evaluation defined in finder.
 		*	@public
 		*	@method findBy
 		*	@param finder {Function} matcher function

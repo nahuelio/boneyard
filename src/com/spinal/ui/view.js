@@ -37,7 +37,7 @@ define(['core/spinal',
 		*	@property className
 		*	@type String
 		**/
-		className: 'com:spinal:ui:view',
+		className: 'com-spinal-ui-view',
 
 		/**
 		*	Render Method
@@ -79,6 +79,7 @@ define(['core/spinal',
 		*	@return {com.spinal.ui.View}
 		**/
 		initialize: function(options) {
+			options || (options = {});
 			this._valid(options);
 			if(options.id) this.id = options.id;
 			if(options.method) this.method = options.method;
@@ -94,7 +95,6 @@ define(['core/spinal',
 		*	@return Boolean
 		**/
 		_valid: function(attrs) {
-			attrs || (attrs = {});
 			if(attrs.id && !_.isString(attrs.id)) throw new UIException('InvalidIDType');
 			if(attrs.model && !(attrs.model instanceof Backbone.Model)) throw new UIException('InvalidModelType');
 			if(attrs.method && !(View.RENDER[attrs.method])) throw new UIException('UnsupportedRenderMethod');
@@ -109,9 +109,9 @@ define(['core/spinal',
 		*	@return Function
 		**/
 		_compile: function(tpl) {
-			if(tpl && _.isString(tpl)) return _.template(this.$el.append(tpl));
-			// FIXME: if(tpl && _.isFunction(tpl)) return _.template();
-			return _.template(this.el);
+			tpl || (tpl = '');
+			if(_.isFunction(tpl)) return tpl;
+			return _.template(tpl);
 		},
 
 		/**
@@ -124,13 +124,13 @@ define(['core/spinal',
 		**/
 		render: function(opts) {
 			opts || (opts = {});
-			if(_.isUndefined(this._successor)) throw new UIException('SuccessorNotSpecified');
+			if(!this._successor) throw new UIException('SuccessorNotSpecified');
 			if(!(this._successor instanceof Spinal.com.spinal.ui.Container)) throw new UIException('InvalidSuccessorType');
+			if(!this._successor.findById(this.id)) throw new UIException('UIStackViolation');
 			this.detach();
 			var m = (opts.method && (View.RENDER[opts.method])) ? opts.method : this.method,
-				data = (this._successor.model) ? this._successor.model.toJSON() : {};
-				data = (this.model) ? this.model.toJSON() : {};
-			this._successor.$el[m](this.template(data));
+				data = (!this.model) ? ((this._successor.model) ? this._successor.model.toJSON() : {}) : this.model.toJSON();
+			this._successor.$el[m](this.$el.append(this.template(data)));
 			if(!opts.silent) this.trigger(View.EVENTS.rendered, { view: this });
 			return this;
 		},

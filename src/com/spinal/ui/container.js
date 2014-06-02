@@ -21,7 +21,7 @@ define(['core/spinal',
 		*	@property className
 		*	@type String
 		**/
-		className: 'com:spinal:ui:container',
+		className: 'com-spinal-ui-container',
 
 		/**
 		*	View Collection
@@ -33,9 +33,8 @@ define(['core/spinal',
 		/**
 		*	Constructor
 		*	@constructor
-		*	@param [options] {Object} view options
 		**/
-		constructor: function(options) {
+		constructor: function() {
 			View.apply(this, arguments);
 		},
 
@@ -47,7 +46,8 @@ define(['core/spinal',
 		*	@return {com.spinal.ui.Container}
 		**/
 		initialize: function() {
-			return Container.__super__.initialize.apply(this, arguments);
+			Container.__super__.initialize.apply(this, arguments);
+			return this;
 		},
 
 		/**
@@ -91,13 +91,13 @@ define(['core/spinal',
 		},
 
 		/**
-		*	Find View
+		*	Find Views by evaluation defined in finder.
 		*	@public
-		*	@method find
-		*	@param v {com.spinal.ui.View} View instance
+		*	@method findBy
+		*	@param id {String} View id
 		*	@return {com.spinal.ui.View}
 		**/
-		find: function(finder) {
+		findBy: function(finder) {
 			return this.views.findBy(finder);
 		},
 
@@ -110,7 +110,7 @@ define(['core/spinal',
 		**/
 		findById: function(id) {
 			if(!id) return null;
-			return this.views.findBy(function(v) { return (v.id && v.id == id); });
+			return this.views.find(function(v) { return (v.id && v.id === id); });
 		},
 
 		/**
@@ -121,8 +121,9 @@ define(['core/spinal',
 		*	@param [*arguments] {Array} arguments to pass to the method invocation.
 		*	@return Array
 		**/
-		invoke: function() {
-			return this.views.invoke(arguments);
+		invoke: function(methodName) {
+			var args = Array.prototype.slice.call(arguments, 1);
+			return this.views.invoke(methodName, args);
 		},
 
 		/**
@@ -185,7 +186,10 @@ define(['core/spinal',
 		*	@return {com.spinal.ui.View}
 		**/
 		detach: function() {
-			if(!this.views.isEmpty()) this.invoke('detach', arguments);
+			if(!this.views.isEmpty()) {
+				this.invoke('detach', arguments);
+				this.views.reset();
+			}
 			Container.__super__.detach.apply(this, arguments);
 			return this;
 		},
@@ -223,6 +227,7 @@ define(['core/spinal',
 			*	@event removed
 			**/
 			removed: 'com:spinal:ui:container:removed'
+		}
 
 	}));
 
