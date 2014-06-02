@@ -1,5 +1,5 @@
 /**
-*	@module com.spinal.util.StringUtil
+*	@module com/spinal/util
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['core/spinal'], function(Spinal) {

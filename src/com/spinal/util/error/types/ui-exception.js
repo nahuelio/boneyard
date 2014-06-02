@@ -34,7 +34,7 @@ define(['core/spinal',
 
 		/**
 		*	__Type List__
-		*		
+		*
 		*		Generic (inherited from com.spinal.util.error.exception)
 		*		InvalidIDType
 		*		SuccessorNotSpecified

@@ -128,6 +128,19 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 		},
 
 		/**
+		*	Invoke a method specified by parameter on every the elements inside the collection
+		*	@public
+		*	@method invoke
+		*	@param methodName {String} Method Name to invoke in every element in the collection
+		*	@param [*arguments] {Array} arguments to pass to the method invocation.
+		*	@return Array
+		**/
+		invoke: function(methodName) {
+			var args = Array.prototype.slice.call(arguments, 1);
+			return _.invoke(this.collection, methodName, args);
+		},
+
+		/**
 		*	Returns true if this collection contains the specified element.
 		*	@public
 		*	@method contains

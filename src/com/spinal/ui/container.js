@@ -51,31 +51,22 @@ define(['core/spinal',
 		},
 
 		/**
-		*	Validates parameters passed to the contructor function of this class.
-		*	@private
-		*	@method _valid
-		*	@param attrs {Object} attributes
-		*	@return Boolean
-		**/
-		_valid: function(attrs) {
-			try {
-				if(!Container.__super__._valid.apply(this, arguments)) return false;
-			} catch(ex) {
-				if(!ex.matches(['SuccessorNotSpecified', 'InvalidSuccessorType'])) throw ex;
-			}
-			return true;
-		},
-
-		/**
 		*	Add View
 		*	@public
 		*	@chainable
 		*	@method add
-		*	@param v {com.spinal.ui.View} View instance
+		*	@param view {com.spinal.ui.View} View instance
+		*	@param [opts] {Object} additional options
 		*	@return {com.spinal.ui.Container}
 		**/
-		add: function(v) {
-			if(!this.find(v)) this.views.add(v);
+		add: function(view, opts) {
+			opts || (opts = {});
+			if(!this.findById(view.id)) {
+				this.views.add(view);
+				view._successor = this;
+				if(opts.renderOnAdd) view.render();
+				if(!opts.silent) this.trigger(Container.EVENTS.added, { view: this });
+			}
 			return this;
 		},
 
@@ -84,11 +75,18 @@ define(['core/spinal',
 		*	@public
 		*	@chainable
 		*	@method lookup
-		*	@param v {com.spinal.ui.View} View instance
+		*	@param view {com.spinal.ui.View} View instance
+		*	@param [opts] {Object} additional options
 		*	@return {com.spinal.ui.Container}
 		**/
-		remove: function(v) {
-			if(this.find(v)) this.views.remove(v);
+		remove: function(view, opts) {
+			opts || (opts = {});
+			if(this.findById(view.id)) {
+				this.views.remove(view);
+				view._successor = null;
+				if(opts.detachOnRemove) view.remove();
+				if(!opts.silent) this.trigger(Container.EVENTS.removed, { view: this });
+			}
 			return this;
 		},
 
@@ -111,7 +109,20 @@ define(['core/spinal',
 		*	@return {com.spinal.ui.View}
 		**/
 		findById: function(id) {
+			if(!id) return null;
 			return this.views.findBy(function(v) { return (v.id && v.id == id); });
+		},
+
+		/**
+		*	Invoke a method specified by parameter on every the view inside the collection.
+		*	@public
+		*	@method invoke
+		*	@param methodName {String} Method Name to invoke in every view in the collection
+		*	@param [*arguments] {Array} arguments to pass to the method invocation.
+		*	@return Array
+		**/
+		invoke: function() {
+			return this.views.invoke(arguments);
 		},
 
 		/**
@@ -122,7 +133,7 @@ define(['core/spinal',
 		*	@return {com.spinal.ui.View}
 		**/
 		show: function() {
-			this.views.invoke('show');
+			this.invoke('show', arguments);
 			Container.__super__.show.apply(this, arguments);
 			return this;
 		},
@@ -135,7 +146,7 @@ define(['core/spinal',
 		*	@return {com.spinal.ui.View}
 		**/
 		hide: function() {
-			this.views.invoke('hide');
+			this.invoke('hide', arguments);
 			Container.__super__.hide.apply(this, arguments);
 			return this;
 		},
@@ -148,7 +159,7 @@ define(['core/spinal',
 		*	@return {com.spinal.ui.View}
 		**/
 		enable: function() {
-			this.views.invoke('enable');
+			this.invoke('enable', arguments);
 			Container.__super__.enable.apply(this, arguments);
 			return this;
 		},
@@ -161,21 +172,21 @@ define(['core/spinal',
 		*	@return {com.spinal.ui.View}
 		**/
 		disable: function() {
-			this.views.invoke('disable');
+			this.invoke('disable', arguments);
 			Container.__super__.disable.apply(this, arguments);
 			return this;
 		},
 
 		/**
-		*	Clear View
+		*	Detach View
 		*	@public
 		*	@chainable
-		*	@method clear
+		*	@method detach
 		*	@return {com.spinal.ui.View}
 		**/
-		clear: function() {
-			this.views.invoke('clear');
-			Container.__super__.clear.apply(this, arguments);
+		detach: function() {
+			if(!this.views.isEmpty()) this.invoke('detach', arguments);
+			Container.__super__.detach.apply(this, arguments);
 			return this;
 		},
 
@@ -196,7 +207,22 @@ define(['core/spinal',
 		*	@property NAME
 		*	@type String
 		**/
-		NAME: 'Container'
+		NAME: 'Container',
+
+		/**
+		*	@static
+		*	@property EVENTS
+		*	@type Object
+		**/
+		EVENTS: {
+			/**
+			*	@event added
+			**/
+			added: 'com:spinal:ui:container:added',
+			/**
+			*	@event removed
+			**/
+			removed: 'com:spinal:ui:container:removed'
 
 	}));
 

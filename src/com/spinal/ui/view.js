@@ -24,14 +24,6 @@ define(['core/spinal',
 		id: StringUtils.uuid(),
 
 		/**
-		*	Successor
-		*	@public
-		*	@property successor
-		*	@type {com.spinal.ui.View}
-		**/
-		successor: null,
-
-		/**
 		*	Events
 		*	@public
 		*	@property events
@@ -56,6 +48,14 @@ define(['core/spinal',
 		method: 'append',
 
 		/**
+		*	Successor Reference
+		*	@private
+		*	@property _successor
+		*	@type {com.spinal.ui.View}
+		**/
+		_successor: null,
+
+		/**
 		*	Constructor
 		*	@constructor
 		*	@param [options] {Object} view options
@@ -64,7 +64,7 @@ define(['core/spinal',
 			options || (options = {});
 			if(options.el) {
 				if(_.isString(options.el)) this.tagName = _.clone(options.el);
-				if(options.el instanceof Backbone.$) this.tagName = options.el[0].nodeName.toLowerCase();
+				if(options.el instanceof Backbone.$ && options.el.length > 0) this.tagName = options.el[0].nodeName.toLowerCase();
 			}
 			delete options.el;
 			Backbone.View.apply(this, arguments);
@@ -82,8 +82,7 @@ define(['core/spinal',
 			this._valid(options);
 			if(options.id) this.id = options.id;
 			if(options.method) this.method = options.method;
-			if(options.template) this.template = _.template(options.template);
-			this.successor = options.successor;
+			this.template = this._compile((options.template) ? options.template : this.template);
 			return this;
 		},
 
@@ -99,9 +98,20 @@ define(['core/spinal',
 			if(attrs.id && !_.isString(attrs.id)) throw new UIException('InvalidIDType');
 			if(attrs.model && !(attrs.model instanceof Backbone.Model)) throw new UIException('InvalidModelType');
 			if(attrs.method && !(View.RENDER[attrs.method])) throw new UIException('UnsupportedRenderMethod');
-			if(_.isUndefined(attrs.successor)) throw new UIException('SuccessorNotSpecified');
-			if(attrs.successor && !(attrs.successor instanceof Spinal.com.spinal.ui.Container)) throw new UIException('InvalidSuccessorType');
 			return true;
+		},
+
+		/**
+		*	Compiles and build the template function used by this view
+		*	@private
+		*	@method _compile
+		*	@param tpl {Function} template to be included as child inside the original view root DOM element
+		*	@return Function
+		**/
+		_compile: function(tpl) {
+			if(tpl && _.isString(tpl)) return _.template(this.$el.append(tpl));
+			// FIXME: if(tpl && _.isFunction(tpl)) return _.template();
+			return _.template(this.el);
 		},
 
 		/**
@@ -114,13 +124,13 @@ define(['core/spinal',
 		**/
 		render: function(opts) {
 			opts || (opts = {});
-			this.clear();
+			if(_.isUndefined(this._successor)) throw new UIException('SuccessorNotSpecified');
+			if(!(this._successor instanceof Spinal.com.spinal.ui.Container)) throw new UIException('InvalidSuccessorType');
+			this.detach();
 			var m = (opts.method && (View.RENDER[opts.method])) ? opts.method : this.method,
+				data = (this._successor.model) ? this._successor.model.toJSON() : {};
 				data = (this.model) ? this.model.toJSON() : {};
-			this.successor.$el[m]((!this.template) ?
-				_.template($('<div/>').append(this.el).html(), data) :
-				this.template(data));
-			// FIXME: template + model.
+			this._successor.$el[m](this.template(data));
 			if(!opts.silent) this.trigger(View.EVENTS.rendered, { view: this });
 			return this;
 		},
@@ -209,16 +219,15 @@ define(['core/spinal',
 		},
 
 		/**
-		*	Clear View
+		*	Detach View
 		*	@public
-		*	@chainable
-		*	@method clear
+		*	@method detach
 		*	@param [opts] {Object} additional options
 		*	@return {com.spinal.ui.View}
 		**/
-		clear: function(opts) {
-			this.$el.remove();
-			if(!opts || !opts.silent) this.trigger(View.EVENTS.cleared, { view: this });
+		detach: function(opts) {
+			View.__super__.remove.apply(this, arguments);
+			if(!opts || !opts.silent) this.trigger(View.EVENTS.detached, { view: this });
 			return this;
 		},
 
@@ -231,7 +240,7 @@ define(['core/spinal',
 		**/
 		_next: function(id) {
 			if(this.id === id) return this;
-			if(this.successor) return this.successor.lookup(id);
+			if(this._successor) return this._successor.lookup(id);
 			return null;
 		},
 
@@ -318,9 +327,9 @@ define(['core/spinal',
 			**/
 			updated: 'com:spinal:ui:view:updated',
 			/**
-			*	@event cleared
+			*	@event detached
 			**/
-			cleared: 'com:spinal:ui:view:cleared'
+			detached: 'com:spinal:ui:view:detached'
 		}
 
 	}));
