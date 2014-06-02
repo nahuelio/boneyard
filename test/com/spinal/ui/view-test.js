@@ -1,8 +1,6 @@
 /**
 *	com.spinal.ui.View Class Tests
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
-*	FIXME:
-*		- Fix Test case on render, when model + template inline is specified.
 **/
 define(['core/spinal',
 		'ui/view',
@@ -288,7 +286,10 @@ define(['core/spinal',
 				this.testView = new View();
 				this.testView.off().on(View.EVENTS.enabled, function(ev) { expect(ev).to.be.ok(); });
 				var result = this.testView.enable();
+				this.testView.disable();
+				expect(this.testView.$el.attr('disabled')).to.be.equal('disabled');
 				result = this.testView.enable({ silent: true });
+				expect(this.testView.$el.attr('disabled')).to.be.equal(undefined);
 			});
 
 		});
@@ -300,6 +301,7 @@ define(['core/spinal',
 				this.testView.off().on(View.EVENTS.disabled, function(ev) { expect(ev).to.be.ok(); });
 				var result = this.testView.disable();
 				result = this.testView.disable({ silent: true });
+				expect(this.testView.$el.attr('disabled')).to.be.equal('disabled');
 			});
 
 		});

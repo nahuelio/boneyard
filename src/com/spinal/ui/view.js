@@ -64,7 +64,9 @@ define(['core/spinal',
 			options || (options = {});
 			if(options.el) {
 				if(_.isString(options.el)) this.tagName = _.clone(options.el);
-				if(options.el instanceof Backbone.$ && options.el.length > 0) this.tagName = options.el[0].nodeName.toLowerCase();
+				if(options.el instanceof Backbone.$ && options.el.length > 0) {
+					this.tagName = options.el[0].nodeName.toLowerCase();
+				}
 			}
 			delete options.el;
 			Backbone.View.apply(this, arguments);
@@ -199,7 +201,7 @@ define(['core/spinal',
 		*	@return {com.spinal.ui.View}
 		**/
 		enable: function(opts) {
-			// FIXME: this.$el.enable();
+			this.$el.removeAttr('disabled');
 			if(!opts || !opts.silent) this.trigger(View.EVENTS.enabled, { view: this });
 			return this;
 		},
@@ -213,7 +215,7 @@ define(['core/spinal',
 		*	@return {com.spinal.ui.View}
 		**/
 		disable: function(opts) {
-			// FIXME: this.$el.disable();
+			this.$el.attr('disabled', 'true');
 			if(!opts || !opts.silent) this.trigger(View.EVENTS.disabled, { view: this });
 			return this;
 		},
