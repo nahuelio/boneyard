@@ -30,7 +30,9 @@ var Build = {
                 { name: 'libs' },
                 { name: 'spinal-core', exclude: ['libs'] },
                 { name: 'spinal-util', exclude: ['libs', 'spinal-core'] },
-                { name: 'spinal-mvc', exclude: ['libs', 'spinal-core'] },
+                { name: 'spinal-ioc', exclude: ['libs', 'spinal-core'] },
+                { name: 'spinal-aop', exclude: ['libs', 'spinal-core'] },
+                { name: 'spinal-mvc', exclude: ['libs', 'spinal-core', 'spinal-util'] },
                 { name: 'spinal-ui', exclude: ['libs', 'spinal-core', 'spinal-util'] }
             ],
             findNestedDependencies: true,
@@ -39,7 +41,7 @@ var Build = {
             uglify: {
                 toplevel: false,
                 ascii_only: true,
-                beautify: true,
+                beautify: false,
                 max_line_length: 1000,
                 no_mangle: true
             },

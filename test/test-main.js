@@ -22,6 +22,8 @@ require.config({
     paths: {
         'libs': 'src/libs',
         'core': 'src/com/spinal/core',
+        'ioc': 'src/com/spinal/ioc',
+        'aop': 'src/com/spinal/aop',
         'mvc': 'src/com/spinal/mvc',
         'ui': 'src/com/spinal/ui',
         'util': 'src/com/spinal/util',

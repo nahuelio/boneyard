@@ -3,11 +3,18 @@
 	<head>
 		<title>SpinalJS - Benchmarking</title>
 		<link rel="stylesheet" type="text/css" href="css/benchmark.css">
-		<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
-		<script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min.js"></script>
-		<script src="//cdnjs.cloudflare.com/ajax/libs/underscore.string/2.3.3/underscore.string.min.js"></script>
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+		<script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min.js"></script>
+		<script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.string/2.3.3/underscore.string.min.js"></script>
 		<script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
-		<script src="spinal-<%= version %>.js"></script>
+		<!--
+			FIXME: Benchmark Tool is broken for now:
+			Spinal modules were split up in different modules.
+			Use requirejs and generate a require config file to map all dependencies
+			from the target folder to use the minified an compiled version of those.
+			We might not need the CDN resources from above anymore!
+		-->
+		<!-- <script src="spinal-<%= version %>.js"></script> -->
 		<script src="libs/benchmark.js"></script>
 		<script src="libs/common.js"></script>
 		<% for(var m in modules) {

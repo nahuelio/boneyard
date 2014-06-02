@@ -416,6 +416,38 @@ define(['core/spinal',
 
     	});
 
+        /**
+    	*	Collection#findBy() test
+    	**/
+    	describe('#findBy()', function() {
+
+            it('Should find one element by a function predicate', function() {
+                this.testSimple.reset().addAll([
+                    { name: 'foo' },
+                    { name: 'bar' },
+                    { name: 'zoo' }
+                ]);
+                var result = this.testSimple.find(function(ele) {
+                    return (ele.name === 'zoo');
+                });
+                expect(result).to.be.ok();
+                expect(result.name).to.be.equal('zoo');
+            });
+
+            it('Should NOT find one element by a function predicate (finder is undefined or not a function)', function() {
+                this.testSimple.reset().addAll([
+                    { name: 'foo' },
+                    { name: 'bar' },
+                    { name: 'zoo' }
+                ]);
+                var result = this.testSimple.find();
+                expect(result).not.be.ok();
+                result = this.testSimple.find({ name: 'bar' });
+                expect(result).not.be.ok();
+            });
+
+        });
+
     	/**
     	*	Collection#findBy() test
     	**/

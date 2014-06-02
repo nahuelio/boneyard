@@ -4,7 +4,7 @@
 *	@requires Backbone
 *	@author Patricio Ferrerira <3dimentionar@gmail.com>
 **/
-define(['libs/backbone', 'libs/bootstrap'], function() {
+define(['libs/backbone'], function() {
 
 	/**
 	*	Spinal Core
@@ -25,14 +25,13 @@ define(['libs/backbone', 'libs/bootstrap'], function() {
 
 		// Expose Backbone and Underscore hard dependency into Spinal Namespace
 		if(!root.Backbone || !root._) throw new Error('[Spinal Error] Backbone or Underscore haven\'t being loaded.');
-		exports.Backbone = root.Backbone;
-		exports._ = root._;
+		exports.Backbone = root.Backbone; exports._ = root._;
 
-		// Expose jQuery hard dependency into Spinal Namespace
-		if(exports.Backbone && exports.Backbone.$) exports.$ = exports.Backbone.$;
-
-		// SpinalJS Expose Third Party Libraries into Spinal Namespace when available.
-		if(root.Modernizr) exports.Modernizr = Modernizr;
+		// Change Setting to Mustache Style
+		_.templateSettings = {
+			interpolate: /\{\{(.+?)\}\}/g,
+			escape: /\{\{-(.*?)\}\}/g
+		};
 
 		/**
 		*	Namespacing Strategy
@@ -76,7 +75,7 @@ define(['libs/backbone', 'libs/bootstrap'], function() {
 		var _createObject = (function() {
 			function Constructor() {};
 			if(typeof Object.create === "function") return Object.create;
-		    return function(proto) {
+			return function(proto) {
 				Constructor.prototype = proto;
 				return new Constructor();
 			};
@@ -95,7 +94,7 @@ define(['libs/backbone', 'libs/bootstrap'], function() {
 		*	@param destination {Object} destination object
 		*	@return Object
 		**/
-		var _deepCopy = function (source, destination) {
+		var _deepCopy = function (source, destination, existing) {
 			if (_isWindow(source)) {
 				throw new Error("Can't copy! Making copies of Window or Scope instances is not supported.");
 			}
@@ -109,7 +108,12 @@ define(['libs/backbone', 'libs/bootstrap'], function() {
 					} else if(_.isRegExp(source)) {
 						destination = new RegExp(source.source);
 					} else if(_.isObject(source) && !_.isFunction(source)) {
-						destination = _deepCopy(source, _createObject(Object.getPrototypeOf(source)));
+						if(!existing) {
+							destination = _deepCopy(source, _createObject(Object.getPrototypeOf(source)));
+						} else {
+							source = _.omit(source, _.keys(existing));
+							destination = _.extend(existing, _deepCopy(source, _createObject(Object.getPrototypeOf(source))));
+						}
 					}
 				}
 			} else {
@@ -117,9 +121,15 @@ define(['libs/backbone', 'libs/bootstrap'], function() {
 				if(_.isArray(source)) {
 					destination.length = 0;
 					for(var i = 0; i < source.length; i++) destination.push(_deepCopy(source[i]));
-	    		} else {
+				} else {
 					for(var key in source) {
-						if(!destination.hasOwnProperty(key)) destination[key] = _deepCopy(source[key]);
+						if(!destination.hasOwnProperty(key)) {
+							destination[key] = _deepCopy(source[key]);
+						} else if(_.isObject(source[key]) && !_.isDate(source[key]) &&
+							!_.isRegExp(source[key]) && !_.isFunction(source[key]) &&
+							!_.isArray(source[key])) {
+								destination[key] = _deepCopy(source[key], null, destination[key]);
+						}
 					}
 				}
 			}
@@ -141,21 +151,6 @@ define(['libs/backbone', 'libs/bootstrap'], function() {
 		};
 
 		/**
-		*	Filters inheritance Constructor function properties.
-		*	@private
-		*	@method _filter
-		*	@return Object
-		**/
-		var _filter = function(func) {
-			var obj = {};
-			for(var p in func) {
-				if(p == 'inherit' || p == '__super__') continue;
-				obj[p] = func[p];
-			}
-			return obj
-		};
-
-		/**
 		*	Inheritance Strategy
 		*	@private
 		*	@method _inherit
@@ -163,14 +158,18 @@ define(['libs/backbone', 'libs/bootstrap'], function() {
 		**/
 		var _inherit = exports._inherit = function(proto, protoStatic) {
 			protoStatic || (protoStatic = {});
-			var Parent = this, Child = function() { return Parent.apply(this, arguments); };
+			var Parent = this;
+
+			Child = (proto && _.has(proto, 'constructor')) ? proto.constructor : function() {
+				return Parent.apply(this, arguments);
+			};
 
 			var F = function() { this.constructor = Child; };
 			F.prototype = Parent.prototype;
 			Child.prototype = new F;
 			if(proto) {
 				extend(Child.prototype, proto);
-				extend(Child, protoStatic, _filter(Parent));
+				extend(Child, protoStatic, _.omit(Parent, 'inherit', '__super__'));
 			}
 
 			Child.inherit = _inherit;
@@ -199,7 +198,7 @@ define(['libs/backbone', 'libs/bootstrap'], function() {
 			*	Default initialize
 			*	@public
 			*	@method initialize
-			*	@return Class
+			*	@return {com.spinal.core.SpinalClass}
 			**/
 			initialize: function() {
 				this.set.apply(this, arguments);
@@ -242,7 +241,7 @@ define(['libs/backbone', 'libs/bootstrap'], function() {
 			/**
 			*	Default toString implementation
 			*	@public
-			*	@method set
+			*	@method toString
 			*	@return String
 			**/
 			toString: function() {
