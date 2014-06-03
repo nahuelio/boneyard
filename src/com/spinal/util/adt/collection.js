@@ -18,7 +18,7 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 		*	@property collection
 		*	@type Array
 		**/
-		collection: [],
+		collection: null,
 
 		/**
 		*	Interface reference, usually a constructor function that identifies
@@ -39,7 +39,9 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 		*	@return {com.spinal.util.adt.Collection}
 		**/
 		initialize: function(initial, opts) {
-			return Collection.__super__.initialize.apply(this, arguments);
+			this.collection = [];
+			Collection.__super__.initialize.apply(this, arguments);
+			return this;
 		},
 
 		/**

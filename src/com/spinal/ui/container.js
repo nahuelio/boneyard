@@ -28,11 +28,16 @@ define(['core/spinal',
 		*	@property views
 		*	@type {com.spinal.util.adt.Collection}
 		**/
-		views: new Collection(),
+		views: null,
 
 		/**
 		*	Constructor
 		*	@constructor
+		*	@example
+		*		<b>Examples</b>
+		*		var example = new Container();
+		*		var example = new Container({ el: 'body' });
+		*		var example = new Container({ id: 'main', 'div.main' });
 		**/
 		constructor: function() {
 			View.apply(this, arguments);
@@ -43,10 +48,15 @@ define(['core/spinal',
 		*	@public
 		*	@chainable
 		*	@method initialize
+		*	@param [options] {Object} Optional Parameters
 		*	@return {com.spinal.ui.Container}
 		**/
-		initialize: function() {
+		initialize: function(options) {
+			options || (options = {});
 			Container.__super__.initialize.apply(this, arguments);
+			this.views = (options.interface && _.isFunction(options.interface)) ?
+				new Collection([], { interface: options.interface }) :
+				new Collection();
 			return this;
 		},
 

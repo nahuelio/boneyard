@@ -37,6 +37,16 @@ define(['core/spinal',
                 ], { interface: Spinal.SpinalClass });
             });
 
+            it('2 Collection instances should have independent \'interfaces\'', function() {
+                this.testCol1 = new Collection([], { interface: Backbone.View });
+                this.testCol2 = new Collection([], { interface: Spinal.SpinalClass });
+                this.testCol1.add({ model: new Backbone.Model({ name: 'foo' }) });
+                this.testCol2.add({ name: 'bar' });
+                expect(this.testCol1.get(0) instanceof Backbone.View).to.be.equal(true);
+                expect(this.testCol2.get(0) instanceof Spinal.SpinalClass).to.be.equal(true);
+                expect(this.testCol1._interface).not.be.equal(this.testCol2._interface);
+            });
+
     	});
 
     	/**

@@ -8,13 +8,21 @@ define(['core/spinal',
 		'util/error/types/ui-exception'], function(Spinal, View, Container, UIException) {
 
 	describe('com.spinal.ui.View', function() {
-
+		
 		before(function() {
 			this.genericContainer = new Container({ id: 'global', el: 'body' });
 		});
 
+		after(function() {
+			this.genericContainer.detach();
+			delete this.genericContainer;
+		});
+
 		afterEach(function() {
-			if(this.testView) delete this.testView.detach();
+			if(this.testView) {
+				this.testView.detach();
+				delete this.testView;
+			}
 		});
 
 		describe('#new()', function() {
@@ -28,10 +36,10 @@ define(['core/spinal',
 			});
 
 			it('Should return an instance of View with el specified as a jquery type instance', function() {
-				this.testView = new View({ el: $('html') });
+				this.testView = new View({ el: $('body') });
 				expect(this.testView).to.be.ok();
 				expect(this.testView.className).to.be.equal('com-spinal-ui-view');
-				expect(this.testView.$el[0].nodeName.toLowerCase()).to.be.equal('html');
+				expect(this.testView.$el[0].nodeName.toLowerCase()).to.be.equal('body');
 				this.testView = new View({ el: $('p.non-existent') });
 				expect(this.testView.$el[0].nodeName.toLowerCase()).to.be.equal('div');
 			});
@@ -73,8 +81,6 @@ define(['core/spinal',
 				expect(this.testView).to.be.ok();
 				expect(this.testView.method).to.be.equal(View.RENDER.prependTo);
 			});
-
-			/** Errors **/
 
 			it('Should throw an Error: new View() with id type number instead of string', function() {
 				expect(function() {
@@ -179,8 +185,6 @@ define(['core/spinal',
 				expect(this.testView.$el.find('p').text()).to.be.equal(temporalContainer.model.get('name'));
 				temporalContainer.detach();
 			});
-
-			/** Errors **/
 
 			it('Should throw an Error: Unable to render the View due to the successor ref is not defined.', function() {
 				expect(_.bind(function() {

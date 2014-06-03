@@ -2,7 +2,7 @@
 *	Spinal Core Tests
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define(['core/spinal'], function(Spinal) {
+define(['core/spinal',], function(Spinal) {
 
 	describe('Spinal.Core', function() {
 
@@ -180,6 +180,7 @@ define(['core/spinal'], function(Spinal) {
 				// submethod() should be overriden in the subclass
 				expect(instance1.submethod()).to.be.equal('SubClass-M100');
 			});
+
 		});
 
 	});

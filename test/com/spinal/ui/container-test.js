@@ -7,21 +7,27 @@ define(['core/spinal',
 		'ui/container',
 		'util/error/types/ui-exception'], function(Spinal, View, Container, UIException) {
 
-	describe('com.spinal.ui.View', function() {
+	describe('com.spinal.ui.Container', function() {
 
 		before(function() {
-			this.body = new Container({ id: 'global', el: 'body' });
+			this.globalbody = new Container({ id: 'global', el: 'body' });
 			this.viewA = new View({ id: 'A' });
 			this.viewB = new View({ id: 'B' });
+		});
+
+		after(function() {
+			delete this.globalbody.detach();
+			delete this.viewA.detach();
+			delete this.viewB.detach();
 		});
 
 		describe('#new()', function() {
 
 			it('Should return a new instance of com.spinal.ui.Container', function() {
-				this.c = new Container({ id: 'main' });
-				this.body.add(this.c);
-				expect(this.c).to.be.ok();
-				expect(this.c.$el.attr('class')).to.be.equal(this.c.className);
+				this.testContainer = new Container({ id: 'main' });
+				this.globalbody.add(this.testContainer);
+				expect(this.testContainer).to.be.ok();
+				expect(this.testContainer.$el.attr('class')).to.be.equal(this.testContainer.className)
 			});
 
 		});
