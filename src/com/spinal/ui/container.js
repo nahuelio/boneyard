@@ -39,7 +39,7 @@ define(['core/spinal',
 		*		var example = new Container({ el: 'body' });
 		*		var example = new Container({ id: 'main', 'div.main' });
 		**/
-		constructor: function() {
+		constructor: function(attrs) {
 			View.apply(this, arguments);
 		},
 
@@ -54,9 +54,7 @@ define(['core/spinal',
 		initialize: function(options) {
 			options || (options = {});
 			Container.__super__.initialize.apply(this, arguments);
-			this.views = new Collection([], {
-				interface: (options.interface) ? options.interface : View
-			});
+			this.views = new Collection([], (options.interface) ? { interface: options.interface } : {});
 			return this;
 		},
 
@@ -79,11 +77,10 @@ define(['core/spinal',
 		/**
 		*	Add View
 		*	@public
-		*	@chainable
 		*	@method add
 		*	@param view {com.spinal.ui.View} View instance
 		*	@param [opts] {Object} additional options
-		*	@return {com.spinal.ui.Container}
+		*	@return Object
 		**/
 		add: function(view, opts) {
 			opts || (opts = {});
@@ -93,7 +90,7 @@ define(['core/spinal',
 				if(opts.renderOnAdd) view.render(opts);
 				if(!opts.silent) this.trigger(Container.EVENTS.added, { added: view, view: this });
 			}
-			return this;
+			return view;
 		},
 
 		/**
@@ -107,12 +104,28 @@ define(['core/spinal',
 		**/
 		remove: function(view, opts) {
 			opts || (opts = {});
-			if(this.findById(view.id)) {
-				this.views.remove(view);
+			var pos = this.getPos(view);
+			if(!_.isNull(pos)) {
+				this.views.remove(pos);
 				view._successor = null;
-				if(opts.detachOnRemove) view.remove();
+				if(opts.detachOnRemove) view.detach();
 				if(!opts.silent) this.trigger(Container.EVENTS.removed, { removed: view, view: this });
 			}
+			return this;
+		},
+
+		/**
+		*	Remove the View and all subviews by detaching them from the dom.
+		*	@public
+		*	@chainable
+		*	@method removeAll
+		*	@FIXME: Enhancement: Improve method _.invoke in collection (no error prone if method is not found.)
+		*	this.removeAll should be triggered if a container is inside another container.
+		*	@return {com.spinal.ui.Container}
+		**/
+		removeAll: function() {
+			this.detach();
+			this.views.reset();
 			return this;
 		},
 
@@ -128,15 +141,31 @@ define(['core/spinal',
 		},
 
 		/**
+		*	Returns the index of the view specified as parameter inside the collection
+		*	@public
+		*	@method getPos
+		*	@param view {com.spinal.core.Backbone.View} view used to get the index
+		*	@return Object
+		**/
+		getPos: function(view) {
+			return this.views.findPos(function(ele) { return (ele.id && ele.id === view.id); });
+		},
+
+		/**
 		*	Render Container
 		*	@public
 		*	@chainable
 		*	@method render
-		*	@param [opts] {Object} additional options
 		*	@return {com.spinal.ui.Container}
 		**/
-		render: function(opts) {
-			opts || (opts = {});
+		render: function() {
+			if(!this._successor) {
+				// FIXME: body can be specified as part of the constructor
+				// options.el: 'body' so that should be to limit of successors
+				// create an exception for that.
+				this._successor = new Container({ el: 'body' });
+				this._successor.add(this, { silent: true });
+			}
 			Container.__super__.render.apply(this, arguments);
 			this.invoke('render', arguments);
 			return this;
@@ -158,17 +187,6 @@ define(['core/spinal',
 		},
 
 		/**
-		*	Find Views by evaluation defined in finder.
-		*	@public
-		*	@method findBy
-		*	@param id {String} View id
-		*	@return {com.spinal.ui.View}
-		**/
-		findBy: function(finder) {
-			return this.views.findBy(finder);
-		},
-
-		/**
 		*	Find View by id
 		*	@public
 		*	@method findById
@@ -178,6 +196,17 @@ define(['core/spinal',
 		findById: function(id) {
 			if(!id) return null;
 			return this.views.find(function(v) { return (v.id && v.id === id); });
+		},
+
+		/**
+		*	Filter Views by evaluation defined in finder.
+		*	@public
+		*	@method filter
+		*	@param id {String} View id
+		*	@return {com.spinal.ui.View}
+		**/
+		filter: function(finder) {
+			return this.views.findBy(finder);
 		},
 
 		/**
@@ -253,10 +282,7 @@ define(['core/spinal',
 		*	@return {com.spinal.ui.View}
 		**/
 		detach: function() {
-			if(!this.views.isEmpty()) {
-				delete this.invoke('detach', arguments);
-				this.views.reset();
-			}
+			if(!this.views.isEmpty()) this.invoke('detach', arguments);
 			Container.__super__.detach.apply(this, arguments);
 			return this;
 		},

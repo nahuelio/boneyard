@@ -141,7 +141,7 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 		*	@return Array
 		**/
 		invoke: function(methodName) {
-			var args = Array.prototype.slice.call(arguments, 1);
+			var args = _.flatten(Array.prototype.slice.call(arguments, 1));;
 			return _.invoke(this.collection, methodName, args);
 		},
 
@@ -265,13 +265,28 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 		*	@public
 		*	@method findBy
 		*	@param finder {Function} matcher function
-		*	@return {Array}
+		*	@return Array
 		**/
 		findBy: function(finder) {
 			for(var i = 0, found = []; i < this.size(); i++) {
 				if(finder(this.collection[i])) found.push(this.collection[i]);
 			}
 			return found;
+		},
+
+		/**
+		*	Find index position of an element that match the evaluation defined in finder.
+		*	First element index that matches the evaluation will be returned. Otherwise, it will return null.
+		*	@public
+		*	@method findPosBy
+		*	@param finder {Function} matcher function
+		*	@return Object
+		**/
+		findPos: function(finder) {
+			for(var i = 0, ix = null; i < this.size(); i++) {
+				if(finder(this.collection[i])) { ix = i; break; }
+			}
+			return ix;
 		},
 
 		/**

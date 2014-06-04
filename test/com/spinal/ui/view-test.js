@@ -8,21 +8,14 @@ define(['core/spinal',
 		'util/error/types/ui-exception'], function(Spinal, View, Container, UIException) {
 
 	describe('com.spinal.ui.View', function() {
-		
+
 		before(function() {
-			this.genericContainer = new Container({ id: 'global', el: 'body' });
+			this.genericContainer = new Container({ id: 'global', el: 'body', interface: View });
 		});
 
 		after(function() {
 			this.genericContainer.detach();
 			delete this.genericContainer;
-		});
-
-		afterEach(function() {
-			if(this.testView) {
-				this.testView.detach();
-				delete this.testView;
-			}
 		});
 
 		describe('#new()', function() {
@@ -114,76 +107,82 @@ define(['core/spinal',
 		describe('#render()', function() {
 
 			it('Should render a View instance', function() {
-				this.testView = new View({ id: 'render-test' });
-				this.testView.off().on(View.EVENTS.rendered, function(ev) {
+				this.testView = { id: 'render-test' };
+				var view = this.genericContainer.add(this.testView);
+				view.off().on(View.EVENTS.rendered, function(ev) {
 					expect(ev).to.be.ok();
 					expect(ev.view).to.be.ok();
 					expect(ev.view.$el.attr('class')).to.be.equal('com-spinal-ui-view');
 				});
-				this.genericContainer.add(this.testView);
-				var result = this.testView.render();
+				var result = view.render();
 				expect(result).to.be.ok();
 				expect(result).to.be.a(View);
 				expect(this.genericContainer.$el.find('div#render-test').length).to.be.equal(1);
 				// Silent (No event triggering)
-				this.testView.render({ silent: true });
+				view.render({ silent: true });
 				expect(this.genericContainer.$el.find('div#render-test').length).to.be.equal(1);
-				this.genericContainer.detach();
+				this.genericContainer.removeAll();
+				delete view;
 			});
 
 			it('Should render a View instance with method inline', function() {
-				this.testView = new View({ id: 'prepend-test' });
-				this.testView2 = new View({ id: 'append-test' });
-				this.genericContainer.add(this.testView).add(this.testView2);
-				this.testView2.render(); // Default 'append' method defined in View Class
-				this.testView.render({ method: View.RENDER.prepend }); // Override Render method explicity to prepend
+				this.testView = { id: 'append-test' };
+				this.testView2 = { id: 'prepend-test' };
+				var view = this.genericContainer.add(this.testView);
+				var view2 = this.genericContainer.add(this.testView2);
+				view.render(); // Default 'append' method defined in View Class
+				view2.render({ method: View.RENDER.prepend }); // Override Render method explicity to prepend
 				expect(this.genericContainer.views.size()).to.be.equal(2);
 				expect(this.genericContainer.$el.children().first().attr('id')).to.be.equal('prepend-test');
-				this.genericContainer.detach();
+				this.genericContainer.removeAll();
+				delete view;
+				delete view2;
 			});
 
 			it('Should render a View instance with template', function() {
-				this.testView = new View({
-					template: '<input class="test" />'
-				});
-				this.genericContainer.add(this.testView);
-				var result = this.testView.render();
+				this.testView = { template: '<input class="test" />' };
+				var view = this.genericContainer.add(this.testView);
+				var result = view.render();
 				expect(result).to.be.ok();
 				expect(result.template).to.be.a(Function);
 				expect(result.$el.find('input').hasClass('test')).to.be.equal(true);
 				expect(this.genericContainer.$el.find('.com-spinal-ui-view').length).to.be.equal(1);
-				expect(this.genericContainer.$el.find('#' + this.testView.id).length).to.be.equal(1);
-				this.genericContainer.detach();
+				expect(this.genericContainer.$el.find('#' + view.id).length).to.be.equal(1);
+				this.genericContainer.removeAll();
+				delete view;
 			});
 
 			it('Should render a View instance with template + model data', function() {
-				this.testView = new View({
+				this.testView = {
 					model: new Backbone.Model({ name: 'Hello Spinal!' }),
 					template: '<p>{{name}}</p>'
-				});
-				this.genericContainer.add(this.testView);
-				var result = this.testView.render();
+				};
+				var view = this.genericContainer.add(this.testView);
+				var result = view.render();
 				expect(result).to.be.ok();
 				expect(result.model).to.be.a(Backbone.Model);
 				expect(result.template).to.be.a(Function);
-				expect(this.testView.$el.find('p').text()).to.be.equal(this.testView.model.get('name'));
-				this.genericContainer.detach();
+				expect(view.$el.find('p').text()).to.be.equal(view.model.get('name'));
+				this.genericContainer.removeAll();
+				delete view;
 			});
 
 			it('Should render a View instance with template + model data provided by the successor', function() {
 				var temporalContainer = new Container({
 					id: 'global-temporal',
 					el: 'body',
-					model: new Backbone.Model({ name: 'Hello Spinal from successor!' })
+					model: new Backbone.Model({ name: 'Hello Spinal from successor!' }),
+					interface: View
 				});
-				this.testView = new View({ template: '<p>{{name}}</p>' });
-				temporalContainer.add(this.testView);
-				var result = this.testView.render();
+				this.testView = { template: '<p>{{name}}</p>' };
+				var view = temporalContainer.add(this.testView);
+				var result = view.render();
 				expect(result).to.be.ok();
 				expect(result.model).not.be.ok();
 				expect(temporalContainer.model).to.be.ok();
-				expect(this.testView.$el.find('p').text()).to.be.equal(temporalContainer.model.get('name'));
-				temporalContainer.detach();
+				expect(view.$el.find('p').text()).to.be.equal(temporalContainer.model.get('name'));
+				temporalContainer.removeAll();
+				delete view;
 			});
 
 			it('Should throw an Error: Unable to render the View due to the successor ref is not defined.', function() {
@@ -224,16 +223,17 @@ define(['core/spinal',
 		describe('#update()', function() {
 
 			it('Should update the View and return the instance', function() {
-				this.testView = new View({ id: 'test-update'});
-				this.testView.off().on(View.EVENTS.updated, function(ev) {
+				this.testView = { id: 'test-update'};
+				var view = this.genericContainer.add(this.testView);
+				view.off().on(View.EVENTS.updated, function(ev) {
 					expect(ev).to.be.ok();
 					expect(ev.view).to.be.ok();
 				});
-				this.genericContainer.add(this.testView);
-				var result = this.testView.update();
+				var result = view.update();
 				expect(result).to.be.a(View);
-				result = this.testView.update({ silent: true });
+				result = view.update({ silent: true });
 				this.genericContainer.detach();
+				delete view;
 			});
 
 		});
@@ -241,23 +241,25 @@ define(['core/spinal',
 		describe('#lookup()', function() {
 
 			it('Should return the successor instance', function() {
-				this.testView = new View({ id: 'child-of-global'});
-				this.genericContainer.add(this.testView);
-				var result = this.testView.lookup('child-of-global');
+				this.testView = { id: 'child-of-global'};
+				var view = this.genericContainer.add(this.testView);
+				var result = view.lookup('child-of-global');
 				expect(result).to.be.ok();
 				expect(result.id).to.be.equal('child-of-global');
-				expect(this.testView._successor).to.be.a(Container);
-				this.genericContainer.detach();
+				expect(view._successor).to.be.a(Container);
+				this.genericContainer.removeAll();
+				delete view;
 			});
 
 			it('Should NOT return the successor instance (null)', function() {
-				this.testView = new View({ id: 'child-of-global' });
-				this.genericContainer.add(this.testView);
-				var result = this.testView.lookup('non-existent');
+				this.testView = { id: 'child-of-global' };
+				var view = this.genericContainer.add(this.testView);
+				var result = view.lookup('non-existent');
 				expect(result).to.be.equal(null);
-				result = this.testView.lookup();
+				result = view.lookup();
 				expect(result).to.be.equal(null);
 				this.genericContainer.detach();
+				delete view;
 			});
 
 		});
