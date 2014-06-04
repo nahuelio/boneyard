@@ -74,8 +74,8 @@ define(['core/spinal',
 			if(!this.findById(view.id)) {
 				this.views.add(view);
 				view._successor = this;
-				if(opts.renderOnAdd) view.render();
-				if(!opts.silent) this.trigger(Container.EVENTS.added, { view: this });
+				if(opts.renderOnAdd) view.render(opts);
+				if(!opts.silent) this.trigger(Container.EVENTS.added, { added: view, view: this });
 			}
 			return this;
 		},
@@ -95,8 +95,49 @@ define(['core/spinal',
 				this.views.remove(view);
 				view._successor = null;
 				if(opts.detachOnRemove) view.remove();
-				if(!opts.silent) this.trigger(Container.EVENTS.removed, { view: this });
+				if(!opts.silent) this.trigger(Container.EVENTS.removed, { removed: view, view: this });
 			}
+			return this;
+		},
+
+		/**
+		*	Returns a view in the index specified as parameter. If it's not found, returns null.
+		*	@public
+		*	@method get
+		*	@param ix {Number} index
+		*	@return Object
+		**/
+		get: function(ix) {
+			return this.views.get(ix);
+		},
+
+		/**
+		*	Render Container
+		*	@public
+		*	@chainable
+		*	@method render
+		*	@param [opts] {Object} additional options
+		*	@return {com.spinal.ui.Container}
+		**/
+		render: function(opts) {
+			opts || (opts = {});
+			Container.__super__.render.apply(this, arguments);
+			this.invoke('render', arguments);
+			return this;
+		},
+
+		/**
+		*	Update Container
+		*	@public
+		*	@chainable
+		*	@method update
+		*	@param [opts] {Object} additional options
+		*	@return {com.spinal.ui.Container}
+		**/
+		update: function(opts) {
+			opts || (opts = {});
+			Container.__super__.update.apply(this, arguments);
+			this.invoke('update', arguments);
 			return this;
 		},
 
@@ -144,8 +185,8 @@ define(['core/spinal',
 		*	@return {com.spinal.ui.View}
 		**/
 		show: function() {
-			this.invoke('show', arguments);
 			Container.__super__.show.apply(this, arguments);
+			this.invoke('show', arguments);
 			return this;
 		},
 
@@ -157,8 +198,8 @@ define(['core/spinal',
 		*	@return {com.spinal.ui.View}
 		**/
 		hide: function() {
-			this.invoke('hide', arguments);
 			Container.__super__.hide.apply(this, arguments);
+			this.invoke('hide', arguments);
 			return this;
 		},
 
@@ -170,8 +211,8 @@ define(['core/spinal',
 		*	@return {com.spinal.ui.View}
 		**/
 		enable: function() {
-			this.invoke('enable', arguments);
 			Container.__super__.enable.apply(this, arguments);
+			this.invoke('enable', arguments);
 			return this;
 		},
 
@@ -183,8 +224,8 @@ define(['core/spinal',
 		*	@return {com.spinal.ui.View}
 		**/
 		disable: function() {
-			this.invoke('disable', arguments);
 			Container.__super__.disable.apply(this, arguments);
+			this.invoke('disable', arguments);
 			return this;
 		},
 
