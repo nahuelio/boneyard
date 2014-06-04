@@ -54,10 +54,26 @@ define(['core/spinal',
 		initialize: function(options) {
 			options || (options = {});
 			Container.__super__.initialize.apply(this, arguments);
-			this.views = (options.interface && _.isFunction(options.interface)) ?
-				new Collection([], { interface: options.interface }) :
-				new Collection();
+			this.views = new Collection([], {
+				interface: (options.interface) ? options.interface : View
+			});
 			return this;
+		},
+
+		/**
+		*	Validates parameters passed to the contructor function of this class.
+		*	@private
+		*	@method _valid
+		*	@param attrs {Object} attributes
+		*	@return Boolean
+		**/
+		_valid: function(attrs) {
+			attrs || (attrs = {});
+			if(Container.__super__._valid.apply(this, arguments)) {
+				if(attrs.interface && !(new attrs.interface() instanceof Backbone.View))
+					throw new UIException('InvalidInterfaceType');
+			}
+			return true;
 		},
 
 		/**
@@ -72,7 +88,7 @@ define(['core/spinal',
 		add: function(view, opts) {
 			opts || (opts = {});
 			if(!this.findById(view.id)) {
-				this.views.add(view);
+				view = this.views.add(view);
 				view._successor = this;
 				if(opts.renderOnAdd) view.render(opts);
 				if(!opts.silent) this.trigger(Container.EVENTS.added, { added: view, view: this });
@@ -238,7 +254,7 @@ define(['core/spinal',
 		**/
 		detach: function() {
 			if(!this.views.isEmpty()) {
-				this.invoke('detach', arguments);
+				delete this.invoke('detach', arguments);
 				this.views.reset();
 			}
 			Container.__super__.detach.apply(this, arguments);

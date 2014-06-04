@@ -11,14 +11,12 @@ define(['core/spinal',
 
 		before(function() {
 			this.globalbody = new Container({ id: 'global', el: 'body' });
-			this.viewA = new View({ id: 'A' });
-			this.viewB = new View({ id: 'B' });
+			this.viewA = { id: 'A' };
+			this.viewB = { id: 'B' };
 		});
 
 		after(function() {
 			delete this.globalbody.detach();
-			delete this.viewA.detach();
-			delete this.viewB.detach();
 		});
 
 		describe('#new()', function() {
@@ -34,10 +32,10 @@ define(['core/spinal',
 				this.globalbody.detach();
 			});
 
-			it('Should return a new instance of com.spinal.ui.Container (with Interface)', function() {
-				this.testContainer = new Container({ id: 'main', interface: View });
+			it('Should return a new instance of com.spinal.ui.Container (with Custom Interface)', function() {
+				this.testContainer = new Container({ id: 'main', interface: Backbone.View });
 				expect(this.testContainer).to.be.ok();
-				expect(this.testContainer.views._interface).to.be.equal(View);
+				expect(this.testContainer.views._interface).to.be.equal(Backbone.View);
 				delete this.testContainer.detach();
 			});
 

@@ -42,6 +42,7 @@ define(['core/spinal',
 		*		UIStackViolation
 		*		InvalidModelType
 		*		UnsupportedRenderMethod
+		*		InvalidInterfaceType
 		*	@static
 		*	@property TYPES
 		*	@type Object
@@ -52,7 +53,8 @@ define(['core/spinal',
 			InvalidSuccessorType: '\'successor\' must be an instance of com.spinal.ui.Container.',
 			UIStackViolation: 'UI Stack Violation found: view \'{{viewId}}\' can not be found inside the successor specified \'{{succesorId}}\'.',
 			InvalidModelType: '\'model\' must be an instance of Backbone.Model.',
-			UnsupportedRenderMethod: 'unsupported render method -> \'{{method}}\'.'
+			UnsupportedRenderMethod: 'unsupported render method -> \'{{method}}\'.',
+			InvalidInterfaceType: 'unsupported Interface Type'
 		}
 
 	}));

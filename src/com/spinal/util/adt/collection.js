@@ -102,9 +102,12 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 		add: function(element, opts) {
 			opts || (opts = {});
 			if(!this._valid(element)) return null;
-			(!_.isNull(this._interface)) ?
-				this.collection.push(new this._interface(element)) :
+			if(!_.isNull(this._interface)) {
+				element = new this._interface(element);
 				this.collection.push(element);
+			} else {
+				this.collection.push(element);
+			}
 			if(!opts.silent) this.trigger(Collection.EVENTS.added, { added: element, collection: this });
 			return element;
 		},
