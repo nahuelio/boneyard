@@ -202,15 +202,32 @@ define(['core/spinal',
 
 		describe('#update()', function() {
 
+			it('Should update() the container and all subviews', function() {
+				this.testContainer = new Container({ id: 'main', interface: View });
+				var viewA = this.testContainer.add(this.viewA),
+					viewB = this.testContainer.add(this.viewB);
+				this.globalbody.on(Container.EVENTS.updated, function(ev) {
+					expect(ev).to.be.ok();
+					expect(ev.view).to.be.ok();
+				});
+				this.globalbody.add(this.testContainer);
+				this.globalbody.render();
+				this.globalbody.update();
+				this.globalbody.removeAll();
+				delete this.testContainer.off().removeAll();
+				delete viewA;
+				delete viewB;
+			});
+
 		});
 
-		describe('#filter()', function() {
+		/**describe('#filter()', function() {
 
-		});
+		});**/
 
 		describe('#show(), #hide()', function() {
 
-			it('Should show() the container and all subviews', function() {
+			it('Should show()/hide() the container and all subviews', function() {
 				this.testContainer = new Container({ id: 'main', interface: View });
 				var viewA = this.testContainer.add(this.viewA),
 					viewB = this.testContainer.add(this.viewB);
@@ -220,20 +237,38 @@ define(['core/spinal',
 				});
 				this.globalbody.add(this.testContainer);
 				this.globalbody.render();
-				this.testContainer.show();;
-				//console.log(this.testContainer.$el.is(':visible')); // problem, always return false!!.
-				// FIXME: Added the exception discribed in Container.render() method to have this validation
-				// work as expected. Seems like jquery evaluates if the object is actually part of the DOM.
-
-				//expect(this.testContainer.hide().$el.is(':visible')).to.be.equal(true);
-				//expect(this.testContainer.show().$el.is(':visible')).to.be.equal(true);
+				expect(this.testContainer.hide().$el.is(':visible')).to.be.equal(false);
+				expect(this.testContainer.show().$el.is(':visible')).to.be.equal(true);
+				this.globalbody.removeAll();
 				delete this.testContainer.off().removeAll();
 				delete viewA;
 				delete viewB;
 			});
+
 		});
 
 		describe('#enable(), #disable()', function() {
+
+			it('Should enable()/disable() the container and all subviews', function() {
+				this.testContainer = new Container({ id: 'main', interface: View });
+				var viewA = this.testContainer.add(this.viewA),
+					viewB = this.testContainer.add(this.viewB);
+				this.testContainer.off().on(Container.EVENTS.disabled, function(ev) {
+					expect(ev).to.be.ok();
+					expect(ev.view).to.be.ok();
+				}).on(Container.EVENTS.enabled, function(ev) {
+					expect(ev).to.be.ok();
+					expect(ev.view).to.be.ok();
+				});
+				this.globalbody.add(this.testContainer);
+				this.globalbody.render();
+				expect(this.testContainer.disable().$el.attr('disabled')).to.be.equal('disabled');
+				expect(this.testContainer.enable().$el.attr('disabled')).to.be.equal(undefined);
+				this.globalbody.removeAll();
+				delete this.testContainer.off().removeAll();
+				delete viewA;
+				delete viewB;
+			});
 
 		});
 

@@ -14,8 +14,7 @@ define(['core/spinal',
 		});
 
 		after(function() {
-			this.genericContainer.detach();
-			delete this.genericContainer;
+			this.genericContainer.removeAll();
 		});
 
 		describe('#new()', function() {
@@ -28,13 +27,13 @@ define(['core/spinal',
 				expect(this.testView.$el.attr('id')).to.be.equal(this.testView.id);
 			});
 
-			it('Should return an instance of View with el specified as a jquery type instance', function() {
-				this.testView = new View({ el: $('body') });
+			it('Should return an instance of View with el specified as part of the constructor', function() {
+				this.testView = new View({ el: 'body' });
 				expect(this.testView).to.be.ok();
 				expect(this.testView.className).to.be.equal('com-spinal-ui-view');
 				expect(this.testView.$el[0].nodeName.toLowerCase()).to.be.equal('body');
-				this.testView = new View({ el: $('p.non-existent') });
-				expect(this.testView.$el[0].nodeName.toLowerCase()).to.be.equal('div');
+				this.testView = new View({ el: 'p.non-existent' });
+				expect(this.testView.el).to.be.equal(undefined);
 			});
 
 			it('Should return instance of View with inline template as String', function() {
@@ -232,7 +231,7 @@ define(['core/spinal',
 				var result = view.update();
 				expect(result).to.be.a(View);
 				result = view.update({ silent: true });
-				this.genericContainer.detach();
+				this.genericContainer.removeAll();
 				delete view;
 			});
 
@@ -258,7 +257,7 @@ define(['core/spinal',
 				expect(result).to.be.equal(null);
 				result = view.lookup();
 				expect(result).to.be.equal(null);
-				this.genericContainer.detach();
+				this.genericContainer.removeAll();
 				delete view;
 			});
 
@@ -267,10 +266,15 @@ define(['core/spinal',
 		describe('#show()', function() {
 
 			it('Should show the view', function() {
-				this.testView = new View({ });
-				this.testView.off().on(View.EVENTS.shown, function(ev) { expect(ev).to.be.ok(); });
-				var result = this.testView.show();
-				result = this.testView.show({ silent: true });
+				this.testView = { id: 'show-test' };
+				var view = this.genericContainer.add(this.testView);
+				this.genericContainer.render();
+				view.off().on(View.EVENTS.shown, function(ev) { expect(ev).to.be.ok(); });
+				var result = view.show();
+				console.log('HELLO');
+				result = view.show({ silent: true });
+				this.genericContainer.removeAll();
+				delete view;
 			});
 
 		});
@@ -278,10 +282,14 @@ define(['core/spinal',
 		describe('#hide()', function() {
 
 			it('Should hide the view', function() {
-				this.testView = new View();
-				this.testView.off().on(View.EVENTS.hidden, function(ev) { expect(ev).to.be.ok(); });
-				var result = this.testView.hide();
-				result = this.testView.hide({ silent: true });
+				this.testView = { id: 'hide-test' };
+				var view = this.genericContainer.add(this.testView);
+				this.genericContainer.render();
+				view.off().on(View.EVENTS.hidden, function(ev) { expect(ev).to.be.ok(); });
+				var result = view.hide();
+				result = view.hide({ silent: true });
+				this.genericContainer.removeAll();
+				delete view;
 			});
 
 		});
@@ -319,7 +327,7 @@ define(['core/spinal',
 				this.genericContainer.add(this.testView);
 				this.testView.off().on(View.EVENTS.detached, function(ev) { expect(ev).to.be.ok(); });
 				var result = this.testView.detach({ silent: true });
-				this.genericContainer.detach();
+				this.genericContainer.removeAll();
 			});
 
 		});

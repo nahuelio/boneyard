@@ -58,17 +58,9 @@ define(['core/spinal',
 		/**
 		*	Constructor
 		*	@constructor
-		*	@param [options] {Object} view options
+		*	@param [options] {Object} View Options
 		**/
 		constructor: function(options) {
-			options || (options = {});
-			if(options.el) {
-				if(_.isString(options.el)) this.tagName = _.clone(options.el);
-				if(options.el instanceof Backbone.$ && options.el.length > 0) {
-					this.tagName = options.el[0].nodeName.toLowerCase();
-				}
-			}
-			delete options.el;
 			Backbone.View.apply(this, arguments);
 		},
 

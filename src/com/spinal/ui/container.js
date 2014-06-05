@@ -37,9 +37,10 @@ define(['core/spinal',
 		*		<b>Examples</b>
 		*		var example = new Container();
 		*		var example = new Container({ el: 'body' });
-		*		var example = new Container({ id: 'main', 'div.main' });
+		*		var example = new Container({ id: 'main', el: 'div.main' });
+		*
 		**/
-		constructor: function(attrs) {
+		constructor: function() {
 			View.apply(this, arguments);
 		},
 
@@ -119,12 +120,12 @@ define(['core/spinal',
 		*	@public
 		*	@chainable
 		*	@method removeAll
-		*	@FIXME: Enhancement: Improve method _.invoke in collection (no error prone if method is not found.)
+		*	@FIXME: Enhancement: Improve method _.invoke in Collection class (less error prone if method is not found.)
 		*	this.removeAll should be triggered if a container is inside another container.
 		*	@return {com.spinal.ui.Container}
 		**/
 		removeAll: function() {
-			this.detach();
+			if(!this.views.isEmpty()) this.invoke('detach', arguments);
 			this.views.reset();
 			return this;
 		},
@@ -160,10 +161,9 @@ define(['core/spinal',
 		**/
 		render: function() {
 			if(!this._successor) {
-				// FIXME: body can be specified as part of the constructor
-				// options.el: 'body' so that should be to limit of successors
-				// create an exception for that.
-				this._successor = new Container({ el: 'body' });
+				var parentEl = (this.$el.parent().length > 0) ?
+					this.$el.parent()[0].nodeName.toLowerCase() : 'body';
+				this._successor = new Container({ el: parentEl });
 				this._successor.add(this, { silent: true });
 			}
 			Container.__super__.render.apply(this, arguments);
