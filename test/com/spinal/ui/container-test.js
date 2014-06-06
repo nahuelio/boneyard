@@ -17,7 +17,7 @@ define(['core/spinal',
 		});
 
 		after(function() {
-			this.globalbody.views.reset();
+			delete this.globalbody.removeAll();
 		});
 
 		describe('#new()', function() {
@@ -30,7 +30,7 @@ define(['core/spinal',
 				expect(this.globalbody.views.size()).to.be.equal(1);
 				expect(this.testContainer.views.size()).to.be.equal(0);
 				delete this.testContainer.removeAll();
-				this.globalbody.views.reset();
+				this.globalbody.removeAll();
 			});
 
 			it('Should return a new instance of com.spinal.ui.Container (with Custom Interface)', function() {
@@ -53,6 +53,16 @@ define(['core/spinal',
 					expect(e).to.be.ok();
 					expect(e.message).to.be.equal(UIException.TYPES.InvalidInterfaceType);
 				});
+			});
+
+		});
+
+		describe('#_valid()', function() {
+
+			it('Should Validate the attributes', function() {
+				this.testContainer = new Container({ id: 'main', interface: View });
+				var result = this.testContainer._valid();
+				delete this.testContainer.removeAll();
 			});
 
 		});
@@ -171,6 +181,7 @@ define(['core/spinal',
 				expect(this.testContainer.$el.find('#A').length).to.be.equal(1);
 				expect(this.testContainer.$el.find('#B').length).to.be.equal(1);
 				delete this.testContainer.removeAll();
+				this.globalbody.views.reset();
 				delete viewA;
 				delete viewB;
 			});
@@ -195,7 +206,6 @@ define(['core/spinal',
 
 				delete this.testB.removeAll();
 				delete this.testA.removeAll();
-				this.globalbody.views.reset();
 			});
 
 		});
@@ -221,9 +231,30 @@ define(['core/spinal',
 
 		});
 
-		/**describe('#filter()', function() {
+		describe('#filter()', function() {
 
-		});**/
+			it('Should Filter Views by a condition', function() {
+				this.testContainer = new Container({ id: 'main', interface: View });
+				var viewA = this.testContainer.add(this.viewA),
+					viewB = this.testContainer.add(this.viewB);
+					viewC = this.testContainer.add(this.viewC);
+				this.globalbody.add(this.testContainer);
+				this.globalbody.render();
+
+				var result = this.testContainer.filter(function(view) {
+					return (view.id === 'A' || view.id === 'C');
+				});
+				expect(result).to.be.ok();
+				expect(result.length).to.be.equal(2);
+				expect(result[1].id).to.be.equal('C');
+
+				this.globalbody.removeAll();
+				delete this.testContainer.off().removeAll();
+				delete viewA;
+				delete viewB;
+			});
+
+		});
 
 		describe('#show(), #hide()', function() {
 
@@ -280,6 +311,7 @@ define(['core/spinal',
 			});
 
 		});
+
 	});
 
 });

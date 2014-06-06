@@ -68,10 +68,9 @@ define(['core/spinal',
 		**/
 		_valid: function(attrs) {
 			attrs || (attrs = {});
-			if(Container.__super__._valid.apply(this, arguments)) {
-				if(attrs.interface && !(new attrs.interface() instanceof Backbone.View))
-					throw new UIException('InvalidInterfaceType');
-			}
+			Container.__super__._valid.apply(this, arguments);
+			if(attrs.interface && !(new attrs.interface() instanceof Backbone.View))
+				throw new UIException('InvalidInterfaceType');
 			return true;
 		},
 

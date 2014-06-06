@@ -271,7 +271,6 @@ define(['core/spinal',
 				this.genericContainer.render();
 				view.off().on(View.EVENTS.shown, function(ev) { expect(ev).to.be.ok(); });
 				var result = view.show();
-				console.log('HELLO');
 				result = view.show({ silent: true });
 				this.genericContainer.removeAll();
 				delete view;

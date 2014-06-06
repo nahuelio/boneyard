@@ -89,6 +89,7 @@ define(['core/spinal',
 		*	@return Boolean
 		**/
 		_valid: function(attrs) {
+			attrs || (attrs = {});
 			if(attrs.id && !_.isString(attrs.id)) throw new UIException('InvalidIDType');
 			if(attrs.model && !(attrs.model instanceof Backbone.Model)) throw new UIException('InvalidModelType');
 			if(attrs.method && !(View.RENDER[attrs.method])) throw new UIException('UnsupportedRenderMethod');
