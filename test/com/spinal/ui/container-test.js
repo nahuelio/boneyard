@@ -1,6 +1,8 @@
 /**
 *	com.spinal.ui.Container Class Tests
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
+*	// FIXME: There is an issue here where a Container instance is accidentally
+*	// Removing the body of the page or something causing karma to restart and load everything again.
 **/
 define(['core/spinal',
 		'ui/view',
@@ -9,14 +11,14 @@ define(['core/spinal',
 
 	describe('com.spinal.ui.Container', function() {
 
-		before(function() {
+		beforeEach(function() {
 			this.globalbody = new Container({ id: 'global', el: 'body' });
 			this.viewA = { id: 'A' };
 			this.viewB = { id: 'B' };
 			this.viewC = { id: 'C' };
 		});
 
-		after(function() {
+		afterEach(function() {
 			delete this.globalbody.removeAll();
 		});
 
@@ -171,10 +173,10 @@ define(['core/spinal',
 
 			it('Should render the views inside the container', function() {
 				this.testContainer = new Container({ id: 'render-container', interface: View });
-				this.testContainer.off().on(Container.EVENTS.rendered, function(ev) {
+				this.testContainer.off().on(Container.EVENTS.rendered, _.bind(function(ev) {
 					expect(ev).to.be.ok();
 					expect(ev.view).to.be.ok();
-				});
+				}, this));
 				var viewA = this.testContainer.add(this.viewA),
 					viewB = this.testContainer.add(this.viewB);
 				var result = this.testContainer.render();
@@ -203,7 +205,7 @@ define(['core/spinal',
 				expect($viewC.length).to.be.equal(1);
 				expect($viewA.parent().attr('id')).to.be.equal('main');
 				expect($viewC.parent().attr('id')).to.be.equal('nested');
-
+				this.globalbody.removeAll();
 				delete this.testB.removeAll();
 				delete this.testA.removeAll();
 			});
@@ -224,7 +226,8 @@ define(['core/spinal',
 				this.globalbody.render();
 				this.globalbody.update();
 				this.globalbody.removeAll();
-				delete this.testContainer.off().removeAll();
+				this.testContainer.off()
+				delete this.testContainer.removeAll();
 				delete viewA;
 				delete viewB;
 			});

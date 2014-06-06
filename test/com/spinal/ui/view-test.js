@@ -9,11 +9,11 @@ define(['core/spinal',
 
 	describe('com.spinal.ui.View', function() {
 
-		before(function() {
+		beforeEach(function() {
 			this.genericContainer = new Container({ id: 'global', el: 'body', interface: View });
 		});
 
-		after(function() {
+		afterEach(function() {
 			this.genericContainer.removeAll();
 		});
 
