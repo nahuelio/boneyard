@@ -1,8 +1,6 @@
 /**
 *	com.spinal.ui.Container Class Tests
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
-*	// FIXME: There is an issue here where a Container instance is accidentally
-*	// Removing the body of the page or something causing karma to restart and load everything again.
 **/
 define(['core/spinal',
 		'ui/view',
@@ -11,28 +9,36 @@ define(['core/spinal',
 
 	describe('com.spinal.ui.Container', function() {
 
+		before(function() {
+			$('body').append('<div class="global"></div>');
+		});
+
+		after(function() {
+			delete this.cglobal.detach();
+		});
+
 		beforeEach(function() {
-			this.globalbody = new Container({ id: 'global', el: 'body' });
+			this.cglobal = new Container({ id: 'global', el: 'div.global' });
 			this.viewA = { id: 'A' };
 			this.viewB = { id: 'B' };
 			this.viewC = { id: 'C' };
 		});
 
 		afterEach(function() {
-			delete this.globalbody.removeAll();
+			this.cglobal.removeAll();
 		});
 
 		describe('#new()', function() {
 
 			it('Should return a new instance of com.spinal.ui.Container', function() {
 				this.testContainer = new Container({ id: 'main' });
-				this.globalbody.add(this.testContainer);
+				this.cglobal.add(this.testContainer);
 				expect(this.testContainer).to.be.ok();
 				expect(this.testContainer.$el.attr('class')).to.be.equal(this.testContainer.className);
-				expect(this.globalbody.views.size()).to.be.equal(1);
+				expect(this.cglobal.views.size()).to.be.equal(1);
 				expect(this.testContainer.views.size()).to.be.equal(0);
 				delete this.testContainer.removeAll();
-				this.globalbody.removeAll();
+				this.cglobal.removeAll();
 			});
 
 			it('Should return a new instance of com.spinal.ui.Container (with Custom Interface)', function() {
@@ -162,7 +168,7 @@ define(['core/spinal',
 				var viewB = this.testContainer.add(this.viewB);
 				var result = this.testContainer.remove({ id: 'non-existent' });
 				expect(this.testContainer.views.size()).to.be.equal(2);
-				delete this.testContainer.removeAll();
+				delete this.testContainer.detach();
 				delete viewA;
 				delete viewB;
 			});
@@ -182,8 +188,7 @@ define(['core/spinal',
 				var result = this.testContainer.render();
 				expect(this.testContainer.$el.find('#A').length).to.be.equal(1);
 				expect(this.testContainer.$el.find('#B').length).to.be.equal(1);
-				delete this.testContainer.removeAll();
-				this.globalbody.views.reset();
+				delete this.testContainer.detach();
 				delete viewA;
 				delete viewB;
 			});
@@ -191,21 +196,21 @@ define(['core/spinal',
 			it('Should render Nested Views and combining (Container in Container and Views in Containers)', function() {
 				this.testA = new Container({ id: 'main' });
 				this.testB = new Container({ id: 'nested' });
-				this.globalbody.add(this.testA);
+				this.cglobal.add(this.testA);
 
 				this.testA.add(new View(this.viewA));
 				this.testA.add(new View(this.viewB));
 				this.testA.add(this.testB);
 				this.testB.add(new View(this.viewC));
-				var result = this.globalbody.render(),
-					$viewA = this.globalbody.$el.find('#A');
-					$viewC = this.globalbody.$el.find('#C');
+				var result = this.cglobal.render(),
+					$viewA = this.cglobal.$el.find('#A');
+					$viewC = this.cglobal.$el.find('#C');
 				// Checking integrity of the hierarchery reflecting the DOM.
 				expect($viewA.length).to.be.equal(1);
 				expect($viewC.length).to.be.equal(1);
 				expect($viewA.parent().attr('id')).to.be.equal('main');
 				expect($viewC.parent().attr('id')).to.be.equal('nested');
-				this.globalbody.removeAll();
+				this.cglobal.removeAll();
 				delete this.testB.removeAll();
 				delete this.testA.removeAll();
 			});
@@ -218,14 +223,14 @@ define(['core/spinal',
 				this.testContainer = new Container({ id: 'main', interface: View });
 				var viewA = this.testContainer.add(this.viewA),
 					viewB = this.testContainer.add(this.viewB);
-				this.globalbody.on(Container.EVENTS.updated, function(ev) {
+				this.cglobal.on(Container.EVENTS.updated, function(ev) {
 					expect(ev).to.be.ok();
 					expect(ev.view).to.be.ok();
 				});
-				this.globalbody.add(this.testContainer);
-				this.globalbody.render();
-				this.globalbody.update();
-				this.globalbody.removeAll();
+				this.cglobal.add(this.testContainer);
+				this.cglobal.render();
+				this.cglobal.update();
+				this.cglobal.removeAll();
 				this.testContainer.off()
 				delete this.testContainer.removeAll();
 				delete viewA;
@@ -241,8 +246,8 @@ define(['core/spinal',
 				var viewA = this.testContainer.add(this.viewA),
 					viewB = this.testContainer.add(this.viewB);
 					viewC = this.testContainer.add(this.viewC);
-				this.globalbody.add(this.testContainer);
-				this.globalbody.render();
+				this.cglobal.add(this.testContainer);
+				this.cglobal.render();
 
 				var result = this.testContainer.filter(function(view) {
 					return (view.id === 'A' || view.id === 'C');
@@ -251,7 +256,7 @@ define(['core/spinal',
 				expect(result.length).to.be.equal(2);
 				expect(result[1].id).to.be.equal('C');
 
-				this.globalbody.removeAll();
+				this.cglobal.removeAll();
 				delete this.testContainer.off().removeAll();
 				delete viewA;
 				delete viewB;
@@ -269,11 +274,11 @@ define(['core/spinal',
 					expect(ev).to.be.ok();
 					expect(ev.view).to.be.ok();
 				});
-				this.globalbody.add(this.testContainer);
-				this.globalbody.render();
+				this.cglobal.add(this.testContainer);
+				this.cglobal.render();
 				expect(this.testContainer.hide().$el.is(':visible')).to.be.equal(false);
 				expect(this.testContainer.show().$el.is(':visible')).to.be.equal(true);
-				this.globalbody.removeAll();
+				this.cglobal.removeAll();
 				delete this.testContainer.off().removeAll();
 				delete viewA;
 				delete viewB;
@@ -294,11 +299,11 @@ define(['core/spinal',
 					expect(ev).to.be.ok();
 					expect(ev.view).to.be.ok();
 				});
-				this.globalbody.add(this.testContainer);
-				this.globalbody.render();
+				this.cglobal.add(this.testContainer);
+				this.cglobal.render();
 				expect(this.testContainer.disable().$el.attr('disabled')).to.be.equal('disabled');
 				expect(this.testContainer.enable().$el.attr('disabled')).to.be.equal(undefined);
-				this.globalbody.removeAll();
+				this.cglobal.removeAll();
 				delete this.testContainer.off().removeAll();
 				delete viewA;
 				delete viewB;

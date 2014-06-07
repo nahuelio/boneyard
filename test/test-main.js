@@ -12,8 +12,6 @@ Object.keys(window.__karma__.files).forEach(function(file) {
     }
 });
 
-console.log('Reloaded Accidentaly??');
-
 require.config({
     // Karma serves files under /base, which is the basePath from your config file
     baseUrl: '/base',
@@ -43,6 +41,8 @@ require.config({
     paths: {
         'libs': 'target/libs',
         'spinal-core': 'target/spinal-core',
+        'spinal-ioc': 'target/spinal-ioc',
+        'spinal-aop': 'target/spinal-aop',
         'spinal-mvc': 'target/spinal-mvc',
         'spinal-ui': 'target/spinal-ui',
         'spinal-util': 'target/spinal-util',
@@ -51,11 +51,16 @@ require.config({
     /**bundles: {
         'libs': ['libs/backbone'],
         'spinal-core': ['core/spinal'],
+        'spinal-ioc': ['ioc/ioc'],
+        'spinal-aop': ['aop/aop'],
         'spinal-mvc': ['mvc/controller', 'mvc/service'],
         'spinal-ui': ['ui/view', 'ui/container'],
-        'spinal-util': ['util/adt/collection', 'util/adt/iterator', 'util/adt/queue'],
+        'spinal-util': ['util/adt/collection', 'util/adt/iterator', 'util/adt/queue']
     },**/
 
     // we have to kickoff jasmine, as it is asynchronous
-    callback: window.__karma__.start
+    callback: function() {
+        console.log('KarmaJS.start()');
+        window.__karma__.start();
+    }
 });

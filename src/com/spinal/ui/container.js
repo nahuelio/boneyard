@@ -160,8 +160,7 @@ define(['core/spinal',
 		**/
 		render: function() {
 			if(!this._successor) {
-				var parentEl = (this.$el.parent().length > 0) ?
-					this.$el.parent()[0].nodeName.toLowerCase() : 'body';
+				var parentEl = (this.$el.parent().length > 0) ? this.$el.parent()[0].nodeName.toLowerCase() : 'body';
 				this._successor = new Container({ el: parentEl });
 				this._successor.add(this, { silent: true });
 			}
