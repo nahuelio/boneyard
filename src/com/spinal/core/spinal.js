@@ -188,9 +188,12 @@ define(['libs/backbone'], function() {
 		/**
 		*	Provides a generic Class with a generic interface to set and get properties
 		*	@class com.spinal.core.SpinalClass
+		*	FIXME: Separate set/get methods into a different interface.
+		*	Evaluate if set/get interface methods became useless!
+		*	You can access variable/method members through this['method/variable'].
 		**/
 		var SpinalClass = exports.SpinalClass = namespace('com.spinal.core.SpinalClass', function() {
-			this.initialize.apply(this, arguments);
+			if(this.initialize) this.initialize.apply(this, arguments);
 		});
 
 		extend(SpinalClass.prototype, exports.Backbone.Events, {

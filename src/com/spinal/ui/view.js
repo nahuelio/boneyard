@@ -3,7 +3,7 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['core/spinal',
-		'util/string-utils',
+		'util/string',
 		'util/error/types/ui-exception',
 		'libs/bootstrap'], function(Spinal, StringUtils, UIException) {
 

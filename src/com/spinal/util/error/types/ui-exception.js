@@ -6,7 +6,7 @@ define(['core/spinal',
 		'util/error/exception'], function(Spinal, Exception) {
 
 	/**
-	*	Define a UI Exception type that occurs in the spinal ui package
+	*	UI Exception Type
 	*	@namespace com.spinal.util.error.types
 	*	@class com.spinal.util.error.types.UIException
 	*	@extends com.spinal.util.error.Exception

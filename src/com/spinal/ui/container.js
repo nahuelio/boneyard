@@ -36,8 +36,8 @@ define(['core/spinal',
 		*	@example
 		*		<b>Examples</b>
 		*		var example = new Container();
-		*		var example = new Container({ el: 'body' });
-		*		var example = new Container({ id: 'main', el: 'div.main' });
+		*		var example = new Container({ el: 'div.main' });
+		*		var example = new Container({ id: 'main', el: 'div.main', interface: View });
 		*
 		**/
 		constructor: function() {

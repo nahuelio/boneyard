@@ -1,5 +1,6 @@
 var allTestFiles = [];
-var TEST_REGEXP = /(spec|test)\.js$/i;
+//var TEST_REGEXP = /(spec|test)\.js$/i;
+var TEST_REGEXP = /(test)\.js$/i;
 
 var pathToModule = function(path) {
     return path.replace(/^\/base\//, '').replace(/\.js$/, '');
@@ -20,6 +21,8 @@ require.config({
     deps: allTestFiles,
 
     paths: {
+        /** Rebase to point to specs folder **/
+        'specs': 'test/com/spinal/ioc/specs',
         'libs': 'src/libs',
         'core': 'src/com/spinal/core',
         'ioc': 'src/com/spinal/ioc',
