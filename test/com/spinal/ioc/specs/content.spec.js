@@ -2,15 +2,19 @@
 *	Content Spec Test
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define({
+define(['specs/main.spec'], function(MainSpec) {
 
-	content: {
+	return Spinal.extend({
 
-		$create: {
-			$module: 'ui/container',
-			$params: { id: 'content' }
+		content: {
+
+			$create: {
+				$module: 'ui/container',
+				$params: { id: 'content' }
+			}
+
 		}
 
-	}
+	}, MainSpec);
 
 });

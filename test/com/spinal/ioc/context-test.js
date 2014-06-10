@@ -15,13 +15,15 @@ define(['ioc/context',
 		});
 
 		after(function() {
-			//delete Spinal.applicationContext.getNut('_global').removeAll();
+			//delete Spinal.applicationContext.getBone('_global').removeAll();
 		});
 
 		describe('#new()', function() {
 
 			it('Should Initialize IoC Container', function() {
-				//Spinal.applicationContext.Run();
+				Spinal.applicationContext = Context.Create();
+				expect(Spinal.applicationContext).to.be.ok();
+				expect(Spinal.applicationContext.bones.size()).to.be.equal(0);
 			});
 
 		});
@@ -29,7 +31,7 @@ define(['ioc/context',
 		describe('#wire()', function() {
 
 			it('Should Wire Specs', function() {
-				//Spinal.applicationContext.wire(ProductSpec);
+				Spinal.applicationContext.wire(ProductSpec);
 			});
 
 		});

@@ -15,16 +15,25 @@ define(['core/spinal',
 	*	@requires com.spinal.core.Spinal
 	*	@requires com.spinal.util.factories.Factory
 	*	@requires com.spinal.util.adt.Collection
+	*
+	*	Life cycle phases of a Bone (Component) inside a context:
+	*
+	*	1) $create (Context will register the constructor function as a Factory and instanciate)
+	*		a) $module -> AMD module path that points to the module
+	*		b) $params -> Arguments to pass to the constructor function
+	*	2) $ready -> Bone was fully created and ready to use.
+	*	3) $destroy -> Bone was destroyed inside the context allowing to execute code before (after)
+	*	a component die.
 	**/
 	var Context = Spinal.namespace('com.spinal.ioc.Context', Factory.inherit({
 
 		/**
-		*	Nuts
+		*	Bones
 		*	@public
-		*	@property nuts
+		*	@property bones
 		*	@type com.spinal.util.adt.Collection
 		**/
-		nuts: null,
+		bones: null,
 
 		/**
 		*	Initialize
@@ -36,24 +45,25 @@ define(['core/spinal',
 		**/
 		initialize: function(opts) {
 			opts || (opts = {});
-			this.nuts = new Collection();
+			this.bones = new Collection();
+			// if(opts.spec && _.isString(opts.spec)) this.getFactory('BoneLoader').execute(opts.spec);
 			return Context.__super__.initialize.apply(this, arguments);
 		},
 
 		/**
-		*	Retrieves a Nut from the current context.
+		*	Retrieves a Bone from the current context.
 		*	@public
-		*	@method getNut
+		*	@method getBone
 		*	@param id {String} Nut Id
 		*	@return Object
 		**/
-		getNut: function(id) {
+		getBone: function(id) {
 			if(!id) return null;
-			return this._nextNut(id);
+			return this.bones.find(function(bone) { return (bone.id === id); });
 		},
 
 		/**
-		*	Module Wire
+		*	Context Wiring
 		*	@public
 		*	@chainable
 		*	@method wire
@@ -61,9 +71,11 @@ define(['core/spinal',
 		*	@return {com.spinal.ioc.Context}
 		**/
 		wire: function(spec) {
-			// TODO: Implement Context Hierarchery
+
 			return this;
 		},
+
+		/** Bone Life Cycle Events **/
 
 		/**
 		*	Context Specification Create
@@ -73,7 +85,7 @@ define(['core/spinal',
 		*	@return Object
 		**/
 		create: function() {
-			this.trigger(Context.EVENTS.created, { ctx: this });
+			this.trigger(Context.EVENTS.created, { bone: this });
 			return this;
 		},
 
@@ -85,23 +97,20 @@ define(['core/spinal',
 		*	@return Object
 		**/
 		ready: function() {
-			this.trigger(Context.EVENTS.ready, { ctx: this });
+			this.trigger(Context.EVENTS.ready, { bone: this });
 			return this;
 		},
 
 		/**
-		*	Tries to retrieve a nut
-		*	@private
-		*	@method _nextNut
-		*	@param id {String} Nut Id
+		*	Destroy bone inside this context
+		*	@public
+		*	@chainable
+		*	@method destroy
 		*	@return Object
 		**/
-		_nextNut: function(id) {
-			/**var ite = this.nuts.iterator();
-			// FIXME: Chain of Responsability (depends strategy choosen to decorate contexts)
-			while(ite.hasNext()) {
-				var nut = ite.next();
-			}**/
+		destroy: function() {
+			this.trigger(Context.EVENTS.destroyed, { bone: this });
+			return this;
 		}
 
 	}, {
@@ -122,24 +131,27 @@ define(['core/spinal',
 			/**
 			*	@event created
 			**/
-			created: 'com:spinal:ioc:context:created',
+			created: 'com:spinal:ioc:context:bone:created',
 			/**
 			*	@event ready
 			**/
-			ready: 'com:spinal:ioc:context:ready'
+			ready: 'com:spinal:ioc:context:bone:ready',
+			/**
+			*	@event destroyed
+			**/
+			destroyed: 'com:spinal:ioc:context:bone:destroyed'
 		},
 
 		/**
 		*	Static IoC Initializer
 		*	@static
-		*	@method Run
+		*	@method Create
 		*	@return com.spinal.ioc.Context
 		**/
-		Run: function() {
+		Create: function() {
 			var $mainSpec = $('html').find('script[data-main-spec]'),
-				spec = ($mainSpec.length === 1) ? $mainSpec.data('main-spec') : '';
-			Spinal.applicationContext = new Context(spec);
-			return Context;
+				spec = ($mainSpec.length === 1) ? { spec: $mainSpec.data('main-spec') } : '';
+			return new Context(spec);
 		}
 
 	}));

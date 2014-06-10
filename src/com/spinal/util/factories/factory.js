@@ -17,6 +17,24 @@ define(['core/spinal',
 	var Factory = Spinal.namespace('com.spinal.util.factories.Factory', Spinal.SpinalClass.inherit({
 
 		/**
+		*	@public
+		*	@property factories
+		*	@type {com.spinal.util.adt.Collection}
+		**/
+		factories: null,
+
+		/**
+		*	Initialize
+		*	@public
+		*	@method initialize
+		*	@return {com.spinal.util.factories.Factory}
+		**/
+		initialize: function() {
+			this.factories = new Collection();
+			return Factory.__super__.initialize.apply(this, arguments);
+		},
+
+		/**
 		*	Returns a factory that has been registered with the id passed as parameter.
 		*	@public
 		*	@method getFactory
@@ -24,8 +42,7 @@ define(['core/spinal',
 		*	@return Object
 		**/
 		getFactory: function(id) {
-			if(!this.constructor.Factories) throw new FactoryException('UnsupportedFactory');
-			return this.constructor.factories.find(function(f) { return (f.id === id); });
+			return this.factories.find(function(f) { return (f.id === id); });
 		},
 
 		/**
@@ -38,7 +55,7 @@ define(['core/spinal',
 		**/
 		register: function(id, constructor) {
 			if(!id || !constructor) return null;
-			if(!this.getFactory(id)) this.constructor.factories.add({ id: id, create: constructor });
+			if(!this.getFactory(id)) this.factories.add({ id: id, create: constructor });
 			return constructor;
 		},
 
@@ -51,7 +68,7 @@ define(['core/spinal',
 		**/
 		unregister: function(id) {
 			if(!id) return null;
-			if(this.getFactory(id)) return this.constructor.factories.removeBy(function(f) { return (f.id === id); })[0];
+			if(this.getFactory(id)) return this.factories.removeBy(function(f) { return (f.id === id); })[0];
 		},
 
 		/**
@@ -73,14 +90,7 @@ define(['core/spinal',
 		*	@property NAME
 		*	@type String
 		**/
-		NAME: 'Factory',
-
-		/**
-		*	@static
-		*	@property Factories
-		*	@type {com.spinal.util.adt.Collection}
-		**/
-		Factories: new Collection()
+		NAME: 'Factory'
 
 	}));
 
