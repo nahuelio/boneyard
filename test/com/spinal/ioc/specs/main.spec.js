@@ -1,26 +1,38 @@
 /**
 *	Main Spec Test
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
+*
+*	Annotations:
+*		$specs,
+*		$create, $ready, $destroy
+*		$module, $params, $call
+*
+*	String processors:
+*		$bone! [boneId] -> Access to bones
+*		$bone! [boneId] : [property | method] Access to bone's properties or methods
+*
 **/
 define(['specs/header.spec',
-		'specs/footer.spec'], function(HeaderSpec, FooterSpec) {
+		'specs/footer.spec'], function(HeaderSpec, FooterSpec)
 
-	return Spinal.extend({
+	return {
+
+		$specs: [HeaderSpec, FooterSpec],
 
 		theme: 'chrome',
 
 		global: {
 			$create: {
 				$module: 'ui/container',
-				$params: { el: 'div.global', theme: '$theme' } }
+				$params: { el: 'div.global', theme: '$bone!theme' }
 			},
 			$ready: {
-				add: { $ref: 'header' },
-				add: { $ref: 'content' },
-				add: { $ref: 'footer' },
+				add: ['$bone!header'],
+				add: ['$bone!content'],
+				add: ['$bone!footer'],
 				render: {}
 			},
-			$destroy: { }
+			$destroy: {}
 		},
 
 		viewA: {
@@ -29,9 +41,9 @@ define(['specs/header.spec',
 				$params: { id: 'viewA' }
 			},
 			$ready: {
-				$ref: { 'content!add': ['viewA', { renderOnAdd: true }] }
+				$call: { '$bone!content:add': ['viewA', { renderOnAdd: true }] }
 			},
-			$destroy: { }
+			$destroy: {}
 		},
 
 		viewB: {
@@ -40,9 +52,9 @@ define(['specs/header.spec',
 				$params: { id: 'viewB' }
 			},
 			$ready: {
-				$ref: { 'content!add': ['viewB', { renderOnAdd: true }] }
+				$call: { '$bone!content:add': ['viewB', { renderOnAdd: true }] }
 			},
-			$destroy: { }
+			$destroy: {}
 		}
 
 		/** Plugins or Additional Features **/
@@ -53,6 +65,6 @@ define(['specs/header.spec',
 		*	$i18n: { }, etc
 		**/
 
-	}, HeaderSpec, FooterSpec);
+	};
 
 });

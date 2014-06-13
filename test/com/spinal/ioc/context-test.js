@@ -21,7 +21,7 @@ define(['ioc/context',
 		describe('#new()', function() {
 
 			it('Should Initialize IoC Container', function() {
-				Spinal.applicationContext = Context.Create();
+				Spinal.applicationContext = Context.Initialize();
 				expect(Spinal.applicationContext).to.be.ok();
 				expect(Spinal.applicationContext.bones.size()).to.be.equal(0);
 			});

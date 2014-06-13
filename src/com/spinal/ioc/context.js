@@ -3,8 +3,13 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['core/spinal',
+		'util/string',
 		'util/factories/factory',
-		'util/adt/collection'], function(Spinal, Factory, Collection) {
+		'util/adt/collection'
+		'ioc/processor/bone',
+		'ioc/processor/create'
+		'ioc/processor/ready',
+		'ioc/processor/destroy'], function(Spinal, StringUtils, Factory, Collection) {
 
 	/**
 	*	IOC Context Class
@@ -28,6 +33,14 @@ define(['core/spinal',
 	var Context = Spinal.namespace('com.spinal.ioc.Context', Factory.inherit({
 
 		/**
+		*	Identifier
+		*	@public
+		*	@property id
+		*	@type String
+		**/
+		id: StringUtils.uuid(),
+
+		/**
 		*	Bones
 		*	@public
 		*	@property bones
@@ -46,7 +59,6 @@ define(['core/spinal',
 		initialize: function(opts) {
 			opts || (opts = {});
 			this.bones = new Collection();
-			// if(opts.spec && _.isString(opts.spec)) this.getFactory('BoneLoader').execute(opts.spec);
 			return Context.__super__.initialize.apply(this, arguments);
 		},
 
@@ -54,12 +66,24 @@ define(['core/spinal',
 		*	Retrieves a Bone from the current context.
 		*	@public
 		*	@method getBone
-		*	@param id {String} Nut Id
+		*	@param id {String} Bone Id
 		*	@return Object
 		**/
 		getBone: function(id) {
 			if(!id) return null;
 			return this.bones.find(function(bone) { return (bone.id === id); });
+		},
+
+		/**
+		*	Retrieves the bone's type by id in the current context.
+		*	@public
+		*	@method getBoneType
+		*	@param id {String} Bone Id
+		*	@return Object
+		**/
+		getBoneType: function(id) {
+			var bone = this.getBone(id);
+			return (bone) ? bone.toString() : null;
 		},
 
 		/**
@@ -71,46 +95,22 @@ define(['core/spinal',
 		*	@return {com.spinal.ioc.Context}
 		**/
 		wire: function(spec) {
-
-			return this;
-		},
-
-		/** Bone Life Cycle Events **/
-
-		/**
-		*	Context Specification Create
-		*	@public
-		*	@chainable
-		*	@method create
-		*	@return Object
-		**/
-		create: function() {
-			this.trigger(Context.EVENTS.created, { bone: this });
-			return this;
+			if(!spec) return this;
+			if(_.isObject(spec)) return this.parse(spec);
+			//TODO: Create ContextException -> throw new ContextException('InvalidSpec');
+			return null;
 		},
 
 		/**
-		*	Context Specification Ready
+		*	Context Parser
 		*	@public
-		*	@chainable
-		*	@method ready
-		*	@return Object
+		*	@method parse
+		*	@param spec {Object} context spec to be wired
+		*	@return {com.spinal.ioc.Context}
 		**/
-		ready: function() {
-			this.trigger(Context.EVENTS.ready, { bone: this });
-			return this;
-		},
-
-		/**
-		*	Destroy bone inside this context
-		*	@public
-		*	@chainable
-		*	@method destroy
-		*	@return Object
-		**/
-		destroy: function() {
-			this.trigger(Context.EVENTS.destroyed, { bone: this });
-			return this;
+		parse: function(spec) {
+			// TODO: Implement Parsing Logic with processors.
+			this.trigger(Context.EVENTS.initialized, this);
 		}
 
 	}, {
@@ -129,29 +129,47 @@ define(['core/spinal',
 		**/
 		EVENTS: {
 			/**
-			*	@event created
+			*	@event initialized
 			**/
-			created: 'com:spinal:ioc:context:bone:created',
-			/**
-			*	@event ready
-			**/
-			ready: 'com:spinal:ioc:context:bone:ready',
-			/**
-			*	@event destroyed
-			**/
-			destroyed: 'com:spinal:ioc:context:bone:destroyed'
+			initialized: 'com:spinal:ioc:context:initialized'
 		},
+
+		/**
+		*	@static
+		*	@property BoneProcessor
+		*	@type {com.spinal.ioc.processor.BoneProcessor}
+		**/
+		BoneProcessor: Context.create('BoneProcessor'),
+
+		/**
+		*	@static
+		*	@property CreateProcessor
+		*	@type {com.spinal.ioc.processor.CreateProcessor}
+		**/
+		CreateProcessor: Context.create('CreateProcessor'),
+
+		/**
+		*	@static
+		*	@property ReadyProcessor
+		*	@type {com.spinal.ioc.processor.ReadyProcessor}
+		**/
+		ReadyProcessor: Context.create('ReadyProcessor'),
+
+		/**
+		*	@static
+		*	@property DestroyProcessor
+		*	@type {com.spinal.ioc.processor.DestroyProcessor}
+		**/
+		DestroyProcessor: Context.create('DestroyProcessor'),
 
 		/**
 		*	Static IoC Initializer
 		*	@static
-		*	@method Create
+		*	@method Initialiaze
 		*	@return com.spinal.ioc.Context
 		**/
-		Create: function() {
-			var $mainSpec = $('html').find('script[data-main-spec]'),
-				spec = ($mainSpec.length === 1) ? { spec: $mainSpec.data('main-spec') } : '';
-			return new Context(spec);
+		Initialize: function() {}
+			return new Context().wire(arguments);
 		}
 
 	}));

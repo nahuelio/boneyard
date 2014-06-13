@@ -4,7 +4,9 @@
 **/
 define(['specs/main.spec'], function(MainSpec) {
 
-	return Spinal.extend({
+	return {
+
+		$specs: MainSpec,
 
 		content: {
 
@@ -15,6 +17,6 @@ define(['specs/main.spec'], function(MainSpec) {
 
 		}
 
-	}, MainSpec);
+	};
 
 });
