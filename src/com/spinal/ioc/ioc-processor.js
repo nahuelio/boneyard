@@ -61,10 +61,11 @@ define(['core/spinal',
 		*	Static Initializer
 		*	@static
 		*	@method Register
+		*	@param ctx {com.spinal.ioc.Context} context in wich the processor will be registered
 		*	@return {com.spinal.ioc.processor.IoCProcessor}
 		**/
-		Register: function() {
-			return Context.Register(this.NAME, this);
+		Register: function(ctx) {
+			return ctx.register(this.NAME, this);
 		}
 
 	}));

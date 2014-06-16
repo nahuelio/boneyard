@@ -71,6 +71,6 @@ define(['core/spinal',
 
 	}));
 
-	return DestroyProcessor.Register();
+	return DestroyProcessor;
 
 });

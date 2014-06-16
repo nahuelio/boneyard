@@ -83,18 +83,34 @@ define(['core/spinal',
 		},
 
 		/**
+		*	Register Processors
+		*	@public
+		*	@method processors
+		**/
+		processors: function() {
+			_.each(arguments, function(Processor) {
+				Processor.Register(this);
+				this[Processor.NAME] = this.create(Processor.NAME);
+			}, this);
+		},
+
+		/**
 		*	Context Wiring
 		*	@public
 		*	@chainable
 		*	@method wire
 		*	@param spec {Object} context specification to be wired
+		*	@param callback
 		*	@return {com.spinal.ioc.Context}
 		**/
-		wire: function(spec) {
-			if(!spec) return this;
-			if(_.isObject(spec)) return this.parse(spec);
-			//TODO: Create ContextException -> throw new ContextException('InvalidSpec');
-			return null;
+		wire: function(spec, callback) {
+			if(!spec) { callback(this); return this; }
+			if(!_.isObject(spec)) throw new ContextException('InvalidSpecFormat');
+			require(Context.PROCESSORS, _.bind(function() {
+				this.processors.apply(this, arguments);
+				callback(this.parse(spec));
+			}, this));
+			return this;
 		},
 
 		/**
@@ -105,9 +121,6 @@ define(['core/spinal',
 		*	@return {com.spinal.ioc.Context}
 		**/
 		parse: function(spec) {
-			this.bones.each(function() {
-				console.log(arguments);
-			}, this);
 			this.trigger(Context.EVENTS.initialized, this);
 		}
 
@@ -137,7 +150,7 @@ define(['core/spinal',
 		*	@property PROCESSORS
 		*	@type Array
 		**/
-		PROCESSESORS: [
+		PROCESSORS: [
 			'ioc/processor/bone',
 			'ioc/processor/create',
 			'ioc/processor/ready',
@@ -147,11 +160,14 @@ define(['core/spinal',
 		/**
 		*	Static IoC Initializer
 		*	@static
-		*	@method Initialiaze
+		*	@method Initialize
+		*	@param spec {Object} Default spec
+		*	@param callback {Function} callback pass to the wire
 		*	@return com.spinal.ioc.Context
 		**/
-		Initialize: function() {
-			return new Context().wire(arguments);
+		Initialize: function(spec, callback) {
+			if(arguments.length === 1 && _.isFunction(spec)) return new Context().wire(null, spec);
+			return new Context().wire(spec, callback);
 		}
 
 	}));

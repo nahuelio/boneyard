@@ -49,6 +49,6 @@ define(['core/spinal',
 
 	}));
 
-	return BoneProcessor.Register();
+	return BoneProcessor;
 
 });

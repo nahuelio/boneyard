@@ -141,7 +141,7 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 		*	@return Array
 		**/
 		invoke: function(methodName) {
-			var args = _.flatten(Array.prototype.slice.call(arguments, 1));;
+			var args = _.flatten(Array.prototype.slice.call(arguments, 1));
 			return _.invoke(this.collection, methodName, args);
 		},
 
@@ -149,10 +149,14 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 		*	Iterate over all the elements inside the collection by using func as the predicate.
 		*	@public
 		*	@method each
+		*	@param func {Function} predicate function used to iterate over the elements.
+		*	@param
 		*	@return Function
 		**/
-		each: function() {
-			return _.each.apply(_, Array.prototype.slice.call(arguments).unshift(this.collection));
+		each: function(func, ctx) {
+			var args = Array.prototype.slice.call(arguments);
+			args.unshift(this.collection);
+			return _.each.apply(this, args);
 		},
 
 		/**

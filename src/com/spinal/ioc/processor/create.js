@@ -71,6 +71,6 @@ define(['core/spinal',
 
 	}));
 
-	return CreateProcessor.Register();
+	return CreateProcessor;
 
 });

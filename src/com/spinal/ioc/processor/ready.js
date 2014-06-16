@@ -71,6 +71,6 @@ define(['core/spinal',
 
 	}));
 
-	return ReadyProcessor.Register();
+	return ReadyProcessor;
 
 });

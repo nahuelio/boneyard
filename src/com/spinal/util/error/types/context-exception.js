@@ -6,21 +6,21 @@ define(['core/spinal',
 		'util/error/exception'], function(Spinal, Exception) {
 
 	/**
-	*	Factory Exception Type
+	*	IoC Context Exception Type
 	*	@namespace com.spinal.util.error.types
-	*	@class com.spinal.util.error.types.FactoryException
+	*	@class com.spinal.util.error.types.ContextException
 	*	@extends com.spinal.util.error.Exception
 	**/
-	var FactoryException = Spinal.namespace('com.spinal.util.error.types.FactoryException', Exception.inherit({
+	var ContextException = Spinal.namespace('com.spinal.util.error.types.ContextException', Exception.inherit({
 
 		/**
 		*	Initialize
 		*	@public
 		*	@method initialize
-		*	@return {com.spinal.util.error.types.FactoryException}
+		*	@return {com.spinal.util.error.types.ContextException}
 		**/
 		initialize: function() {
-			return FactoryException.__super__.initialize.apply(this, arguments);
+			return ContextException.__super__.initialize.apply(this, arguments);
 		}
 
 	}, {
@@ -30,25 +30,23 @@ define(['core/spinal',
 		*	@property NAME
 		*	@type String
 		**/
-		NAME: 'FactoryException',
+		NAME: 'ContextException',
 
 		/**
 		*	__Type List__
 		*
 		*		Generic (inherited from com.spinal.util.error.exception)
-		*		UnsupportedFactory
-		*		UnregisteredFactory
+		*		InvalidSpecFormat
 		*	@static
 		*	@property TYPES
 		*	@type Object
 		**/
 		TYPES: {
-			UnsupportedFactory: 'Unsupported Factory Pattern',
-			UnregisteredFactory: 'Factory {{id}} not found. Unable to use factory method to instanciate class.'
+			InvalidSpecFormat: 'Invalid Spec Format',
 		}
 
 	}));
 
-	return FactoryException;
+	return ContextException;
 
 });

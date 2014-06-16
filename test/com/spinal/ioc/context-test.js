@@ -20,18 +20,20 @@ define(['ioc/context',
 
 		describe('#new()', function() {
 
-			it('Should Initialize IoC Container', function() {
-				Spinal.applicationContext = Context.Initialize();
-				expect(Spinal.applicationContext).to.be.ok();
-				expect(Spinal.applicationContext.bones.size()).to.be.equal(0);
+			it('Should Initialize IoC Container', function(done) {
+				Spinal.applicationContext = Context.Initialize(_.bind(function(ctx) {
+					expect(ctx).to.be.ok();
+					expect(ctx.bones.size()).to.be.equal(0);
+					done();
+				}, this));
 			});
 
 		});
 
 		describe('#wire()', function() {
 
-			it('Should Wire Specs', function() {
-				Spinal.applicationContext.wire(ProductSpec);
+			it('Should Wire Specs', function(done) {
+				Spinal.applicationContext.wire(ProductSpec, done);
 			});
 
 		});
