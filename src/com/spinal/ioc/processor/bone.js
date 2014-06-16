@@ -49,6 +49,6 @@ define(['core/spinal',
 
 	}));
 
-	return IoCProcessor.getContext().register('BoneProcessor', BoneProcessor);
+	return BoneProcessor.Register();
 
 });

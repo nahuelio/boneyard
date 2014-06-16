@@ -5,11 +5,7 @@
 define(['core/spinal',
 		'util/string',
 		'util/factories/factory',
-		'util/adt/collection'
-		'ioc/processor/bone',
-		'ioc/processor/create'
-		'ioc/processor/ready',
-		'ioc/processor/destroy'], function(Spinal, StringUtils, Factory, Collection) {
+		'util/adt/collection'], function(Spinal, StringUtils, Factory, Collection) {
 
 	/**
 	*	IOC Context Class
@@ -109,7 +105,9 @@ define(['core/spinal',
 		*	@return {com.spinal.ioc.Context}
 		**/
 		parse: function(spec) {
-			// TODO: Implement Parsing Logic with processors.
+			this.bones.each(function() {
+				console.log(arguments);
+			}, this);
 			this.trigger(Context.EVENTS.initialized, this);
 		}
 
@@ -136,31 +134,15 @@ define(['core/spinal',
 
 		/**
 		*	@static
-		*	@property BoneProcessor
-		*	@type {com.spinal.ioc.processor.BoneProcessor}
+		*	@property PROCESSORS
+		*	@type Array
 		**/
-		BoneProcessor: Context.create('BoneProcessor'),
-
-		/**
-		*	@static
-		*	@property CreateProcessor
-		*	@type {com.spinal.ioc.processor.CreateProcessor}
-		**/
-		CreateProcessor: Context.create('CreateProcessor'),
-
-		/**
-		*	@static
-		*	@property ReadyProcessor
-		*	@type {com.spinal.ioc.processor.ReadyProcessor}
-		**/
-		ReadyProcessor: Context.create('ReadyProcessor'),
-
-		/**
-		*	@static
-		*	@property DestroyProcessor
-		*	@type {com.spinal.ioc.processor.DestroyProcessor}
-		**/
-		DestroyProcessor: Context.create('DestroyProcessor'),
+		PROCESSESORS: [
+			'ioc/processor/bone',
+			'ioc/processor/create',
+			'ioc/processor/ready',
+			'ioc/processor/destroy'
+		],
 
 		/**
 		*	Static IoC Initializer
@@ -168,7 +150,7 @@ define(['core/spinal',
 		*	@method Initialiaze
 		*	@return com.spinal.ioc.Context
 		**/
-		Initialize: function() {}
+		Initialize: function() {
 			return new Context().wire(arguments);
 		}
 

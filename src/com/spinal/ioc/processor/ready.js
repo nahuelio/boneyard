@@ -71,6 +71,6 @@ define(['core/spinal',
 
 	}));
 
-	return IoCProcessor.getContext().register('ReadyProcessor', ReadyProcessor);
+	return ReadyProcessor.Register();
 
 });

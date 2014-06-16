@@ -146,6 +146,16 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 		},
 
 		/**
+		*	Iterate over all the elements inside the collection by using func as the predicate.
+		*	@public
+		*	@method each
+		*	@return Function
+		**/
+		each: function() {
+			return _.each.apply(_, Array.prototype.slice.call(arguments).unshift(this.collection));
+		},
+
+		/**
 		*	Returns true if this collection contains the specified element.
 		*	@public
 		*	@method contains

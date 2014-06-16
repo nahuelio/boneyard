@@ -13,7 +13,7 @@
 *
 **/
 define(['specs/header.spec',
-		'specs/footer.spec'], function(HeaderSpec, FooterSpec)
+		'specs/footer.spec'], function(HeaderSpec, FooterSpec) {
 
 	return {
 

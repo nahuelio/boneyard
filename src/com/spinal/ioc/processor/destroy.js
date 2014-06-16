@@ -71,6 +71,6 @@ define(['core/spinal',
 
 	}));
 
-	return CreateProcessor.getContext().register('DestroyProcessor', DestroyProcessor);
+	return DestroyProcessor.Register();
 
 });

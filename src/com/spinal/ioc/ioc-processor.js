@@ -22,7 +22,9 @@ define(['core/spinal',
 		*	@method initialize
 		*	@return {com.spinal.ioc.IoCProcessor}
 		**/
-		initialize: function() {
+		initialize: function(opts) {
+			opts || (opts = {});
+			if(opts.context) this.context = opts.context;
 			return this;
 		},
 
@@ -33,7 +35,7 @@ define(['core/spinal',
 		*	@return {com.spinal.ioc.Context}
 		**/
 		getContext: function() {
-			return this;
+			return this.context;
 		},
 
 		/**
@@ -43,7 +45,7 @@ define(['core/spinal',
 		*	@return {com.spinal.ioc.IoCProcessor}
 		**/
 		execute: function() {
-			// throw new ContextException('ProcessorExecutor');
+			return this;
 		}
 
 	}, {
@@ -53,7 +55,17 @@ define(['core/spinal',
 		*	@property NAME
 		*	@type String
 		**/
-		NAME: 'IoCProcessor'
+		NAME: 'IoCProcessor',
+
+		/**
+		*	Static Initializer
+		*	@static
+		*	@method Register
+		*	@return {com.spinal.ioc.processor.IoCProcessor}
+		**/
+		Register: function() {
+			return Context.Register(this.NAME, this);
+		}
 
 	}));
 
