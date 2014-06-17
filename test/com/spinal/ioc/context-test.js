@@ -33,7 +33,10 @@ define(['ioc/context',
 		describe('#wire()', function() {
 
 			it('Should Wire Specs', function(done) {
-				Spinal.applicationContext.wire(ProductSpec, done);
+				Spinal.applicationContext.wire(ProductSpec, _.bind(function(ctx) {
+					expect(ctx).to.be.ok();
+					done();
+				}, this));
 			});
 
 		});

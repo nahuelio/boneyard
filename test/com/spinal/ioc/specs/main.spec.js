@@ -29,8 +29,7 @@ define(['specs/header.spec',
 			$ready: {
 				add: ['$bone!header'],
 				add: ['$bone!content'],
-				add: ['$bone!footer'],
-				render: {}
+				add: ['$bone!footer']
 			},
 			$destroy: {}
 		},

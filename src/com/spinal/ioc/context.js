@@ -25,6 +25,15 @@ define(['core/spinal',
 	*	2) $ready -> Bone was fully created and ready to use.
 	*	3) $destroy -> Bone was destroyed inside the context allowing to execute code before (after)
 	*	a component die.
+	*
+	*	Processor's Composition (Order of execution)
+	*
+	*	1) IoCProcessor -> Builds bones structure
+	*	2) BoneProcessor -> Solves Bones references and module requires (String parsing logic).
+	*	3) Create -> Instanciate Modules
+	*	4) Ready -> Calls operations on modules already instanciated by the context.
+	*	5) Destroy -> Create delayed behaviors when modules are destroyed (Behavioral control).
+	*		Destroy might be not necessary; AOP can offer a better solution (subject to be deleted).
 	**/
 	var Context = Spinal.namespace('com.spinal.ioc.Context', Factory.inherit({
 
@@ -88,10 +97,14 @@ define(['core/spinal',
 		*	@method processors
 		**/
 		processors: function() {
+			var commands
 			_.each(arguments, function(Processor) {
 				Processor.Register(this);
-				this[Processor.NAME] = this.create(Processor.NAME);
+				this[Processor.NAME] = this.create(Processor.NAME, { context: this });
 			}, this);
+			this.execute = _.compose(this.BoneProcessor.execute, this.CreateProcessor.execute,
+				this.ReadyProcessor.execute, this.DestroyProcessor);
+			this.parse = _.wrap(this.execute, _.bind(this.parse, this));
 		},
 
 		/**
@@ -100,7 +113,7 @@ define(['core/spinal',
 		*	@chainable
 		*	@method wire
 		*	@param spec {Object} context specification to be wired
-		*	@param callback
+		*	@param callback {Function} callback function to be called after autowiring.
 		*	@return {com.spinal.ioc.Context}
 		**/
 		wire: function(spec, callback) {
@@ -120,8 +133,10 @@ define(['core/spinal',
 		*	@param spec {Object} context spec to be wired
 		*	@return {com.spinal.ioc.Context}
 		**/
-		parse: function(spec) {
+		parse: function(execute, spec) {
+			this.excecute(spec);
 			this.trigger(Context.EVENTS.initialized, this);
+			return this;
 		}
 
 	}, {

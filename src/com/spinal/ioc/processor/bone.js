@@ -31,10 +31,12 @@ define(['core/spinal',
 		*	Execute Processor
 		*	@public
 		*	@method execute
+		*	@param spec {Object} Context spec reference
 		*	@return {com.spinal.ioc.processor.BoneProcessor}
 		**/
-		execute: function() {
+		execute: function(spec) {
 			BoneProcessor.__super__.execute.apply(this, arguments);
+			// TODO: Solve $bone! references.
 			return this;
 		}
 

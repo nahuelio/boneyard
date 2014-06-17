@@ -42,9 +42,10 @@ define(['core/spinal',
 		*	Execute Processor
 		*	@public
 		*	@method execute
+		*	@param spec {Object} Context reference.
 		*	@return {com.spinal.ioc.IoCProcessor}
 		**/
-		execute: function() {
+		execute: function(spec) {
 			return this;
 		}
 
