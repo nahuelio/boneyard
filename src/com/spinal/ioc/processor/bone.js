@@ -3,15 +3,15 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['core/spinal',
-		'ioc/ioc-processor'], function(Spinal, IoCProcessor) {
+		'ioc/processor/ioc-processor'], function(Spinal, IoCProcessor) {
 
 	/**
 	*	Bone Processor
 	*	@namespace com.spinal.ioc.processor
 	*	@class com.spinal.ioc.processor.BoneProcessor
-	*	@extends com.spinal.ioc.IoCProcessor
+	*	@extends com.spinal.ioc.processor.IoCProcessor
 	*
-	*	@requires com.spinal.ioc.IoCProcessor
+	*	@requires com.spinal.ioc.processor.IoCProcessor
 	**/
 	var BoneProcessor = Spinal.namespace('com.spinal.ioc.processor.BoneProcessor', IoCProcessor.inherit({
 

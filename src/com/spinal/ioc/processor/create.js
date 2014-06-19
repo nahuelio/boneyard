@@ -3,15 +3,15 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['core/spinal',
-		'ioc/ioc-processor'], function(Spinal, IoCProcessor) {
+		'ioc/processor/ioc-processor'], function(Spinal, IoCProcessor) {
 
 	/**
 	*	Create Processor
 	*	@namespace com.spinal.ioc.processor
 	*	@class com.spinal.ioc.processor.CreateProcessor
-	*	@extends com.spinal.ioc.IoCProcessor
+	*	@extends com.spinal.ioc.processor.IoCProcessor
 	*
-	*	@requires com.spinal.ioc.IoCProcessor
+	*	@requires com.spinal.ioc.processor.IoCProcessor
 	**/
 	var CreateProcessor = Spinal.namespace('com.spinal.ioc.processor.CreateProcessor', IoCProcessor.inherit({
 

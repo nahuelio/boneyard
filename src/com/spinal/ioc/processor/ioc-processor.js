@@ -1,5 +1,5 @@
 /**
-*	@module com.spinal.ioc
+*	@module com.spinal.ioc.processor
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['core/spinal',
@@ -7,20 +7,20 @@ define(['core/spinal',
 
 	/**
 	*	Abstract IoC Processor defines the interface
-	*	@namespace com.spinal.ioc
-	*	@class com.spinal.ioc.IoCProcessor
+	*	@namespace com.spinal.ioc.processor
+	*	@class com.spinal.ioc.processor.IoCProcessor
 	*	@extends com.spinal.core.SpinalClass
 	*
 	*	@requires com.spinal.core.SpinalClass
 	**/
-	var IoCProcessor = Spinal.namespace('com.spinal.ioc.IoCProcessor', Spinal.SpinalClass.inherit({
+	var IoCProcessor = Spinal.namespace('com.spinal.ioc.processor.IoCProcessor', Spinal.SpinalClass.inherit({
 
 		/**
 		*	Initialize
 		*	@public
 		*	@chainable
 		*	@method initialize
-		*	@return {com.spinal.ioc.IoCProcessor}
+		*	@return {com.spinal.ioc.processor.IoCProcessor}
 		**/
 		initialize: function(opts) {
 			opts || (opts = {});
@@ -43,7 +43,7 @@ define(['core/spinal',
 		*	@public
 		*	@method execute
 		*	@param spec {Object} Context reference.
-		*	@return {com.spinal.ioc.IoCProcessor}
+		*	@return {com.spinal.ioc.processor.IoCProcessor}
 		**/
 		execute: function(spec) {
 			return this;

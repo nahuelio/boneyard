@@ -4,8 +4,8 @@
 **/
 define(['core/spinal',
 		'util/string',
-		'util/factories/factory',
-		'util/adt/collection'], function(Spinal, StringUtils, Factory, Collection) {
+		'ioc/bone-factory',
+		'util/adt/collection'], function(Spinal, StringUtils, BoneFactory, Collection) {
 
 	/**
 	*	IOC Context Class
@@ -14,7 +14,7 @@ define(['core/spinal',
 	*	@extends com.spinal.core.SpinalClass
 	*
 	*	@requires com.spinal.core.Spinal
-	*	@requires com.spinal.util.factories.Factory
+	*	@requires com.spinal.ioc.BoneFactory
 	*	@requires com.spinal.util.adt.Collection
 	*
 	*	IMPORTANT CHANGE:
@@ -42,7 +42,7 @@ define(['core/spinal',
 	*	5) DestroyProcessor -> Create delayed behaviors when modules are destroyed (Behavioral control).
 	*		Destroy Processor might be not necessary; AOP can offer a better solution to that (subject to be deleted).
 	**/
-	var Context = Spinal.namespace('com.spinal.ioc.Context', Factory.inherit({
+	var Context = Spinal.namespace('com.spinal.ioc.Context', Spinal.SpinalClass.inherit({
 
 		/**
 		*	Identifier
@@ -61,6 +61,27 @@ define(['core/spinal',
 		bones: null,
 
 		/**
+		*	Bone Factory instance
+		*	@public
+		*	@property boneFactory
+		*	@type com.spinal.ioc.BoneFactory
+		**/
+		boneFactory: null,
+
+		/**
+		*	Processors List used by the context
+		*	@public
+		*	@property processors
+		*	@type Array
+		**/
+		processors: [
+			'ioc/processor/bone',
+			'ioc/processor/create',
+			'ioc/processor/ready',
+			'ioc/processor/destroy'
+		],
+
+		/**
 		*	Initialize
 		*	@public
 		*	@chainable
@@ -71,6 +92,8 @@ define(['core/spinal',
 		initialize: function(opts) {
 			opts || (opts = {});
 			this.bones = new Collection();
+			this.boneFactory = new BoneFactory();
+			this.boneFactory.on(BoneFactory.EVENTS.loaded, this._onModuleLoaded, this);
 			return Context.__super__.initialize.apply(this, arguments);
 		},
 
@@ -99,18 +122,26 @@ define(['core/spinal',
 		},
 
 		/**
-		*	Register Processors
+		*	Bone Factory invoke method wrapper
 		*	@public
-		*	@method processors
+		*	@method invoke
+		*	@param methodName {String} Bone factory method
+		*	@return Object
 		**/
-		processors: function() {
-			var commands
-			_.each(arguments, function(Processor) {
-				Processor.Register(this);
-				this[Processor.NAME] = this.create(Processor.NAME, { context: this });
-			}, this);
-			this.execute = _.compose(this.BoneProcessor.execute, this.CreateProcessor.execute,
-				this.ReadyProcessor.execute, this.DestroyProcessor);
+		invoke: function(methodName) {
+			if(!methodName) return null;
+			var args = Array.prototype.slice.apply(arguments, 1);
+			return (this.boneFactory[methodName]) ? this.boneFactory[methodName](args) : null;
+		},
+
+		/**
+		*	Modules loaded handler
+		*	@public
+		*	@method _onModuleLoaded
+		**/
+		_onModuleLoaded: function(ev) {
+			// TODO: Continue here...
+			_.each(ev.modules function(modules) { }, this);
 			this.parse = _.wrap(this.execute, _.bind(this.parse, this));
 		},
 
@@ -126,10 +157,7 @@ define(['core/spinal',
 		wire: function(spec, callback) {
 			if(!spec) { callback(this); return this; }
 			if(!_.isObject(spec)) throw new ContextException('InvalidSpecFormat');
-			require(Context.PROCESSORS, _.bind(function() {
-				this.processors.apply(this, arguments);
-				callback(this.parse(spec));
-			}, this));
+			this.invoke('register', this.processors);
 			return this;
 		},
 
@@ -166,18 +194,6 @@ define(['core/spinal',
 			**/
 			initialized: 'com:spinal:ioc:context:initialized'
 		},
-
-		/**
-		*	@static
-		*	@property PROCESSORS
-		*	@type Array
-		**/
-		PROCESSORS: [
-			'ioc/processor/bone',
-			'ioc/processor/create',
-			'ioc/processor/ready',
-			'ioc/processor/destroy'
-		],
 
 		/**
 		*	Static IoC Initializer

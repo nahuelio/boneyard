@@ -2,12 +2,12 @@
 *	Main Spec Test
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 *
-*	Annotations:
-*		$specs,
-*		$create, $ready, $destroy
-*		$module, $params, $call
+*	Notations:
+*		$specs, (specs dependencies)
+*		$create, $ready, $destroy (Life Cycle phases)
+*		$module, $params, $call (behavioral notations)
 *
-*	String processors:
+*	String notations:
 *		$bone! [boneId] -> Access to bones
 *		$bone! [boneId] : [property | method] Access to bone's properties or methods
 *
@@ -59,9 +59,9 @@ define(['specs/header.spec',
 		/** Plugins or Additional Features **/
 
 		/**
-		*	$aop: { },
-		*	$poly: { },
-		*	$i18n: { }, etc
+		*	$aop: { desc: 'Interceptors' },
+		*	$poly: { desc: 'Polyfill machinery config' },
+		*	$i18n: { desc: 'internationalization support.' }, etc
 		**/
 
 	};
