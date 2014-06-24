@@ -117,10 +117,9 @@ define(['core/spinal',
 		*	@public
 		*	@method invoke
 		*	@param methodName {String} Bone factory method
-		*	@param [callback] {Function} Optional Callback
 		*	@return Object
 		**/
-		invoke: function(methodName, callback) {
+		invoke: function(methodName) {
 			if(!methodName) return null;
 			var args = Array.prototype.slice.apply(arguments, 1);
 			return (this.boneFactory[methodName]) ? this.boneFactory[methodName](args) : null;
@@ -143,17 +142,14 @@ define(['core/spinal',
 		},
 
 		/**
-		*	Context Parser
-		*	@private
-		*	@method _parse
-		*	@param spec {Object} context spec to be wired
-		*	@param [callback] {Function} Optional Callback
-		*	@return {com.spinal.ioc.Context}
+		*	Notifies current context that a bone has been affected
+		*	@public
+		*	@method notify
+		*	@param eventType {String} Bone Event Type
+		*	@param data {Object} data passed from the original event
 		**/
-		_parse: function(spec, callback) {
-			if(callback && _.isFunction(callback)) callback(this);
-			this.trigger(Context.EVENTS.initialized, this);
-			return this;
+		notify: function(eventType, data) {
+			this.trigger(Context.EVENTS.changed, { type: eventType, data: data });
 		},
 
 		/**
@@ -164,11 +160,9 @@ define(['core/spinal',
 		*	@param [callback] {Function} Optional Callback
 		**/
 		_onProcessorsLoaded: function(spec, callback, processors) {
-			_.each(processors function(processor) {
-				this[processor.NAME] = this.invoke('create', processor.NAME);
-				// Continue Here...
-			}, this);
-			this.execute(spec, callback);
+			_.each(processors function(p) { this[p.NAME] = this.invoke('create', p.NAME, this).execute(spec); }, this);
+			if(callback && _.isFunction(callback)) callback(this);
+			this.trigger(Context.EVENTS.initialized, this);
 		}
 
 	}, {
@@ -189,7 +183,11 @@ define(['core/spinal',
 			/**
 			*	@event initialized
 			**/
-			initialized: 'com:spinal:ioc:context:initialized'
+			initialized: 'com:spinal:ioc:context:initialized',
+			/**
+			*	@event changed
+			**/
+			changed: 'com:spinal:ioc:context:changed'
 		},
 
 		/**

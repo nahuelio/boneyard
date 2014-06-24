@@ -1,26 +1,26 @@
 /**
-*	@module com/spinal/aop
+*	@module com.spinal.aop
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['core/spinal'], function(Spinal) {
 
 	/**
-	*	AOP Core module
+	*	Interceptor Class
 	*	@namespace com.spinal.aop
-	*	@class com.spinal.aop.AopCore
+	*	@class com.spinal.aop.Interceptor
 	*	@extends com.spinal.core.SpinalClass
 	**/
-	var AopCore = Spinal.namespace('com.spinal.aop.AOP', Spinal.SpinalClass.inheirt({
+	var Interceptor = Spinal.namespace('com.spinal.aop.Interceptor', Spinal.SpinalClass.inherit({
 
 		/**
 		*	Initialize
 		*	@public
-		*	@chainable
 		*	@method initialize
-		*	@return {com.spinal.aop.AopCore}
+		*	@return {com.spinal.aop.Interceptor}
 		**/
 		initialize: function() {
-			return AopCore.__super__.initialize.apply(this, arguments);
+			Interceptor.__super__.initialize.apply(this, arguments);
+			return this;
 		}
 
 	}, {
@@ -30,8 +30,10 @@ define(['core/spinal'], function(Spinal) {
 		*	@property NAME
 		*	@type String
 		**/
-		NAME: 'AopCore'
+		NAME: 'Interceptor'
 
 	}));
+
+	return Interceptor;
 
 });

@@ -45,7 +45,7 @@ define(['core/spinal',
 		*	@param bone {Object} Bone reference
 		**/
 		onReady: function(bone) {
-			this.trigger(ReadyProcessor.EVENTS.ready, bone);
+			this.context.notify(ReadyProcessor.EVENTS.ready, bone);
 		}
 
 	}, {

@@ -45,7 +45,7 @@ define(['core/spinal',
 		*	@param bone {Object} Bone created reference
 		**/
 		onCreate: function(bone) {
-			this.trigger(CreateProcessor.EVENTS.created, bone);
+			this.context.notify(CreateProcessor.EVENTS.created, bone);
 		}
 
 	}, {

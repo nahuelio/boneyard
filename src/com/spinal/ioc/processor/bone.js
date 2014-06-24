@@ -30,13 +30,13 @@ define(['core/spinal',
 		},
 
 		/**
-		*	Retrieves the Context associated with this processor.
+		*	Resolves bone references
 		*	@public
-		*	@method getContext
-		*	@return {com.spinal.ioc.Context}
+		*	@method resolve
+		*	@return {com.spinal.ioc.processor.BoneProcessor}
 		**/
-		getContext: function() {
-			return this.context;
+		resolve: function() {
+			return this;
 		},
 
 		/**

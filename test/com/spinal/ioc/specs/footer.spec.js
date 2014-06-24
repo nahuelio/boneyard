@@ -5,10 +5,12 @@
 define({
 
 	footer: {
-		$create: {
-			$module: 'ui/container',
-			$params: { id: 'footer' }
+
+		$module: {
+			class: 'ui/container',
+			args: { id: 'footer' }
 		}
+
 	}
 
 });

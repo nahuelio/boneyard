@@ -45,7 +45,7 @@ define(['core/spinal',
 		*	@param bone {Object} Bone destroyed reference
 		**/
 		onDestroy: function(bone) {
-			this.trigger(DestroyProcessor.EVENTS.destroyed, bone);
+			this.context.notify(DestroyProcessor.EVENTS.destroyed, bone);
 		}
 
 	}, {

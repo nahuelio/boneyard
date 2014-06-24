@@ -5,10 +5,12 @@
 define({
 
 	header: {
-		$create: {
-			$module: 'ui/container',
-			$params: { id: 'header' }
+
+		$module: {
+			class: 'ui/container',
+			args: { id: 'header' }
 		}
+
 	}
 
 });

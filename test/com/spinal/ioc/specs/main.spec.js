@@ -3,9 +3,11 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 *
 *	Notations:
-*		$specs, (specs dependencies)
-*		$create, $ready, $destroy (Life Cycle phases)
-*		$module, $params, $call (behavioral notations)
+*		$specs, (inheritance model for specs)
+*		(Life Cycle phases)
+*		$module (class, args)
+*		$ready (methods)
+*		$destroy (methods)
 *
 *	String notations:
 *		$bone! [boneId] -> Access to bones
@@ -22,9 +24,9 @@ define(['specs/header.spec',
 		theme: 'chrome',
 
 		global: {
-			$create: {
-				$module: 'ui/container',
-				$params: { el: 'div.global', theme: '$bone!theme' }
+			$module: {
+				class: 'ui/container',
+				args: { el: 'div.global', theme: '$bone!theme' }
 			},
 			$ready: {
 				add: ['$bone!header'],
@@ -35,34 +37,28 @@ define(['specs/header.spec',
 		},
 
 		viewA: {
-			$create: {
-				$module: 'ui/view',
-				$params: { id: 'viewA' }
+			$module: {
+				class: 'ui/view',
+				args: { id: 'viewA' }
 			},
 			$ready: {
-				$call: { '$bone!content:add': ['viewA', { renderOnAdd: true }] }
+				'$bone!content:add': ['viewA', { renderOnAdd: true }]
 			},
 			$destroy: {}
 		},
 
 		viewB: {
-			$create: {
-				$module: 'ui/view',
-				$params: { id: 'viewB' }
+			$module: {
+				class: 'ui/view',
+				args: { id: 'viewB' }
 			},
 			$ready: {
-				$call: { '$bone!content:add': ['viewB', { renderOnAdd: true }] }
+				'$bone!content:add': ['viewB', { renderOnAdd: true }]
 			},
 			$destroy: {}
-		}
+		},
 
-		/** Plugins or Additional Features **/
-
-		/**
-		*	$aop: { desc: 'Interceptors' },
-		*	$poly: { desc: 'Polyfill machinery config' },
-		*	$i18n: { desc: 'internationalization support.' }, etc
-		**/
+		$plugins: ['aop', 'poly', 'i18n']
 
 	};
 
