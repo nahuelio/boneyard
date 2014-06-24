@@ -3,17 +3,17 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['core/spinal',
-		'ioc/processor/ioc-processor'], function(Spinal, IoCProcessor) {
+		'ioc/context'], function(Spinal, Context) {
 
 	/**
-	*	Bone Processor
+	*	BaseClass Bone Processor
 	*	@namespace com.spinal.ioc.processor
 	*	@class com.spinal.ioc.processor.BoneProcessor
-	*	@extends com.spinal.ioc.processor.IoCProcessor
+	*	@extends com.spinal.core.SpinalClass
 	*
-	*	@requires com.spinal.ioc.processor.IoCProcessor
+	*	@requires com.spinal.ioc.IoCProcessor
 	**/
-	var BoneProcessor = Spinal.namespace('com.spinal.ioc.processor.BoneProcessor', IoCProcessor.inherit({
+	var BoneProcessor = Spinal.namespace('com.spinal.ioc.processor.BoneProcessor', Spinal.SpinalClass.inherit({
 
 		/**
 		*	Initialize
@@ -22,9 +22,21 @@ define(['core/spinal',
 		*	@method initialize
 		*	@return {com.spinal.ioc.processor.BoneProcessor}
 		**/
-		initialize: function() {
+		initialize: function(opts) {
+			opts || (opts = {});
+			if(opts.context) this.context = opts.context;
 			BoneProcessor.__super__.initialize.apply(this, arguments);
 			return this;
+		},
+
+		/**
+		*	Retrieves the Context associated with this processor.
+		*	@public
+		*	@method getContext
+		*	@return {com.spinal.ioc.Context}
+		**/
+		getContext: function() {
+			return this.context;
 		},
 
 		/**
@@ -35,8 +47,7 @@ define(['core/spinal',
 		*	@return {com.spinal.ioc.processor.BoneProcessor}
 		**/
 		execute: function(spec) {
-			BoneProcessor.__super__.execute.apply(this, arguments);
-			// TODO: Solve $bone! references.
+			// Solve dependencies (Child Processors will execute this "super call")
 			return this;
 		}
 
@@ -47,7 +58,38 @@ define(['core/spinal',
 		*	@property NAME
 		*	@type String
 		**/
-		NAME: 'BoneProcessor'
+		NAME: 'BoneProcessor',
+
+		/**
+		*	@static
+		*	@property EVENTS
+		*	@type Object
+		**/
+		EVENTS: {
+			/**
+			*	@event created
+			**/
+			created: 'com:spinal:ioc:context:bone:created',
+			/**
+			*	@event ready
+			**/
+			ready: 'com:spinal:ioc:context:bone:ready',
+			/**
+			*	@event destroyed
+			**/
+			destroyed: 'com:spinal:ioc:context:bone:destroyed'
+		},
+
+		/**
+		*	Static Initializer
+		*	@static
+		*	@method Register
+		*	@param ctx {com.spinal.ioc.Context} context in wich the processor will be registered
+		*	@return {com.spinal.ioc.processor.IoCProcessor}
+		**/
+		Register: function(ctx) {
+			return ctx.register(this.NAME, this);
+		}
 
 	}));
 

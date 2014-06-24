@@ -17,13 +17,6 @@ define(['core/spinal',
 	*	@requires com.spinal.ioc.BoneFactory
 	*	@requires com.spinal.util.adt.Collection
 	*
-	*	IMPORTANT CHANGE:
-	*		* We need a BoneFactory (extends Factory) but augments the factory to use requirejs
-	*		AMD module loader to be able to instanciate modules from specs.
-	*		* I will use composition in this class (Context) to include a reference to the BoneFactory.
-	*		* Context should not inherit Factory (or BoneFactory), use composition instead.
-	*		* Example: Context.invoke('loadBone') maps to -> BoneFactory.load($module).
-	*
 	*	Life cycle phases of a Bone (Component) inside a context:
 	*
 	*	1) $Create (Context will register the constructor function as a Factory and instanciate)
@@ -75,7 +68,6 @@ define(['core/spinal',
 		*	@type Array
 		**/
 		processors: [
-			'ioc/processor/bone',
 			'ioc/processor/create',
 			'ioc/processor/ready',
 			'ioc/processor/destroy'
@@ -93,7 +85,6 @@ define(['core/spinal',
 			opts || (opts = {});
 			this.bones = new Collection();
 			this.boneFactory = new BoneFactory();
-			this.boneFactory.on(BoneFactory.EVENTS.loaded, this._onModuleLoaded, this);
 			return Context.__super__.initialize.apply(this, arguments);
 		},
 
@@ -126,23 +117,13 @@ define(['core/spinal',
 		*	@public
 		*	@method invoke
 		*	@param methodName {String} Bone factory method
+		*	@param [callback] {Function} Optional Callback
 		*	@return Object
 		**/
-		invoke: function(methodName) {
+		invoke: function(methodName, callback) {
 			if(!methodName) return null;
 			var args = Array.prototype.slice.apply(arguments, 1);
 			return (this.boneFactory[methodName]) ? this.boneFactory[methodName](args) : null;
-		},
-
-		/**
-		*	Modules loaded handler
-		*	@public
-		*	@method _onModuleLoaded
-		**/
-		_onModuleLoaded: function(ev) {
-			// TODO: Continue here...
-			_.each(ev.modules function(modules) { }, this);
-			this.parse = _.wrap(this.execute, _.bind(this.parse, this));
 		},
 
 		/**
@@ -157,21 +138,37 @@ define(['core/spinal',
 		wire: function(spec, callback) {
 			if(!spec) { callback(this); return this; }
 			if(!_.isObject(spec)) throw new ContextException('InvalidSpecFormat');
-			this.invoke('register', this.processors);
+			this.boneFactory.register(this.processors, _.bind(this._onProcessorsLoaded, this, spec, callback));
 			return this;
 		},
 
 		/**
 		*	Context Parser
-		*	@public
-		*	@method parse
+		*	@private
+		*	@method _parse
 		*	@param spec {Object} context spec to be wired
+		*	@param [callback] {Function} Optional Callback
 		*	@return {com.spinal.ioc.Context}
 		**/
-		parse: function(execute, spec) {
-			this.excecute(spec);
+		_parse: function(spec, callback) {
+			if(callback && _.isFunction(callback)) callback(this);
 			this.trigger(Context.EVENTS.initialized, this);
 			return this;
+		},
+
+		/**
+		*	Processors loaded callback
+		*	@private
+		*	@method _onProcessorsLoaded
+		*	@param processors {Array} Array of Processor Modules
+		*	@param [callback] {Function} Optional Callback
+		**/
+		_onProcessorsLoaded: function(spec, callback, processors) {
+			_.each(processors function(processor) {
+				this[processor.NAME] = this.invoke('create', processor.NAME);
+				// Continue Here...
+			}, this);
+			this.execute(spec, callback);
 		}
 
 	}, {
@@ -204,8 +201,9 @@ define(['core/spinal',
 		*	@return com.spinal.ioc.Context
 		**/
 		Initialize: function(spec, callback) {
-			if(arguments.length === 1 && _.isFunction(spec)) return new Context().wire(null, spec);
-			return new Context().wire(spec, callback);
+			return (arguments.length === 1 && _.isFunction(spec)) ?
+				new Context().wire(null, spec) :
+				new Context().wire(spec, callback);
 		}
 
 	}));

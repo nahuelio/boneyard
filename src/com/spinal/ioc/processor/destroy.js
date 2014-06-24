@@ -3,17 +3,17 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['core/spinal',
-		'ioc/processor/create'], function(Spinal, CreateProcessor) {
+		'ioc/processor/bone'], function(Spinal, BoneProcessor) {
 
 	/**
 	*	Destroy Processor
 	*	@namespace com.spinal.ioc.processor
 	*	@class com.spinal.ioc.processor.DestroyProcessor
-	*	@extends com.spinal.ioc.processor.CreateProcessor
+	*	@extends com.spinal.ioc.processor.BoneProcessor
 	*
-	*	@requires com.spinal.ioc.processor.CreateProcessor
+	*	@requires com.spinal.ioc.processor.BoneProcessor
 	**/
-	var DestroyProcessor = Spinal.namespace('com.spinal.ioc.processor.DestroyProcessor', CreateProcessor.inherit({
+	var DestroyProcessor = Spinal.namespace('com.spinal.ioc.processor.DestroyProcessor', BoneProcessor.inherit({
 
 		/**
 		*	Initialize
@@ -55,19 +55,7 @@ define(['core/spinal',
 		*	@property NAME
 		*	@type String
 		**/
-		NAME: 'DestroyProcessor',
-
-		/**
-		*	@static
-		*	@property EVENTS
-		*	@type Object
-		**/
-		EVENTS: {
-			/**
-			*	@event destroyed
-			**/
-			destroyed: 'com:spinal:ioc:processor:bone:destroyed'
-		}
+		NAME: 'DestroyProcessor'
 
 	}));
 
