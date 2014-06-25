@@ -16,24 +16,6 @@ define(['core/spinal',
 	*	@requires com.spinal.core.Spinal
 	*	@requires com.spinal.ioc.BoneFactory
 	*	@requires com.spinal.util.adt.Collection
-	*
-	*	Life cycle phases of a Bone (Component) inside a context:
-	*
-	*	1) $Create (Context will register the constructor function as a Factory and instanciate)
-	*		a) $Module -> AMD module path that points to the module
-	*		b) $Params -> Arguments to pass to the constructor function
-	*	2) $Ready -> Bone was fully created and ready to use.
-	*	3) $Destroy -> Bone was destroyed inside the context allowing to execute code before (after)
-	*	a component die.
-	*
-	*	Processor's Composition (Order of execution)
-	*
-	*	1) IoCProcessor -> Builds bones structure
-	*	2) BoneProcessor -> Solves Bones references across other bone declarations and module requires (String parsing logic).
-	*	3) CreateProcessor -> Instanciate Modules
-	*	4) ReadyProcessor -> Calls operations on modules already instanciated by the context.
-	*	5) DestroyProcessor -> Create delayed behaviors when modules are destroyed (Behavioral control).
-	*		Destroy Processor might be not necessary; AOP can offer a better solution to that (subject to be deleted).
 	**/
 	var Context = Spinal.namespace('com.spinal.ioc.Context', Spinal.SpinalClass.inherit({
 

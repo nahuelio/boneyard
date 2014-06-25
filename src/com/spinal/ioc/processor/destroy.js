@@ -16,6 +16,14 @@ define(['core/spinal',
 	var DestroyProcessor = Spinal.namespace('com.spinal.ioc.processor.DestroyProcessor', BoneProcessor.inherit({
 
 		/**
+		*	Supported Notations
+		*	@public
+		*	@property notations
+		*	@type Array
+		**/
+		notations: ['destroy'],
+
+		/**
 		*	Initialize
 		*	@public
 		*	@chainable

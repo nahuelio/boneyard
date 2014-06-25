@@ -16,6 +16,14 @@ define(['core/spinal',
 	var ReadyProcessor = Spinal.namespace('com.spinal.ioc.processor.ReadyProcessor', BoneProcessor.inherit({
 
 		/**
+		*	Supported Notations
+		*	@public
+		*	@property notations
+		*	@type Array
+		**/
+		notations: ['ready'],
+
+		/**
 		*	Initialize
 		*	@public
 		*	@chainable

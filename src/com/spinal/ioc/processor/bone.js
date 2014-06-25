@@ -16,6 +16,14 @@ define(['core/spinal',
 	var BoneProcessor = Spinal.namespace('com.spinal.ioc.processor.BoneProcessor', Spinal.SpinalClass.inherit({
 
 		/**
+		*	Supported Notations
+		*	@public
+		*	@property notations
+		*	@type Array
+		**/
+		notations: ['specs', 'plugins'],
+
+		/**
 		*	Initialize
 		*	@public
 		*	@chainable
@@ -27,6 +35,19 @@ define(['core/spinal',
 			if(opts.context) this.context = opts.context;
 			BoneProcessor.__super__.initialize.apply(this, arguments);
 			return this;
+		},
+
+		/**
+		*	Performs a notation full look up inside the bones hierarchy defined in the current context.
+		*	@public
+		*	@method lookup
+		*	@param notation {String} Notation literal
+		*	@return Object
+		**/
+		lookup: function(notation) {
+			if(!notation || !_.isString(notation) || notation === '' || !_.contains(this.notations, notation)) return null;
+			// TODO: Implement this
+			return null;
 		},
 
 		/**
