@@ -21,7 +21,7 @@ define(['core/spinal',
 		*	@property notations
 		*	@type Array
 		**/
-		notations: ['module', 'class', 'args'],
+		notations: ['module', 'params'],
 
 		/**
 		*	Initialize
@@ -43,6 +43,7 @@ define(['core/spinal',
 		**/
 		execute: function() {
 			CreateProcessor.__super__.initialize.apply(this, arguments);
+			// TODO: Process -> $module & $params
 			return this;
 		},
 

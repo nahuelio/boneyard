@@ -34,6 +34,7 @@ define(['ioc/context',
 			it('Should Wire Specs', function(done) {
 				this.appContext.wire(ProductSpec, _.bind(function(ctx) {
 					expect(ctx).to.be.ok();
+					//console.log(ctx.bones.collection);
 					done();
 				}, this));
 			});

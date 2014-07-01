@@ -44,16 +44,12 @@ define(['core/spinal',
 		boneFactory: null,
 
 		/**
-		*	Processors List used by the context
+		*	Supported Notations
 		*	@public
-		*	@property processors
+		*	@property notations
 		*	@type Array
 		**/
-		processors: [
-			'ioc/processor/create',
-			'ioc/processor/ready',
-			'ioc/processor/destroy'
-		],
+		notations: ['specs'],
 
 		/**
 		*	Initialize
@@ -66,8 +62,51 @@ define(['core/spinal',
 		initialize: function(opts) {
 			opts || (opts = {});
 			this.bones = new Collection();
-			this.boneFactory = new BoneFactory();
 			return Context.__super__.initialize.apply(this, arguments);
+		},
+
+		/**
+		*	Validate notation for the current context or processor
+		*	@private
+		*	@method _valid
+		*	@param notation {String} Notation name
+		*	@return Boolean
+		**/
+		_valid: function(notation) {
+			return !(!notation || !_.isString(notation) || notation === '' || !_.contains(this.notations, notation));
+		},
+
+		/**
+		*	Builds bone structure hierarchy recursively
+		*	@private
+		*	@method _build
+		*	@param ctx {com.spinal.ioc.Context} current context
+		*	@param spec {Object} Spec to process
+		*	@return {com.spinal.ioc.context}
+		**/
+		_build: function(ctx, spec) {
+			var depSpecs = ctx.lookup('specs', spec);
+			if(depSpecs && _.isArray(depSpecs)) {
+				_.each(depSpecs, function(spec) {
+					this._build(new Context())
+				}, this);
+			} else {
+				this.bones.add(spec);
+			}
+			return this;
+		},
+
+		/**
+		*	Processors loaded callback
+		*	@private
+		*	@method _onProcessorsLoaded
+		*	@param processors {Array} Array of Processor Modules
+		*	@param [callback] {Function} Optional Callback
+		**/
+		_onProcessorsLoaded: function(spec, callback, processors) {
+			_.each(processors, function(p) { Context[p.NAME] = this.invoke('create', p.NAME, this).execute(spec); }, this);
+			if(callback && _.isFunction(callback)) callback(this);
+			this.trigger(Context.EVENTS.initialized, this);
 		},
 
 		/**
@@ -95,6 +134,21 @@ define(['core/spinal',
 		},
 
 		/**
+		*	Perform a look up by notation in the current context (or in the spec passed as parameter, if exists).
+		*	@public
+		*	@method lookup
+		*	@param notation {String} Notation name
+		*	@param [spec] {Object} Optional Spec in which the lookup will be perform
+		*	@return Object
+		**/
+		lookup: function(notation, spec) {
+			if(!spec || !_.isObject(spec) || !this._valid(notation)) return null;
+			return _.find(spec, function(value, name) {
+				return (name === (Context.NOTATION_PREFIX + notation));
+			}, this);
+		},
+
+		/**
 		*	Bone Factory invoke method wrapper
 		*	@public
 		*	@method invoke
@@ -104,7 +158,7 @@ define(['core/spinal',
 		invoke: function(methodName) {
 			if(!methodName) return null;
 			var args = Array.prototype.slice.apply(arguments, 1);
-			return (this.boneFactory[methodName]) ? this.boneFactory[methodName](args) : null;
+			return (Context.BoneFactory[methodName]) ? Context.BoneFactory[methodName](args) : null;
 		},
 
 		/**
@@ -119,7 +173,8 @@ define(['core/spinal',
 		wire: function(spec, callback) {
 			if(!spec) { callback(this); return this; }
 			if(!_.isObject(spec)) throw new ContextException('InvalidSpecFormat');
-			this.boneFactory.register(this.processors, _.bind(this._onProcessorsLoaded, this, spec, callback));
+			Context.boneFactory.register(Context.PROCESSORS, _.bind(this._onProcessorsLoaded, this, spec, callback));
+			this._build(this, spec);
 			return this;
 		},
 
@@ -132,19 +187,6 @@ define(['core/spinal',
 		**/
 		notify: function(eventType, data) {
 			this.trigger(Context.EVENTS.changed, { type: eventType, data: data });
-		},
-
-		/**
-		*	Processors loaded callback
-		*	@private
-		*	@method _onProcessorsLoaded
-		*	@param processors {Array} Array of Processor Modules
-		*	@param [callback] {Function} Optional Callback
-		**/
-		_onProcessorsLoaded: function(spec, callback, processors) {
-			_.each(processors function(p) { this[p.NAME] = this.invoke('create', p.NAME, this).execute(spec); }, this);
-			if(callback && _.isFunction(callback)) callback(this);
-			this.trigger(Context.EVENTS.initialized, this);
 		}
 
 	}, {
@@ -171,6 +213,32 @@ define(['core/spinal',
 			**/
 			changed: 'com:spinal:ioc:context:changed'
 		},
+
+		/**
+		*	@static
+		*	@property NOTATION_PREFIX
+		*	@type String
+		**/
+		NOTATION_PREFIX: '$',
+
+		/**
+		*	Processors List used by the context
+		*	@static
+		*	@property PROCESSORS
+		*	@type Array
+		**/
+		PROCESSORS: [
+			'ioc/processor/create',
+			'ioc/processor/ready',
+			'ioc/processor/destroy'
+		],
+
+		/**
+		*	@static
+		*	@property BoneFactory
+		*	@type {com.spinal.ioc.BoneFactory}
+		**/
+		BoneFactory: new BoneFactory(),
 
 		/**
 		*	Static IoC Initializer

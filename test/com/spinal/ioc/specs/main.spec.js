@@ -24,10 +24,8 @@ define(['specs/header.spec',
 		theme: 'chrome',
 
 		global: {
-			$module: {
-				class: 'ui/container',
-				args: { el: 'div.global', theme: '$bone!theme' }
-			},
+			$module: 'ui/container',
+			$params: { el: 'div.global', theme: '$bone!theme' },
 			$ready: {
 				add: ['$bone!header'],
 				add: ['$bone!content'],
@@ -37,10 +35,8 @@ define(['specs/header.spec',
 		},
 
 		viewA: {
-			$module: {
-				class: 'ui/view',
-				args: { id: 'viewA' }
-			},
+			$module: 'ui/view',
+			$params: { id: 'viewA' },
 			$ready: {
 				'$bone!content:add': ['viewA', { renderOnAdd: true }]
 			},
@@ -48,10 +44,8 @@ define(['specs/header.spec',
 		},
 
 		viewB: {
-			$module: {
-				class: 'ui/view',
-				args: { id: 'viewB' }
-			},
+			$module: 'ui/view',
+			$params: { id: 'viewB' },
 			$ready: {
 				'$bone!content:add': ['viewB', { renderOnAdd: true }]
 			},

@@ -43,7 +43,7 @@ define(['core/spinal',
 		*	@param callback {Function} module loaded callback
 		**/
 		_onModulesLoaded: function(callback) {
-			var modules = Array.prototype.slice.apply(arguments, 1);
+			var modules = Array.prototype.slice.call(arguments, 1);
 			_.each(modules, function(module) { BoneFactory.__super__.register.apply(module.NAME, module); }, this);
 			if(callback && _.isFunction(callback)) callback(modules);
 			this.trigger(BoneFactory.EVENTS.loaded, { modules: modules });

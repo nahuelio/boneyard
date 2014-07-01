@@ -21,7 +21,7 @@ define(['core/spinal',
 		*	@property notations
 		*	@type Array
 		**/
-		notations: ['specs', 'plugins'],
+		notations: ['plugins', 'bone'],
 
 		/**
 		*	Initialize
@@ -45,19 +45,19 @@ define(['core/spinal',
 		*	@return Object
 		**/
 		lookup: function(notation) {
-			if(!notation || !_.isString(notation) || notation === '' || !_.contains(this.notations, notation)) return null;
-			// TODO: Implement this
-			return null;
+			if(!this.context._valid.apply(this, notation)) return null;
+			// TODO: Perform look up over the bone structure.
 		},
 
 		/**
 		*	Resolves bone references
 		*	@public
 		*	@method resolve
-		*	@return {com.spinal.ioc.processor.BoneProcessor}
+		*	@return Object
 		**/
-		resolve: function() {
-			return this;
+		resolve: function(notation) {
+			// TODO: Implement RegExp to extract bone reference strings
+			return { bone: null, method: null };
 		},
 
 		/**
@@ -68,7 +68,7 @@ define(['core/spinal',
 		*	@return {com.spinal.ioc.processor.BoneProcessor}
 		**/
 		execute: function(spec) {
-			// Solve dependencies (Child Processors will execute this "super call")
+			// TODO: Resolve Bone References on this.context.bones
 			return this;
 		}
 

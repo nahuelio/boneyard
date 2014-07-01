@@ -6,14 +6,12 @@ define(['specs/main.spec'], function(MainSpec) {
 
 	return {
 
-		$specs: MainSpec,
+		$specs: [MainSpec],
 
 		content: {
 
-			$module: {
-				class: 'ui/container',
-				args: { id: 'content' }
-			}
+			$module: 'ui/container',
+			$params: { id: 'content' }
 
 		}
 
