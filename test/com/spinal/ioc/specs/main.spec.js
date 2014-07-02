@@ -30,8 +30,7 @@ define(['specs/header.spec',
 				add: ['$bone!header'],
 				add: ['$bone!content'],
 				add: ['$bone!footer']
-			},
-			$destroy: {}
+			}
 		},
 
 		viewA: {
@@ -39,8 +38,7 @@ define(['specs/header.spec',
 			$params: { id: 'viewA' },
 			$ready: {
 				'$bone!content:add': ['viewA', { renderOnAdd: true }]
-			},
-			$destroy: {}
+			}
 		},
 
 		viewB: {
@@ -48,8 +46,7 @@ define(['specs/header.spec',
 			$params: { id: 'viewB' },
 			$ready: {
 				'$bone!content:add': ['viewB', { renderOnAdd: true }]
-			},
-			$destroy: {}
+			}
 		},
 
 		$plugins: ['aop', 'poly', 'i18n']

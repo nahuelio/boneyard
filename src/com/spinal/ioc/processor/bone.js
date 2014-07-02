@@ -21,7 +21,7 @@ define(['core/spinal',
 		*	@property notations
 		*	@type Array
 		**/
-		notations: ['plugins', 'bone'],
+		notations: ['bone'],
 
 		/**
 		*	Initialize

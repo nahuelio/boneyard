@@ -4,8 +4,7 @@
 **/
 define(['core/spinal',
 		'util/string',
-		'ioc/bone-factory',
-		'util/adt/collection'], function(Spinal, StringUtils, BoneFactory, Collection) {
+		'ioc/bone-factory'], function(Spinal, StringUtil, BoneFactory) {
 
 	/**
 	*	IOC Context Class
@@ -14,8 +13,8 @@ define(['core/spinal',
 	*	@extends com.spinal.core.SpinalClass
 	*
 	*	@requires com.spinal.core.Spinal
+	*	@requires com.spinal.util.StringUtil
 	*	@requires com.spinal.ioc.BoneFactory
-	*	@requires com.spinal.util.adt.Collection
 	**/
 	var Context = Spinal.namespace('com.spinal.ioc.Context', Spinal.SpinalClass.inherit({
 
@@ -25,15 +24,7 @@ define(['core/spinal',
 		*	@property id
 		*	@type String
 		**/
-		id: StringUtils.uuid(),
-
-		/**
-		*	Bones
-		*	@public
-		*	@property bones
-		*	@type com.spinal.util.adt.Collection
-		**/
-		bones: null,
+		id: StringUtil.uuid(),
 
 		/**
 		*	Bone Factory instance
@@ -61,7 +52,6 @@ define(['core/spinal',
 		**/
 		initialize: function(opts) {
 			opts || (opts = {});
-			this.bones = new Collection();
 			return Context.__super__.initialize.apply(this, arguments);
 		},
 
@@ -80,19 +70,12 @@ define(['core/spinal',
 		*	Builds bone structure hierarchy recursively
 		*	@private
 		*	@method _build
-		*	@param ctx {com.spinal.ioc.Context} current context
 		*	@param spec {Object} Spec to process
+		*	@param ctx {com.spinal.ioc.Context} current context
 		*	@return {com.spinal.ioc.context}
 		**/
-		_build: function(ctx, spec) {
-			var depSpecs = ctx.lookup('specs', spec);
-			if(depSpecs && _.isArray(depSpecs)) {
-				_.each(depSpecs, function(spec) {
-					this._build(new Context())
-				}, this);
-			} else {
-				this.bones.add(spec);
-			}
+		_build: function(spec, ctx) {
+			if(!ctx) ctx = this;
 			return this;
 		},
 
@@ -107,30 +90,6 @@ define(['core/spinal',
 			_.each(processors, function(p) { Context[p.NAME] = this.invoke('create', p.NAME, this).execute(spec); }, this);
 			if(callback && _.isFunction(callback)) callback(this);
 			this.trigger(Context.EVENTS.initialized, this);
-		},
-
-		/**
-		*	Retrieves a Bone from the current context.
-		*	@public
-		*	@method getBone
-		*	@param id {String} Bone Id
-		*	@return Object
-		**/
-		getBone: function(id) {
-			if(!id) return null;
-			return this.bones.find(function(bone) { return (bone.id === id); });
-		},
-
-		/**
-		*	Retrieves the bone's type by id in the current context.
-		*	@public
-		*	@method getBoneType
-		*	@param id {String} Bone Id
-		*	@return Object
-		**/
-		getBoneType: function(id) {
-			var bone = this.getBone(id);
-			return (bone) ? bone.toString() : null;
 		},
 
 		/**
@@ -174,7 +133,7 @@ define(['core/spinal',
 			if(!spec) { callback(this); return this; }
 			if(!_.isObject(spec)) throw new ContextException('InvalidSpecFormat');
 			Context.boneFactory.register(Context.PROCESSORS, _.bind(this._onProcessorsLoaded, this, spec, callback));
-			this._build(this, spec);
+			this._build(spec);
 			return this;
 		},
 
