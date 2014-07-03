@@ -5,67 +5,99 @@
 define(['core/spinal'], function(Spinal) {
 
 	/**
-	*	ObjectUtil Singleton class provides a useful interface to query object structure.
-	*	@namespace com.spinal.util
-	*	@class com.spinal.util.ObjectUtil
-	*	@extends com.spinal.core.SpinalClass
-	*
-	*	Try to give some shape to this implementation and see if it's worth it.
-	*	This should be benchmarked it!!!
-	*
-	*	The goal:
-	*		1) Simple and please... faster!!
-	*		2) Remove the boiler plate code, while checking the existance of object's props
-	*		in large object structure hierarchies.
-	*		3) This should be a bug helper to query specs on the spinal-ioc/context module.
-	*		essentially to avoid the usage of the Collection classes and keep the spec structure.
-	*
+	*	Object Util Class
+	*	@namespace Object
 	**/
-	var ObjectUtil = Spinal.namespace('com.spinal.util.ObjectUtil', Spinal.SpinalClass.inherit({
+	(function(export) {
 
 		/**
-		*	Initialize
-		*	@public
-		*	@method initialize
-		*	@return {com.spinal.util.ObjectUtil}
+		*	Test Case:
+		*		var test = {
+					"store": {
+					    "book": [
+					      { "category": "reference",
+					        "author": "Nigel Rees",
+					        "title": "Sayings of the Century",
+					        "price": 8.95
+					      },
+					      { "category": "fiction",
+					        "author": "Evelyn Waugh",
+					        "title": "Sword of Honour",
+					        "price": 12.99
+					      },
+					      { "category": "fiction",
+					        "author": "Herman Melville",
+					        "title": "Moby Dick",
+					        "isbn": "0-553-21311-3",
+					        "price": 8.99
+					      },
+					      { "category": "fiction",
+					        "author": "J. R. R. Tolkien",
+					        "title": "The Lord of the Rings",
+					        "isbn": "0-395-19395-8",
+					        "price": 22.99
+					      }
+					    ],
+					    "bicycle": {
+					      "color": "red",
+					      "price": 19.95
+						}
+					}
+				}
+		*
+		*		test.query('$.store.bicycle['color']') || test.query('library.bicycle.color');
+		*		test.query('$..book[?(@.price < 100), ?(@.title.indexOf('the'))].title');
+		*		test.query('$.store[?(@.address.street.indexOf('1234'))]');
 		**/
-		initialize: function() {
-			if(arguments.callee._singleton) return arguments.callee._singleton;
-			return arguments.callee._singleton = this;
-		},
+
+		var operators = {
+			'$': 'R', // root element
+			'..': 'S', // recursive descendent
+			'*': 'W', // wildcard. All objects regardless their key names.
+			'@': 'E', // current element in a expr
+			'[_]|.': 'C', // child operator
+			',': 'U', // Union operator
+			'?(_)': 'F' // filter operator
+		};
 
 		/**
-		*	By Query
+		*	Tokenize query based on child operator
+		*	@private
+		*	@method _tokenize
+		*	@param expr {String} query expr
+		*	@return Array
 		**/
-		byQuery: function(query) {
-			return _.reduce(query.split('.'), function(ref, prop) { return ref[prop]; }, this.o, this);
-		},
-
-		/**
-		*	By Key
-		**/
-		byKey: function() {
-			return null;
-		},
-
-		/**
-		*	By Val
-		**/
-		byVal: function() {
-			return null;
+		function _tokenize(expr) {
+			// TODO
 		}
 
-	}, {
-
 		/**
-		*	@static
-		*	@property NAME
-		*	@type String
+		*	Validates/executes a valid query expression against the list of supported operators
+		*	@private
+		*	@method _match
+		*	@param expr {String} query expr
+		*	@return Array
 		**/
-		NAME: 'ObjectUtil'
+		function _match(expr) {
+			var tks = _tokenize(expr);
+			if(tks && typeof tks === 'array') {
+				for(var i = 0; i < tks.length; i++)
 
-	}));
+			}
+		}
 
-	return ObjectUtil;
+		function _R() { }
+		function _S() { }
+		function _W() { }
+		function _E() { }
+		function _C() { }
+		function _U() { }
+		function _F() { }
+
+		Object.prototype.query = function(expr) {
+			return _match(expr)();
+		};
+
+	})(typeof exports === 'undefined' ? window : exports);
 
 });
