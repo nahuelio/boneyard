@@ -16,6 +16,14 @@ define(['core/spinal',
 	var BoneProcessor = Spinal.namespace('com.spinal.ioc.processor.BoneProcessor', Spinal.SpinalClass.inherit({
 
 		/**
+		*	Context Reference
+		*	@public
+		*	@property context
+		*	@type {com.spinal.ioc.Context}
+		**/
+		context: null,
+
+		/**
 		*	Supported Notations
 		*	@public
 		*	@property notations
@@ -28,25 +36,14 @@ define(['core/spinal',
 		*	@public
 		*	@chainable
 		*	@method initialize
+		*	@param ctx {com.spinal.ioc.Context} context reference
 		*	@return {com.spinal.ioc.processor.BoneProcessor}
 		**/
-		initialize: function(opts) {
-			opts || (opts = {});
-			if(opts.context) this.context = opts.context;
+		initialize: function(ctx) {
+			if(!ctx) throw new ContextException('UndefinedContext');
+			this.context = ctx;
 			BoneProcessor.__super__.initialize.apply(this, arguments);
 			return this;
-		},
-
-		/**
-		*	Performs a notation full look up inside the bones hierarchy defined in the current context.
-		*	@public
-		*	@method lookup
-		*	@param notation {String} Notation literal
-		*	@return Object
-		**/
-		lookup: function(notation) {
-			if(!this.context._valid.apply(this, notation)) return null;
-			// TODO: Perform look up over the bone structure.
 		},
 
 		/**
@@ -99,17 +96,6 @@ define(['core/spinal',
 			*	@event destroyed
 			**/
 			destroyed: 'com:spinal:ioc:context:bone:destroyed'
-		},
-
-		/**
-		*	Static Initializer
-		*	@static
-		*	@method Register
-		*	@param ctx {com.spinal.ioc.Context} context in wich the processor will be registered
-		*	@return {com.spinal.ioc.processor.IoCProcessor}
-		**/
-		Register: function(ctx) {
-			return ctx.register(this.NAME, this);
 		}
 
 	}));

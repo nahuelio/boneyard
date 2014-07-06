@@ -29,8 +29,7 @@ define(['core/spinal',
 		*	@return {com.spinal.ioc.processor.CreateProcessor}
 		**/
 		initialize: function() {
-			CreateProcessor.__super__.initialize.apply(this, arguments);
-			return this;
+			return PluginProcessor.__super__.initialize.apply(this, arguments);
 		},
 
 		/**
@@ -40,9 +39,7 @@ define(['core/spinal',
 		*	@return {com.spinal.ioc.processor.CreateProcessor}
 		**/
 		execute: function() {
-			CreateProcessor.__super__.initialize.apply(this, arguments);
-			// TODO: Process -> $module & $params
-			return this;
+			return PluginProcessor.__super__.initialize.apply(this, arguments);
 		}
 
 	}, {

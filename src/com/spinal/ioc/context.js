@@ -4,7 +4,9 @@
 **/
 define(['core/spinal',
 		'util/string',
-		'ioc/bone-factory'], function(Spinal, StringUtil, BoneFactory) {
+		'ioc/bone-factory',
+		'ioc/bone-query',
+		'util/error/types/context-exception'], function(Spinal, StringUtil, BoneFactory, BoneQuery, ContextException) {
 
 	/**
 	*	IOC Context Class
@@ -15,6 +17,7 @@ define(['core/spinal',
 	*	@requires com.spinal.core.Spinal
 	*	@requires com.spinal.util.StringUtil
 	*	@requires com.spinal.ioc.BoneFactory
+	*	@requires com.spinal.util.error.types.ContextException
 	**/
 	var Context = Spinal.namespace('com.spinal.ioc.Context', Spinal.SpinalClass.inherit({
 
@@ -27,20 +30,20 @@ define(['core/spinal',
 		id: StringUtil.uuid(),
 
 		/**
-		*	Bone Factory instance
+		*	Current Spec
 		*	@public
-		*	@property boneFactory
-		*	@type com.spinal.ioc.BoneFactory
+		*	@property spec
+		*	@type Object
 		**/
-		boneFactory: null,
+		spec: {},
 
 		/**
-		*	Supported Notations
+		*	Bone Query Engine Class
 		*	@public
-		*	@property notations
-		*	@type Array
+		*	@property boneQuery
+		*	@type com.spinal.ioc.BoneQuery
 		**/
-		notations: ['specs'],
+		boneQuery: null,
 
 		/**
 		*	Initialize
@@ -52,72 +55,50 @@ define(['core/spinal',
 		**/
 		initialize: function(opts) {
 			opts || (opts = {});
+			this.boneQuery = new BoneQuery({ context: this });
 			return Context.__super__.initialize.apply(this, arguments);
-		},
-
-		/**
-		*	Validate notation for the current context or processor
-		*	@private
-		*	@method _valid
-		*	@param notation {String} Notation name
-		*	@return Boolean
-		**/
-		_valid: function(notation) {
-			return !(!notation || !_.isString(notation) || notation === '' || !_.contains(this.notations, notation));
-		},
-
-		/**
-		*	Builds bone structure hierarchy recursively
-		*	@private
-		*	@method _build
-		*	@param spec {Object} Spec to process
-		*	@param ctx {com.spinal.ioc.Context} current context
-		*	@return {com.spinal.ioc.context}
-		**/
-		_build: function(spec, ctx) {
-			if(!ctx) ctx = this;
-			return this;
 		},
 
 		/**
 		*	Processors loaded callback
 		*	@private
 		*	@method _onProcessorsLoaded
-		*	@param processors {Array} Array of Processor Modules
 		*	@param [callback] {Function} Optional Callback
+		*	@param processors {Array} Array of Processor Modules
 		**/
-		_onProcessorsLoaded: function(spec, callback, processors) {
-			_.each(processors, function(p) { Context[p.NAME] = this.invoke('create', p.NAME, this).execute(spec); }, this);
+		_onProcessorsLoaded: function(callback, processors) {
+			_.each(processors, function(p) { Context[p.NAME] = this.factory('create', p.NAME, this); }, this);
 			if(callback && _.isFunction(callback)) callback(this);
 			this.trigger(Context.EVENTS.initialized, this);
 		},
 
 		/**
-		*	Perform a look up by notation in the current context (or in the spec passed as parameter, if exists).
-		*	@public
-		*	@method lookup
-		*	@param notation {String} Notation name
-		*	@param [spec] {Object} Optional Spec in which the lookup will be perform
-		*	@return Object
+		*	Build specs into a single object unit suitable to query by boneQuery class
+		*	@private
+		*	@method _build
+		*	@param bone {Object} current bone
+		*	@return {com.spinal.ioc.Context}
 		**/
-		lookup: function(notation, spec) {
-			if(!spec || !_.isObject(spec) || !this._valid(notation)) return null;
-			return _.find(spec, function(value, name) {
-				return (name === (Context.NOTATION_PREFIX + notation));
-			}, this);
+		_build: function(bone) {
+			_.each(bone, function(b, id) {
+		        (id === (Context.PREFIX + 'specs')) ?
+					_.each((!_.isArray(b) && _.isObject(b)) ? [b] : b, this._build, this) :
+					this.spec[id] = b;
+		    }, this);
+			return this;
 		},
 
 		/**
-		*	Bone Factory invoke method wrapper
+		*	Bone Factory method wrapper
 		*	@public
-		*	@method invoke
+		*	@method factory
 		*	@param methodName {String} Bone factory method
 		*	@return Object
 		**/
-		invoke: function(methodName) {
+		factory: function(methodName) {
 			if(!methodName) return null;
-			var args = Array.prototype.slice.apply(arguments, 1);
-			return (Context.BoneFactory[methodName]) ? Context.BoneFactory[methodName](args) : null;
+			var args = Array.prototype.slice.call(arguments, 1);
+			return (Context.BoneFactory[methodName]) ? Context.BoneFactory[methodName].apply(Context.BoneFactory, args) : null;
 		},
 
 		/**
@@ -132,9 +113,8 @@ define(['core/spinal',
 		wire: function(spec, callback) {
 			if(!spec) { callback(this); return this; }
 			if(!_.isObject(spec)) throw new ContextException('InvalidSpecFormat');
-			Context.boneFactory.register(Context.PROCESSORS, _.bind(this._onProcessorsLoaded, this, spec, callback));
-			this._build(spec);
-			return this;
+			Context.BoneFactory.register(Context.PROCESSORS, _.bind(this._onProcessorsLoaded, this, callback));
+			return this._build(spec);
 		},
 
 		/**
@@ -175,10 +155,10 @@ define(['core/spinal',
 
 		/**
 		*	@static
-		*	@property NOTATION_PREFIX
+		*	@property PREFIX
 		*	@type String
 		**/
-		NOTATION_PREFIX: '$',
+		PREFIX: '$',
 
 		/**
 		*	Processors List used by the context
@@ -187,9 +167,9 @@ define(['core/spinal',
 		*	@type Array
 		**/
 		PROCESSORS: [
+			'ioc/processor/plugin',
 			'ioc/processor/create',
-			'ioc/processor/ready',
-			'ioc/processor/destroy'
+			'ioc/processor/ready'
 		],
 
 		/**

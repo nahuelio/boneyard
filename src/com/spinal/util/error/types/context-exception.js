@@ -36,13 +36,15 @@ define(['core/spinal',
 		*	__Type List__
 		*
 		*		Generic (inherited from com.spinal.util.error.exception)
+		*		UndefinedContext
 		*		InvalidSpecFormat
 		*	@static
 		*	@property TYPES
 		*	@type Object
 		**/
 		TYPES: {
-			InvalidSpecFormat: 'Invalid Spec Format',
+			UndefinedContext: 'Context Not Defined',
+			InvalidSpecFormat: 'Invalid Spec Format'
 		}
 
 	}));

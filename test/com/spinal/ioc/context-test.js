@@ -22,7 +22,7 @@ define(['ioc/context',
 			it('Should Initialize IoC Container', function(done) {
 				this.appContext = Context.Initialize(_.bind(function(ctx) {
 					expect(ctx).to.be.ok();
-					expect(ctx.bones.size()).to.be.equal(0);
+					expect(ctx.spec).to.be.ok();
 					done();
 				}, this));
 			});
@@ -34,7 +34,8 @@ define(['ioc/context',
 			it('Should Wire Specs', function(done) {
 				this.appContext.wire(ProductSpec, _.bind(function(ctx) {
 					expect(ctx).to.be.ok();
-					//console.log(ctx.bones.collection);
+					expect(ctx.spec).to.be.ok();
+					expect(ctx.spec.header).to.be.ok();
 					done();
 				}, this));
 			});

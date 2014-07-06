@@ -1,10 +1,10 @@
 /**
 *	@module com.spinal.util.factories
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
-*	FIXME: Resolve factories static access to instance member.
 **/
 define(['core/spinal',
-		'util/adt/collection'], function(Spinal, Collection) {
+		'util/error/types/factory-exception',
+		'util/adt/collection'], function(Spinal, FactoryException, Collection) {
 
 	/**
 	*	Generic Factory
@@ -81,7 +81,7 @@ define(['core/spinal',
 		create: function(id) {
 			var factory = this.getFactory(id);
 			if(!factory) throw new FactoryException('UnregisteredFactory');
-			return new factory.create(Array.prototype.slice.call(1, arguments));
+			return new factory.create(Array.prototype.slice.call(arguments, 1));
 		}
 
 	}, {
