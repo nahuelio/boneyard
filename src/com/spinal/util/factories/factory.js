@@ -36,6 +36,19 @@ define(['core/spinal',
 		},
 
 		/**
+		*	Creates a pseudo constructor to allow passing an argument list with the new operator.
+		*	@private
+		*	@method _construct
+		*	@param constructor {Function} Original Constructor function
+		*	@return {Function}
+		**/
+		_construct: function(constructor, args) {
+			function F() { return constructor.apply(this, args); }
+		    F.prototype = constructor.prototype;
+		    return new F();
+		},
+
+		/**
 		*	Returns a factory that has been registered with the id passed as parameter.
 		*	@public
 		*	@method GetFactory
@@ -81,7 +94,7 @@ define(['core/spinal',
 		create: function(id) {
 			var factory = this.getFactory(id);
 			if(!factory) throw new FactoryException('UnregisteredFactory');
-			return new factory.create(Array.prototype.slice.call(arguments, 1));
+			return this._construct(factory.create, Array.prototype.slice.call(arguments, 1));
 		}
 
 	}, {

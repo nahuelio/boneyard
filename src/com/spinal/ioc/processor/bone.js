@@ -40,7 +40,6 @@ define(['core/spinal'], function(Spinal) {
 		**/
 		initialize: function(ctx) {
 			if(!ctx) throw new ContextException('UndefinedContext');
-			// FIXME: ctx is an real array!!
 			this.context = ctx;
 			return this;
 		},
@@ -64,8 +63,8 @@ define(['core/spinal'], function(Spinal) {
 		*	@return {com.spinal.ioc.processor.BoneProcessor}
 		**/
 		execute: function() {
-			// TODO: Resolve Bone References on this.context.bones
 			console.log(this.constructor.NAME + '.execute()... with Spec ->');
+			console.log(this.context.spec);
 			return this;
 		}
 
@@ -91,11 +90,7 @@ define(['core/spinal'], function(Spinal) {
 			/**
 			*	@event ready
 			**/
-			ready: 'com:spinal:ioc:context:bone:ready',
-			/**
-			*	@event destroyed
-			**/
-			destroyed: 'com:spinal:ioc:context:bone:destroyed'
+			ready: 'com:spinal:ioc:context:bone:ready'
 		}
 
 	}));

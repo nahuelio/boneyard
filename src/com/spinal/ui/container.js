@@ -119,8 +119,6 @@ define(['core/spinal',
 		*	@public
 		*	@chainable
 		*	@method removeAll
-		*	@FIXME: Enhancement: Improve method _.invoke in Collection class (less error prone if method is not found.)
-		*	this.removeAll should be triggered if a container is inside another container.
 		*	@return {com.spinal.ui.Container}
 		**/
 		removeAll: function() {
@@ -208,7 +206,7 @@ define(['core/spinal',
 		},
 
 		/**
-		*	Invoke a method specified by parameter on every the view inside the collection.
+		*	Invoke a method specified by parameter on every view inside the container's collection
 		*	@public
 		*	@method invoke
 		*	@param methodName {String} Method Name to invoke in every view in the collection

@@ -2,16 +2,22 @@
 *	Main Spec Test
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 *
+*	Composition Layer (Inversion of control)
+*
 *	Notations:
 *		$specs, (inheritance model for specs)
-*		(Life Cycle phases)
-*		$module (class, args)
-*		$ready (methods)
-*		$destroy (methods)
+*		$create ->
+*			$module (class)
+*			$params (parameters to pass to the constructor)
+*		$ready ->
+*			(operations)
 *
 *	String notations:
 *		$bone! [boneId] -> Access to bones
-*		$bone! [boneId] : [property | method] Access to bone's properties or methods
+*		$bone! [boneId] . [property | method] Access to bone's properties or methods
+*
+*	- See if an IoC implementation should compose app flow like declaring event binding
+*	(when 'ready' state happends)
 *
 **/
 define(['specs/header.spec',
@@ -37,7 +43,7 @@ define(['specs/header.spec',
 			$module: 'ui/view',
 			$params: { id: 'viewA' },
 			$ready: {
-				'$bone!content:add': ['viewA', { renderOnAdd: true }]
+				'$bone!content.add': ['viewA', { renderOnAdd: true }]
 			}
 		},
 
@@ -45,7 +51,7 @@ define(['specs/header.spec',
 			$module: 'ui/view',
 			$params: { id: 'viewB' },
 			$ready: {
-				'$bone!content:add': ['viewB', { renderOnAdd: true }]
+				'$bone!content.add': ['viewB', { renderOnAdd: true }]
 			}
 		},
 
