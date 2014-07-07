@@ -2,8 +2,7 @@
 *	@module com.spinal.ioc.processor
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define(['core/spinal',
-		'ioc/context'], function(Spinal, Context) {
+define(['core/spinal'], function(Spinal) {
 
 	/**
 	*	BaseClass Bone Processor
@@ -36,13 +35,13 @@ define(['core/spinal',
 		*	@public
 		*	@chainable
 		*	@method initialize
-		*	@param ctx {com.spinal.ioc.Context} context reference
+		*	@param ctx {com.spinal.ioc.Context} Context Reference
 		*	@return {com.spinal.ioc.processor.BoneProcessor}
 		**/
 		initialize: function(ctx) {
 			if(!ctx) throw new ContextException('UndefinedContext');
+			// FIXME: ctx is an real array!!
 			this.context = ctx;
-			BoneProcessor.__super__.initialize.apply(this, arguments);
 			return this;
 		},
 
@@ -54,18 +53,19 @@ define(['core/spinal',
 		**/
 		resolve: function(notation) {
 			// TODO: Implement RegExp to extract bone reference strings
-			return { bone: null, method: null };
+			// return { bone: null, method: null };
+			return this;
 		},
 
 		/**
 		*	Execute Processor
 		*	@public
 		*	@method execute
-		*	@param spec {Object} Context spec reference
 		*	@return {com.spinal.ioc.processor.BoneProcessor}
 		**/
-		execute: function(spec) {
+		execute: function() {
 			// TODO: Resolve Bone References on this.context.bones
+			console.log(this.constructor.NAME + '.execute()... with Spec ->');
 			return this;
 		}
 

@@ -2,8 +2,7 @@
 *	@module com.spinal.ioc.processor
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define(['core/spinal',
-		'ioc/processor/bone'], function(Spinal, BoneProcessor) {
+define(['ioc/processor/bone'], function(BoneProcessor) {
 
 	/**
 	*	Defines a processor that acts as a wrapper to trigger plugins functionality
@@ -39,7 +38,7 @@ define(['core/spinal',
 		*	@return {com.spinal.ioc.processor.CreateProcessor}
 		**/
 		execute: function() {
-			return PluginProcessor.__super__.initialize.apply(this, arguments);
+			return PluginProcessor.__super__.execute.apply(this, arguments);
 		}
 
 	}, {

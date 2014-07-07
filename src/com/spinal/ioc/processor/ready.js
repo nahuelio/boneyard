@@ -2,8 +2,7 @@
 *	@module com.spinal.ioc.processor
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define(['core/spinal',
-		'ioc/processor/bone'], function(Spinal, BoneProcessor) {
+define(['ioc/processor/bone'], function(BoneProcessor) {
 
 	/**
 	*	Ready Processor
@@ -31,8 +30,7 @@ define(['core/spinal',
 		*	@return {com.spinal.ioc.processor.ReadyProcessor}
 		**/
 		initialize: function() {
-			ReadyProcessor.__super__.initialize.apply(this, arguments);
-			return this;
+			return ReadyProcessor.__super__.initialize.apply(this, arguments);
 		},
 
 		/**
@@ -42,8 +40,7 @@ define(['core/spinal',
 		*	@return {com.spinal.ioc.processor.ReadyProcessor}
 		**/
 		execute: function() {
-			ReadyProcessor.__super__.execute.apply(this, arguments);
-			return this;
+			return ReadyProcessor.__super__.execute.apply(this, arguments);
 		},
 
 		/**

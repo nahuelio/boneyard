@@ -271,7 +271,9 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 		**/
 		find: function(finder) {
 			if(!finder || !_.isFunction(finder)) return null;
-			return _.find(this.collection, finder);
+			var args = Array.prototype.slice.call(arguments);
+			args.unshift(this.collection);
+			return _.find.apply(this, args);
 		},
 
 		/**

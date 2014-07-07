@@ -33,20 +33,11 @@ define(['core/spinal',
 		**/
 		register: function(modules, callback) {
 			if(!modules || !_.isArray(modules)) return null;
-			return require(modules, _.bind(this._onModulesLoaded, this, callback));
-		},
-
-		/**
-		*	Modules Loaded Handler
-		*	@private
-		*	@method _onModulesLoaded
-		*	@param callback {Function} module loaded callback
-		**/
-		_onModulesLoaded: function(callback) {
-			var modules = Array.prototype.slice.call(arguments, 1);
-			_.each(modules, function(module) { BoneFactory.__super__.register.call(this, module.NAME, module); }, this);
-			if(callback && _.isFunction(callback)) callback(modules);
-			this.trigger(BoneFactory.EVENTS.loaded, { modules: modules });
+			return require(modules, _.bind(function() {
+				var constructors = Array.prototype.slice.call(arguments);
+				_.each(constructors, function(c) { BoneFactory.__super__.register.apply(this, [c.NAME, c]); }, this);
+				callback(constructors);
+			}, this));
 		}
 
 	}, {
@@ -56,19 +47,7 @@ define(['core/spinal',
 		*	@property NAME
 		*	@type String
 		**/
-		NAME: 'BoneFactory',
-
-		/**
-		*	@static
-		*	@property EVENTS
-		*	@type Object
-		**/
-		EVENTS: {
-			/**
-			*	@event loaded
-			**/
-			loaded: 'com:spinal:ioc:bonefactory:modules:loaded'
-		}
+		NAME: 'BoneFactory'
 
 	}));
 

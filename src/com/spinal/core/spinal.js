@@ -190,10 +190,11 @@ define(['libs/backbone'], function() {
 		*	@class com.spinal.core.SpinalClass
 		*	FIXME: Separate set/get methods into a different interface.
 		*	Evaluate if set/get interface methods became useless!
+		*	!!!!!NOTE: Have to be careful when removing 'set', package UI and UTIL has an strong dependency on that.
 		*	You can access variable/method members through this['method/variable'].
 		**/
 		var SpinalClass = exports.SpinalClass = namespace('com.spinal.core.SpinalClass', function() {
-			if(this.initialize) this.initialize.apply(this, arguments);
+			this.initialize.apply(this, arguments);
 		});
 
 		extend(SpinalClass.prototype, exports.Backbone.Events, {
@@ -221,12 +222,14 @@ define(['libs/backbone'], function() {
 			*	Default Setter
 			*	@public
 			*	@method set
-			*	@param p {Object} Key String or Object (haskmap) to be set as properties.
+			*	@param p {Object} Key String or Object (hashmap) to be set as properties.
 			*	@param v {Object} Value to be set for the key property specified in p
 			*	@return Object
 			**/
 			set: function(p, v) {
 				if(_.isUndefined(p)) return this;
+				// FIXME: Review the following implementation! there is something wrong here.
+				// In BoneProcessor Class: if super.initialize is being called, we get a blocking inifinite loop crash!!
 				(p === Object(p)) ? extend.apply(this, [this, p]) : this[p] = v;
 				return this;
 			},

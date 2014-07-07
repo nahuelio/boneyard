@@ -2,9 +2,8 @@
 *	@module com.spinal.ioc
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define(['core/spinal',
-		'ioc/context',
-		'util/error/types/context-exception'], function(Spinal, Context, ContextException) {
+define(['ioc/context',
+		'util/error/types/context-exception'], function(Context, ContextException) {
 
 	/**
 	*	Bone Query Class
