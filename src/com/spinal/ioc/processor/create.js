@@ -40,18 +40,9 @@ define(['ioc/processor/bone'], function(BoneProcessor) {
 		*	@return {com.spinal.ioc.processor.CreateProcessor}
 		**/
 		execute: function() {
-			// TODO: Process -> $module & $params
-			return CreateProcessor.__super__.execute.apply(this, arguments);
-		},
-
-		/**
-		*	Bone Create Default Event
-		*	@public
-		*	@method onCreate
-		*	@param bone {Object} Bone created reference
-		**/
-		onCreate: function(bone) {
+			CreateProcessor.__super__.execute.apply(this, _.bind());
 			this.context.notify(CreateProcessor.EVENTS.created, bone);
+			return this;
 		}
 
 	}, {

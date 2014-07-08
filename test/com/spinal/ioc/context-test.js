@@ -14,7 +14,7 @@ define(['ioc/context',
 		});
 
 		after(function() {
-			// delete applicationcontext here...
+			delete this.appContext;
 		});
 
 		describe('#new()', function() {

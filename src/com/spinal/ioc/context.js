@@ -40,10 +40,10 @@ define(['core/spinal',
 		/**
 		*	Bone Query Engine Class
 		*	@public
-		*	@property boneQuery
+		*	@property query
 		*	@type com.spinal.ioc.BoneQuery
 		**/
-		boneQuery: null,
+		query: null,
 
 		/**
 		*	Initialize
@@ -55,7 +55,7 @@ define(['core/spinal',
 		**/
 		initialize: function(opts) {
 			opts || (opts = {});
-			this.boneQuery = new BoneQuery({ context: this });
+			this.query = new BoneQuery({ context: this });
 			return Context.__super__.initialize.apply(this, arguments);
 		},
 

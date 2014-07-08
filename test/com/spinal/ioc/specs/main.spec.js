@@ -5,7 +5,7 @@
 *	Composition Layer (Inversion of control)
 *
 *	Notations:
-*		$specs, (inheritance model for specs)
+*		$specs, (inheritance model for specs) OK
 *		$create ->
 *			$module (class)
 *			$params (parameters to pass to the constructor)
