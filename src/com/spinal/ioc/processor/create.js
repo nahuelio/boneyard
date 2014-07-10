@@ -34,13 +34,30 @@ define(['ioc/processor/bone'], function(BoneProcessor) {
 		},
 
 		/**
+		*	Handles specifc notation with the current processor.
+		*	@public
+		*	@method handleNotation
+		*	@param id {Object} current bone id
+		*	@param bone {Object} current bone to evaluate
+		*	@return Boolean
+		**/
+		handleNotation: function(id, bone) {
+			var result = CreateProcessor.__super__.handleNotation.apply(this, arguments);
+			if(result) {
+
+			}
+			// TODO: At the end bone._$created = true;
+			return true;
+		},
+
+		/**
 		*	Execute Processor
 		*	@public
 		*	@method execute
 		*	@return {com.spinal.ioc.processor.CreateProcessor}
 		**/
 		execute: function() {
-			CreateProcessor.__super__.execute.apply(this, _.bind());
+			var bones = CreateProcessor.__super__.execute.apply(this, _.bind(this.handleNotation, this));
 			this.context.notify(CreateProcessor.EVENTS.created, bone);
 			return this;
 		}

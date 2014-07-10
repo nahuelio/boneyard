@@ -2,7 +2,8 @@
 *	@module com.spinal.ioc.processor
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define(['core/spinal'], function(Spinal) {
+define(['core/spinal',
+		'ioc/context'], function(Spinal, Context) {
 
 	/**
 	*	BaseClass Bone Processor
@@ -40,6 +41,7 @@ define(['core/spinal'], function(Spinal) {
 		**/
 		initialize: function(ctx) {
 			this.ctx = (!ctx) ? throw new ContextException('UndefinedContext') : ctx;
+			this.notationRE = new RegExp('/\\' + Context.PREFIX + '(' + this.notations.join('|') + ')/');
 			return this;
 		},
 
@@ -70,15 +72,14 @@ define(['core/spinal'], function(Spinal) {
 		},
 
 		/**
-		*	Checks if the bone has a dependency on another
+		*	Handles specifc notation with the current processor.
 		*	@public
-		*	@method hasBoneDependency
+		*	@method handleNotation
 		*	@param bone {Object} current bone to evaluate
 		*	@return Object
 		**/
-		hasBoneDependency: function(bone) {
-			// TODO: Implement
-			return {};
+		handleNotation: function(id, bone) {
+			return (!this.notationRE.test(id));
 		},
 
 		/**
@@ -90,10 +91,10 @@ define(['core/spinal'], function(Spinal) {
 		**/
 		execute: function(predicate) {
 			if(!predicate || !_.isFunction(predicate)) return [];
-			return _.filter(this.context.spec, function(bone, id) {
-				if(!this.ctx.query.isNotationSupported(arguments)) return false;
-				return predicate(bone, this.hasBoneDependency(bone));
+			var bones = _.filter(this.context.spec, function(bone, id) {
+				return predicate(id, bone);
 			}, this);
+			return bones;
 		}
 
 	}, {

@@ -52,23 +52,6 @@ define(['ioc/context',
 		},
 
 		/**
-		*	Perform a look up for an specific notation in the current context.
-		*	If a bone is specified as a extra argument, it will narrow the search down to the specific bone context.
-		*	If no notations are found, it returns null.
-		*	@public
-		*	@method findNotations
-		*	@param notation {String} Notation name
-		*	@param [bone] {Object} Optional Bone context in which the lookup will be narrowed down
-		*	@return Array
-		**/
-		findNotations: function(notation, bone) {
-			if(!this.context.spec || !_.isObject(this.context.spec) || !this._valid.apply(this, notation)) return null;
-			return _.find((bone) ? bone : this.context.spec, function(bone, id) {
-				return (id === (Context.PREFIX + notation));
-			}, this);
-		},
-
-		/**
 		*	Perform a look up of bones by a predicate passed as parameter.
 		*	If a bone is specified as a extra argument, it will narrow the search down to the specific bone context.
 		*	@public
