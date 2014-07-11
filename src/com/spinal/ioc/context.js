@@ -67,7 +67,10 @@ define(['core/spinal',
 		*	@param processors {Array} Array of Processor Modules
 		**/
 		_onProcessorsLoaded: function(callback, processors) {
-			_.each(processors, function(p) { Context[p.NAME] = this.factory('create', p.NAME, this).execute(); }, this);
+			_.each(processors, function(p) {
+				Context[p.NAME] = this.factory('create', p.NAME, this);
+				Context[p.NAME].execute();
+			}, this);
 			if(callback && _.isFunction(callback)) callback(this);
 			this.trigger(Context.EVENTS.initialized, this);
 		},

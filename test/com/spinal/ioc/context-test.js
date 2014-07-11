@@ -17,6 +17,9 @@ define(['ioc/context',
 			delete this.appContext;
 		});
 
+		/**
+		*	Constructor test
+		**/
 		describe('#new()', function() {
 
 			it('Should Initialize IoC Container', function(done) {
@@ -29,15 +32,29 @@ define(['ioc/context',
 
 		});
 
+		/**
+		*	Context#wire() test
+		**/
 		describe('#wire()', function() {
 
 			it('Should Wire Specs', function(done) {
-				this.appContext.wire(ProductSpec, _.bind(function(ctx) {
+				this.appContext.on(Context.EVENTS.initialized, function(ctx) {
+					console.log('Context Initialized!');
+				}).on(Context.EVENTS.changed, _.bind(function(result) {
+					expect(result).to.be.ok();
+					expect(result.type).to.be.ok();
+					expect(result.data).to.be.ok();
+					//console.log('Changed: ', result.type, result.data);
+					if(Context['ReadyProcessor'] &&
+						result.type === Context['ReadyProcessor'].constructor.EVENTS.ready) done();
+				}, this));
+
+				this.appContext.wire(ProductSpec, function(ctx) {
 					expect(ctx).to.be.ok();
 					expect(ctx.spec).to.be.ok();
 					expect(ctx.spec.header).to.be.ok();
-					done();
-				}, this));
+				});
+
 			});
 
 		});

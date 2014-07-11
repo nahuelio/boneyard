@@ -40,8 +40,9 @@ define(['core/spinal',
 		*	@return {com.spinal.ioc.processor.BoneProcessor}
 		**/
 		initialize: function(ctx) {
-			this.ctx = (!ctx) ? throw new ContextException('UndefinedContext') : ctx;
-			this.notationRE = new RegExp('/\\' + Context.PREFIX + '(' + this.notations.join('|') + ')/');
+			if(!ctx) throw new ContextException('UndefinedContext');
+			this.ctx = ctx;
+			this.notationRE = new RegExp('\\' + Context.PREFIX + '(' + this.notations.join('|') + ')', 'gi');
 			return this;
 		},
 
@@ -49,52 +50,53 @@ define(['core/spinal',
 		*	Checks if the bone was succesufuly created
 		*	@public
 		*	@method isCreated
-		*	@param id {String} bone id
+		*	@param bone {Object} current bone to be evaluated
 		*	@return Boolean
 		**/
-		isCreated: function(id) {
-			if(!id) return false;
-			var b = this.ctx.query.findBoneById(id);
-			return (b && b._$created);
+		isCreated: function(bone) {
+			return (bone && bone._$created);
 		},
 
 		/**
 		*	Checks if the bone completed the ready phase
 		*	@public
 		*	@method isReady
-		*	@param id {String} bone id
+		*	@param bone {Object} current bone to be evaluated
 		*	@return Boolean
 		**/
-		isReady: function(id) {
-			if(!id) return false;
-			var b = this.ctx.query.findBoneById(id);
-			return (b && b._$ready);
+		isReady: function(bone) {
+			return (bone && bone._$ready);
 		},
 
 		/**
 		*	Handles specifc notation with the current processor.
 		*	@public
 		*	@method handleNotation
+		*	@param id {Object} current bone id
 		*	@param bone {Object} current bone to evaluate
 		*	@return Object
 		**/
-		handleNotation: function(id, bone) {
-			return (!this.notationRE.test(id));
+		handleNotation: function(bone, id) {
+			//if(this.constructor.NAME === 'CreateProcessor') console.log(id, this.notationRE.test(id));
+			return this.notationRE.test(id);
 		},
 
 		/**
-		*	Filters out and call the predicate function over the notations supported by the processor
+		*	Filters out and call the predicate function over the notations supported by the processor.
+		*	If bone parameter is passed, the predicate function will be evaluated inside the bone context.
 		*	@public
 		*	@method execute
-		*	@param predicate {Function} predicate function being call when notation correspond to the processor
+		*	@param predicate {Function} predicate function that filters out bones that are suitable to be processed
+		*	@param [bone] {Object} Bone context in which the execution will be narrowed down
 		*	@return Array
 		**/
-		execute: function(predicate) {
+		execute: function(predicate, bone) {
 			if(!predicate || !_.isFunction(predicate)) return [];
-			var bones = _.filter(this.context.spec, function(bone, id) {
-				return predicate(id, bone);
-			}, this);
-			return bones;
+			var result = [], bone = (bone) ? bone : this.ctx.spec;
+			for(var id in bone) {
+				if(predicate.call(this, bone[id], id)) result.push(bone[id]);
+			}
+			return result;
 		}
 
 	}, {
@@ -112,6 +114,10 @@ define(['core/spinal',
 		*	@type Object
 		**/
 		EVENTS: {
+			/**
+			*	@event created
+			**/
+			plugin: 'com:spinal:ioc:context:bone:plugin',
 			/**
 			*	@event created
 			**/

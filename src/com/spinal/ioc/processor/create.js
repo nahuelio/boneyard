@@ -37,28 +37,32 @@ define(['ioc/processor/bone'], function(BoneProcessor) {
 		*	Handles specifc notation with the current processor.
 		*	@public
 		*	@method handleNotation
-		*	@param id {Object} current bone id
 		*	@param bone {Object} current bone to evaluate
+		*	@param id {Object} current bone id
 		*	@return Boolean
 		**/
-		handleNotation: function(id, bone) {
+		handleNotation: function(bone, id) {
 			var result = CreateProcessor.__super__.handleNotation.apply(this, arguments);
-			if(result) {
-
+			if(!result && _.isObject(bone) && !this.isCreated(bone)) {
+				//CreateProcessor.__super__.execute.call(this, this.handleNotation, bone);
+			} else {
+				//console.log(id);
 			}
-			// TODO: At the end bone._$created = true;
-			return true;
+			// bone._$created = instance of module???;
+			return result;
 		},
 
 		/**
 		*	Execute Processor
 		*	@public
 		*	@method execute
+		*	@param [bone] {Object} Bone context in which the execution will be narrowed down
 		*	@return {com.spinal.ioc.processor.CreateProcessor}
 		**/
-		execute: function() {
-			var bones = CreateProcessor.__super__.execute.apply(this, _.bind(this.handleNotation, this));
-			this.context.notify(CreateProcessor.EVENTS.created, bone);
+		execute: function(bone) {
+			this.ctx.notify(CreateProcessor.EVENTS.created, {
+				bones: CreateProcessor.__super__.execute.call(this, this.handleNotation, bone)
+			});
 			return this;
 		}
 

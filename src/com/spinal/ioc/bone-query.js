@@ -20,10 +20,10 @@ define(['ioc/context',
 		/**
 		*	Context Reference
 		*	@public
-		*	@property context
+		*	@property ctx
 		*	@type {com.spinal.ioc.Context}
 		**/
-		context: null,
+		ctx: null,
 
 		/**
 		*	Initialize
@@ -36,7 +36,7 @@ define(['ioc/context',
 		initialize: function(opts) {
 			opts || (opts = {});
 			if(!opts.context) throw new ContextException('UndefinedContext');
-			this.context = opts.context;
+			this.ctx = opts.context;
 			return this;
 		},
 
@@ -52,6 +52,32 @@ define(['ioc/context',
 		},
 
 		/**
+		*	Add a new Bone to the context
+		*	@public
+		*	@chainable
+		*	@method addBone
+		*	@param id {String} bone id
+		*	@param data {Object} done data to be stored
+		*	@return {com.spinal.ioc.BoneQuery}
+		**/
+		addBone: function(id, data) {
+			// TODO: Implement
+		},
+
+		/**
+		*	Add a new Bone to the context
+		*	@public
+		*	@chainable
+		*	@method addBone
+		*	@param id {String} bone id
+		*	@param data {Object} done data to be stored
+		*	@return {com.spinal.ioc.BoneQuery}
+		**/
+		removeBone: function(id) {
+			// TODO: Implement
+		},
+
+		/**
 		*	Perform a look up of bones by a predicate passed as parameter.
 		*	If a bone is specified as a extra argument, it will narrow the search down to the specific bone context.
 		*	@public
@@ -62,7 +88,7 @@ define(['ioc/context',
 		**/
 		findBonesBy: function(finder, bone) {
 			var args = Array.prototype.slice.call(arguments);
-			args.unshift((bone) ? bone : this.context.spec);
+			args.unshift((bone) ? bone : this.ctx.spec);
 			return _.filter.apply(this, args);
 		},
 
@@ -71,15 +97,11 @@ define(['ioc/context',
 		*	@public
 		*	@method findBonesByType
 		*	@param type {String} bone type
+		*	@param [bone] {Object} Optional Bone context in which the lookup will be narrowed down
 		*	@return Array
 		**/
-		findBonesByType: function(type) {
-			return this.findBonesBy(function(bone, id) {
-				var module = this.findNotations('module', bone);
-				return (module.length > 0) ?
-					(module[Context.PREFIX + 'module'] === type) :
-					(bone instanceof type);
-			});
+		findBonesByType: function(type, bone) {
+			return this.findBonesBy(function(bone, id) { return (bone instanceof type); }, bone);
 		},
 
 		/**
@@ -90,9 +112,7 @@ define(['ioc/context',
 		*	@return Object
 		**/
 		findBoneById: function(id) {
-			return _.find(this.context.spec, function(bone, boneId) {
-				return (boneId === id);
-			}, this);
+			return _.find(this.ctx.spec, function(bone, boneId) { return (boneId === id); }, this);
 		}
 
 	}, {
