@@ -7,7 +7,7 @@
 *	Notations:
 *		$specs, (inheritance model for specs) OK
 *		$create ->
-*			$module (class)
+*			$module (class, params)
 *			$params (parameters to pass to the constructor)
 *		$ready ->
 *			(operations)
@@ -30,8 +30,10 @@ define(['specs/header.spec',
 		theme: 'chrome',
 
 		global: {
-			$module: 'ui/container',
-			$params: { el: 'div.global', theme: '$bone!theme' },
+			$module: {
+				class: 'ui/container',
+				params: { el: 'div.global', theme: '$bone!theme' }
+			},
 			$ready: {
 				add: ['$bone!header'],
 				add: ['$bone!content'],
@@ -40,16 +42,20 @@ define(['specs/header.spec',
 		},
 
 		viewA: {
-			$module: 'ui/view',
-			$params: { id: 'viewA' },
+			$module: {
+				class: 'ui/view',
+				params: { id: 'viewA' }
+			},
 			$ready: {
 				'$bone!content.add': ['viewA', { renderOnAdd: true }]
 			}
 		},
 
 		viewB: {
-			$module: 'ui/view',
-			$params: { id: 'viewB' },
+			$module: {
+				class: 'ui/view',
+				params: { id: 'viewB' }
+			},
 			$ready: {
 				'$bone!content.add': ['viewB', { renderOnAdd: true }]
 			}

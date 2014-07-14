@@ -10,9 +10,10 @@ define(['specs/main.spec'], function(MainSpec) {
 
 		content: {
 
-			$module: 'ui/container',
-			$params: { id: 'content' }
-
+			$module: {
+				class: 'ui/container',
+				params: { id: 'content' }
+			}
 		}
 
 	};

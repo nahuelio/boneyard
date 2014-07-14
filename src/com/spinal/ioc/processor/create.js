@@ -2,7 +2,8 @@
 *	@module com.spinal.ioc.processor
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define(['ioc/processor/bone'], function(BoneProcessor) {
+define(['ioc/context',
+	'ioc/processor/bone'], function(Context, BoneProcessor) {
 
 	/**
 	*	Create Processor
@@ -20,7 +21,7 @@ define(['ioc/processor/bone'], function(BoneProcessor) {
 		*	@property notations
 		*	@type Array
 		**/
-		notations: ['module', 'params'],
+		notations: ['module'],
 
 		/**
 		*	Initialize
@@ -34,7 +35,17 @@ define(['ioc/processor/bone'], function(BoneProcessor) {
 		},
 
 		/**
-		*	Handles specifc notation with the current processor.
+		*	Create RegExp used by this processor
+		*	@private
+		*	@method _regexp
+		*	@return RegExp
+		**/
+		_regexp: function() {
+			return new RegExp('\\' + Context.PREFIX + '(' + this.notations.join('|') + ')$', 'i');
+		},
+
+		/**
+		*	Handles specific notation with the current processor.
 		*	@public
 		*	@method handleNotation
 		*	@param bone {Object} current bone to evaluate
@@ -43,12 +54,7 @@ define(['ioc/processor/bone'], function(BoneProcessor) {
 		**/
 		handleNotation: function(bone, id) {
 			var result = CreateProcessor.__super__.handleNotation.apply(this, arguments);
-			if(!result && _.isObject(bone) && !this.isCreated(bone)) {
-				//CreateProcessor.__super__.execute.call(this, this.handleNotation, bone);
-			} else {
-				//console.log(id);
-			}
-			// bone._$created = instance of module???;
+			if(result) console.log('Module -> ', id, bone);
 			return result;
 		},
 

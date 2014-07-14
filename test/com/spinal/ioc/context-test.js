@@ -44,9 +44,12 @@ define(['ioc/context',
 					expect(result).to.be.ok();
 					expect(result.type).to.be.ok();
 					expect(result.data).to.be.ok();
-					//console.log('Changed: ', result.type, result.data);
-					if(Context['ReadyProcessor'] &&
-						result.type === Context['ReadyProcessor'].constructor.EVENTS.ready) done();
+					console.log('Changed: ', result.type, result.data);
+					/**if(Context['CreateProcessor'] &&
+						result.type === Context['CreateProcessor'].constructor.EVENTS.ready) {
+						done();
+					}**/
+					done();
 				}, this));
 
 				this.appContext.wire(ProductSpec, function(ctx) {

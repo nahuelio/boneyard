@@ -2,7 +2,8 @@
 *	@module com.spinal.ioc.processor
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define(['ioc/processor/bone'], function(BoneProcessor) {
+define(['ioc/context',
+		'ioc/processor/bone'], function(Context, BoneProcessor) {
 
 	/**
 	*	Ready Processor
@@ -34,28 +35,42 @@ define(['ioc/processor/bone'], function(BoneProcessor) {
 		},
 
 		/**
+		*	Create RegExp used by this processor
+		*	@private
+		*	@method _regexp
+		*	@return RegExp
+		**/
+		_regexp: function() {
+			return new RegExp('\\' + Context.PREFIX + '(' + this.notations.join('|') + ')$', 'i');
+		},
+
+		/**
 		*	Handles specifc notation with the current processor.
 		*	@public
 		*	@method handleNotation
 		*	@param bone {Object} current bone to evaluate
 		*	@param id {Object} current bone id
 		*	@return Boolean
+		*	@Note Once CreateProcessor finished their job, evaluates the presence of $ready notation.
 		**/
 		handleNotation: function(bone, id) {
-			var result = ReadyProcessor.__super__.handleNotation.apply(this, arguments);
-			if(result) // Implement Ready job!!
-			return result;
+			if(this.isCreated(bone)) {
+				console.log('Ready -> ', id, bone);
+				return true;
+			}
+			return false;
 		},
 
 		/**
 		*	Execute Processor
 		*	@public
 		*	@method execute
+		*	@param [bone] {Object} Bone context in which the execution will be narrowed down
 		*	@return {com.spinal.ioc.processor.ReadyProcessor}
 		**/
-		execute: function() {
+		execute: function(bone) {
 			this.ctx.notify(ReadyProcessor.EVENTS.ready, {
-				bones: ReadyProcessor.__super__.execute.call(this, this.handleNotation)
+				bones: this.ctx.query.findBonesBy(_.bind(this.handleNotation, this))
 			});
 			return this;
 		}

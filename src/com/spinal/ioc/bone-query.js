@@ -41,43 +41,6 @@ define(['ioc/context',
 		},
 
 		/**
-		*	Validate notation for the current context or processor
-		*	@private
-		*	@method _valid
-		*	@param notation {String} Notation name
-		*	@return Boolean
-		**/
-		_valid: function(notation) {
-			return !(!notation || !_.isString(notation) || notation === '' || !_.contains(this.notations, notation));
-		},
-
-		/**
-		*	Add a new Bone to the context
-		*	@public
-		*	@chainable
-		*	@method addBone
-		*	@param id {String} bone id
-		*	@param data {Object} done data to be stored
-		*	@return {com.spinal.ioc.BoneQuery}
-		**/
-		addBone: function(id, data) {
-			// TODO: Implement
-		},
-
-		/**
-		*	Add a new Bone to the context
-		*	@public
-		*	@chainable
-		*	@method addBone
-		*	@param id {String} bone id
-		*	@param data {Object} done data to be stored
-		*	@return {com.spinal.ioc.BoneQuery}
-		**/
-		removeBone: function(id) {
-			// TODO: Implement
-		},
-
-		/**
 		*	Perform a look up of bones by a predicate passed as parameter.
 		*	If a bone is specified as a extra argument, it will narrow the search down to the specific bone context.
 		*	@public
@@ -101,7 +64,7 @@ define(['ioc/context',
 		*	@return Array
 		**/
 		findBonesByType: function(type, bone) {
-			return this.findBonesBy(function(bone, id) { return (bone instanceof type); }, bone);
+			return this.findBonesBy(function(b, i) { return (b instanceof type); }, bone);
 		},
 
 		/**

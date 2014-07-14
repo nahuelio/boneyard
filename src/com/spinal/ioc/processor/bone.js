@@ -42,7 +42,7 @@ define(['core/spinal',
 		initialize: function(ctx) {
 			if(!ctx) throw new ContextException('UndefinedContext');
 			this.ctx = ctx;
-			this.notationRE = new RegExp('\\' + Context.PREFIX + '(' + this.notations.join('|') + ')', 'gi');
+			this.notationRE = this._regexp();
 			return this;
 		},
 
@@ -69,6 +69,28 @@ define(['core/spinal',
 		},
 
 		/**
+		*	Create RegExp used by this processor
+		*	@private
+		*	@method _regexp
+		*	@return RegExp
+		**/
+		_regexp: function() {
+			return new RegExp('\\' + Context.PREFIX + '(' + this.notations.join('|') + ')(\!{1})', 'i');
+		},
+
+		/**
+		*	Validates if the current processor supports the notation passed as parameter
+		*	@public
+		*	@method matchNotation
+		*	@param notation {String} notation to be evaluated
+		*	@return Boolean
+		**/
+		matchNotation: function(notation) {
+			if(!this.notationRE) this.notationRE = this._regexp();
+			return this.notationRE.test(notation);
+		},
+
+		/**
 		*	Handles specifc notation with the current processor.
 		*	@public
 		*	@method handleNotation
@@ -77,8 +99,14 @@ define(['core/spinal',
 		*	@return Object
 		**/
 		handleNotation: function(bone, id) {
-			//if(this.constructor.NAME === 'CreateProcessor') console.log(id, this.notationRE.test(id));
-			return this.notationRE.test(id);
+			var result = this.matchNotation(id);
+			if(!result) {
+				if(_.isObject(bone) || _.isArray(bone))
+					this.constructor.__super__.execute.apply(this, [this.handleNotation, bone]);
+				if(_.isString(bone) && this.constructor.__super__.matchNotation.call(this.constructor.__super__, bone))
+					console.log('Bone Ref -> ', bone);
+			}
+			return result;
 		},
 
 		/**
@@ -92,11 +120,14 @@ define(['core/spinal',
 		**/
 		execute: function(predicate, bone) {
 			if(!predicate || !_.isFunction(predicate)) return [];
-			var result = [], bone = (bone) ? bone : this.ctx.spec;
-			for(var id in bone) {
-				if(predicate.call(this, bone[id], id)) result.push(bone[id]);
+			var matched = [], context = (bone) ? bone : this.ctx.spec;
+			for(var bId in context) {
+				if(predicate.call(this, context[bId], bId)) {
+					matched.push(context[bId]);
+					break;
+				}
 			}
-			return result;
+			return matched;
 		}
 
 	}, {

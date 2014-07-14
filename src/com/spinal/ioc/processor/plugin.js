@@ -2,7 +2,8 @@
 *	@module com.spinal.ioc.processor
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define(['ioc/processor/bone'], function(BoneProcessor) {
+define(['ioc/context',
+		'ioc/processor/bone'], function(Context, BoneProcessor) {
 
 	/**
 	*	Defines a processor that acts as a wrapper to trigger plugins functionality
@@ -32,20 +33,32 @@ define(['ioc/processor/bone'], function(BoneProcessor) {
 		},
 
 		/**
+		*	Create RegExp used by this processor
+		*	@private
+		*	@method _regexp
+		*	@return RegExp
+		**/
+		_regexp: function() {
+			return new RegExp('\\' + Context.PREFIX + '(' + this.notations.join('|') + ')$', 'i');
+		},
+
+		/**
 		*	Handles specifc notation with the current processor.
 		*	@public
 		*	@method handleNotation
 		*	@param bone {Object} current bone to evaluate
 		*	@param id {Object} current bone id
 		*	@return Boolean
+		*	@Note TODO: Implement Plugin job... For now just remove it from the spec/
 		**/
 		handleNotation: function(bone, id) {
-			var result = PluginProcessor.__super__.handleNotation.apply(this, arguments);
-			if(result) {
-				// TODO: Implement Plugin job... For now just remove it from the spec/
+			var b = this.matchNotation(id);
+			if(b) {
+				console.log('Plugins -> ', id, bone);
 				delete this.ctx.spec[id];
+				return true;
 			}
-			return result;
+			return false;
 		},
 
 		/**
@@ -56,7 +69,7 @@ define(['ioc/processor/bone'], function(BoneProcessor) {
 		**/
 		execute: function() {
 			this.ctx.notify(PluginProcessor.EVENTS.plugin, {
-				bones: PluginProcessor.__super__.execute.call(this, this.handleNotation)
+				bones: this.ctx.query.findBonesBy(_.bind(this.handleNotation, this))
 			});
 			return this;
 		}
