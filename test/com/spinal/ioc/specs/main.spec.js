@@ -6,11 +6,8 @@
 *
 *	Notations:
 *		$specs, (inheritance model for specs) OK
-*		$create ->
-*			$module (class, params)
-*			$params (parameters to pass to the constructor)
-*		$ready ->
-*			(operations)
+*		$module -> (class, params)
+*		$ready -> (operations)
 *
 *	String notations:
 *		$bone! [boneId] -> Access to bones
@@ -32,7 +29,7 @@ define(['specs/header.spec',
 		global: {
 			$module: {
 				class: 'ui/container',
-				params: { el: 'div.global', theme: '$bone!theme' }
+				params: { el: 'div.global', css: '$bone!theme' }
 			},
 			$ready: {
 				add: ['$bone!header'],

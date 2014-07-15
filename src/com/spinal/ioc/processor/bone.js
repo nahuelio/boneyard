@@ -3,7 +3,8 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['core/spinal',
-		'ioc/context'], function(Spinal, Context) {
+		'util/error/types/processor-exception',
+		'ioc/context'], function(Spinal, ProcessorException, Context) {
 
 	/**
 	*	BaseClass Bone Processor
@@ -47,28 +48,6 @@ define(['core/spinal',
 		},
 
 		/**
-		*	Checks if the bone was succesufuly created
-		*	@public
-		*	@method isCreated
-		*	@param bone {Object} current bone to be evaluated
-		*	@return Boolean
-		**/
-		isCreated: function(bone) {
-			return (bone && bone._$created);
-		},
-
-		/**
-		*	Checks if the bone completed the ready phase
-		*	@public
-		*	@method isReady
-		*	@param bone {Object} current bone to be evaluated
-		*	@return Boolean
-		**/
-		isReady: function(bone) {
-			return (bone && bone._$ready);
-		},
-
-		/**
 		*	Create RegExp used by this processor
 		*	@private
 		*	@method _regexp
@@ -91,6 +70,35 @@ define(['core/spinal',
 		},
 
 		/**
+		*	Extract dependent bone id from the String notation and return it.
+		*	@public
+		*	@method getDependency
+		*	@param notation {String} bone dependency notation
+		*	@return String
+		**/
+		getDependency: function(notation) {
+			if(!notation || !_.isString(notation)) return null;
+			var pos = notation.search(/\!{1}/i);
+			return (pos > 0) ? notation.substring((pos+1), notation.length) : null;
+
+		},
+
+		/**
+		*	Handler when a module depends on bone of 'String' type in order to be instanciated.
+		*	@public
+		*	@method handleDependency
+		*	@param id {Object} current bone id
+		*	@param bone {Object} current bone to evaluate
+		*	@param [parentBone] {Object} parent bone ref
+		*	@return Object
+		**/
+		handleDependency: function(bone, id, parentBone) {
+			if(!bone) throw new ProcessorException('BoneNotFound');
+			parentBone.parent[id] = (_.isString(bone)) ? bone : null;
+			return parentBone.parent;
+		},
+
+		/**
 		*	Handles specifc notation with the current processor.
 		*	@public
 		*	@method handleNotation
@@ -102,9 +110,9 @@ define(['core/spinal',
 			var result = this.matchNotation(id);
 			if(!result) {
 				if(_.isObject(bone) || _.isArray(bone))
-					this.constructor.__super__.execute.apply(this, [this.handleNotation, bone]);
+					this.constructor.__super__.execute.apply(this, [this.handleNotation, bone, id]);
 				if(_.isString(bone) && this.constructor.__super__.matchNotation.call(this.constructor.__super__, bone))
-					console.log('Bone Ref -> ', bone);
+					this.handleDependency.apply(this, arguments);
 			}
 			return result;
 		},
@@ -118,16 +126,39 @@ define(['core/spinal',
 		*	@param [bone] {Object} Bone context in which the execution will be narrowed down
 		*	@return Array
 		**/
-		execute: function(predicate, bone) {
+		execute: function(predicate, bone, id) {
 			if(!predicate || !_.isFunction(predicate)) return [];
-			var matched = [], context = (bone) ? bone : this.ctx.spec;
+			if(!this.matched) this.matched = [];
+			var context = (bone) ? bone : this.ctx.spec;
 			for(var bId in context) {
-				if(predicate.call(this, context[bId], bId)) {
-					matched.push(context[bId]);
+				if(predicate.call(this, context[bId], bId, { parent: context, id: id })) {
+					this.matched.push({ id: id, bone: context[bId] });
 					break;
 				}
 			}
-			return matched;
+			return this.matched;
+		},
+
+		/**
+		*	Checks if the bone was succesufuly created
+		*	@public
+		*	@method isCreated
+		*	@param bone {Object} current bone to be evaluated
+		*	@return Boolean
+		**/
+		isCreated: function(bone) {
+			return (bone && bone._$created);
+		},
+
+		/**
+		*	Checks if the bone completed the ready phase
+		*	@public
+		*	@method isReady
+		*	@param bone {Object} current bone to be evaluated
+		*	@return Boolean
+		**/
+		isReady: function(bone) {
+			return (bone && bone._$ready);
 		}
 
 	}, {

@@ -75,7 +75,7 @@ define(['ioc/context',
 		*	@return Object
 		**/
 		findBoneById: function(id) {
-			return _.find(this.ctx.spec, function(bone, boneId) { return (boneId === id); }, this);
+			return (this.ctx.spec[id]) ? this.ctx.spec[id] : null;
 		}
 
 	}, {

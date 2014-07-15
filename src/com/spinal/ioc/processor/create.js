@@ -3,7 +3,8 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['ioc/context',
-	'ioc/processor/bone'], function(Context, BoneProcessor) {
+	'util/error/types/processor-exception',
+	'ioc/processor/bone'], function(Context, ProcessorException, BoneProcessor) {
 
 	/**
 	*	Create Processor
@@ -45,16 +46,42 @@ define(['ioc/context',
 		},
 
 		/**
+		*	Handler when a module depends on bone of '$module' type in order to be instanciated.
+		*	@public
+		*	@method handleDependency
+		*	@param id {Object} current bone id
+		*	@param bone {Object} current bone to evaluate
+		*	@param [parentBone] {Object} parent bone ref
+		*	@return Object
+		**/
+		handleDependency: function(bone, id, parentBone) {
+			var dependencyId = this.getDependency(bone),
+				dependency = (dependencyId) ? this.ctx.query.findBoneById(dependencyId) : null,
+				moduleBone = this.ctx.query.findBoneById(parentBone.id);
+			if(dependency && moduleBone && _.isObject(dependency)) {
+				if(moduleBone['$module'] && this.isCreated(moduleBone)) {
+					console.log('Module Dependency Management!!!');
+				}
+			}
+			return CreateProcessor.__super__.handleDependency.apply(this, [dependency, id, parentBone]);
+		},
+
+		/**
 		*	Handles specific notation with the current processor.
 		*	@public
 		*	@method handleNotation
 		*	@param bone {Object} current bone to evaluate
 		*	@param id {Object} current bone id
+		*	@param [parentBone] {Object} parent bone ref
 		*	@return Boolean
 		**/
-		handleNotation: function(bone, id) {
+		handleNotation: function(bone, id, parentBone) {
 			var result = CreateProcessor.__super__.handleNotation.apply(this, arguments);
-			if(result) console.log('Module -> ', id, bone);
+			if(result) {
+				if(!bone.class) throw new ProcessorException('InvalidModuleDeclaration');
+				if(bone.params) CreateProcessor.__super__.execute.call(this, this.handleNotation, bone.params, parentBone.id);
+				// TODO: Instanciation???
+			}
 			return result;
 		},
 
@@ -63,12 +90,12 @@ define(['ioc/context',
 		*	@public
 		*	@method execute
 		*	@param [bone] {Object} Bone context in which the execution will be narrowed down
+		*	@param [id] {Object} Bone Id of the context
 		*	@return {com.spinal.ioc.processor.CreateProcessor}
 		**/
-		execute: function(bone) {
-			this.ctx.notify(CreateProcessor.EVENTS.created, {
-				bones: CreateProcessor.__super__.execute.call(this, this.handleNotation, bone)
-			});
+		execute: function(bone, id) {
+			this.ctx.notify(CreateProcessor.EVENTS.created,
+				CreateProcessor.__super__.execute.call(this, this.handleNotation, bone, id));
 			return this;
 		}
 

@@ -45,11 +45,11 @@ define(['ioc/context',
 					expect(result.type).to.be.ok();
 					expect(result.data).to.be.ok();
 					console.log('Changed: ', result.type, result.data);
-					/**if(Context['CreateProcessor'] &&
+					// FIXME: Temporal 'If'
+					if(Context['CreateProcessor'] &&
 						result.type === Context['CreateProcessor'].constructor.EVENTS.ready) {
 						done();
-					}**/
-					done();
+					}
 				}, this));
 
 				this.appContext.wire(ProductSpec, function(ctx) {
