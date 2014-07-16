@@ -6,7 +6,7 @@ define(['core/spinal',
 		'util/error/exception'], function(Spinal, Exception) {
 
 	/**
-	*	Define a UI Exception type that occurs in the spinal ui package
+	*	UI Exception Type
 	*	@namespace com.spinal.util.error.types
 	*	@class com.spinal.util.error.types.UIException
 	*	@extends com.spinal.util.error.Exception
@@ -42,6 +42,7 @@ define(['core/spinal',
 		*		UIStackViolation
 		*		InvalidModelType
 		*		UnsupportedRenderMethod
+		*		InvalidInterfaceType
 		*	@static
 		*	@property TYPES
 		*	@type Object
@@ -52,7 +53,8 @@ define(['core/spinal',
 			InvalidSuccessorType: '\'successor\' must be an instance of com.spinal.ui.Container.',
 			UIStackViolation: 'UI Stack Violation found: view \'{{viewId}}\' can not be found inside the successor specified \'{{succesorId}}\'.',
 			InvalidModelType: '\'model\' must be an instance of Backbone.Model.',
-			UnsupportedRenderMethod: 'unsupported render method -> \'{{method}}\'.'
+			UnsupportedRenderMethod: 'unsupported render method -> \'{{method}}\'.',
+			InvalidInterfaceType: 'unsupported Interface Type'
 		}
 
 	}));

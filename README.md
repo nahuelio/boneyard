@@ -4,7 +4,7 @@
 
 HighLevel UI framework built on top of BackboneJS
 
-Status: Work in Progress
+Overall Status: Work in Progress
 
 =========================
 
@@ -24,28 +24,28 @@ Download latest stable release:
 
 ### Basic Usage
 
-* TODO
+* Spinal Builder Command-line Tool documentation (TBD)
 
 ### API Documentation
 
-* TODO
-
-### API Docs
-
-* YUIDoc already hooked up into the build system
+* YUIDoc Avialable and completed (URL deploy needed)
 
 =========================
 
 ### Development Roadmap
 
-* Unit Testing phase need to be setup to use karma, mocha, expect and coverage (high priority).
-* RequireJS hook up as a dependency manager (Done but some tweaks need to be applied to the current set up).
-* UI Improvements in the Benchmark Tool needed.
+* IoC Implementation | <b>In Progresss</b>
+* AoP Implementation | <b>To be Completed</b>
+* i18n Implementation (RequireJS plugin to make it work in combination with the IoC Implementation) | <b>To be Completed</b>
+* Benchmark IoC Implementation - setup test cases and specs | <b>To be Completed</b>
+* IoC Storage (Persitent Layer that will work as a Plugin) <b>stretch goal</b>
+
+### Design Roadmap
+
+* Official Website [3dimention/spinal](http://3dimention.github.io/spinal)
+* Logo need more work
 
 ### Documentation Roadmap
 
-* Add Examples of usage.
-
-### Micellaneous Todos
-
-* Logo design needs more work :)
+* High Level documentation (TBD)
+* Usage Examples, simple applications

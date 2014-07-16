@@ -18,7 +18,7 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 		*	@property collection
 		*	@type Array
 		**/
-		collection: [],
+		collection: null,
 
 		/**
 		*	Interface reference, usually a constructor function that identifies
@@ -39,7 +39,9 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 		*	@return {com.spinal.util.adt.Collection}
 		**/
 		initialize: function(initial, opts) {
-			return Collection.__super__.initialize.apply(this, arguments);
+			this.collection = [];
+			Collection.__super__.initialize.apply(this, arguments);
+			return this;
 		},
 
 		/**
@@ -100,9 +102,12 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 		add: function(element, opts) {
 			opts || (opts = {});
 			if(!this._valid(element)) return null;
-			(!_.isNull(this._interface)) ?
-				this.collection.push(new this._interface(element)) :
+			if(!_.isNull(this._interface)) {
+				element = new this._interface(element);
 				this.collection.push(element);
+			} else {
+				this.collection.push(element);
+			}
 			if(!opts.silent) this.trigger(Collection.EVENTS.added, { added: element, collection: this });
 			return element;
 		},
@@ -136,8 +141,22 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 		*	@return Array
 		**/
 		invoke: function(methodName) {
-			var args = Array.prototype.slice.call(arguments, 1);
+			var args = _.flatten(Array.prototype.slice.call(arguments, 1));
 			return _.invoke(this.collection, methodName, args);
+		},
+
+		/**
+		*	Iterate over all the elements inside the collection by using func as the predicate.
+		*	@public
+		*	@method each
+		*	@param func {Function} predicate function used to iterate over the elements.
+		*	@param
+		*	@return Function
+		**/
+		each: function(func, ctx) {
+			var args = Array.prototype.slice.call(arguments);
+			args.unshift(this.collection);
+			return _.each.apply(this, args);
 		},
 
 		/**
@@ -252,7 +271,9 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 		**/
 		find: function(finder) {
 			if(!finder || !_.isFunction(finder)) return null;
-			return _.find(this.collection, finder);
+			var args = Array.prototype.slice.call(arguments);
+			args.unshift(this.collection);
+			return _.find.apply(this, args);
 		},
 
 		/**
@@ -260,13 +281,28 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 		*	@public
 		*	@method findBy
 		*	@param finder {Function} matcher function
-		*	@return {Array}
+		*	@return Array
 		**/
 		findBy: function(finder) {
 			for(var i = 0, found = []; i < this.size(); i++) {
 				if(finder(this.collection[i])) found.push(this.collection[i]);
 			}
 			return found;
+		},
+
+		/**
+		*	Find index position of an element that match the evaluation defined in finder.
+		*	First element index that matches the evaluation will be returned. Otherwise, it will return null.
+		*	@public
+		*	@method findPosBy
+		*	@param finder {Function} matcher function
+		*	@return Object
+		**/
+		findPos: function(finder) {
+			for(var i = 0, ix = null; i < this.size(); i++) {
+				if(finder(this.collection[i])) { ix = i; break; }
+			}
+			return ix;
 		},
 
 		/**

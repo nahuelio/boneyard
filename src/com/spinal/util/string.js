@@ -5,18 +5,18 @@
 define(['core/spinal'], function(Spinal) {
 
 	/**
-	*	StringUtils class provides a bunch of string utilities.
+	*	StringUtil class provides a bunch of string utilities.
 	*	@namespace com.spinal.util
-	*	@class com.spinal.util.StringUtils
+	*	@class com.spinal.util.StringUtil
 	*	@extends com.spinal.core.SpinalClass
 	**/
-	var StringUtils = Spinal.namespace('com.spinal.util.StringUtils', Spinal.SpinalClass.inherit({
+	var StringUtil = Spinal.namespace('com.spinal.util.StringUtil', Spinal.SpinalClass.inherit({
 
 		/**
 		*	Initialize
 		*	@public
 		*	@method initialize
-		*	@return {com.spinal.util.StringUtils}
+		*	@return {com.spinal.util.StringUtil}
 		**/
 		initialize: function() {
 			throw new Error(this.toString() + ' cannot be instanciate it. All methods are declare as static.');
@@ -29,7 +29,7 @@ define(['core/spinal'], function(Spinal) {
 		*	@property NAME
 		*	@type String
 		**/
-		NAME: 'StringUtils',
+		NAME: 'StringUtil',
 
 		/**
 		*	Returns a UUID (Universally Unique Identifier)
@@ -47,6 +47,6 @@ define(['core/spinal'], function(Spinal) {
 
 	}));
 
-	return StringUtils;
+	return StringUtil;
 
 });

@@ -28,11 +28,17 @@ define(['core/spinal',
 		*	@property views
 		*	@type {com.spinal.util.adt.Collection}
 		**/
-		views: new Collection(),
+		views: null,
 
 		/**
 		*	Constructor
 		*	@constructor
+		*	@example
+		*		<b>Examples</b>
+		*		var example = new Container();
+		*		var example = new Container({ el: 'div.main' });
+		*		var example = new Container({ id: 'main', el: 'div.main', interface: View });
+		*
 		**/
 		constructor: function() {
 			View.apply(this, arguments);
@@ -43,31 +49,48 @@ define(['core/spinal',
 		*	@public
 		*	@chainable
 		*	@method initialize
+		*	@param [options] {Object} Optional Parameters
 		*	@return {com.spinal.ui.Container}
 		**/
-		initialize: function() {
+		initialize: function(options) {
+			options || (options = {});
 			Container.__super__.initialize.apply(this, arguments);
+			this.views = new Collection([], (options.interface) ? { interface: options.interface } : {});
 			return this;
+		},
+
+		/**
+		*	Validates parameters passed to the contructor function of this class.
+		*	@private
+		*	@method _valid
+		*	@param attrs {Object} attributes
+		*	@return Boolean
+		**/
+		_valid: function(attrs) {
+			attrs || (attrs = {});
+			Container.__super__._valid.apply(this, arguments);
+			if(attrs.interface && !(new attrs.interface() instanceof Backbone.View))
+				throw new UIException('InvalidInterfaceType');
+			return true;
 		},
 
 		/**
 		*	Add View
 		*	@public
-		*	@chainable
 		*	@method add
 		*	@param view {com.spinal.ui.View} View instance
 		*	@param [opts] {Object} additional options
-		*	@return {com.spinal.ui.Container}
+		*	@return Object
 		**/
 		add: function(view, opts) {
 			opts || (opts = {});
 			if(!this.findById(view.id)) {
-				this.views.add(view);
+				view = this.views.add(view);
 				view._successor = this;
-				if(opts.renderOnAdd) view.render();
-				if(!opts.silent) this.trigger(Container.EVENTS.added, { view: this });
+				if(opts.renderOnAdd) view.render(opts);
+				if(!opts.silent) this.trigger(Container.EVENTS.added, { added: view, view: this });
 			}
-			return this;
+			return view;
 		},
 
 		/**
@@ -81,24 +104,82 @@ define(['core/spinal',
 		**/
 		remove: function(view, opts) {
 			opts || (opts = {});
-			if(this.findById(view.id)) {
-				this.views.remove(view);
+			var pos = this.getPos(view);
+			if(!_.isNull(pos)) {
+				this.views.remove(pos);
 				view._successor = null;
-				if(opts.detachOnRemove) view.remove();
-				if(!opts.silent) this.trigger(Container.EVENTS.removed, { view: this });
+				if(opts.detachOnRemove) view.detach();
+				if(!opts.silent) this.trigger(Container.EVENTS.removed, { removed: view, view: this });
 			}
 			return this;
 		},
 
 		/**
-		*	Find Views by evaluation defined in finder.
+		*	Remove the View and all subviews by detaching them from the dom.
 		*	@public
-		*	@method findBy
-		*	@param id {String} View id
-		*	@return {com.spinal.ui.View}
+		*	@chainable
+		*	@method removeAll
+		*	@return {com.spinal.ui.Container}
 		**/
-		findBy: function(finder) {
-			return this.views.findBy(finder);
+		removeAll: function() {
+			if(!this.views.isEmpty()) this.invoke('detach', arguments);
+			this.views.reset();
+			return this;
+		},
+
+		/**
+		*	Returns a view in the index specified as parameter. If it's not found, returns null.
+		*	@public
+		*	@method get
+		*	@param ix {Number} index
+		*	@return Object
+		**/
+		get: function(ix) {
+			return this.views.get(ix);
+		},
+
+		/**
+		*	Returns the index of the view specified as parameter inside the collection
+		*	@public
+		*	@method getPos
+		*	@param view {com.spinal.core.Backbone.View} view used to get the index
+		*	@return Object
+		**/
+		getPos: function(view) {
+			return this.views.findPos(function(ele) { return (ele.id && ele.id === view.id); });
+		},
+
+		/**
+		*	Render Container
+		*	@public
+		*	@chainable
+		*	@method render
+		*	@return {com.spinal.ui.Container}
+		**/
+		render: function() {
+			if(!this._successor) {
+				var parentEl = (this.$el.parent().length > 0) ? this.$el.parent()[0].nodeName.toLowerCase() : 'body';
+				this._successor = new Container({ el: parentEl });
+				this._successor.add(this, { silent: true });
+			}
+			Container.__super__.render.apply(this, arguments);
+			this.invoke('render', arguments);
+			return this;
+		},
+
+		/**
+		*	Update Container
+		*	@public
+		*	@chainable
+		*	@method update
+		*	@param [opts] {Object} additional options
+		*	@return {com.spinal.ui.Container}
+		**/
+		update: function(opts) {
+			opts || (opts = {});
+			Container.__super__.update.apply(this, arguments);
+			this.invoke('update', arguments);
+			return this;
 		},
 
 		/**
@@ -114,7 +195,18 @@ define(['core/spinal',
 		},
 
 		/**
-		*	Invoke a method specified by parameter on every the view inside the collection.
+		*	Filter Views by evaluation defined in finder.
+		*	@public
+		*	@method filter
+		*	@param id {String} View id
+		*	@return {com.spinal.ui.View}
+		**/
+		filter: function(finder) {
+			return this.views.findBy(finder);
+		},
+
+		/**
+		*	Invoke a method specified by parameter on every view inside the container's collection
 		*	@public
 		*	@method invoke
 		*	@param methodName {String} Method Name to invoke in every view in the collection
@@ -134,8 +226,8 @@ define(['core/spinal',
 		*	@return {com.spinal.ui.View}
 		**/
 		show: function() {
-			this.invoke('show', arguments);
 			Container.__super__.show.apply(this, arguments);
+			this.invoke('show', arguments);
 			return this;
 		},
 
@@ -147,8 +239,8 @@ define(['core/spinal',
 		*	@return {com.spinal.ui.View}
 		**/
 		hide: function() {
-			this.invoke('hide', arguments);
 			Container.__super__.hide.apply(this, arguments);
+			this.invoke('hide', arguments);
 			return this;
 		},
 
@@ -160,8 +252,8 @@ define(['core/spinal',
 		*	@return {com.spinal.ui.View}
 		**/
 		enable: function() {
-			this.invoke('enable', arguments);
 			Container.__super__.enable.apply(this, arguments);
+			this.invoke('enable', arguments);
 			return this;
 		},
 
@@ -173,8 +265,8 @@ define(['core/spinal',
 		*	@return {com.spinal.ui.View}
 		**/
 		disable: function() {
-			this.invoke('disable', arguments);
 			Container.__super__.disable.apply(this, arguments);
+			this.invoke('disable', arguments);
 			return this;
 		},
 
@@ -186,10 +278,7 @@ define(['core/spinal',
 		*	@return {com.spinal.ui.View}
 		**/
 		detach: function() {
-			if(!this.views.isEmpty()) {
-				this.invoke('detach', arguments);
-				this.views.reset();
-			}
+			if(!this.views.isEmpty()) this.invoke('detach', arguments);
 			Container.__super__.detach.apply(this, arguments);
 			return this;
 		},
