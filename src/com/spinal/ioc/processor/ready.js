@@ -55,7 +55,7 @@ define(['ioc/context',
 		*	@Note Once CreateProcessor finished their job, evaluates the presence of $ready notation.
 		**/
 		handleNotation: function(bone, id, parentRef) {
-			if(this.isCreated(bone)) {
+			if(this.ctx.query.isCreated(bone)) {
 				console.log('Ready -> ', id, bone);
 				return true;
 			}

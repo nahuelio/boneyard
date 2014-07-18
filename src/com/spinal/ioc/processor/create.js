@@ -46,7 +46,7 @@ define(['ioc/context',
 		},
 
 		/**
-		*	Handler when a module depends on bone of '$module' type in order to be instanciated.
+		*	Handler when a module depends on a bone of '$module' type in order to be instanciated.
 		*	@public
 		*	@method handleDependency
 		*	@param id {Object} current bone id
@@ -56,12 +56,11 @@ define(['ioc/context',
 		**/
 		handleDependency: function(bone, id, parentBone) {
 			var dependencyId = this.getDependency(bone),
-				dependency = (dependencyId) ? this.ctx.query.findBoneById(dependencyId) : null,
-				moduleBone = this.ctx.query.findBoneById(parentBone.id);
-			if(dependency && moduleBone && _.isObject(dependency)) {
-				if(moduleBone['$module'] && this.isCreated(moduleBone)) {
-					console.log('Module Dependency Management!!!');
-				}
+				dependency = (dependencyId) ? this.ctx.query.findBoneById(dependencyId) : null;
+			if(dependency && parentBone && _.isObject(dependency) && !this.ctx.query.isCreated(dependency)) {
+				parentBone.parent[id] = dependencyId;
+				console.log('[' + parentBone.parent.id + '] depends on -> [' + dependencyId + ']');
+				return parentBone.parent;
 			}
 			return CreateProcessor.__super__.handleDependency.apply(this, [dependency, id, parentBone]);
 		},
@@ -80,7 +79,8 @@ define(['ioc/context',
 			if(result) {
 				if(!bone.class) throw new ProcessorException('InvalidModuleDeclaration');
 				if(bone.params) CreateProcessor.__super__.execute.call(this, this.handleNotation, bone.params, parentBone.id);
-				// TODO: Instanciation???
+				// if bone.params doesn't have a dependent, enqueue the load operation for the module.
+				// That means that handle Notation should return something to evaluate that case!
 			}
 			return result;
 		},

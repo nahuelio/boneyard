@@ -3,7 +3,8 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['core/spinal',
-		'util/factories/factory'], function(Spinal, Factory) {
+		'util/factories/factory',
+		'util/adt/queue'], function(Spinal, Factory, Queue) {
 
 	/**
 	*	BoneFactory Class
@@ -14,13 +15,34 @@ define(['core/spinal',
 	var BoneFactory = Spinal.namespace('com.spinal.ioc.BoneFactory', Factory.inherit({
 
 		/**
+		*	Modules queue
+		*	@public
+		*	@property queue
+		*	@type String
+		**/
+		queue: null,
+
+		/**
 		*	Initialize
 		*	@public
 		*	@method initialize
 		*	@return {com.spinal.ioc.BoneFactory}
 		**/
 		initialize: function() {
+			this.queue = new Queue([], { capacity: 0 });
 			return BoneFactory.__super__.initialize.apply(this, arguments);
+		},
+
+		/**
+		*	Adds a new module into the queue
+		*	@public
+		*	@chainable
+		*	@method add
+		*	// TODO: Continue Here
+		**/
+		add: function(id, class) {
+			this.queue.offer({ id: id, module: module})
+			return this;
 		},
 
 		/**
