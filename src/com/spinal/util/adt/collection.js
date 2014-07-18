@@ -168,12 +168,11 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 		**/
 		contains: function(element) {
 			if(!this._valid(element)) return false;
-			if(!_.isNull(this._interface)) {
-				var attrs = (this._interface.prototype.toJSON) ? this.invoke('toJSON') : this.collection;
-				return (_.filter(attrs, _.matches(element)).length > 0);
-			} else {
-				return (_.filter(this.collection, _.matches(element)).length > 0);
-			}
+			var result = false, col = (this._interface && this._interface.prototype.toJSON) ?
+				this.invoke('toJSON') : this.collection;
+			for(var i = 0; i < col.length; i++)
+				if(_.isEqual(col[i], element)) { result = true; break; }
+			return result;
 		},
 
 		/**

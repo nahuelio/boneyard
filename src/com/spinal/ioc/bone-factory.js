@@ -4,7 +4,7 @@
 **/
 define(['core/spinal',
 		'util/factories/factory',
-		'util/adt/queue'], function(Spinal, Factory, Queue) {
+		'util/adt/stack'], function(Spinal, Factory, Stack) {
 
 	/**
 	*	BoneFactory Class
@@ -15,12 +15,12 @@ define(['core/spinal',
 	var BoneFactory = Spinal.namespace('com.spinal.ioc.BoneFactory', Factory.inherit({
 
 		/**
-		*	Modules queue
+		*	Module Stack
 		*	@public
-		*	@property queue
-		*	@type String
+		*	@property stack
+		*	@type {com.spinal.util.adt.Stack}
 		**/
-		queue: null,
+		stack: null,
 
 		/**
 		*	Initialize
@@ -29,7 +29,7 @@ define(['core/spinal',
 		*	@return {com.spinal.ioc.BoneFactory}
 		**/
 		initialize: function() {
-			this.queue = new Queue([], { capacity: 0 });
+			this.stack = new Stack();
 			return BoneFactory.__super__.initialize.apply(this, arguments);
 		},
 
@@ -38,10 +38,12 @@ define(['core/spinal',
 		*	@public
 		*	@chainable
 		*	@method add
-		*	// TODO: Continue Here
+		*	@param id {String} module name
+		*	@param module {String} require module id
+		*	@return {com.spinal.ioc.BoneFactory}
 		**/
-		add: function(id, class) {
-			this.queue.offer({ id: id, module: module})
+		add: function(id, module) {
+			this.stack.push({ id: id, module: module})
 			return this;
 		},
 

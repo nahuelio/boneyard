@@ -208,11 +208,10 @@ define(['core/spinal',
                     { model: new Backbone.Model({ name: 'foo' }) },
                     { model: new Backbone.Model({ name: 'bar' }) }
                 ]);
-                var result = this.testInterface.contains({ cid: this.testInterface.get(0).cid });
+                var result = this.testInterface.contains(this.testInterface.get(0));
                 expect(result).to.be.equal(true);
                 result = this.testInterface.contains({ model: new Backbone.Model({ nonexistent: '1' }) });
                 expect(result).to.be.equal(false);
-
                 // Interface with toJSON method
                 result = this.testGeneric.contains({ name: 'bar' });
                 expect(result).to.be.equal(true);
@@ -243,14 +242,11 @@ define(['core/spinal',
                     { model: new Backbone.Model({ name: 'bar' }) },
                     { model: new Backbone.Model({ name: 'zoo' }) }
                 ]);
-                var result = this.testInterface.containsAll([
-                    { cid: this.testInterface.get(0).cid },
-                    { model: this.testInterface.get(1).model }
-                ]);
+                var result = this.testInterface.containsAll([this.testInterface.get(0), this.testInterface.get(2)]);
                 expect(result).to.be.equal(true);
                 result = this.testInterface.containsAll([
-                    { model: new Backbone.Model({ name: 'non-existent' }) },
-                    { cid: this.testInterface.get(0).cid }
+                    new Backbone.Model({ name: 'non-existent' }),
+                    this.testInterface.get(0)
                 ]);
                 expect(result).to.be.equal(false);
                 result = this.testInterface.containsAll();
