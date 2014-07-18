@@ -344,7 +344,8 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 		},
 
 		/**
-		*	Sort the collection
+		*	Sort the collection by comparator passed as parameter.
+		*	If the function comparator is ommited, the standard sort will be applied.
 		*	@public
 		*	@chainable
 		*	@method sort

@@ -38,7 +38,7 @@ define(['ioc/context',
 		**/
 		describe('#wire()', function() {
 
-			it('Should Wire Simple Spec (String dependency)', function(done) {
+			it('Should Wire Simple specs (String, Numbers, Array, Date, etc)', function(done) {
 				this.appContext.on(Context.EVENTS.initialized, _.bind(function(ctx) {
 					expect(ctx).to.be.ok();
 					this.appContext.off();

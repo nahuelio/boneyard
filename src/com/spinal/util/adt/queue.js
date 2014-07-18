@@ -6,7 +6,7 @@ define(['core/spinal',
 	   'util/adt/collection'], function(Spinal, Collection) {
 
 	/**
-	*	Define a generic interface to communicate with a service in the cloud.
+	*	Defines the interface of a FIFO Queue (FirstIn-FirstOut)
 	*	<h5>Usages:</h5>
 	*
 	*		var myqueue = new Queue([], { capacity: 5 }); // initial is set to capacity was set to 5
@@ -78,15 +78,15 @@ define(['core/spinal',
 		/**
 		*	Inserts the specified element into this queue if it is possible to do so immediately without violating capacity restrictions.
 		*	@public
-		*	@method remove
+		*	@method offer
 		*	@param element {Object} element to be inserted.
 		*	@return Boolean
 		**/
 		offer: function(element) {
 			if(!this._valid(element)) return false;
 			(!_.isNull(this._interface)) ?
-				this.collection.unshift(new this._interface(element)) :
-				this.collection.unshift(element);
+				this.collection.push(new this._interface(element)) :
+				this.collection.push(element);
 			return true;
 		},
 

@@ -9,29 +9,24 @@ define(['specs/main.spec'], function(MainSpec) {
 		$specs: MainSpec,
 
 		content: {
-
 			$module: {
 				class: 'ui/container',
-				params: { id: 'content', injectedDependency: '$bone!viewC' }
+				params: { id: 'content', dependency: '$bone!viewC' }
 			}
 		},
 
 		viewC: {
-
 			$module: {
-				class: 'ui/view',
-				params: { id: 'viewC', injectedDependency: '$bone!viewD' }
+				class: 'ui/container',
+				params: { id: 'viewC', dependency: '$bone!viewD' }
 			}
-
 		},
 
 		viewD: {
-
 			$module: {
 				class: 'ui/view',
 				params: { id: 'viewD' }
 			}
-
 		}
 
 	};
