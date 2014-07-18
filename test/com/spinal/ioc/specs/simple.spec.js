@@ -1,5 +1,5 @@
 /**
-*	Content Spec Test
+*	Simple Spec Test
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['specs/main.spec'], function(MainSpec) {

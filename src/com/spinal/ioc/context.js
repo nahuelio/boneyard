@@ -116,6 +116,7 @@ define(['core/spinal',
 		wire: function(spec, callback) {
 			if(!spec) { callback(this); return this; }
 			if(!_.isObject(spec)) throw new ContextException('InvalidSpecFormat');
+			this.spec = {};
 			Context.BoneFactory.register(Context.PROCESSORS, _.bind(this._onProcessorsLoaded, this, callback));
 			return this._build(spec);
 		},

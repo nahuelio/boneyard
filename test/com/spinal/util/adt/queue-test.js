@@ -69,7 +69,7 @@ define(['core/spinal', 'util/adt/queue'], function(Spinal, Queue) {
 				expect(this.testSimple.offer({ name: 'bar'})).to.be.equal(true);
 				expect(this.testSimple.size()).to.be.equal(2);
 				// Checking FIFO structure
-				expect(this.testSimple.get(0).name).to.be.equal('bar');
+				expect(this.testSimple.get(1).name).to.be.equal('bar');
 			});
 
 			it('Should insert element without violating capacity restrictions (With Interface)', function() {
@@ -94,7 +94,7 @@ define(['core/spinal', 'util/adt/queue'], function(Spinal, Queue) {
 				this.testSimple.offer({ name: 'foo' });
 				var result = this.testSimple.peek();
 				expect(result).to.be.ok();
-				expect(result.name).to.be.equal('foo');
+				expect(result.name).to.be.equal('zoo');
 				expect(this.testSimple.size()).to.be.equal(3);
 			});
 
@@ -114,11 +114,11 @@ define(['core/spinal', 'util/adt/queue'], function(Spinal, Queue) {
 				this.testSimple.offer({ name: 'foo' });
 				var result = this.testSimple.poll();
 				expect(result).to.be.ok();
-				expect(result.name).to.be.equal('foo');
+				expect(result.name).to.be.equal('zoo');
 				expect(this.testSimple.size()).to.be.equal(2);
 			});
 
-			it('Should NOT retriebe and remove the head (element) from the queue', function() {
+			it('Should NOT retrieve and remove the head (element) from the queue', function() {
 				this.testSimple = new Queue([], { capacity: 1 });
 				expect(this.testSimple.poll()).to.be.equal(null);
 			});

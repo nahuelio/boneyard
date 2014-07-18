@@ -3,7 +3,8 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['ioc/context',
-		'specs/content.spec'], function(Context, ProductSpec) {
+		'specs/simple.spec',
+		'specs/advanced.spec'], function(Context, SimpleSpec, AdvancedSpec) {
 
 	describe('com.spinal.ioc.Context', function() {
 
@@ -37,27 +38,42 @@ define(['ioc/context',
 		**/
 		describe('#wire()', function() {
 
-			it('Should Wire Specs', function(done) {
-				this.appContext.on(Context.EVENTS.initialized, function(ctx) {
-					console.log('Context Initialized!');
-				}).on(Context.EVENTS.changed, _.bind(function(result) {
+			it('Should Wire Simple specs (String, Numbers, Array, Date, etc)', function(done) {
+				this.appContext.on(Context.EVENTS.initialized, _.bind(function(ctx) {
+					expect(ctx).to.be.ok();
+					this.appContext.off();
+					done();
+				}, this)).on(Context.EVENTS.changed, _.bind(function(result) {
 					expect(result).to.be.ok();
 					expect(result.type).to.be.ok();
 					expect(result.data).to.be.ok();
-					console.log('Changed: ', result.type, result.data);
-					// FIXME: Temporal 'If'
-					if(Context['CreateProcessor'] &&
-						result.type === Context['CreateProcessor'].constructor.EVENTS.ready) {
-						done();
-					}
 				}, this));
 
-				this.appContext.wire(ProductSpec, function(ctx) {
+				this.appContext.wire(SimpleSpec, function(ctx) {
 					expect(ctx).to.be.ok();
 					expect(ctx.spec).to.be.ok();
 					expect(ctx.spec.header).to.be.ok();
 				});
+			});
 
+			it('Should Wire Advanced specs (Module dependencies)', function(done) {
+				this.appContext.on(Context.EVENTS.initialized, _.bind(function(ctx) {
+					expect(ctx).to.be.ok();
+					this.appContext.off();
+					console.log('----------------------------');
+					console.log(this.appContext.spec['content'].$module.params);
+					console.log(this.appContext.spec['viewC'].$module.params);
+					done();
+				}, this)).on(Context.EVENTS.changed, _.bind(function(result) {
+					expect(result).to.be.ok();
+					expect(result.type).to.be.ok();
+					expect(result.data).to.be.ok();
+				}, this));
+
+				this.appContext.wire(AdvancedSpec, function(ctx) {
+					expect(ctx).to.be.ok();
+					expect(ctx.spec).to.be.ok();
+				});
 			});
 
 		});

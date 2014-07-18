@@ -56,12 +56,11 @@ define(['ioc/context',
 		**/
 		handleDependency: function(bone, id, parentBone) {
 			var dependencyId = this.getDependency(bone),
-				dependency = (dependencyId) ? this.ctx.query.findBoneById(dependencyId) : null,
-				moduleBone = this.ctx.query.findBoneById(parentBone.id);
-			if(dependency && moduleBone && _.isObject(dependency)) {
-				if(moduleBone['$module'] && this.isCreated(moduleBone)) {
-					console.log('Module Dependency Management!!!');
-				}
+				dependency = (dependencyId) ? this.ctx.query.findBoneById(dependencyId) : null;
+			if(dependency && parentBone && _.isObject(dependency)) {
+				parentBone.parent[id] = dependencyId;
+				console.log('Bone [' + parentBone.parent.id + '] depends on [' + dependencyId + ']');
+				return parentBone.parent;
 			}
 			return CreateProcessor.__super__.handleDependency.apply(this, [dependency, id, parentBone]);
 		},

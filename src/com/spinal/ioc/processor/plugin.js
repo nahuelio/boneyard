@@ -54,7 +54,6 @@ define(['ioc/context',
 		handleNotation: function(bone, id) {
 			var b = this.matchNotation(id);
 			if(b) {
-				console.log('Plugins -> ', id, bone);
 				delete this.ctx.spec[id];
 				return true;
 			}

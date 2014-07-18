@@ -137,28 +137,6 @@ define(['core/spinal',
 				}
 			}
 			return this.matched;
-		},
-
-		/**
-		*	Checks if the bone was succesufuly created
-		*	@public
-		*	@method isCreated
-		*	@param bone {Object} current bone to be evaluated
-		*	@return Boolean
-		**/
-		isCreated: function(bone) {
-			return (bone && bone._$created);
-		},
-
-		/**
-		*	Checks if the bone completed the ready phase
-		*	@public
-		*	@method isReady
-		*	@param bone {Object} current bone to be evaluated
-		*	@return Boolean
-		**/
-		isReady: function(bone) {
-			return (bone && bone._$ready);
 		}
 
 	}, {
