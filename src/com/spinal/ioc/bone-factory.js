@@ -3,8 +3,8 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['core/spinal',
-		'util/factories/factory',
-		'util/adt/stack'], function(Spinal, Factory, Stack) {
+		'util/adt/stack',
+		'util/factories/factory'], function(Spinal, Stack, Factory) {
 
 	/**
 	*	BoneFactory Class
@@ -15,12 +15,12 @@ define(['core/spinal',
 	var BoneFactory = Spinal.namespace('com.spinal.ioc.BoneFactory', Factory.inherit({
 
 		/**
-		*	Module Stack
+		*	Stack module
 		*	@public
 		*	@property stack
 		*	@type {com.spinal.util.adt.Stack}
 		**/
-		stack: null,
+		modules: null,
 
 		/**
 		*	Initialize
@@ -29,39 +29,86 @@ define(['core/spinal',
 		*	@return {com.spinal.ioc.BoneFactory}
 		**/
 		initialize: function() {
-			this.stack = new Stack();
+			this.modules = new Stack();
 			return BoneFactory.__super__.initialize.apply(this, arguments);
 		},
 
 		/**
-		*	Adds a new module into the queue
+		*	Set a new collection of elements to be inserted in the modules stack
 		*	@public
-		*	@chainable
-		*	@method add
-		*	@param id {String} module name
-		*	@param module {String} require module id
+		*	@method set
+		*	@param arr {Array} new collection to be replaced
 		*	@return {com.spinal.ioc.BoneFactory}
 		**/
-		add: function(id, module) {
-			this.stack.push({ id: id, module: module})
+		set: function(arr) {
+			if(!arr || !_.isArray(arr)) return false;
+			this.modules.reset({ silent: true });
+			this.modules.set(arr);
 			return this;
+		},
+
+		/**
+		*	Adds a new module into the stack
+		*	@public
+		*	@chainable
+		*	@method addModule
+		*	@param moduleId {Object} module data
+		*	@param [dependency] {Object} dependency of the module to load
+		*	@return {com.spinal.ioc.BoneFactory}
+		**/
+		add: function(module, dependency, callback) {
+			if(!module || !_.isObject(module)) return this;
+			this.modules.push({ module: module, dependency: dependency, callback: callback });
+			return this;
+		},
+
+		/**
+		*	Removes a module from the stack
+		*	@public
+		*	@chainable
+		*	@method removeModule
+		*	@param module {Object} module data used to remove the module
+		*	@return {com.spinal.ioc.BoneFactory}
+		**/
+		remove: function(module) {
+			if(!module) return this;
+			this.modules.removeBy(_.bind(function(m) { return (m.id && module.id && m.id === module.id);  }, this));
+			return this;
+		},
+
+		/**
+		*	Load an specific module
+		*	@public
+		*	@method load
+		*	@param module {Object} module data required
+		*	@param [modules] {Array} List of modules
+		*	@param [callback] callback
+		*	@FIXME: Improve the portability of this by not being specific with the parameters
+		**/
+		register: function(module, modules, callback) {
+			require([module.class], _.bind(function(c) {
+				modules.push(BoneFactory.__super__.register.apply(this, [c.NAME, c]));
+				if(module.success) module.success(module, c);
+				this.load(callback, modules);
+			}, this));
 		},
 
 		/**
 		*	Loads and Registers a list of modules into the factory.
 		*	@public
-		*	@method Register
-		*	@param modules {Array} array of module ids to load before register them.
+		*	@method load
 		*	@param [callback] {Function} Optional Callback
-		*	@return Function
+		*	@return {com.spinal.ioc.BoneFactory}
 		**/
-		register: function(modules, callback) {
-			if(!modules || !_.isArray(modules)) return null;
-			return require(modules, _.bind(function() {
-				var constructors = Array.prototype.slice.call(arguments);
-				_.each(constructors, function(c) { BoneFactory.__super__.register.apply(this, [c.NAME, c]); }, this);
-				callback(constructors);
-			}, this));
+		load: function(callback, modules) {
+			if(m = this.modules.pop()) {
+				if(!modules) modules = [];
+				if(!m.id || !m.class) this.register(callback, modules);
+				this.register(m, modules, callback);
+			} else {
+				this.modules.reset({ silent: true });
+				if(callback && _.isFunction(callback)) callback(modules);
+			}
 		}
 
 	}, {

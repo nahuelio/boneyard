@@ -65,6 +65,7 @@ define(['core/spinal',
 		*	@method _onProcessorsLoaded
 		*	@param [callback] {Function} Optional Callback
 		*	@param processors {Array} Array of Processor Modules
+		*	@FIXME: Processors have be executed in order. Continue here...
 		**/
 		_onProcessorsLoaded: function(callback, processors) {
 			_.each(processors, function(p) {
@@ -117,19 +118,9 @@ define(['core/spinal',
 			if(!spec) { callback(this); return this; }
 			if(!_.isObject(spec)) throw new ContextException('InvalidSpecFormat');
 			this.spec = {};
-			Context.BoneFactory.register(Context.PROCESSORS, _.bind(this._onProcessorsLoaded, this, callback));
-			return this._build(spec);
-		},
-
-		/**
-		*	Notifies current context that a bone has been affected
-		*	@public
-		*	@method notify
-		*	@param eventType {String} Bone Event Type
-		*	@param data {Object} data passed from the original event
-		**/
-		notify: function(eventType, data) {
-			this.trigger(Context.EVENTS.changed, { type: eventType, data: data });
+			this._build(spec);
+			Context.BoneFactory.set(Context.PROCESSORS).load(_.bind(this._onProcessorsLoaded, this, callback));
+			return this;
 		}
 
 	}, {
@@ -152,9 +143,17 @@ define(['core/spinal',
 			**/
 			initialized: 'com:spinal:ioc:context:initialized',
 			/**
-			*	@event changed
+			*	@event created
 			**/
-			changed: 'com:spinal:ioc:context:changed'
+			plugin: 'com:spinal:ioc:context:bone:plugin',
+			/**
+			*	@event created
+			**/
+			created: 'com:spinal:ioc:context:bone:created',
+			/**
+			*	@event ready
+			**/
+			ready: 'com:spinal:ioc:context:bone:ready'
 		},
 
 		/**
@@ -171,9 +170,9 @@ define(['core/spinal',
 		*	@type Array
 		**/
 		PROCESSORS: [
-			'ioc/processor/plugin',
-			'ioc/processor/create',
-			'ioc/processor/ready'
+			{ id: 'plugin', class: 'ioc/processor/plugin' },
+			{ id: 'create', class: 'ioc/processor/create' },
+			{ id: 'ready', class: 'ioc/processor/ready' }
 		],
 
 		/**

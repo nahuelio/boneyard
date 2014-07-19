@@ -95,7 +95,7 @@ define(['core/spinal',
 		handleDependency: function(bone, id, parentBone) {
 			if(!bone) throw new ProcessorException('BoneNotFound');
 			parentBone.parent[id] = (_.isString(bone)) ? bone : null;
-			return parentBone.parent;
+			return !_.isNull(parentBone.parent[id]);
 		},
 
 		/**
@@ -127,16 +127,14 @@ define(['core/spinal',
 		*	@return Array
 		**/
 		execute: function(predicate, bone, id) {
-			if(!predicate || !_.isFunction(predicate)) return [];
-			if(!this.matched) this.matched = [];
-			var context = (bone) ? bone : this.ctx.spec;
+			if(!predicate || !_.isFunction(predicate)) return false;
+			var result = false, context = (bone) ? bone : this.ctx.spec;
+			if(!bone) this.matches = [];
 			for(var bId in context) {
-				if(predicate.call(this, context[bId], bId, { parent: context, id: id })) {
-					this.matched.push({ id: id, bone: context[bId] });
-					break;
-				}
+				result = predicate.call(this, context[bId], bId, { parent: context, id: id });
+				if(result) { this.matches.push(id); break; }
 			}
-			return this.matched;
+			return (!bone) ? this.matches : result;
 		}
 
 	}, {
@@ -146,27 +144,7 @@ define(['core/spinal',
 		*	@property NAME
 		*	@type String
 		**/
-		NAME: 'BoneProcessor',
-
-		/**
-		*	@static
-		*	@property EVENTS
-		*	@type Object
-		**/
-		EVENTS: {
-			/**
-			*	@event created
-			**/
-			plugin: 'com:spinal:ioc:context:bone:plugin',
-			/**
-			*	@event created
-			**/
-			created: 'com:spinal:ioc:context:bone:created',
-			/**
-			*	@event ready
-			**/
-			ready: 'com:spinal:ioc:context:bone:ready'
-		}
+		NAME: 'BoneProcessor'
 
 	}));
 

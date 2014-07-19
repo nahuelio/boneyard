@@ -45,6 +45,21 @@ define(['ioc/context',
 			return new RegExp('\\' + Context.PREFIX + '(' + this.notations.join('|') + ')$', 'i');
 		},
 
+		injectDependency: function(module, c) {
+			console.log('InjectDependency()', module);
+		},
+
+		/**
+		*	Check if there are dependencies (via constructor params) passed as parameter.
+		*	@public
+		*	@method hasDependencies
+		*	@param params {Object} constructor params to evaluate
+		*	@return Boolean
+		**/
+		hasDependencies: function(params) {
+			return (_.filter(params, function(v, k) { return this.getDependency(v); }, this).length > 0);
+		},
+
 		/**
 		*	Handler when a module depends on a bone of '$module' type in order to be instanciated.
 		*	@public
@@ -55,14 +70,17 @@ define(['ioc/context',
 		*	@return Object
 		**/
 		handleDependency: function(bone, id, parentBone) {
-			var dependencyId = this.getDependency(bone),
-				dependency = (dependencyId) ? this.ctx.query.findBoneById(dependencyId) : null;
-			if(dependency && parentBone && _.isObject(dependency) && !this.ctx.query.isCreated(dependency)) {
-				parentBone.parent[id] = dependencyId;
-				console.log('[' + parentBone.parent.id + '] depends on -> [' + dependencyId + ']');
-				return parentBone.parent;
+			var depId = this.getDependency(bone), dep = (depId) ? this.ctx.query.findBoneById(depId) : null;
+			if(dep && parentBone && _.isObject(dep)) {
+				if(dep.$module && !this.ctx.query.isCreated(dep)) {
+					var mBone = this.ctx.query.findBoneById(parentBone.id);
+					return Context.BoneFactory.add({
+						id: parentBone.id, class: mBone.$module.class,
+						dependebcy: dep, success: this.injectDependecy
+					});
+				}
 			}
-			return CreateProcessor.__super__.handleDependency.apply(this, [dependency, id, parentBone]);
+			return CreateProcessor.__super__.handleDependency.apply(this, [dep, id, parentBone]);
 		},
 
 		/**
@@ -78,9 +96,9 @@ define(['ioc/context',
 			var result = CreateProcessor.__super__.handleNotation.apply(this, arguments);
 			if(result) {
 				if(!bone.class) throw new ProcessorException('InvalidModuleDeclaration');
-				if(bone.params) CreateProcessor.__super__.execute.call(this, this.handleNotation, bone.params, parentBone.id);
-				// if bone.params doesn't have a dependent, enqueue the load operation for the module.
-				// That means that handle Notation should return something to evaluate that case!
+				(bone.params && this.hasDependencies(bone.params)) ?
+					CreateProcessor.__super__.execute.call(this, this.handleNotation, bone.params, parentBone.id) :
+					Context.BoneFactory.add({ id: parentBone.id, class: bone.class });
 			}
 			return result;
 		},
@@ -94,8 +112,10 @@ define(['ioc/context',
 		*	@return {com.spinal.ioc.processor.CreateProcessor}
 		**/
 		execute: function(bone, id) {
-			this.ctx.notify(CreateProcessor.EVENTS.created,
-				CreateProcessor.__super__.execute.call(this, this.handleNotation, bone, id));
+			var result = CreateProcessor.__super__.execute.call(this, this.handleNotation, bone, id);
+			Context.BoneFactory.load(_.bind(function() {
+				this.ctx.trigger(Context.EVENTS.created, result);
+			}, this));
 			return this;
 		}
 

@@ -69,7 +69,7 @@ define(['ioc/context',
 		*	@return {com.spinal.ioc.processor.ReadyProcessor}
 		**/
 		execute: function() {
-			this.ctx.notify(ReadyProcessor.EVENTS.ready, this.ctx.query.findBonesBy(_.bind(this.handleNotation, this)));
+			this.ctx.trigger(Context.EVENTS.ready, this.ctx.query.findBonesBy(_.bind(this.handleNotation, this)));
 			return this;
 		}
 

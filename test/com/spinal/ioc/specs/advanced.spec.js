@@ -27,6 +27,20 @@ define(['specs/main.spec'], function(MainSpec) {
 				class: 'ui/view',
 				params: { id: 'viewD' }
 			}
+		},
+
+		viewE: {
+			$module: {
+				class: 'ui/view',
+				params: { id: 'viewE' }
+			}
+		},
+
+		subcontent: {
+			$module: {
+				class: 'ui/container',
+				params: { id: 'subcontent', dependency: '$bone!viewE' }
+			}
 		}
 
 	};
