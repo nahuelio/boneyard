@@ -4,9 +4,11 @@
 **/
 define(['core/spinal',
 		'util/string',
+		'util/adt/iterator',
 		'ioc/bone-factory',
 		'ioc/bone-query',
-		'util/error/types/context-exception'], function(Spinal, StringUtil, BoneFactory, BoneQuery, ContextException) {
+		'util/error/types/context-exception'], function(Spinal, StringUtil, Iterator,
+														BoneFactory, BoneQuery, ContextException) {
 
 	/**
 	*	IOC Context Class
@@ -65,15 +67,27 @@ define(['core/spinal',
 		*	@method _onProcessorsLoaded
 		*	@param [callback] {Function} Optional Callback
 		*	@param processors {Array} Array of Processor Modules
-		*	@FIXME: Processors have be executed in order. Continue here...
 		**/
 		_onProcessorsLoaded: function(callback, processors) {
-			_.each(processors, function(p) {
-				Context[p.NAME] = this.factory('create', p.NAME, this);
-				Context[p.NAME].execute();
-			}, this);
-			if(callback && _.isFunction(callback)) callback(this);
-			this.trigger(Context.EVENTS.initialized, this);
+			this.on(Context.EVENTS.processed, _.bind(this._onProcessorFinished, this, callback));
+			_.each(processors, function(p) { Context[p.NAME] = this.factory('create', p.NAME, this); }, this);
+			this._onProcessorFinished(callback);
+		},
+
+		/**
+		*	Processor Finish Handler
+		*	@private
+		*	@method _onProcessorFinished
+		*	@param data {Object} event data
+		**/
+		_onProcessorFinished: function(callback, event) {
+			if(Context.PROCESSORS.hasNext()) {
+				Context[Context.PROCESSORS.next().id].execute();
+			} else {
+				Context.PROCESSORS.rewind();
+				if(callback && _.isFunction(callback)) callback(this);
+				this.trigger(Context.EVENTS.initialized, this);
+			}
 		},
 
 		/**
@@ -119,7 +133,7 @@ define(['core/spinal',
 			if(!_.isObject(spec)) throw new ContextException('InvalidSpecFormat');
 			this.spec = {};
 			this._build(spec);
-			Context.BoneFactory.set(Context.PROCESSORS).load(_.bind(this._onProcessorsLoaded, this, callback));
+			Context.BoneFactory.set(Context.PROCESSORS.collection).load(_.bind(this._onProcessorsLoaded, this, callback));
 			return this;
 		}
 
@@ -142,6 +156,10 @@ define(['core/spinal',
 			*	@event initialized
 			**/
 			initialized: 'com:spinal:ioc:context:initialized',
+			/**
+			*	@event processed
+			**/
+			processed: 'com:spinal:ioc:processor:processed',
 			/**
 			*	@event created
 			**/
@@ -167,13 +185,13 @@ define(['core/spinal',
 		*	Processors List used by the context
 		*	@static
 		*	@property PROCESSORS
-		*	@type Array
+		*	@type {com.spinal.util.adt.Iterator}
 		**/
-		PROCESSORS: [
-			{ id: 'plugin', class: 'ioc/processor/plugin' },
-			{ id: 'create', class: 'ioc/processor/create' },
-			{ id: 'ready', class: 'ioc/processor/ready' }
-		],
+		PROCESSORS: new Iterator([
+			{ id: 'PluginProcessor', class: 'ioc/processor/plugin' },
+			{ id: 'CreateProcessor', class: 'ioc/processor/create' },
+			{ id: 'ReadyProcessor', class: 'ioc/processor/ready' }
+		]),
 
 		/**
 		*	@static

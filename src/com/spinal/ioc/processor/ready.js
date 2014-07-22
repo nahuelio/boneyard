@@ -56,7 +56,7 @@ define(['ioc/context',
 		**/
 		handleNotation: function(bone, id, parentRef) {
 			if(this.ctx.query.isCreated(bone)) {
-				console.log('Ready -> ', id, bone);
+				console.log('Ready $Created -> ', id);
 				return true;
 			}
 			return false;
@@ -70,6 +70,7 @@ define(['ioc/context',
 		**/
 		execute: function() {
 			this.ctx.trigger(Context.EVENTS.ready, this.ctx.query.findBonesBy(_.bind(this.handleNotation, this)));
+			this.ctx.trigger(Context.EVENTS.processed, { type: ReadyProcessor.NAME });
 			return this;
 		}
 

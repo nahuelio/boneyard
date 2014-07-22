@@ -68,6 +68,7 @@ define(['ioc/context',
 		**/
 		execute: function() {
 			this.ctx.trigger(Context.EVENTS.plugin, this.ctx.query.findBonesBy(_.bind(this.handleNotation, this)));
+			this.ctx.trigger(Context.EVENTS.processed, { type: PluginProcessor.NAME });
 			return this;
 		}
 

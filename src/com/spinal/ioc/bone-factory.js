@@ -58,7 +58,7 @@ define(['core/spinal',
 		**/
 		add: function(module, dependency, callback) {
 			if(!module || !_.isObject(module)) return this;
-			this.modules.push({ module: module, dependency: dependency, callback: callback });
+			this.modules.push(module);
 			return this;
 		},
 
@@ -83,12 +83,13 @@ define(['core/spinal',
 		*	@param module {Object} module data required
 		*	@param [modules] {Array} List of modules
 		*	@param [callback] callback
-		*	@FIXME: Improve the portability of this by not being specific with the parameters
+		*	@FIXME: Improve the portability of this by not being too specific with the parameters
+		*	('modules' is irrelevant if I want to access this method to load a single module).
 		**/
 		register: function(module, modules, callback) {
 			require([module.class], _.bind(function(c) {
 				modules.push(BoneFactory.__super__.register.apply(this, [c.NAME, c]));
-				if(module.success) module.success(module, c);
+				if(module.success) module.success(c.NAME, module);
 				this.load(callback, modules);
 			}, this));
 		},

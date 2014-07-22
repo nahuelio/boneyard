@@ -45,8 +45,32 @@ define(['ioc/context',
 			return new RegExp('\\' + Context.PREFIX + '(' + this.notations.join('|') + ')$', 'i');
 		},
 
-		injectDependency: function(module, c) {
-			console.log('InjectDependency()', module);
+		/**
+		*	Creates an instance of the module passing the parameters to the constructor function
+		*	@public
+		*	@method create
+		*	@param className {String} current module class name to pass to BoneFactory
+		*	@param [params] {Object} module data (includes module id, params reference object and so on)
+		*	@return Object
+		**/
+		create: function(className, data) {
+			if(!className || !data) throw new Error('Module Create Error'); // Convert it into a defined exception.
+			if(data.dependencies) this.injectDependency(data);
+			var bone = this.ctx.query.findBoneById(data.id);
+				bone._$created = (bone) ? Context.BoneFactory.create(className, data.params) : null;
+			return bone._$created;
+		},
+
+		/**
+		*	Inject Dependencies via constructor params into the current module
+		*	and creates the module
+		*	@public
+		*	@method injectDependency
+		*	@param data {Object} module data (includes module id, params reference object and so on)
+		*	@return Object
+		**/
+		injectDependency: function(data) {
+			console.log('InjectDependency()', className, data);
 		},
 
 		/**
@@ -70,17 +94,18 @@ define(['ioc/context',
 		*	@return Object
 		**/
 		handleDependency: function(bone, id, parentBone) {
-			var depId = this.getDependency(bone), dep = (depId) ? this.ctx.query.findBoneById(depId) : null;
+			var depId = this.getDependency(bone),
+				dep = (depId) ? this.ctx.query.findBoneById(depId) : null,
+				mBone = this.ctx.query.findBoneById(parentBone.id);
+			var result = CreateProcessor.__super__.handleDependency.apply(this, [dep, id, parentBone]);
 			if(dep && parentBone && _.isObject(dep)) {
-				if(dep.$module && !this.ctx.query.isCreated(dep)) {
-					var mBone = this.ctx.query.findBoneById(parentBone.id);
-					return Context.BoneFactory.add({
-						id: parentBone.id, class: mBone.$module.class,
-						dependebcy: dep, success: this.injectDependecy
-					});
-				}
+				var dependencies = (dep.$module && !this.ctx.query.isCreated(dep)) ? { id: depId, bone: dep } : {};
 			}
-			return CreateProcessor.__super__.handleDependency.apply(this, [dep, id, parentBone]);
+			Context.BoneFactory.add(_.extend({
+				id: parentBone.id, class: mBone.$module.class,
+				params: mBone.$module.params, success: _.bind(this.create, this)
+			}, dependencies));
+			return result;
 		},
 
 		/**
@@ -98,7 +123,8 @@ define(['ioc/context',
 				if(!bone.class) throw new ProcessorException('InvalidModuleDeclaration');
 				(bone.params && this.hasDependencies(bone.params)) ?
 					CreateProcessor.__super__.execute.call(this, this.handleNotation, bone.params, parentBone.id) :
-					Context.BoneFactory.add({ id: parentBone.id, class: bone.class });
+					Context.BoneFactory.add({ id: parentBone.id, class: bone.class,
+						params: bone.params, success: _.bind(this.create, this) });
 			}
 			return result;
 		},
@@ -115,6 +141,7 @@ define(['ioc/context',
 			var result = CreateProcessor.__super__.execute.call(this, this.handleNotation, bone, id);
 			Context.BoneFactory.load(_.bind(function() {
 				this.ctx.trigger(Context.EVENTS.created, result);
+				this.ctx.trigger(Context.EVENTS.processed, { type: CreateProcessor.NAME });
 			}, this));
 			return this;
 		}

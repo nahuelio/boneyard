@@ -94,8 +94,7 @@ define(['core/spinal',
 		**/
 		handleDependency: function(bone, id, parentBone) {
 			if(!bone) throw new ProcessorException('BoneNotFound');
-			parentBone.parent[id] = (_.isString(bone)) ? bone : null;
-			return !_.isNull(parentBone.parent[id]);
+			if(_.isString(bone)) return (parentBone.parent[id] = bone);
 		},
 
 		/**

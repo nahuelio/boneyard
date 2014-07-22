@@ -46,8 +46,10 @@ define(['ioc/context',
 					console.log(result);
 				}, this)).on(Context.EVENTS.ready, _.bind(function(result) {
 					expect(result).to.be.ok();
-					console.log(result);
 					this.appContext.off();
+					console.log(result);
+					console.log('----------------------------------------------------');
+					console.log('Dependency: ', this.appContext.spec['global'].$module.params);
 					done();
 				}, this));
 
@@ -58,7 +60,7 @@ define(['ioc/context',
 				});
 			});
 
-			// it('Should Wiere Advanced Spec (Module Dependency)', function(done) {
+			// it('Should Wire Advanced Spec (Module Dependency)', function(done) {
 			// 	this.appContext.on(Context.EVENTS.initialized, _.bind(function(ctx) {
 			// 		expect(ctx).to.be.ok();
 			// 		this.appContext.off();
@@ -70,9 +72,9 @@ define(['ioc/context',
 			// 		console.log(Context['ReadyProcessor']);
 			// 		if(Context['ReadyProcessor'] && result.type === Context['ReadyProcessor'].EVENTS.ready) {
 			// 			console.log('----------------------------------------------------');
-			// 			console.log('Dependency: ', ctx.spec['content'].$module.params);
-			// 			console.log('Dependency: ', ctx.spec['viewC'].$module.params);
-			// 			console.log('Dependency: ', ctx.spec['subcontent'].$module.params);
+			// 			console.log('Dependency: ', this.appContext.spec['content'].$module.params);
+			// 			console.log('Dependency: ', this.appContext.spec['viewC'].$module.params);
+			// 			console.log('Dependency: ', this.appContext.spec['subcontent'].$module.params);
 			// 			done();
 			// 		}
 			// 	}, this));
