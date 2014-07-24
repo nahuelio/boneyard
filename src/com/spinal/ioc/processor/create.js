@@ -55,6 +55,7 @@ define(['ioc/context',
 		**/
 		create: function(className, data) {
 			if(!className || !data) throw new Error('Module Create Error'); // Convert it into a defined exception.
+			if(!data.dependencies) console.log('Create (NO Dependencies): ', data.id);
 			if(data.dependencies) this.injectDependency(data);
 			var bone = this.ctx.query.findBoneById(data.id);
 				bone._$created = (bone) ? Context.BoneFactory.create(className, data.params) : null;
@@ -68,9 +69,11 @@ define(['ioc/context',
 		*	@method injectDependency
 		*	@param data {Object} module data (includes module id, params reference object and so on)
 		*	@return Object
+		*	@FIXME: Order ir wrong first should instanciate modules with no dependencies!!
 		**/
 		injectDependency: function(data) {
-			console.log('InjectDependency()', className, data);
+			// use module._$created to inject dependencies into the dependent module but in order
+			console.log('InjectDependency()', data.id);
 		},
 
 		/**
@@ -95,16 +98,16 @@ define(['ioc/context',
 		**/
 		handleDependency: function(bone, id, parentBone) {
 			var depId = this.getDependency(bone),
-				dep = (depId) ? this.ctx.query.findBoneById(depId) : null,
+				dBone = (depId) ? this.ctx.query.findBoneById(depId) : null,
 				mBone = this.ctx.query.findBoneById(parentBone.id);
-			var result = CreateProcessor.__super__.handleDependency.apply(this, [dep, id, parentBone]);
-			if(dep && parentBone && _.isObject(dep)) {
-				var dependencies = (dep.$module && !this.ctx.query.isCreated(dep)) ? { id: depId, bone: dep } : {};
+			var result = CreateProcessor.__super__.handleDependency.apply(this, [dBone, id, parentBone]);
+			if(dBone && parentBone && _.isObject(dBone)) {
+				var dependencies = (dBone.$module && !this.ctx.query.isCreated(dBone)) ? { id: depId, bone: dBone } : {};
 			}
-			Context.BoneFactory.add(_.extend({
-				id: parentBone.id, class: mBone.$module.class,
+			Context.BoneFactory.add({
+				id: parentBone.id, class: mBone.$module.class, dependencies: dependencies,
 				params: mBone.$module.params, success: _.bind(this.create, this)
-			}, dependencies));
+			});
 			return result;
 		},
 
