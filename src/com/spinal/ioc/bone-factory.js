@@ -49,16 +49,18 @@ define(['core/spinal',
 
 		/**
 		*	Adds a new module into the stack
+		*	If the module has a dependency that was added previously, it will swap positions.
 		*	@public
 		*	@chainable
 		*	@method addModule
-		*	@param moduleId {Object} module data
-		*	@param [dependency] {Object} dependency of the module to load
+		*	@param module {Object} module data
 		*	@return {com.spinal.ioc.BoneFactory}
 		**/
-		add: function(module, dependency, callback) {
+		add: function(module, callback) {
 			if(!module || !_.isObject(module)) return this;
-			this.modules.push(module);
+			var eModule = this.exists(module.id);
+			(eModule) ? eModule.dependency = eModule.dependency.concat(module.dependency) : this.modules.push(module);
+			if(module.dependency) this.swap(module.id, module.dependency[0].id);
 			return this;
 		},
 
@@ -73,6 +75,45 @@ define(['core/spinal',
 		remove: function(module) {
 			if(!module) return this;
 			this.modules.removeBy(_.bind(function(m) { return (m.id && module.id && m.id === module.id);  }, this));
+			return this;
+		},
+
+		/**
+		*   Returns the 1-based position where an object is on the modules stack by id
+		*	@public
+		*	@method search
+		*	@param id {String} module id
+		*	@return Number
+		**/
+		getPos: function(id) {
+			return this.modules.findPos(function(element) { return (element.id === id); });
+		},
+
+		/**
+		*	Checks if the module exists or was added into the stack by module id
+		*	@public
+		*	@method exists
+		*	@param moduleId {String} module id
+		*	@return Boolean
+		**/
+		exists: function(moduleId) {
+			if(!moduleId || moduleId === '') return false;
+			return this.modules.find(function(module) { return (module.id === moduleId); });
+		},
+
+		/**
+		*	Swaps modules order based on dependents
+		*	@public
+		*	@method swap
+		*	@param moduleId {Object} module data
+		*	@param dependency {Object} dependency data
+		*	@return Boolean
+		**/
+		swap: function(moduleId, dependencyId) {
+			var modPos = this.getPos(moduleId), depPos = this.getPos(dependencyId);
+			if(!_.isNull(modPos) && !_.isNull(depPos)) this.modules.swap(function(e, i) {
+				return (i === depPos && modPos < i) ? modPos : null;
+			});
 			return this;
 		},
 

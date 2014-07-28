@@ -46,6 +46,26 @@ define(['ioc/context',
 		},
 
 		/**
+		*	Add the module dependency into the bone factory stack
+		*	@private
+		*	@chainable
+		*	@method _enqueue
+		*	@param moduleId {String} module id
+		*	@param dependencies {Array} dependency for the module
+		*	@param success {Function} callback function to be executed once the module is loaded
+		*	@return {com.spinal.ioc.processor.CreateProcessor}
+		**/
+		_enqueue: function(moduleId, dependencies, success) {
+			var mBone = this.ctx.query.findBoneById(moduleId);
+			if(!mBone) return this;
+			Context.BoneFactory.add({
+				id: moduleId, class: mBone.$module.class, params: mBone.$module.params,
+				dependency: dependencies, success: success
+			});
+			return this;
+		},
+
+		/**
 		*	Creates an instance of the module passing the parameters to the constructor function
 		*	@public
 		*	@method create
@@ -55,25 +75,21 @@ define(['ioc/context',
 		**/
 		create: function(className, data) {
 			if(!className || !data) throw new Error('Module Create Error'); // Convert it into a defined exception.
-			if(!data.dependencies) console.log('Create (NO Dependencies): ', data.id);
-			if(data.dependencies) this.injectDependency(data);
 			var bone = this.ctx.query.findBoneById(data.id);
-				bone._$created = (bone) ? Context.BoneFactory.create(className, data.params) : null;
+			if(data.dependency) this.injectDependency(bone.$module, data.dependency);
+			bone._$created = (bone) ? Context.BoneFactory.create(className, data.params) : null;
 			return bone._$created;
 		},
 
 		/**
-		*	Inject Dependencies via constructor params into the current module
-		*	and creates the module
+		*	Inject dependency via constructor params into the current module
 		*	@public
 		*	@method injectDependency
-		*	@param data {Object} module data (includes module id, params reference object and so on)
-		*	@return Object
-		*	@FIXME: Order ir wrong first should instanciate modules with no dependencies!!
+		*	@param module {Object} bone module in which the dependency will be injected
+		*	@param dependency {Object} dependency data
 		**/
-		injectDependency: function(data) {
-			// use module._$created to inject dependencies into the dependent module but in order
-			console.log('InjectDependency()', data.id);
+		injectDependency: function(module, dependency) {
+			_.each(dependency, function(d) { module.params[d.key] = this.ctx.query.findBoneById(d.id)._$created; }, this);
 		},
 
 		/**
@@ -98,16 +114,12 @@ define(['ioc/context',
 		**/
 		handleDependency: function(bone, id, parentBone) {
 			var depId = this.getDependency(bone),
-				dBone = (depId) ? this.ctx.query.findBoneById(depId) : null,
-				mBone = this.ctx.query.findBoneById(parentBone.id);
+				dBone = (depId) ? this.ctx.query.findBoneById(depId) : null;
 			var result = CreateProcessor.__super__.handleDependency.apply(this, [dBone, id, parentBone]);
-			if(dBone && parentBone && _.isObject(dBone)) {
-				var dependencies = (dBone.$module && !this.ctx.query.isCreated(dBone)) ? { id: depId, bone: dBone } : {};
+			if(_.isUndefined(result) && dBone && parentBone && _.isObject(dBone)) {
+				var dependency = (dBone.$module && !this.ctx.query.isCreated(dBone)) ? { id: depId, key: id } : null;
+				this._enqueue(parentBone.id, [dependency], _.bind(this.create, this));
 			}
-			Context.BoneFactory.add({
-				id: parentBone.id, class: mBone.$module.class, dependencies: dependencies,
-				params: mBone.$module.params, success: _.bind(this.create, this)
-			});
 			return result;
 		},
 
@@ -126,8 +138,7 @@ define(['ioc/context',
 				if(!bone.class) throw new ProcessorException('InvalidModuleDeclaration');
 				(bone.params && this.hasDependencies(bone.params)) ?
 					CreateProcessor.__super__.execute.call(this, this.handleNotation, bone.params, parentBone.id) :
-					Context.BoneFactory.add({ id: parentBone.id, class: bone.class,
-						params: bone.params, success: _.bind(this.create, this) });
+					this._enqueue(parentBone.id, null, _.bind(this.create, this));
 			}
 			return result;
 		},

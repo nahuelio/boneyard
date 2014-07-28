@@ -356,6 +356,28 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 				this.collection.sort(comparator) :
 				this.collection.sort();
 			return this;
+		},
+
+		/**
+		*	Swap element positions that matches the comparator evaluation function
+		*	@public
+		*	@chainable
+		*	@method swap
+		*	@param comparator {Function} comparator function
+		*	@return {com.spinal.util.adt.Collection}
+		**/
+		swap: function(comparator) {
+			if(!_.isUndefined(comparator) && _.isFunction(comparator)) {
+				for(var i = 0; i < this.collection.length; i++) {
+					var ix = comparator(this.collection[i], i);
+					if(!_.isNull(ix) && ix > -1) {
+						var e = this.collection[i];
+						this.collection[i] = this.collection[ix];
+						this.collection[ix] = e;
+					}
+				}
+			}
+			return this;
 		}
 
 	}, {

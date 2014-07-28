@@ -99,7 +99,7 @@ define(['core/spinal',
 		},
 
 		/**
-		*    Returns the 1-based position where an object is on this stack
+		*   Returns the 1-based position where an object is on this stack
 		*	@public
 		*	@method search
 		*	@param element {Object} element to get 1-based position

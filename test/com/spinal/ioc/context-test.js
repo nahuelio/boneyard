@@ -48,7 +48,6 @@ define(['ioc/context',
 					console.log(result);
 				}, this)).on(Context.EVENTS.ready, _.bind(function(result) {
 					expect(result).to.be.ok();
-					console.log(result);
 					console.log('----------------------------------------------------');
 					console.log('Dependency: ', this.appContext.spec['global'].$module.params);
 				}, this));
@@ -70,11 +69,11 @@ define(['ioc/context',
 					console.log(result);
 				}, this)).on(Context.EVENTS.ready, _.bind(function(result) {
 					expect(result).to.be.ok();
-					console.log(result);
 					console.log('----------------------------------------------------');
-					console.log('Dependency: ', this.appContext.spec['content'].$module.params);
-					console.log('Dependency: ', this.appContext.spec['viewC'].$module.params);
-					console.log('Dependency: ', this.appContext.spec['subcontent'].$module.params);
+					console.log('Dependency: ', this.appContext.spec['content'].$module.params.dependencyA);
+					console.log('Dependency: ', this.appContext.spec['viewC'].$module.params.dependencyA);
+					console.log('Dependency: ', this.appContext.spec['subcontent'].$module.params.dependency1);
+					console.log('Dependency: ', this.appContext.spec['subcontent'].$module.params.dependency2);
 				}, this));
 
 				this.appContext.wire(AdvancedSpec, function(ctx) {

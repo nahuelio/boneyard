@@ -56,7 +56,7 @@ define(['ioc/context',
 		**/
 		handleNotation: function(bone, id, parentRef) {
 			if(this.ctx.query.isCreated(bone)) {
-				console.log('Ready $Created -> ', id);
+				//console.log('Ready $Created -> ', id);
 				return true;
 			}
 			return false;

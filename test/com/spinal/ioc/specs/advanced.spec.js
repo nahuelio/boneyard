@@ -11,14 +11,14 @@ define(['specs/main.spec'], function(MainSpec) {
 		content: {
 			$module: {
 				class: 'ui/container',
-				params: { id: 'content', dependency: '$bone!viewC' }
+				params: { id: 'content', dependencyA: '$bone!viewC' }
 			}
 		},
 
-		viewC: {
+		view1: {
 			$module: {
-				class: 'ui/container',
-				params: { id: 'viewC', dependency: '$bone!viewD' }
+				class: 'ui/view',
+				params: { id: 'view1' }
 			}
 		},
 
@@ -29,17 +29,17 @@ define(['specs/main.spec'], function(MainSpec) {
 			}
 		},
 
-		viewE: {
+		view2: {
 			$module: {
 				class: 'ui/view',
-				params: { id: 'viewE' }
+				params: { id: 'view2' }
 			}
 		},
 
-		viewF: {
+		viewC: {
 			$module: {
-				class: 'ui/view',
-				params: { id: 'viewF' }
+				class: 'ui/container',
+				params: { id: 'viewC', dependencyA: '$bone!viewD' }
 			}
 		},
 
@@ -49,8 +49,8 @@ define(['specs/main.spec'], function(MainSpec) {
 				params: {
 					id: 'subcontent',
 					css: '$bone!theme',
-					dependencyA: '$bone!viewE',
-					dependencyB: '$bone!viewF'
+					dependency1: '$bone!view1',
+					dependency2: '$bone!view2'
 				}
 			}
 		}
