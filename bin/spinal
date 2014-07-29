@@ -5,7 +5,7 @@ var program = require('commander'),
 	fs = require('fs'),
 	path = require('path'),
 	lib = path.join(path.dirname(fs.realpathSync(__filename)), '../'),
-	build = require(lib + 'config/build');
+	build = require(lib + 'tools/build');
 
 /**
 *	Spinal Compile Tool

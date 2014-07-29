@@ -19,7 +19,7 @@ define(['ioc/context',
 		});
 
 		/**
-		*	Constructor test
+		*	Context#new() test
 		**/
 		describe('#new()', function() {
 
@@ -29,6 +29,23 @@ define(['ioc/context',
 					expect(ctx.spec).to.be.ok();
 					done();
 				}, this));
+			});
+
+		});
+
+		/**
+		*	Context#factory() test
+		**/
+		describe('#factory()', function() {
+
+			it('Should NOT execute a factory method (method not defined)', function() {
+				var result = this.appContext.factory();
+				expect(result).not.be.ok();
+			});
+
+			it('Should NOT execute a factory method (method is not declared in BoneFactory Class)', function() {
+				var result = this.appContext.factory('method-non-existent');
+				expect(result).not.be.ok();
 			});
 
 		});
@@ -52,11 +69,7 @@ define(['ioc/context',
 					console.log('Dependency: ', this.appContext.spec['global'].$module.params);
 				}, this));
 
-				this.appContext.wire(SimpleSpec, function(ctx) {
-					expect(ctx).to.be.ok();
-					expect(ctx.spec).to.be.ok();
-					expect(ctx.spec.content).to.be.ok();
-				});
+				this.appContext.wire(SimpleSpec);
 			});
 
 			it('Should Wire Advanced Spec (Module Dependency)', function(done) {
@@ -81,6 +94,10 @@ define(['ioc/context',
 					expect(ctx.spec).to.be.ok();
 					expect(ctx.spec.viewC).to.be.ok();
 				});
+			});
+
+			it('Should NOT wire Specs (Spect format is invalid)', function() {
+
 			});
 
 		});
