@@ -1,5 +1,5 @@
 /**
-*	@module com/spinal/ioc
+*	@module com.spinal.ioc
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['core/spinal',
@@ -124,6 +124,7 @@ define(['core/spinal',
 		*	@public
 		*	@chainable
 		*	@method wire
+		*	@throws {com.spinal.util.error.types.ContextException}
 		*	@param spec {Object} context specification to be wired
 		*	@param callback {Function} callback function to be called after autowiring.
 		*	@return {com.spinal.ioc.Context}
@@ -135,6 +136,59 @@ define(['core/spinal',
 			this._build(spec);
 			Context.BoneFactory.set(Context.PROCESSORS.collection).load(_.bind(this._onProcessorsLoaded, this, callback));
 			return this;
+		},
+
+		/**
+		*	Perform a look up of bones by a predicate passed as parameter.
+		*	If a bone is specified as a extra argument, it will narrow the search down to the specific bone context.
+		*	@public
+		*	@method getBonesBy
+		*	@param predicate {Function} predicate evaluation
+		*	@return Array
+		**/
+		getBonesBy: function(predicate) {
+			var result = [];
+			for(var b in this.spec) {
+				var m = (this.query.isModule(this.spec[b]) && this.query.isCreated(this.spec[b])) ?
+					this.spec[b]._$created : this.spec[b];
+				if(predicate(m, b)) result.push(m);
+			}
+			return result;
+		},
+
+		/**
+		*	Perform a look up of bones by class name passed as parameter.
+		*	This method will require to make use of the Static NAME property declared in the constructor.
+		*	@public
+		*	@method getBonesByClass
+		*	@param className {String} bone class name
+		*	@return Array
+		**/
+		getBonesByClass: function(className) {
+			return this.getBonesBy(_.bind(function(bone, id) { return (bone.constructor.NAME === className); }, this));
+		},
+
+		/**
+		*	Perform a look up of bones by type passed as parameter.
+		*	@public
+		*	@method getBonesByType
+		*	@param type {String} bone type
+		*	@return Array
+		**/
+		getBonesByType: function(type) {
+			return this.getBonesBy(function(bone, id) { return (bone instanceof type); });
+		},
+
+		/**
+		*	Perform a look up by bone id passed as parameter
+		*	@public
+		*	@method getBone
+		*	@param id {String} bone id
+		*	@return Object
+		**/
+		getBone: function(id) {
+			var bone = this.query.findBoneById(id);
+			return (this.query.isModule(bone)) ? (this.query.isCreated(bone) ? bone._$created : null) : bone;
 		}
 
 	}, {

@@ -4,7 +4,7 @@
 **/
 define(['core/spinal',
 		'util/adt/stack',
-		'util/factories/factory'], function(Spinal, Stack, Factory) {
+		'util/factory'], function(Spinal, Stack, Factory) {
 
 	/**
 	*	BoneFactory Class
@@ -53,14 +53,18 @@ define(['core/spinal',
 		*	@public
 		*	@chainable
 		*	@method addModule
-		*	@param module {Object} module data
+		*	@param m {Object} module data
 		*	@return {com.spinal.ioc.BoneFactory}
 		**/
-		add: function(module, callback) {
-			if(!module || !_.isObject(module)) return this;
-			var eModule = this.exists(module.id);
-			(eModule) ? eModule.dependency = eModule.dependency.concat(module.dependency) : this.modules.push(module);
-			if(module.dependency) this.swap(module.id, module.dependency[0].id);
+		add: function(m, callback) {
+			if(!m || !_.isObject(m)) return this;
+			var em = this.exists(m.id);
+			if(em) {
+				em.dependency = (m.dependency) ? em.dependency.concat(m.dependency) : em.dependency;
+			} else {
+				this.modules.push(m);
+			}
+			if(m.dependency) this.swap(m.id, m.dependency[0].id);
 			return this;
 		},
 
@@ -139,14 +143,15 @@ define(['core/spinal',
 		*	Loads and Registers a list of modules into the factory.
 		*	@public
 		*	@method load
-		*	@param [callback] {Function} Optional Callback
+		*	@param callback {Function} Callback to be called after modules are loaded and registered.
+		*	@FIXME: Improve the portability of this by not being too specific with the parameters
+		*	('modules' is irrelevant if I want to access this method to load a single module).
 		*	@return {com.spinal.ioc.BoneFactory}
 		**/
 		load: function(callback, modules) {
 			if(m = this.modules.pop()) {
 				if(!modules) modules = [];
-				if(!m.id || !m.class) this.register(callback, modules);
-				this.register(m, modules, callback);
+				(!m.id || !m.class) ? this.load(callback, modules) : this.register(m, modules, callback);
 			} else {
 				this.modules.reset({ silent: true });
 				if(callback && _.isFunction(callback)) callback(modules);

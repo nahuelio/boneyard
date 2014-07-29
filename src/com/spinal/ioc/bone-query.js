@@ -79,6 +79,17 @@ define(['ioc/context',
 		},
 
 		/**
+		*	Checks if the bone defined was declared as a module.
+		*	@public
+		*	@method isModule
+		*	@param bone {Object} current bone to be evaluated
+		*	@return Boolean
+		**/
+		isModule: function(bone) {
+			return (bone && bone.$module);
+		},
+
+		/**
 		*	Checks if the bone was succesufuly created
 		*	@public
 		*	@method isCreated

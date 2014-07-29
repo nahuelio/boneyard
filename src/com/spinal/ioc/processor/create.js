@@ -69,12 +69,13 @@ define(['ioc/context',
 		*	Creates an instance of the module passing the parameters to the constructor function
 		*	@public
 		*	@method create
+		*	@throws {com.spinal.util.error.types.ProcessorException}
 		*	@param className {String} current module class name to pass to BoneFactory
 		*	@param [params] {Object} module data (includes module id, params reference object and so on)
 		*	@return Object
 		**/
 		create: function(className, data) {
-			if(!className || !data) throw new Error('Module Create Error'); // Convert it into a defined exception.
+			if(!className || !data) throw new ProcessorException('CreateModuleException')
 			var bone = this.ctx.query.findBoneById(data.id);
 			if(data.dependency) this.injectDependency(bone.$module, data.dependency);
 			bone._$created = (bone) ? Context.BoneFactory.create(className, data.params) : null;
@@ -127,6 +128,7 @@ define(['ioc/context',
 		*	Handles specific notation with the current processor.
 		*	@public
 		*	@method handleNotation
+		*	@throws {com.spinal.util.error.types.ProcessorException}
 		*	@param bone {Object} current bone to evaluate
 		*	@param id {Object} current bone id
 		*	@param [parentBone] {Object} parent bone ref
@@ -136,9 +138,9 @@ define(['ioc/context',
 			var result = CreateProcessor.__super__.handleNotation.apply(this, arguments);
 			if(result) {
 				if(!bone.class) throw new ProcessorException('InvalidModuleDeclaration');
-				(bone.params && this.hasDependencies(bone.params)) ?
-					CreateProcessor.__super__.execute.call(this, this.handleNotation, bone.params, parentBone.id) :
-					this._enqueue(parentBone.id, null, _.bind(this.create, this));
+				if(bone.params && this.hasDependencies(bone.params))
+					CreateProcessor.__super__.execute.call(this, this.handleNotation, bone.params, parentBone.id);
+				this._enqueue(parentBone.id, null, _.bind(this.create, this));
 			}
 			return result;
 		},

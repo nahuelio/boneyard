@@ -8,6 +8,28 @@ define(['specs/main.spec'], function(MainSpec) {
 
 		$specs: MainSpec,
 
+		model: {
+			$module: {
+				class: 'mvc/model',
+				params: {
+					schema: {
+						_boolean: 'boolean',
+						_string: 'string',
+						_int: 'int',
+ 						_float: 'float'
+					},
+					_boolean: true,
+					_string: '$bone!theme',
+					_int: 10,
+					_float: 0.5,
+					_object: { prop: 'value' },
+					_array: [1, 2, 3],
+					_date: new Date(),
+					_regexp: new RegExp()
+				}
+			}
+		},
+
 		content: {
 			$module: {
 				class: 'ui/container',
@@ -39,7 +61,7 @@ define(['specs/main.spec'], function(MainSpec) {
 		viewC: {
 			$module: {
 				class: 'ui/container',
-				params: { id: 'viewC', dependencyA: '$bone!viewD' }
+				params: { id: 'viewC', css: '$bone!theme', dependencyA: '$bone!viewD' }
 			}
 		},
 
@@ -48,7 +70,7 @@ define(['specs/main.spec'], function(MainSpec) {
 				class: 'ui/container',
 				params: {
 					id: 'subcontent',
-					css: '$bone!theme',
+					model: '$bone!model',
 					dependency1: '$bone!view1',
 					dependency2: '$bone!view2'
 				}

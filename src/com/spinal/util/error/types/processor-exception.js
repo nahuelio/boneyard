@@ -1,5 +1,5 @@
 /**
-*	@module com/spinal/util/error/types
+*	@module com.spinal.util.error.types
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['core/spinal',
@@ -38,13 +38,15 @@ define(['core/spinal',
 		*		Generic (inherited from com.spinal.util.error.exception)
 		*		BoneNotFound
 		*		InvalidModuleDeclaration
+		*		CreateModuleException
 		*	@static
 		*	@property TYPES
 		*	@type Object
 		**/
 		TYPES: {
 			BoneNotFound: 'Bone {{id}} was not found.',
-			InvalidModuleDeclaration: 'Module bone {{id}} is missing required \'class\' declaration.'
+			InvalidModuleDeclaration: 'Module bone {{id}} is missing required \'class\' declaration.',
+			CreateModuleException: 'Create Model operation requires a \'className\' and module \'data\' in order to work.'
 		}
 
 	}));

@@ -3,8 +3,11 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['ioc/context',
+		'util/error/types/context-exception',
+		'ui/view',
+		'ui/container',
 		'specs/simple.spec',
-		'specs/advanced.spec'], function(Context, SimpleSpec, AdvancedSpec) {
+		'specs/advanced.spec'], function(Context, ContextException, View, Container, SimpleSpec, AdvancedSpec) {
 
 	describe('com.spinal.ioc.Context', function() {
 
@@ -55,18 +58,21 @@ define(['ioc/context',
 		**/
 		describe('#wire()', function() {
 
-			it('Should Wire Simple specs (String, Numbers, Array, Date, etc)', function(done) {
+			it('Should Wire Simple specs (Boolean, String, Numbers, Object, Array, Date, RegExp, etc)', function(done) {
 				this.appContext.on(Context.EVENTS.initialized, _.bind(function(ctx) {
 					expect(ctx).to.be.ok();
 					this.appContext.off();
 					done();
 				}, this)).on(Context.EVENTS.plugin + ' ' + Context.EVENTS.created, _.bind(function(result) {
 					expect(result).to.be.ok();
-					console.log(result);
+					expect(result).to.be.an('array');
 				}, this)).on(Context.EVENTS.ready, _.bind(function(result) {
 					expect(result).to.be.ok();
-					console.log('----------------------------------------------------');
-					console.log('Dependency: ', this.appContext.spec['global'].$module.params);
+					var model = this.appContext.getBone('model');
+					expect(model.get('_o')).to.be.an('object');
+					expect(model.get('_b')).to.be.an('boolean');
+					expect(model.get('_a')[0]).to.be.equal(model.get('_n'));
+					expect(model.get('_o').prop).to.be.equal(model.get('_s'));
 				}, this));
 
 				this.appContext.wire(SimpleSpec);
@@ -79,14 +85,12 @@ define(['ioc/context',
 					done();
 				}, this)).on(Context.EVENTS.plugin + ' ' + Context.EVENTS.created, _.bind(function(result) {
 					expect(result).to.be.ok();
-					console.log(result);
+					expect(result).to.be.an('array');
 				}, this)).on(Context.EVENTS.ready, _.bind(function(result) {
 					expect(result).to.be.ok();
-					console.log('----------------------------------------------------');
-					console.log('Dependency: ', this.appContext.spec['content'].$module.params.dependencyA);
-					console.log('Dependency: ', this.appContext.spec['viewC'].$module.params.dependencyA);
-					console.log('Dependency: ', this.appContext.spec['subcontent'].$module.params.dependency1);
-					console.log('Dependency: ', this.appContext.spec['subcontent'].$module.params.dependency2);
+					var model = this.appContext.getBone('model'),
+						theme = this.appContext.getBone('theme');
+					expect(model.get('_string')).to.be.equal(theme);
 				}, this));
 
 				this.appContext.wire(AdvancedSpec, function(ctx) {
@@ -97,7 +101,60 @@ define(['ioc/context',
 			});
 
 			it('Should NOT wire Specs (Spect format is invalid)', function() {
+				expect(_.bind(function() {
+					this.appContext.wire('non-valid-format');
+				}, this)).to.throwException(function(e) {
+					expect(e).to.be.ok();
+					expect(e.message).to.be.equal(ContextException.TYPES.InvalidSpecFormat);
+				});
+			});
 
+		});
+
+		/**
+		*	Context#getBonesBy() test
+		**/
+		describe('#getBonesBy()', function() {
+
+			it('Should return a list of bones by a predicate', function() {
+				var bones = this.appContext.getBonesBy(function(bone, id) {
+					return (bone.id && bone.id.indexOf('content') != -1);
+				});
+				expect(bones).to.have.length(2);
+				expect(bones[0]).to.be.a(Container);
+			});
+
+			it('Should return an empty list of bones by a predicate', function() {
+				var bones = this.appContext.getBonesBy(function(bone, id) {
+					return (bone.id && bone.id === 'non-existent');
+				});
+				expect(bones).to.have.length(0);
+			});
+
+		});
+
+		/**
+		*	Context#getBonesByClass() test
+		**/
+		describe('#getBonesByClass()', function() {
+
+			it('Should return a list of bones filtered by class', function() {
+				var bones = this.appContext.getBonesByClass(View.NAME);
+				expect(bones).to.have.length(5);
+				_.each(bones, function(b) { expect(b).to.be.an(View); });
+			});
+
+		});
+
+		/**
+		*	Context#getBonesByType() test
+		**/
+		describe('#getBonesByType()', function() {
+
+			it('Should return a list of bones filtered by type', function() {
+				var bones = this.appContext.getBonesByType(Container);
+				expect(bones).to.have.length(6);
+				_.each(bones, function(b) { expect(b).to.be.an(Container); });
 			});
 
 		});

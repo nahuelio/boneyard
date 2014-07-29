@@ -94,7 +94,7 @@ define(['core/spinal',
 		**/
 		handleDependency: function(bone, id, parentBone) {
 			if(!bone) throw new ProcessorException('BoneNotFound');
-			if(_.isString(bone)) return (parentBone.parent[id] = bone);
+			if(!this.ctx.query.isModule(bone)) return (parentBone.parent[id] = bone);
 		},
 
 		/**
@@ -108,10 +108,11 @@ define(['core/spinal',
 		handleNotation: function(bone, id) {
 			var result = this.matchNotation(id);
 			if(!result) {
-				if(_.isObject(bone) || _.isArray(bone))
+				if(_.isObject(bone) || _.isArray(bone)) {
 					this.constructor.__super__.execute.apply(this, [this.handleNotation, bone, id]);
-				if(_.isString(bone) && this.constructor.__super__.matchNotation.call(this.constructor.__super__, bone))
+				} else if(this.constructor.__super__.matchNotation.call(this.constructor.__super__, bone)) {
 					this.handleDependency.apply(this, arguments);
+				}
 			}
 			return result;
 		},

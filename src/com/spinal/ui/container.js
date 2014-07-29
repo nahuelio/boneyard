@@ -1,5 +1,5 @@
 /**
-*	@module com/spinal/ui
+*	@module com.spinal.ui
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['core/spinal',
@@ -32,7 +32,7 @@ define(['core/spinal',
 
 		/**
 		*	Constructor
-		*	@constructor
+		*	@method constructor
 		*	@example
 		*		<b>Examples</b>
 		*		var example = new Container();

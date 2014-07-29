@@ -1,5 +1,5 @@
 /**
-*	@module com/spinal/ui
+*	@module com.spinal.ui
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['core/spinal',
@@ -57,7 +57,7 @@ define(['core/spinal',
 
 		/**
 		*	Constructor
-		*	@constructor
+		*	@method constructor
 		*	@param [options] {Object} View Options
 		**/
 		constructor: function(options) {
