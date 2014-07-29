@@ -2,5 +2,6 @@
 *	SpinalJS | MVC Module Package
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define(['mvc/controller',
+define(['mvc/model',
+		'mvc/controller',
 		'mvc/service'], function() {});

@@ -1,12 +1,14 @@
 /**
-*	@module com/spinal/ioc
+*	@module com.spinal.ioc
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['core/spinal',
 		'util/string',
+		'util/adt/iterator',
 		'ioc/bone-factory',
 		'ioc/bone-query',
-		'util/error/types/context-exception'], function(Spinal, StringUtil, BoneFactory, BoneQuery, ContextException) {
+		'util/error/types/context-exception'], function(Spinal, StringUtil, Iterator,
+														BoneFactory, BoneQuery, ContextException) {
 
 	/**
 	*	IOC Context Class
@@ -67,12 +69,25 @@ define(['core/spinal',
 		*	@param processors {Array} Array of Processor Modules
 		**/
 		_onProcessorsLoaded: function(callback, processors) {
-			_.each(processors, function(p) {
-				Context[p.NAME] = this.factory('create', p.NAME, this);
-				Context[p.NAME].execute();
-			}, this);
-			if(callback && _.isFunction(callback)) callback(this);
-			this.trigger(Context.EVENTS.initialized, this);
+			this.on(Context.EVENTS.processed, _.bind(this._onProcessorFinished, this, callback));
+			_.each(processors, function(p) { Context[p.NAME] = this.factory('create', p.NAME, this); }, this);
+			this._onProcessorFinished(callback);
+		},
+
+		/**
+		*	Processor Finish Handler
+		*	@private
+		*	@method _onProcessorFinished
+		*	@param data {Object} event data
+		**/
+		_onProcessorFinished: function(callback, event) {
+			if(Context.PROCESSORS.hasNext()) {
+				Context[Context.PROCESSORS.next().id].execute();
+			} else {
+				Context.PROCESSORS.rewind();
+				if(callback && _.isFunction(callback)) callback(this);
+				this.trigger(Context.EVENTS.initialized, this);
+			}
 		},
 
 		/**
@@ -109,6 +124,7 @@ define(['core/spinal',
 		*	@public
 		*	@chainable
 		*	@method wire
+		*	@throws {com.spinal.util.error.types.ContextException}
 		*	@param spec {Object} context specification to be wired
 		*	@param callback {Function} callback function to be called after autowiring.
 		*	@return {com.spinal.ioc.Context}
@@ -116,19 +132,63 @@ define(['core/spinal',
 		wire: function(spec, callback) {
 			if(!spec) { callback(this); return this; }
 			if(!_.isObject(spec)) throw new ContextException('InvalidSpecFormat');
-			Context.BoneFactory.register(Context.PROCESSORS, _.bind(this._onProcessorsLoaded, this, callback));
-			return this._build(spec);
+			this.spec = {};
+			this._build(spec);
+			Context.BoneFactory.set(Context.PROCESSORS.collection).load(_.bind(this._onProcessorsLoaded, this, callback));
+			return this;
 		},
 
 		/**
-		*	Notifies current context that a bone has been affected
+		*	Perform a look up of bones by a predicate passed as parameter.
+		*	If a bone is specified as a extra argument, it will narrow the search down to the specific bone context.
 		*	@public
-		*	@method notify
-		*	@param eventType {String} Bone Event Type
-		*	@param data {Object} data passed from the original event
+		*	@method getBonesBy
+		*	@param predicate {Function} predicate evaluation
+		*	@return Array
 		**/
-		notify: function(eventType, data) {
-			this.trigger(Context.EVENTS.changed, { type: eventType, data: data });
+		getBonesBy: function(predicate) {
+			var result = [];
+			for(var b in this.spec) {
+				var m = (this.query.isModule(this.spec[b]) && this.query.isCreated(this.spec[b])) ?
+					this.spec[b]._$created : this.spec[b];
+				if(predicate(m, b)) result.push(m);
+			}
+			return result;
+		},
+
+		/**
+		*	Perform a look up of bones by class name passed as parameter.
+		*	This method will require to make use of the Static NAME property declared in the constructor.
+		*	@public
+		*	@method getBonesByClass
+		*	@param className {String} bone class name
+		*	@return Array
+		**/
+		getBonesByClass: function(className) {
+			return this.getBonesBy(_.bind(function(bone, id) { return (bone.constructor.NAME === className); }, this));
+		},
+
+		/**
+		*	Perform a look up of bones by type passed as parameter.
+		*	@public
+		*	@method getBonesByType
+		*	@param type {String} bone type
+		*	@return Array
+		**/
+		getBonesByType: function(type) {
+			return this.getBonesBy(function(bone, id) { return (bone instanceof type); });
+		},
+
+		/**
+		*	Perform a look up by bone id passed as parameter
+		*	@public
+		*	@method getBone
+		*	@param id {String} bone id
+		*	@return Object
+		**/
+		getBone: function(id) {
+			var bone = this.query.findBoneById(id);
+			return (this.query.isModule(bone)) ? (this.query.isCreated(bone) ? bone._$created : null) : bone;
 		}
 
 	}, {
@@ -151,9 +211,21 @@ define(['core/spinal',
 			**/
 			initialized: 'com:spinal:ioc:context:initialized',
 			/**
-			*	@event changed
+			*	@event processed
 			**/
-			changed: 'com:spinal:ioc:context:changed'
+			processed: 'com:spinal:ioc:processor:processed',
+			/**
+			*	@event created
+			**/
+			plugin: 'com:spinal:ioc:context:bone:plugin',
+			/**
+			*	@event created
+			**/
+			created: 'com:spinal:ioc:context:bone:created',
+			/**
+			*	@event ready
+			**/
+			ready: 'com:spinal:ioc:context:bone:ready'
 		},
 
 		/**
@@ -167,13 +239,13 @@ define(['core/spinal',
 		*	Processors List used by the context
 		*	@static
 		*	@property PROCESSORS
-		*	@type Array
+		*	@type {com.spinal.util.adt.Iterator}
 		**/
-		PROCESSORS: [
-			'ioc/processor/plugin',
-			'ioc/processor/create',
-			'ioc/processor/ready'
-		],
+		PROCESSORS: new Iterator([
+			{ id: 'PluginProcessor', class: 'ioc/processor/plugin' },
+			{ id: 'CreateProcessor', class: 'ioc/processor/create' },
+			{ id: 'ReadyProcessor', class: 'ioc/processor/ready' }
+		]),
 
 		/**
 		*	@static

@@ -1,5 +1,5 @@
 /**
-*	@module com/spinal/mvc
+*	@module com.spinal.mvc
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['core/spinal'], function(Spinal) {

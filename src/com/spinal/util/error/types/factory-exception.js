@@ -1,5 +1,5 @@
 /**
-*	@module com/spinal/util/error/types
+*	@module com.spinal.util.error.types
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['core/spinal',

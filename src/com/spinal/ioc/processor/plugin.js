@@ -54,7 +54,6 @@ define(['ioc/context',
 		handleNotation: function(bone, id) {
 			var b = this.matchNotation(id);
 			if(b) {
-				console.log('Plugins -> ', id, bone);
 				delete this.ctx.spec[id];
 				return true;
 			}
@@ -68,7 +67,8 @@ define(['ioc/context',
 		*	@return {com.spinal.ioc.processor.CreateProcessor}
 		**/
 		execute: function() {
-			this.ctx.notify(PluginProcessor.EVENTS.plugin, this.ctx.query.findBonesBy(_.bind(this.handleNotation, this)));
+			this.ctx.trigger(Context.EVENTS.plugin, this.ctx.query.findBonesBy(_.bind(this.handleNotation, this)));
+			this.ctx.trigger(Context.EVENTS.processed, { type: PluginProcessor.NAME });
 			return this;
 		}
 

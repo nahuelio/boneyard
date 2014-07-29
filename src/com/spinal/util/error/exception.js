@@ -1,5 +1,5 @@
 /**
-*	@module com/spinal/util/error
+*	@module com.spinal.util.error
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 *	[ENHANCEMENT]: Add support for {{mustache}} in exception messages
 **/
@@ -63,7 +63,7 @@ define(['core/spinal'], function(Spinal) {
 
 	/**
 	*	__Type List__
-	*		
+	*
 	*		Generic
 	*	@static
 	*	@property TYPES

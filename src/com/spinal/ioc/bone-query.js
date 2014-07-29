@@ -76,6 +76,39 @@ define(['ioc/context',
 		**/
 		findBoneById: function(id) {
 			return (this.ctx.spec[id]) ? this.ctx.spec[id] : null;
+		},
+
+		/**
+		*	Checks if the bone defined was declared as a module.
+		*	@public
+		*	@method isModule
+		*	@param bone {Object} current bone to be evaluated
+		*	@return Boolean
+		**/
+		isModule: function(bone) {
+			return (bone && bone.$module);
+		},
+
+		/**
+		*	Checks if the bone was succesufuly created
+		*	@public
+		*	@method isCreated
+		*	@param bone {Object} current bone to be evaluated
+		*	@return Boolean
+		**/
+		isCreated: function(bone) {
+			return (bone && bone._$created);
+		},
+
+		/**
+		*	Checks if the bone completed the ready phase
+		*	@public
+		*	@method isReady
+		*	@param bone {Object} current bone to be evaluated
+		*	@return Boolean
+		**/
+		isReady: function(bone) {
+			return (bone && bone._$ready);
 		}
 
 	}, {

@@ -84,7 +84,7 @@ define(['core/spinal',
 		},
 
 		/**
-		*	Handler when a module depends on bone of 'String' type in order to be instanciated.
+		*	Handler when a module depends on a bone of 'String' type in order to be instanciated.
 		*	@public
 		*	@method handleDependency
 		*	@param id {Object} current bone id
@@ -94,8 +94,7 @@ define(['core/spinal',
 		**/
 		handleDependency: function(bone, id, parentBone) {
 			if(!bone) throw new ProcessorException('BoneNotFound');
-			parentBone.parent[id] = (_.isString(bone)) ? bone : null;
-			return parentBone.parent;
+			if(!this.ctx.query.isModule(bone)) return (parentBone.parent[id] = bone);
 		},
 
 		/**
@@ -109,10 +108,11 @@ define(['core/spinal',
 		handleNotation: function(bone, id) {
 			var result = this.matchNotation(id);
 			if(!result) {
-				if(_.isObject(bone) || _.isArray(bone))
+				if(_.isObject(bone) || _.isArray(bone)) {
 					this.constructor.__super__.execute.apply(this, [this.handleNotation, bone, id]);
-				if(_.isString(bone) && this.constructor.__super__.matchNotation.call(this.constructor.__super__, bone))
+				} else if(this.constructor.__super__.matchNotation.call(this.constructor.__super__, bone)) {
 					this.handleDependency.apply(this, arguments);
+				}
 			}
 			return result;
 		},
@@ -127,38 +127,14 @@ define(['core/spinal',
 		*	@return Array
 		**/
 		execute: function(predicate, bone, id) {
-			if(!predicate || !_.isFunction(predicate)) return [];
-			if(!this.matched) this.matched = [];
-			var context = (bone) ? bone : this.ctx.spec;
+			if(!predicate || !_.isFunction(predicate)) return false;
+			var result = false, context = (bone) ? bone : this.ctx.spec;
+			if(!bone) this.matches = [];
 			for(var bId in context) {
-				if(predicate.call(this, context[bId], bId, { parent: context, id: id })) {
-					this.matched.push({ id: id, bone: context[bId] });
-					break;
-				}
+				result = predicate.call(this, context[bId], bId, { parent: context, id: id });
+				if(result) { this.matches.push(id); break; }
 			}
-			return this.matched;
-		},
-
-		/**
-		*	Checks if the bone was succesufuly created
-		*	@public
-		*	@method isCreated
-		*	@param bone {Object} current bone to be evaluated
-		*	@return Boolean
-		**/
-		isCreated: function(bone) {
-			return (bone && bone._$created);
-		},
-
-		/**
-		*	Checks if the bone completed the ready phase
-		*	@public
-		*	@method isReady
-		*	@param bone {Object} current bone to be evaluated
-		*	@return Boolean
-		**/
-		isReady: function(bone) {
-			return (bone && bone._$ready);
+			return (!bone) ? this.matches : result;
 		}
 
 	}, {
@@ -168,27 +144,7 @@ define(['core/spinal',
 		*	@property NAME
 		*	@type String
 		**/
-		NAME: 'BoneProcessor',
-
-		/**
-		*	@static
-		*	@property EVENTS
-		*	@type Object
-		**/
-		EVENTS: {
-			/**
-			*	@event created
-			**/
-			plugin: 'com:spinal:ioc:context:bone:plugin',
-			/**
-			*	@event created
-			**/
-			created: 'com:spinal:ioc:context:bone:created',
-			/**
-			*	@event ready
-			**/
-			ready: 'com:spinal:ioc:context:bone:ready'
-		}
+		NAME: 'BoneProcessor'
 
 	}));
 

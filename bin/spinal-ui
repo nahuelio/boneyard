@@ -1,0 +1,29 @@
+#!/usr/bin/env node
+
+var program = require('commander'),
+	pkg = require('../package.json'),
+	fs = require('fs'),
+	path = require('path'),
+	lib = path.join(path.dirname(fs.realpathSync(__filename)), '../');
+	//spinalui = require(lib + 'tools/ui');
+
+/**
+*	Spinal UI Components Tool
+**/
+program
+	.version(pkg.version)
+	.description('Autowatch utility service to build components dynamically in a scratch pad page')
+	.usage('[options]')
+	.option('-s, --source', 'UI Component source path.')
+	.option('-t, --target', 'if target is specified, spinal-ui will use the compiled version.')
+	.option('-v, --verbose', 'Display useful information while building UI components.')
+	.parse(process.argv)
+	.name = 'spinal-ui';
+
+if(program.source) {
+	/**spinalui.exec('ui', {
+		source: program.source,
+		target: program.target,
+		verbose: program.verbose
+	});**/
+}

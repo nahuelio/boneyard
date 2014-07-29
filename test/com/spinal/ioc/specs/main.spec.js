@@ -14,7 +14,7 @@
 *		$bone! [boneId] . [property | method] Access to bone's properties or methods
 *
 *	- See if an IoC implementation should compose app flow like declaring event binding
-*	(when 'ready' state happends)
+*	(when 'ready' state happens)
 *
 **/
 define(['specs/header.spec',

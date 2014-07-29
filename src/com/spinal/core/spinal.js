@@ -1,6 +1,6 @@
 /**
 *	SpinalJS UI Framework
-*	@module com/spinal/core
+*	@module com.spinal.core
 *	@requires Backbone
 *	@author Patricio Ferrerira <3dimentionar@gmail.com>
 **/
@@ -187,11 +187,12 @@ define(['libs/backbone'], function() {
 
 		/**
 		*	Provides a generic Class with a generic interface to set and get properties
-		*	@class com.spinal.core.SpinalClass
 		*	FIXME: Separate set/get methods into a different interface.
 		*	Evaluate if set/get interface methods became useless!
 		*	!!!!!NOTE: Have to be careful when removing 'set', package UI and UTIL has an strong dependency on that.
 		*	You can access variable/method members through this['method/variable'].
+		*
+		*	@class com.spinal.core.SpinalClass
 		**/
 		var SpinalClass = exports.SpinalClass = namespace('com.spinal.core.SpinalClass', function() {
 			this.initialize.apply(this, arguments);

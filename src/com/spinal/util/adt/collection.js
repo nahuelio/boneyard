@@ -1,5 +1,5 @@
 /**
-*	@module com/spinal/util/adt
+*	@module com.spinal.util.adt
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
@@ -168,12 +168,11 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 		**/
 		contains: function(element) {
 			if(!this._valid(element)) return false;
-			if(!_.isNull(this._interface)) {
-				var attrs = (this._interface.prototype.toJSON) ? this.invoke('toJSON') : this.collection;
-				return (_.filter(attrs, _.matches(element)).length > 0);
-			} else {
-				return (_.filter(this.collection, _.matches(element)).length > 0);
-			}
+			var result = false, col = (this._interface && this._interface.prototype.toJSON) ?
+				this.invoke('toJSON') : this.collection;
+			for(var i = 0; i < col.length; i++)
+				if(_.isEqual(col[i], element)) { result = true; break; }
+			return result;
 		},
 
 		/**
@@ -344,7 +343,8 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 		},
 
 		/**
-		*	Sort the collection
+		*	Sort the collection by comparator passed as parameter.
+		*	If the function comparator is ommited, the standard sort will be applied.
 		*	@public
 		*	@chainable
 		*	@method sort
@@ -355,6 +355,28 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 			(!_.isUndefined(comparator) && _.isFunction(comparator)) ?
 				this.collection.sort(comparator) :
 				this.collection.sort();
+			return this;
+		},
+
+		/**
+		*	Swap element positions that matches the comparator evaluation function
+		*	@public
+		*	@chainable
+		*	@method swap
+		*	@param comparator {Function} comparator function
+		*	@return {com.spinal.util.adt.Collection}
+		**/
+		swap: function(comparator) {
+			if(!_.isUndefined(comparator) && _.isFunction(comparator)) {
+				for(var i = 0; i < this.collection.length; i++) {
+					var ix = comparator(this.collection[i], i);
+					if(!_.isNull(ix) && ix > -1) {
+						var e = this.collection[i];
+						this.collection[i] = this.collection[ix];
+						this.collection[ix] = e;
+					}
+				}
+			}
 			return this;
 		}
 

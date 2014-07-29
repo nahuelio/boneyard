@@ -55,8 +55,8 @@ define(['ioc/context',
 		*	@Note Once CreateProcessor finished their job, evaluates the presence of $ready notation.
 		**/
 		handleNotation: function(bone, id, parentRef) {
-			if(this.isCreated(bone)) {
-				console.log('Ready -> ', id, bone);
+			if(this.ctx.query.isCreated(bone)) {
+				//console.log('Ready $Created -> ', id);
 				return true;
 			}
 			return false;
@@ -69,7 +69,8 @@ define(['ioc/context',
 		*	@return {com.spinal.ioc.processor.ReadyProcessor}
 		**/
 		execute: function() {
-			this.ctx.notify(ReadyProcessor.EVENTS.ready, this.ctx.query.findBonesBy(_.bind(this.handleNotation, this)));
+			this.ctx.trigger(Context.EVENTS.ready, this.ctx.query.findBonesBy(_.bind(this.handleNotation, this)));
+			this.ctx.trigger(Context.EVENTS.processed, { type: ReadyProcessor.NAME });
 			return this;
 		}
 
