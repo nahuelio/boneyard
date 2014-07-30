@@ -49,9 +49,9 @@ var Build = {
         },
         libs: {
             minify: true,
-            banner: "//\tModule <%= module %> | SpinalJS <%= version %> (c) <%= year %> <%= author %>, 3dimention.com\n" +
+            banner: "//\tSpinalJS <%= module %>@<%= version %> (c) <%= year %> <%= author %>, 3dimention.com\n" +
                 "//\tSpinalJS may be freely distributed under the MIT license.\n" +
-                "//\tFor all details and documentation:\n//\thttp://3dimention.github.io/spinal\n\n"
+                "//\tFor all details and documentation: http://3dimention.github.io/spinal\n\n"
         },
         debug: true,
         live: false
@@ -156,8 +156,11 @@ var Build = {
 	banner: function(result) {
         _.each(this.config.project.modules, function(m) {
             if(m.name !== 'libs') {
-                var contents = fs.readFileSync(m._buildPath, 'utf8');
-                contents = _s.insert(contents, 0, _.template(this.config.libs.banner, { module: m.name, version: pkg.version, year: new Date().getFullYear(), author: pkg.author }));
+                var moduleName = _s.capitalize(_s.strRightBack(m.name, '-')),
+                    data = { module: moduleName, version: pkg.version, year: new Date().getFullYear(), author: pkg.author },
+                    contents = fs.readFileSync(m._buildPath, 'utf8');
+                contents = _s.insert(contents, 0, _.template(this.config.libs.banner, data));
+                if(m.name === 'spinal-core') contents = _.template(contents, { __VERSION__: pkg.version });
                 Utils.createFile(m._buildPath, contents, { mode: 0777, encoding: 'utf8', flags: 'w' }); // minify and save.
             }
         }, this);
