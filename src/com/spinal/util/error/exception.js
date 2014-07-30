@@ -1,7 +1,6 @@
 /**
 *	@module com.spinal.util.error
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
-*	[ENHANCEMENT]: Add support for {{mustache}} in exception messages
 **/
 define(['core/spinal'], function(Spinal) {
 
@@ -10,10 +9,7 @@ define(['core/spinal'], function(Spinal) {
 	*	@namespace com.spinal.util.error
 	*	@class com.spinal.util.error.SpinalException
 	**/
-	var SpinalException = Spinal.namespace('com.spinal.util.error.SpinalException', function(type, message) {
-		this.name = (this.constructor.NAME) ? this.constructor.NAME : 'SpinalException';
-		this.type = (!_.isUndefined(this.constructor.TYPES[type])) ? type : 'Generic';
-		this.message = (message || this.getMessage(this.type));
+	var SpinalException = Spinal.namespace('com.spinal.util.error.SpinalException', function(type) {
 		this.initialize.apply(this, arguments);
 		return this;
 	});
@@ -24,9 +20,14 @@ define(['core/spinal'], function(Spinal) {
 		*	Initialize
 		*	@public
 		*	@method initialize
+		*	@param type {String} exception type
+		*	@param type {Object} key/value pairs to be used to template the message
 		*	@return {com.spinal.util.error.SpinalException}
 		**/
-		initialize: function() {
+		initialize: function(type, tpl) {
+			this.name = (this.constructor.NAME) ? this.constructor.NAME : 'SpinalException';
+			this.type = (!_.isUndefined(this.constructor.TYPES[type])) ? type : 'Generic';
+			this.message = this.getMessage(this.type, tpl);
 			return this;
 		},
 
@@ -45,11 +46,11 @@ define(['core/spinal'], function(Spinal) {
 		*	@public
 		*	@method getMessage
 		*	@param type {String} exception type
+		*	@param tpl {Object} key/value pairs to be used to template the message
 		*	@return String
 		**/
-		getMessage: function(type) {
-			// FIXME: see notes above.
-			return (!this.constructor.TYPES[type]) ? 'Unknown Exception Message' : this.constructor.TYPES[type];
+		getMessage: function(type, tpl) {
+			return SpinalException.getMessage.apply(this, arguments);
 		}
 
 	});
@@ -73,6 +74,20 @@ define(['core/spinal'], function(Spinal) {
 		Generic: 'Generic Exception',
 		StaticClass: 'Class cannot be instanciated. All methods and variable members are static.'
 	};
+
+	/**
+	*	@static
+	*	@method getMessage
+	*	@param type {String} exception type
+	*	@param tpl {Object} key/value pairs to be used to template the message
+	*	@return String
+	**/
+	SpinalException.getMessage = function(type, tpl) {
+		var ctx = (this instanceof SpinalException) ? this.constructor : this;
+		return (type && ctx.TYPES[type]) ?
+			_.template(ctx.TYPES[type], (!_.isUndefined(tpl) ? tpl : {})) :
+			'Unknown Exception Message';
+	},
 
 	/**
 	*	@static

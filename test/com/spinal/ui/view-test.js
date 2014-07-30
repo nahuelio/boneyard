@@ -87,7 +87,7 @@ define(['core/spinal',
 					new View({ id: 1 });
 				}).to.throwException(function(e) {
 					expect(e).to.be.ok();
-					expect(e.message).to.be.equal(UIException.TYPES.InvalidIDType);
+					expect(e.message).to.be.equal(UIException.getMessage('InvalidIDType'));
 				});
 			});
 
@@ -96,16 +96,16 @@ define(['core/spinal',
 					new View({ model: new Spinal.SpinalClass({ name: 'foo' }) });
 				}, this)).to.throwException(function(e) {
 					expect(e).to.be.ok();
-					expect(e.message).to.be.equal(UIException.TYPES.InvalidModelType);
+					expect(e.message).to.be.equal(UIException.getMessage('InvalidModelType'));
 				});
 			});
 
 			it('Should throw an Error: Passed unexistent (unsupported) method as parameter to the View constructor', function() {
 				expect(_.bind(function() {
-					new View({ method: 'non-existent' });
+					new View({ method: 'non-existent-method' });
 				}, this)).to.throwException(function(e) {
 					expect(e).to.be.ok();
-					expect(e.message).to.be.equal(UIException.TYPES.UnsupportedRenderMethod);
+					expect(e.message).to.be.equal(UIException.getMessage('UnsupportedRenderMethod', { method: 'non-existent-method' }));
 				});
 			});
 
@@ -197,7 +197,7 @@ define(['core/spinal',
 					new View({ id: 'view-error-no-successor-defined' }).render();
 				}, this)).to.throwException(function(e) {
 					expect(e).to.be.ok();
-					expect(e.message).to.be.equal(UIException.TYPES.SuccessorNotSpecified);
+					expect(e.message).to.be.equal(UIException.getMessage('SuccessorNotSpecified'));
 				});
 			});
 
@@ -209,7 +209,7 @@ define(['core/spinal',
 					test.render();
 				}, this)).to.throwException(function(e) {
 					expect(e).to.be.ok();
-					expect(e.message).to.be.equal(UIException.TYPES.InvalidSuccessorType);
+					expect(e.message).to.be.equal(UIException.getMessage('InvalidSuccessorType'));
 				});
 			});
 
@@ -221,7 +221,7 @@ define(['core/spinal',
 					test.render();
 				}, this)).to.throwException(function(e) {
 					expect(e).to.be.ok();
-					expect(e.message).to.be.equal(UIException.TYPES.UIStackViolation);
+					expect(e.message).to.be.equal(UIException.getMessage('UIStackViolation', { viewId: 'view-error', succesorId: 'container-declared-inline' }));
 				});
 			});
 

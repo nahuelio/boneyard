@@ -102,7 +102,7 @@ define(['util/factory',
 					this.factory.create('Non-Existent');
 				}, this)).to.throwException(function(e) {
 					expect(e).to.be.ok();
-					expect(e.message).to.be.equal(FactoryException.TYPES.UnregisteredFactory);
+					expect(e.message).to.be.equal(FactoryException.getMessage('UnregisteredFactory', { id: 'Non-Existent' }));
 				});
 			});
 

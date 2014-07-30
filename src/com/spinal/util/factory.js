@@ -93,7 +93,7 @@ define(['core/spinal',
 		**/
 		create: function(id) {
 			var factory = this.getFactory(id);
-			if(!factory) throw new FactoryException('UnregisteredFactory');
+			if(!factory) throw new FactoryException('UnregisteredFactory', { id: id });
 			return this._construct(factory.create, Array.prototype.slice.call(arguments, 1));
 		}
 
