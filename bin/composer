@@ -1,0 +1,32 @@
+#!/usr/bin/env node
+
+var program = require('commander'),
+	pkg = require('../package.json'),
+	fs = require('fs'),
+	path = require('path'),
+	lib = path.join(path.dirname(fs.realpathSync(__filename)), '../');
+	composer = require(lib + 'tools/composer');
+
+program
+	.version(pkg.version)
+	.usage('[options]')
+	.option('-s, --source <path>', 'Source path used to load your code')
+	.option('-c, --clear_on_exit', 'Composer tool will clear all the temporal files before exit')
+	.option('-v, --verbose', 'Display useful information about the process')
+	.on('--help', function() {
+		// Explain the temporal folder that compose will be generating the code preparation
+		console.log('  Examples:\n');
+		console.log('\tcomposer -s ./mysourcepath [-v]\n');
+	})
+	.parse(process.argv)
+	.name = 'Spinal Composer Tool';
+
+if(program.source) {
+	composer.exec( {
+		source: program.source,
+		target: program.target,
+		verbose: program.verbose
+	});
+} else {
+	program.help();
+}
