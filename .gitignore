@@ -2,7 +2,7 @@ src/libs
 coverage
 target
 benchmark/spinal-*.html
-docs
+apidocs
 *-SNAPSHOT.*
 *.seed
 *.log
