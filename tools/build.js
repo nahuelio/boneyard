@@ -30,14 +30,14 @@ var Build = {
                 { name: 'libs' },
                 { name: 'spinal-core', exclude: ['libs'] },
                 { name: 'spinal-util', exclude: ['libs', 'spinal-core'] },
-                { name: 'spinal-ioc', exclude: ['libs', 'spinal-core'] },
-                { name: 'spinal-aop', exclude: ['libs', 'spinal-core'] },
+                { name: 'spinal-ioc', exclude: ['libs', 'spinal-core', 'spinal-util'] },
+                { name: 'spinal-aop', exclude: ['libs', 'spinal-core', 'spinal-util'] },
                 { name: 'spinal-mvc', exclude: ['libs', 'spinal-core', 'spinal-util'] },
                 { name: 'spinal-ui', exclude: ['libs', 'spinal-core', 'spinal-util'] }
             ],
             findNestedDependencies: true,
             removeCombined: true,
-            optimize: 'uglify',
+            optimize: 'uglify2',
             uglify: {
                 toplevel: false,
                 ascii_only: true,
@@ -48,7 +48,7 @@ var Build = {
             dir: 'target'
         },
         libs: {
-            minify: false,
+            minify: true,
             banner: "//\tSpinalJS <%= version %> (c) <%= year %> <%= author %>, 3dimention.com\n" +
                 "//\tSpinalJS may be freely distributed under the MIT license.\n" +
                 "//\tFor all details and documentation:\n//\thttp://3dimention.github.io/spinal\n\n"
