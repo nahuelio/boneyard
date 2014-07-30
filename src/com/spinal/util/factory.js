@@ -78,7 +78,7 @@ define(['core/spinal',
 		*	@public
 		*	@method Unregister
 		*	@param id {String} Factory Id
-		*	@return Function
+		*	@return Object
 		**/
 		unregister: function(id) {
 			if(!id) return null;
@@ -93,7 +93,7 @@ define(['core/spinal',
 		**/
 		create: function(id) {
 			var factory = this.getFactory(id);
-			if(!factory) throw new FactoryException('UnregisteredFactory');
+			if(!factory) throw new FactoryException('UnregisteredFactory', { id: id });
 			return this._construct(factory.create, Array.prototype.slice.call(arguments, 1));
 		}
 

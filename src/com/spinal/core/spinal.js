@@ -21,7 +21,7 @@ define(['libs/backbone'], function() {
 		*	@property __VERSION__
 		*	@type String
 		**/
-		exports.__VERSION__ = '<%= version %>';
+		exports.__VERSION__ = '<%= __VERSION__ %>';
 
 		// Expose Backbone and Underscore hard dependency into Spinal Namespace
 		if(!root.Backbone || !root._) throw new Error('[Spinal Error] Backbone or Underscore haven\'t being loaded.');

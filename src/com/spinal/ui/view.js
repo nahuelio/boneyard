@@ -92,7 +92,7 @@ define(['core/spinal',
 			attrs || (attrs = {});
 			if(attrs.id && !_.isString(attrs.id)) throw new UIException('InvalidIDType');
 			if(attrs.model && !(attrs.model instanceof Backbone.Model)) throw new UIException('InvalidModelType');
-			if(attrs.method && !(View.RENDER[attrs.method])) throw new UIException('UnsupportedRenderMethod');
+			if(attrs.method && !(View.RENDER[attrs.method])) throw new UIException('UnsupportedRenderMethod', { method: 'non-existent-method' });
 			return true;
 		},
 
@@ -121,7 +121,9 @@ define(['core/spinal',
 			opts || (opts = {});
 			if(!this._successor) throw new UIException('SuccessorNotSpecified');
 			if(!(this._successor instanceof Spinal.com.spinal.ui.Container)) throw new UIException('InvalidSuccessorType');
-			if(!this._successor.findById(this.id)) throw new UIException('UIStackViolation');
+			if(!this._successor.findById(this.id)) throw new UIException('UIStackViolation', {
+				viewId: 'view-error', succesorId: 'container-declared-inline'
+			});
 			this.detach();
 			var m = (opts.method && (View.RENDER[opts.method])) ? opts.method : this.method,
 				data = (!this.model) ? ((this._successor.model) ? this._successor.model.toJSON() : {}) : this.model.toJSON();

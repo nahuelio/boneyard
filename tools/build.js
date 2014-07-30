@@ -30,14 +30,14 @@ var Build = {
                 { name: 'libs' },
                 { name: 'spinal-core', exclude: ['libs'] },
                 { name: 'spinal-util', exclude: ['libs', 'spinal-core'] },
-                { name: 'spinal-ioc', exclude: ['libs', 'spinal-core'] },
-                { name: 'spinal-aop', exclude: ['libs', 'spinal-core'] },
+                { name: 'spinal-ioc', exclude: ['libs', 'spinal-core', 'spinal-util'] },
+                { name: 'spinal-aop', exclude: ['libs', 'spinal-core', 'spinal-util'] },
                 { name: 'spinal-mvc', exclude: ['libs', 'spinal-core', 'spinal-util'] },
                 { name: 'spinal-ui', exclude: ['libs', 'spinal-core', 'spinal-util'] }
             ],
             findNestedDependencies: true,
             removeCombined: true,
-            optimize: 'uglify',
+            optimize: 'uglify2',
             uglify: {
                 toplevel: false,
                 ascii_only: true,
@@ -48,10 +48,10 @@ var Build = {
             dir: 'target'
         },
         libs: {
-            minify: false,
-            banner: "//\tSpinalJS <%= version %> (c) <%= year %> <%= author %>, 3dimention.com\n" +
+            minify: true,
+            banner: "//\tSpinalJS <%= module %>@<%= version %> (c) <%= year %> <%= author %>, 3dimention.com\n" +
                 "//\tSpinalJS may be freely distributed under the MIT license.\n" +
-                "//\tFor all details and documentation:\n//\thttp://3dimention.github.io/spinal\n\n"
+                "//\tFor all details and documentation: http://3dimention.github.io/spinal\n\n"
         },
         debug: true,
         live: false
@@ -108,8 +108,7 @@ var Build = {
 		Utils.log('\nCreating Release...\n');
 		try {
 			Utils.createDir(resolve(__dirname, '../'), this.config.project.dir);
-			requirejs.optimize(this.config.project, _.bind(function(result) {}, this), function(err) { console.log(err); });
-			Utils.log('[RELEASE] Build Process DONE.'.green);
+			requirejs.optimize(this.config.project, _.bind(this.banner, this), function(err) { console.log(err); });
 		} catch(ex) {
 			Utils.log(('[RELEASE] Error ocurred while building modules: ' + ex.message).red);
 			process.exit();
@@ -154,8 +153,18 @@ var Build = {
 	/**
 	*	Banner Insertion
 	**/
-	banner: function(o) {
-		return _s.insert(o, 0, _.template(this.config.options.banner, { version: pkg.version, year: new Date().getFullYear(), author: pkg.author }));
+	banner: function(result) {
+        _.each(this.config.project.modules, function(m) {
+            if(m.name !== 'libs') {
+                var moduleName = _s.capitalize(_s.strRightBack(m.name, '-')),
+                    data = { module: moduleName, version: pkg.version, year: new Date().getFullYear(), author: pkg.author },
+                    contents = fs.readFileSync(m._buildPath, 'utf8');
+                contents = _s.insert(contents, 0, _.template(this.config.libs.banner, data));
+                if(m.name === 'spinal-core') contents = _.template(contents, { __VERSION__: pkg.version });
+                Utils.createFile(m._buildPath, contents, { mode: 0777, encoding: 'utf8', flags: 'w' }); // minify and save.
+            }
+        }, this);
+        Utils.log('[RELEASE] Build Process DONE.'.green);
 	},
 
 	/***********************/

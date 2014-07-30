@@ -2,7 +2,8 @@
 *	@module com.spinal.util
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define(['core/spinal'], function(Spinal) {
+define(['core/spinal',
+		'util/error/exception'], function(Spinal, SpinalException) {
 
 	/**
 	*	StringUtil class provides a bunch of string utilities.
@@ -19,7 +20,7 @@ define(['core/spinal'], function(Spinal) {
 		*	@return {com.spinal.util.StringUtil}
 		**/
 		initialize: function() {
-			throw new Error(this.toString() + ' cannot be instanciate it. All methods are declare as static.');
+			throw new SpinalException('StaticClass');
 		}
 
 	}, {

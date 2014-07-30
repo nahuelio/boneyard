@@ -215,7 +215,7 @@ define(['core/spinal',
 			**/
 			processed: 'com:spinal:ioc:processor:processed',
 			/**
-			*	@event created
+			*	@event plugin
 			**/
 			plugin: 'com:spinal:ioc:context:bone:plugin',
 			/**
