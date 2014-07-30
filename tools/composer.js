@@ -32,7 +32,7 @@ var Composer = {
     },
 
     output: function() {
-        Utils.log('\nSpinal Composer Tool Initialized...'.yellow);
+        Utils.log('\nSpinal Composer Tool'.yellow);
         Utils.log('\nSettings:'.magenta);
         Utils.log(('\n  Source Path: ' + this.source +
             '\n  Local Folder: ' + this.target +

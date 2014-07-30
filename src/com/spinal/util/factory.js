@@ -78,7 +78,7 @@ define(['core/spinal',
 		*	@public
 		*	@method Unregister
 		*	@param id {String} Factory Id
-		*	@return Function
+		*	@return Object
 		**/
 		unregister: function(id) {
 			if(!id) return null;

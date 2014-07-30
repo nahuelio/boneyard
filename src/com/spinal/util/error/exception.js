@@ -70,7 +70,8 @@ define(['core/spinal'], function(Spinal) {
 	*	@type Object
 	**/
 	SpinalException.TYPES = {
-		Generic: 'Generic Exception'
+		Generic: 'Generic Exception',
+		StaticClass: 'Class cannot be instanciated. All methods and variable members are static.'
 	};
 
 	/**

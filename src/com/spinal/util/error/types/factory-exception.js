@@ -36,14 +36,12 @@ define(['core/spinal',
 		*	__Type List__
 		*
 		*		Generic (inherited from com.spinal.util.error.exception)
-		*		UnsupportedFactory
 		*		UnregisteredFactory
 		*	@static
 		*	@property TYPES
 		*	@type Object
 		**/
 		TYPES: {
-			UnsupportedFactory: 'Unsupported Factory Pattern',
 			UnregisteredFactory: 'Factory {{id}} not found. Unable to use factory method to instanciate class.'
 		}
 

@@ -3,12 +3,12 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['ioc/context',
-		'ioc/bone-factory'], function(ContextBoneFactory) {
+		'ioc/bone-factory'], function(Context, BoneFactory) {
 
 	describe('com.spinal.ioc.BoneFactory', function() {
 
 		before(function() {
-			// TODO
+
 		});
 
 		after(function() {
