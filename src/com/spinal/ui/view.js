@@ -4,7 +4,7 @@
 **/
 define(['core/spinal',
 		'util/string',
-		'util/exception/ui-exception',
+		'util/exception/ui',
 		'libs/bootstrap'], function(Spinal, StringUtils, UIException) {
 
 	/**

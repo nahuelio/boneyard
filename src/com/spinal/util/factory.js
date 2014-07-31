@@ -3,7 +3,7 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['core/spinal',
-		'util/exception/factory-exception',
+		'util/exception/factory',
 		'util/adt/collection'], function(Spinal, FactoryException, Collection) {
 
 	/**

@@ -3,7 +3,7 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['util/factory',
-		'util/exception/factory-exception',
+		'util/exception/factory',
 		'ui/view',
 		'mvc/model'], function(Factory, FactoryException, View, Model) {
 

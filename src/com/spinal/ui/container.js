@@ -5,7 +5,7 @@
 define(['core/spinal',
 		'ui/view',
 		'util/adt/collection',
-		'util/exception/ui-exception'], function(Spinal, View, Collection, UIException) {
+		'util/exception/ui'], function(Spinal, View, Collection, UIException) {
 
 	/**
 	*	Define a generic container interface to add/remove views

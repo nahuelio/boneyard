@@ -3,7 +3,7 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['ioc/context',
-		'util/exception/context-exception'], function(Context, ContextException) {
+		'util/exception/context'], function(Context, ContextException) {
 
 	/**
 	*	Bone Query Class

@@ -7,8 +7,7 @@ define(['core/spinal',
 		'util/adt/iterator',
 		'ioc/bone-factory',
 		'ioc/bone-query',
-		'util/exception/context-exception'], function(Spinal, StringUtil, Iterator,
-														BoneFactory, BoneQuery, ContextException) {
+		'util/exception/context'], function(Spinal, StringUtil, Iterator, BoneFactory, BoneQuery, ContextException) {
 
 	/**
 	*	IOC Context Class

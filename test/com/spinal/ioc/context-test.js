@@ -3,7 +3,7 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['ioc/context',
-		'util/exception/context-exception',
+		'util/exception/context',
 		'ui/view',
 		'ui/container',
 		'specs/simple.spec',

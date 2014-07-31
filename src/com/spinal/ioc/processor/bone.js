@@ -4,7 +4,7 @@
 **/
 define(['core/spinal',
 		'ioc/context',
-		'util/exception/processor-exception'], function(Spinal, Context, ProcessorException) {
+		'util/exception/processor'], function(Spinal, Context, ProcessorException) {
 
 	/**
 	*	BaseClass Bone Processor

@@ -4,7 +4,7 @@
 **/
 define(['ioc/context',
 	'ioc/processor/bone',
-	'util/exception/processor-exception'], function(Context, BoneProcessor, ProcessorException) {
+	'util/exception/processor'], function(Context, BoneProcessor, ProcessorException) {
 
 	/**
 	*	Create Processor
