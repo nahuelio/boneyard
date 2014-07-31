@@ -7,7 +7,7 @@ define(['core/spinal',
 		'util/adt/iterator',
 		'ioc/bone-factory',
 		'ioc/bone-query',
-		'util/error/types/context-exception'], function(Spinal, StringUtil, Iterator,
+		'util/exception/context-exception'], function(Spinal, StringUtil, Iterator,
 														BoneFactory, BoneQuery, ContextException) {
 
 	/**
@@ -18,8 +18,10 @@ define(['core/spinal',
 	*
 	*	@requires com.spinal.core.Spinal
 	*	@requires com.spinal.util.StringUtil
+	*	@requires com.spinal.util.adt.Iterator
 	*	@requires com.spinal.ioc.BoneFactory
-	*	@requires com.spinal.util.error.types.ContextException
+	*	@requires com.spinal.ioc.BoneQuery
+	*	@requires com.spinal.util.exception.ContextException
 	**/
 	var Context = Spinal.namespace('com.spinal.ioc.Context', Spinal.SpinalClass.inherit({
 
@@ -124,7 +126,7 @@ define(['core/spinal',
 		*	@public
 		*	@chainable
 		*	@method wire
-		*	@throws {com.spinal.util.error.types.ContextException}
+		*	@throws {com.spinal.util.exception.ContextException}
 		*	@param spec {Object} context specification to be wired
 		*	@param callback {Function} callback function to be called after autowiring.
 		*	@return {com.spinal.ioc.Context}

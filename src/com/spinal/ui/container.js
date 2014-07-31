@@ -5,13 +5,18 @@
 define(['core/spinal',
 		'ui/view',
 		'util/adt/collection',
-		'util/error/types/ui-exception'], function(Spinal, View, Collection, UIException) {
+		'util/exception/ui-exception'], function(Spinal, View, Collection, UIException) {
 
 	/**
 	*	Define a generic container interface to add/remove views
 	*	@namespace com.spinal.ui
 	*	@class com.spinal.ui.Container
 	*	@extends com.spinal.ui.View
+	*
+	*	@requires com.spinal.core.Spinal
+	*	@requires com.spinal.ui.View
+	*	@requires com.spinal.util.adt.Collection
+	*	@requires com.spinal.util.exception.UIException
 	**/
 	var Container = Spinal.namespace('com.spinal.ui.Container', View.inherit({
 

@@ -3,8 +3,8 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['core/spinal',
-		'util/error/types/processor-exception',
-		'ioc/context'], function(Spinal, ProcessorException, Context) {
+		'ioc/context',
+		'util/exception/processor-exception'], function(Spinal, Context, ProcessorException) {
 
 	/**
 	*	BaseClass Bone Processor
@@ -12,7 +12,8 @@ define(['core/spinal',
 	*	@class com.spinal.ioc.processor.BoneProcessor
 	*	@extends com.spinal.core.SpinalClass
 	*
-	*	@requires com.spinal.ioc.IoCProcessor
+	*	@requires com.spinal.ioc.Context
+	*	@requires com.spinal.util.exception.ProcessorException
 	**/
 	var BoneProcessor = Spinal.namespace('com.spinal.ioc.processor.BoneProcessor', Spinal.SpinalClass.inherit({
 

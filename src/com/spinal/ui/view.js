@@ -4,7 +4,7 @@
 **/
 define(['core/spinal',
 		'util/string',
-		'util/error/types/ui-exception',
+		'util/exception/ui-exception',
 		'libs/bootstrap'], function(Spinal, StringUtils, UIException) {
 
 	/**
@@ -12,6 +12,11 @@ define(['core/spinal',
 	*	@namespace com.spinal.ui
 	*	@class com.spinal.ui.View
 	*	@extends Spinal.Backbone.View
+	*
+	*	@requires com.spinal.core.Spinal
+	*	@requires com.spinal.util.StringUtil
+	*	@requires com.spinal.util.exception.UIException
+	*	@requires libs.bootstrap
 	**/
 	var View = Spinal.namespace('com.spinal.ui.View', Spinal.Backbone.View.inherit({
 

@@ -11,6 +11,7 @@ define(['ioc/context',
 	*	@class com.spinal.ioc.processor.ReadyProcessor
 	*	@extends com.spinal.ioc.processor.BoneProcessor
 	*
+	*	@requires com.spinal.ioc.Context
 	*	@requires com.spinal.ioc.processor.BoneProcessor
 	**/
 	var ReadyProcessor = Spinal.namespace('com.spinal.ioc.processor.ReadyProcessor', BoneProcessor.inherit({

@@ -1,15 +1,15 @@
 /**
-*	@module com.spinal.util.error
+*	@module com.spinal.util.exception
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['core/spinal'], function(Spinal) {
 
 	/**
 	*	Extend functionality of Spinal Core to create custom exceptions (Errors)
-	*	@namespace com.spinal.util.error
-	*	@class com.spinal.util.error.SpinalException
+	*	@namespace com.spinal.util.exception
+	*	@class com.spinal.util.exception.SpinalException
 	**/
-	var SpinalException = Spinal.namespace('com.spinal.util.error.SpinalException', function(type) {
+	var SpinalException = Spinal.namespace('com.spinal.util.exception.SpinalException', function(type) {
 		this.initialize.apply(this, arguments);
 		return this;
 	});
@@ -22,7 +22,7 @@ define(['core/spinal'], function(Spinal) {
 		*	@method initialize
 		*	@param type {String} exception type
 		*	@param type {Object} key/value pairs to be used to template the message
-		*	@return {com.spinal.util.error.SpinalException}
+		*	@return {com.spinal.util.exception.SpinalException}
 		**/
 		initialize: function(type, tpl) {
 			this.name = (this.constructor.NAME) ? this.constructor.NAME : 'SpinalException';

@@ -1,23 +1,23 @@
 /**
-*	@module com.spinal.util.error.types
+*	@module com.spinal.util.exception
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['core/spinal',
-		'util/error/exception'], function(Spinal, Exception) {
+		'util/exception/exception'], function(Spinal, Exception) {
 
 	/**
 	*	IoC Processor Exception Type
-	*	@namespace com.spinal.util.error.types
-	*	@class com.spinal.util.error.types.ProcessorException
-	*	@extends com.spinal.util.error.Exception
+	*	@namespace com.spinal.util.exception
+	*	@class com.spinal.util.exception.ProcessorException
+	*	@extends com.spinal.util.exception.Exception
 	**/
-	var ProcessorException = Spinal.namespace('com.spinal.util.error.types.ProcessorException', Exception.inherit({
+	var ProcessorException = Spinal.namespace('com.spinal.util.exception.ProcessorException', Exception.inherit({
 
 		/**
 		*	Initialize
 		*	@public
 		*	@method initialize
-		*	@return {com.spinal.util.error.types.ProcessorException}
+		*	@return {com.spinal.util.exception.ProcessorException}
 		**/
 		initialize: function() {
 			return ProcessorException.__super__.initialize.apply(this, arguments);
@@ -35,7 +35,7 @@ define(['core/spinal',
 		/**
 		*	__Type List__
 		*
-		*		Generic (inherited from com.spinal.util.error.exception)
+		*		Generic (inherited from com.spinal.util.exception.Exception)
 		*		BoneNotFound
 		*		InvalidModuleDeclaration
 		*		CreateModuleException

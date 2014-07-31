@@ -3,13 +3,16 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['core/spinal',
-		'util/error/exception'], function(Spinal, SpinalException) {
+		'util/exception/exception'], function(Spinal, SpinalException) {
 
 	/**
 	*	StringUtil class provides a bunch of string utilities.
 	*	@namespace com.spinal.util
 	*	@class com.spinal.util.StringUtil
 	*	@extends com.spinal.core.SpinalClass
+	*
+	*	@requires com.spinal.core.Spinal
+	*	@requires com.spinal.util.exception.Exception
 	**/
 	var StringUtil = Spinal.namespace('com.spinal.util.StringUtil', Spinal.SpinalClass.inherit({
 
