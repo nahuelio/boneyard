@@ -1,0 +1,16 @@
+{
+	"project": {
+		"baseURL": "path/to/source",
+		"paths": {
+			"spinal": "path/to/spinal/libs",
+			"specs": "path/to/app/highlevel/specs"
+		},
+		"mainConfigFile": "project/target/project.js",
+		"out": "project/target"
+	},
+	"options" : {
+		"minify": true,
+		"banner": "/** MyProject Library Custom Banner **/",
+		"license": "path/to/license"
+	}
+}
