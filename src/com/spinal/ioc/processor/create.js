@@ -19,12 +19,12 @@ define(['ioc/context',
 	var CreateProcessor = Spinal.namespace('com.spinal.ioc.processor.CreateProcessor', BoneProcessor.inherit({
 
 		/**
-		*	Supported Notations
+		*	Supported Notation Regular Expression
 		*	@public
-		*	@property notations
-		*	@type Array
+		*	@property notationRE
+		*	@type RegExp
 		**/
-		notations: ['module'],
+		notationRE: new RegExp('\\' + Context.PREFIX + '(module)$', 'i'),
 
 		/**
 		*	Initialize
@@ -35,16 +35,6 @@ define(['ioc/context',
 		**/
 		initialize: function() {
 			return CreateProcessor.__super__.initialize.apply(this, arguments);
-		},
-
-		/**
-		*	Create RegExp used by this processor
-		*	@private
-		*	@method _regexp
-		*	@return RegExp
-		**/
-		_regexp: function() {
-			return new RegExp('\\' + Context.PREFIX + '(' + this.notations.join('|') + ')$', 'i');
 		},
 
 		/**
@@ -143,6 +133,11 @@ define(['ioc/context',
 				if(bone.params && this.hasDependencies(bone.params))
 					CreateProcessor.__super__.execute.call(this, this.handleNotation, bone.params, parentBone.id);
 				this._enqueue(parentBone.id, null, _.bind(this.create, this));
+			} else {
+				if(_.isObject(bone) || _.isArray(bone))
+					CreateProcessor.__super__.execute.apply(this, [this.handleNotation, bone, id]);
+				if(this.matchNotation(bone, CreateProcessor.__super__.notationRE))
+					this.handleDependency.apply(this, arguments);
 			}
 			return result;
 		},

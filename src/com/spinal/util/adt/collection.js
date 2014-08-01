@@ -137,7 +137,6 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 		*	@public
 		*	@method invoke
 		*	@param methodName {String} Method Name to invoke in every element in the collection
-		*	@param [*arguments] {Array} arguments to pass to the method invocation.
 		*	@return Array
 		**/
 		invoke: function(methodName) {

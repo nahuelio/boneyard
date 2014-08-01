@@ -17,12 +17,12 @@ define(['ioc/context',
 	var ReadyProcessor = Spinal.namespace('com.spinal.ioc.processor.ReadyProcessor', BoneProcessor.inherit({
 
 		/**
-		*	Supported Notations
+		*	Supported Notation Regular Expression
 		*	@public
-		*	@property notations
-		*	@type Array
+		*	@property notationRE
+		*	@type RegExp
 		**/
-		notations: ['ready'],
+		notationRE: new RegExp('\\' + Context.PREFIX + '(ready)$', 'i'),
 
 		/**
 		*	Initialize
@@ -36,41 +36,59 @@ define(['ioc/context',
 		},
 
 		/**
-		*	Create RegExp used by this processor
-		*	@private
-		*	@method _regexp
-		*	@return RegExp
+		*	Validates if the current processor supports the notation passed as parameter
+		*	@public
+		*	@method matchNotation
+		*	@param bone {String} notation to be evaluated
+		*	@return Boolean
 		**/
-		_regexp: function() {
-			return new RegExp('\\' + Context.PREFIX + '(' + this.notations.join('|') + ')$', 'i');
+		matchNotation: function(bone) {
+			var result = (this.ctx.query.isModule(bone) && this.ctx.query.isCreated(bone) && !this.ctx.query.isReady(bone));
+			if(result) return ReadyProcessor.__super__.matchNotation.apply(this, [bone, this.notationRE]);
+			return false;
+		},
+
+		/**
+		*	Handler when a module $ready depends on a bone of '$module' type in order to execute
+		*	@public
+		*	@method handleDependency
+		*	@param id {Object} current bone id
+		*	@param bone {Object} current bone to evaluate
+		*	@return Object
+		**/
+		handleDependency: function(bone, id) {
+			//console.log('Ready.handleDependency: ', bone, id);
 		},
 
 		/**
 		*	Handles specifc notation with the current processor.
+		*	FIXME: Continue working here...
 		*	@public
 		*	@method handleNotation
 		*	@param bone {Object} current bone to evaluate
 		*	@param id {Object} current bone id
-		*	@param parentRef {Object} parent bone ref
 		*	@return Boolean
-		*	@Note Once CreateProcessor finished their job, evaluates the presence of $ready notation.
 		**/
-		handleNotation: function(bone, id, parentRef) {
-			if(this.ctx.query.isCreated(bone)) {
-				//console.log('Ready $Created -> ', id);
-				return true;
-			}
-			return false;
+		handleNotation: function(bone, id) {
+			var result = this.matchNotation(bone);
+			//console.log(bone, result);
+			// if(result) {
+			// 	console.log(id);
+			// }
+			return result;
 		},
 
 		/**
 		*	Execute Processor
 		*	@public
 		*	@method execute
+		*	@param [bone] {Object} Bone context in which the execution will be narrowed down
+		*	@param [id] {Object} Bone Id of the context
 		*	@return {com.spinal.ioc.processor.ReadyProcessor}
 		**/
-		execute: function() {
-			this.ctx.trigger(Context.EVENTS.ready, this.ctx.query.findBonesBy(_.bind(this.handleNotation, this)));
+		execute: function(bone, id) {
+			var result = ReadyProcessor.__super__.execute.call(this, this.handleNotation, bone, id);
+			this.ctx.trigger(Context.EVENTS.ready, result);
 			this.ctx.trigger(Context.EVENTS.processed, { type: ReadyProcessor.NAME });
 			return this;
 		}

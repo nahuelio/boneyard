@@ -26,12 +26,12 @@ define(['core/spinal',
 		ctx: null,
 
 		/**
-		*	Supported Notations
+		*	Supported Notation Regular Expression
 		*	@public
-		*	@property notations
-		*	@type Array
+		*	@property notationRE
+		*	@type RegExp
 		**/
-		notations: ['bone'],
+		notationRE: new RegExp('\\' + Context.PREFIX + '(bone)(\!{1})', 'i'),
 
 		/**
 		*	Initialize
@@ -44,18 +44,7 @@ define(['core/spinal',
 		initialize: function(ctx) {
 			if(!ctx) throw new ContextException('UndefinedContext');
 			this.ctx = ctx;
-			this.notationRE = this._regexp();
 			return this;
-		},
-
-		/**
-		*	Create RegExp used by this processor
-		*	@private
-		*	@method _regexp
-		*	@return RegExp
-		**/
-		_regexp: function() {
-			return new RegExp('\\' + Context.PREFIX + '(' + this.notations.join('|') + ')(\!{1})', 'i');
 		},
 
 		/**
@@ -63,11 +52,12 @@ define(['core/spinal',
 		*	@public
 		*	@method matchNotation
 		*	@param notation {String} notation to be evaluated
+		*	@param [re] {RegExp} RegExp used to evaluate notation
 		*	@return Boolean
 		**/
-		matchNotation: function(notation) {
-			if(!this.notationRE) this.notationRE = this._regexp();
-			return this.notationRE.test(notation);
+		matchNotation: function(notation, re) {
+			if(!notation) return false;
+			return re.test(notation);
 		},
 
 		/**
@@ -107,15 +97,7 @@ define(['core/spinal',
 		*	@return Object
 		**/
 		handleNotation: function(bone, id) {
-			var result = this.matchNotation(id);
-			if(!result) {
-				if(_.isObject(bone) || _.isArray(bone)) {
-					this.constructor.__super__.execute.apply(this, [this.handleNotation, bone, id]);
-				} else if(this.constructor.__super__.matchNotation.call(this.constructor.__super__, bone)) {
-					this.handleDependency.apply(this, arguments);
-				}
-			}
-			return result;
+			return this.matchNotation(id, this.notationRE);
 		},
 
 		/**
