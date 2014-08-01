@@ -2,9 +2,9 @@
 
 # SpinalJS
 
-HighLevel UI framework built on top of BackboneJS
+Architectural UI framework built on top of BackboneJS/RequireJS
 
-Overall Status: Work in Progress
+Overall Project Status: Work in Progress
 
 =========================
 
@@ -35,17 +35,28 @@ Download latest stable release:
 ### Development Roadmap
 
 * IoC Implementation | <b>In Progresss</b>
-* AoP Implementation | <b>To be Completed</b>
-* i18n Implementation (RequireJS plugin to make it work in combination with the IoC Implementation) | <b>To be Completed</b>
+*     -> Refactor BoneQuery Class into the BoneProcessor Base Class (Must have)
+*     -> IoC Wiring bones with "partial specs" capabilities ("Nice to have" for a second release)
+* i18n/css/html Implementation | <b>To be Completed</b> (Must have)
+  (RequireJS plugin to make it work in combination with the IoC Implementation)
 * Benchmark IoC Implementation - setup test cases and specs | <b>To be Completed</b>
-* IoC Storage (Persitent Layer that will work as a Plugin) <b>stretch goal</b>
+  (The tool is broken now due to a bunch of new changes since the first shot).
+* Spinal Composer Tool development <b>To be Completed</b>
+* AoP Implementation | <b>To be Completed</b>
+
+### Stretch Goals
+
+* IoC Storage (HTML5 LocalStorage API. Persitent Layer that will work as a Plugin) to store modules states
+  across Request-Responses via ajax or classic request-response strategies | Low Priority
+* Poly package development (Must have) | Low Priority
+* Lo-dash hook up (Performance Boost) | Low Priority
 
 ### Design Roadmap
 
-* Official Website [3dimention/spinal](http://3dimention.github.io/spinal)
-* Logo need more work
+* Official Website [3dimention/spinal](http://3dimention.github.io/spinal) (Low Priority)
+* Logo need more work (Low Priority)
 
 ### Documentation Roadmap
 
-* High Level documentation (TBD)
-* Usage Examples, simple applications
+* High Level documentation (TBD) (Low Priority)
+* Usage Examples, simple applications (Low Priority)
