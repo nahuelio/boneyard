@@ -105,10 +105,10 @@ define(['ioc/context',
 		*	@param [parentBone] {Object} parent bone ref
 		*	@return Object
 		**/
-		handleDependency: function(bone, id, parentBone) {
+		process: function(bone, id, parentBone) {
 			var depId = this.getDependency(bone),
 				dBone = (depId) ? this.ctx.query.findBoneById(depId) : null;
-			var result = CreateProcessor.__super__.handleDependency.apply(this, [dBone, id, parentBone]);
+			var result = CreateProcessor.__super__.process.apply(this, [dBone, id, parentBone]);
 			if(_.isUndefined(result) && dBone && parentBone && _.isObject(dBone)) {
 				var dependency = (dBone.$module && !this.ctx.query.isCreated(dBone)) ? { id: depId, key: id } : null;
 				this._enqueue(parentBone.id, [dependency], _.bind(this.create, this));
@@ -117,7 +117,7 @@ define(['ioc/context',
 		},
 
 		/**
-		*	Handles specific notation with the current processor.
+		*	Validates the notation and handles it accordingly to the processor.
 		*	@public
 		*	@method handleNotation
 		*	@throws {com.spinal.util.error.types.ProcessorException}
@@ -137,7 +137,7 @@ define(['ioc/context',
 				if(_.isObject(bone) || _.isArray(bone))
 					CreateProcessor.__super__.execute.apply(this, [this.handleNotation, bone, id]);
 				if(this.matchNotation(bone, CreateProcessor.__super__.notationRE))
-					this.handleDependency.apply(this, arguments);
+					this.process.apply(this, arguments);
 			}
 			return result;
 		},

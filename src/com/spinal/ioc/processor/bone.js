@@ -75,21 +75,21 @@ define(['core/spinal',
 		},
 
 		/**
-		*	Handler when a module depends on a bone of 'String' type in order to be instanciated.
+		*	Process notation when a module depends on a bone of 'String' type in order to be instanciated.
 		*	@public
 		*	@method handleDependency
-		*	@param id {Object} current bone id
 		*	@param bone {Object} current bone to evaluate
+		*	@param id {String} current bone id
 		*	@param [parentBone] {Object} parent bone ref
 		*	@return Object
 		**/
-		handleDependency: function(bone, id, parentBone) {
+		process: function(bone, id, parentBone) {
 			if(!bone) throw new ProcessorException('BoneNotFound');
 			if(!this.ctx.query.isModule(bone)) return (parentBone.parent[id] = bone);
 		},
 
 		/**
-		*	Handles specifc notation with the current processor.
+		*	Validates the notation and handles it accordingly to the processor.
 		*	@public
 		*	@method handleNotation
 		*	@param id {Object} current bone id
