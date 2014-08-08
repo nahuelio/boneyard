@@ -11,7 +11,8 @@ program
 	.version(pkg.version)
 	.usage('[options]')
 	.option('-s, --source <path>', 'Source path used to load your code')
-	.option('-c, --clear_on_exit', 'Composer tool will clear all the temporal files before exit')
+	.option('-c, --config <path>', 'Source path used to load your code')
+	.option('-e, --clear_on_exit', 'Composer tool will clear all the temporal files before exit')
 	.option('-v, --verbose', 'Display useful information about the process')
 	.on('--help', function() {
 		// Explain the temporal folder that compose will be generating the code preparation
@@ -24,7 +25,8 @@ program
 if(program.source) {
 	composer.exec( {
 		source: program.source,
-		target: program.target,
+		config: program.config,
+		clear: program.clear_on_exit,
 		verbose: program.verbose
 	});
 } else {

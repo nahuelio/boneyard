@@ -11,6 +11,7 @@
 		"glob": "3.2.9",
 		"underscore": "1.6.x",
 		"underscore.string": "2.3.x",
+		"watch": "~0.11.x",
 		"colors": "~0.6.2",
 		"benchmark": "1.0.x",
 		"uglify-js": "1.3.5",

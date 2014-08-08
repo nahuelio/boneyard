@@ -3,6 +3,7 @@ coverage
 target
 benchmark/spinal-*.html
 apidocs
+composer-app
 *-SNAPSHOT.*
 *.seed
 *.log
