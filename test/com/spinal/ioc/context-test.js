@@ -112,6 +112,19 @@ define(['ioc/context',
 		});
 
 		/**
+		*	Context#wire() Test Cases for possible semantics errors in Specs
+		*/
+		describe('#wire() - Semantics Errors', function() {
+
+			it('Error:', function() {
+				var errorSpec = {};
+			});
+
+			// Continue adding more error test cases
+
+		});
+
+		/**
 		*	Context#getBonesBy() test
 		**/
 		describe('#getBonesBy()', function() {

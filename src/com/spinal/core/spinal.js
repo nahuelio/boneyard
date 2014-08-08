@@ -24,7 +24,6 @@ define(['libs/backbone'], function() {
 		exports.__VERSION__ = '<%= __VERSION__ %>';
 
 		// Expose Backbone and Underscore hard dependency into Spinal Namespace
-		if(!root.Backbone || !root._) throw new Error('[Spinal Error] Backbone or Underscore haven\'t being loaded.');
 		exports.Backbone = root.Backbone; exports._ = root._;
 
 		// Change Setting to Mustache Style
