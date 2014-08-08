@@ -22,7 +22,7 @@ define(['ioc/context',
 		*	@property notationRE
 		*	@type RegExp
 		**/
-		notationRE: new RegExp('\\' + Context.PREFIX + '(ready|this)$', 'i'),
+		notationRE: new RegExp('\\' + Context.PREFIX + '(ready)$', 'i'),
 
 		/**
 		*	Initialize
@@ -38,11 +38,11 @@ define(['ioc/context',
 		/**
 		*	Validates if the current processor supports the notation passed as parameter
 		*	@public
-		*	@method matchNotation
+		*	@method _isModuleBoneReady
 		*	@param bone {String} notation to be evaluated
 		*	@return Boolean
 		**/
-		matchNotation: function(bone) {
+		_isModuleBoneReady: function(bone) {
 			var result = (this.ctx.query.isModule(bone) && this.ctx.query.isCreated(bone) && !this.ctx.query.isReady(bone));
 			if(result) return !_.isUndefined(bone.$ready);
 			return false;
@@ -56,6 +56,7 @@ define(['ioc/context',
 		*	@public
 		*	@method getDependency
 		*	@param notation {String} bone dependency notation
+		*	@param bone {Object} current module bone reference
 		*	@return Object
 		**/
 		getDependency: function(notation, bone) {
@@ -69,17 +70,25 @@ define(['ioc/context',
 
 		/**
 		*	Process and resolves possible dependencies on params via setter injection.
+		*	@FIXME: Improve this logic with notations (Not sure if it's worth it to use RegExp)
+		*	It might affect performance, run some benchmarking to determine if indexOf will be faster.
  		*	@public
 		*	@method processParams
-		*	@params params {Any} parameter passed via setter by a context spec directive
+		*	@param ps {Any} parameters passed via setter by a context spec directive
+		*	@param mBone {Object} current module bone reference
 		*	@return {Any}
 		*/
-		processParams: function(params) {
-			if(!params) return null;
-			if(_.isArray(params) || _.isObject(params)) {
-				// TODO: continue parsing here...
+		processParams: function(ps, mBone) {
+			if(!ps) return null;
+			if(!_.isArray(ps) || !_.isObject(ps)) return ps;
+			for(var p in ps) {
+				if(ps[p] && _.isString(ps[p]) &&
+					(this.matchNotation(ps[p], ReadyProcessor.__super__.notationRE) || ps[p].indexOf('$this') !== 1)) {
+						var depId = ReadyProcessor.__super__.getDependency(ps[p]);
+						ps[p] = (depId) ? this.ctx.getBone(depId) : mBone;
+				}
 			}
-			return params;
+			return ps;
 		},
 
 		/**
@@ -93,10 +102,11 @@ define(['ioc/context',
 		process: function(bone, id) {
 			if(!bone || !_.isObject(bone)) return false;
 			for(var b in bone) {
-				var d = this.getDependency(b, this.ctx.getBone(id)), params = this.processParams(bone[b]);
-				if(!d || !d.bone[d.op]) continue; // throw an exception maybe! ignore or a warning.
-				//if(_.isFunction(d.bone[d.op])) console.log(d.bone[d.op], params);
-				//(_.isFunction(d.bone[d.op])) ? d.bone[d.op].apply(d.bone, params) : (d.bone[d.op] = params);
+				var mBone = this.ctx.getBone(id),
+					d = this.getDependency(b, mBone),
+					params = this.processParams(bone[b], mBone);
+				if(!d || !d.bone[d.op]) continue; // FIXME: throw an exception maybe! ignore or a warning.
+				(_.isFunction(d.bone[d.op])) ? d.bone[d.op].apply(d.bone, params) : (d.bone[d.op] = params);
 			};
 			return true;
 		},
@@ -111,7 +121,7 @@ define(['ioc/context',
 		*	@return Boolean
 		**/
 		handleNotation: function(bone, id, parentBone) {
-			var result = this.matchNotation(bone);
+			var result = this._isModuleBoneReady(bone);
 			if(result) {
 				ReadyProcessor.__super__.execute.call(this, this.handleNotation, bone.$ready, id);
 			} else if(parentBone && parentBone.id) {

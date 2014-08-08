@@ -52,7 +52,7 @@ define(['core/spinal',
 		*	@public
 		*	@method matchNotation
 		*	@param notation {String} notation to be evaluated
-		*	@param [re] {RegExp} RegExp used to evaluate notation
+		*	@param re {RegExp} RegExp used to evaluate notation
 		*	@return Boolean
 		**/
 		matchNotation: function(notation, re) {
