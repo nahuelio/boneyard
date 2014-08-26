@@ -1,12 +1,24 @@
 {
 	"project": {
-		"baseURL": "path/to/source",
+		"name": "SpinalJS",
+		"mainSpecPath": "./composer/ui-spec.js"
+	},
+	"require": {
+		"baseURL": "/",
 		"paths": {
-			"spinal": "path/to/spinal/libs",
-			"specs": "path/to/app/highlevel/specs"
+			"specs": "specs"
 		},
-		"mainConfigFile": "project/target/project.js",
-		"out": "project/target"
+		"bundles": {
+			"libs": ["libs"],
+			"spinal-core": ["spinal-core"],
+			"spinal-aop": ["spinal-aop"],
+			"spinal-ioc": ["spinal-ioc"],
+			"spinal-mvc": ["spinal-mvc"],
+			"spinal-ui": ["spinal-ui"],
+			"spinal-util": ["spinal-util"]
+		},
+		"mainConfigFile": "src/main.js",
+		"out": "target"
 	},
 	"options" : {
 		"minify": true,

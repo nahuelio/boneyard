@@ -35,6 +35,7 @@ var Build = {
                 { name: 'spinal-mvc', exclude: ['libs', 'spinal-core', 'spinal-util'] },
                 { name: 'spinal-ui', exclude: ['libs', 'spinal-core', 'spinal-util'] }
             ],
+            fileExclusionRegExp: /.md$/,
             findNestedDependencies: true,
             removeCombined: true,
             optimize: 'uglify2',

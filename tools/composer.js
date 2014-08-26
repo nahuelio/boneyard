@@ -5,17 +5,19 @@
 
 var fs = require('fs'),
     path = require('path'),
+    resolve = path.resolve,
     connect = require('connect'),
     watch = require('watch'),
     _ = require('underscore'),
-	_s = require('underscore.string'),
-	colors = require('colors'),
-	Utils = require('./util');
+    _s = require('underscore.string'),
+    colors = require('colors'),
+    Utils = require('./util');
 
 var Composer = {
 
     defaults: {
-        configPath: './custom-config-example.json'
+        configPath: './custom-config-example.json',
+        template: './composer/composer.html'
     },
 
     // Source code
@@ -26,7 +28,7 @@ var Composer = {
     config: {},
 
     // Composer temporal target folder
-    target: '/composer-app',
+    target: '../composer-app',
 
     // Autowatch Server
     port: 9393,
@@ -41,9 +43,9 @@ var Composer = {
     exec: function(opts) {
         this.parse(opts);
         this.output();
-        //this.loadConfig();
-        //this.createTarget();
-        //this.spinUpAutoWatch();
+        this.loadConfig();
+        this.createTarget();
+        this.spinUpAutoWatch();
     },
 
     /**
@@ -68,14 +70,18 @@ var Composer = {
             '\n  Verbose: ' + ((this.verbose) ? 'Activated' : 'Deactivated') + '\n').magenta);
     },
 
+    /**
+    *   Load Config Files (default or custom)
+    *
+    */
     loadConfig: function() {
         try {
             if(!this.configPath) {
                 Utils.log('\nPath to the config file not specify'.yellow);
-                this.configPath = resolve(this.src, this.defaults.configPath);
-                Utils.log(('\nLoading Default Config file [' + this.configPath + ']').green);
+                this.configPath = resolve(__dirname, this.defaults.configPath);
+                Utils.log(('Loading Default Config file [' + this.configPath + ']').green);
             } else {
-                Utils.log(('\nLoading Config file [' + resolve(this.configPath) + ']').green);
+                Utils.log(('\nLoading Config file [' + resolve(__dirname, this.configPath) + ']').green);
             }
             this.config = require(this.configPath);
         } catch(ex) {
@@ -89,7 +95,18 @@ var Composer = {
     */
     createTarget: function() {
         Utils.log('\nGenerating Composer Environment'.green);
-        // TODO: Create Target folder... with templates to use spinal[core-util-ioc] as a base.
+        var baseDir = Utils.createDir(__dirname, this.target);
+        try {
+            var tpl = fs.readFileSync(resolve(__dirname, this.defaults.template), "utf8");
+            // TODO: Need to look for an strategy to tell in which bundle you will find the module ID.
+            Utils.createFile(baseDir + '/index.html', _.template(tpl, {
+                project: this.config.project,
+                require: JSON.stringify(_.omit(this.config.require, 'mainConfigFile', 'out'))
+            }), { encoding: 'utf8' });
+        } catch(ex) {
+            Utils.log(('\nError while parsing HTML template').red);
+            Utils.log(ex.message.red);
+        }
     },
 
     /**
@@ -97,8 +114,11 @@ var Composer = {
     */
     spinUpAutoWatch: function() {
         Utils.log('\nSpinning Up Server...'.green);
-        watch.createMonitor(this.src, { ignoreDotFiles: true, ignoreUnreadableDir: true }, _.bind(this.onFileChange, this));
-        connect().use(connect.static(__dirname + this.target)).listen(this.port);
+        // TODO: Watch service do later
+        //watch.createMonitor(this.source, { ignoreDotFiles: true, ignoreUnreadableDir: true }, _.bind(this.onFileChange, this));
+        connect().use(connect.static(resolve(__dirname, this.target)))
+            .use(connect.static(resolve(__dirname, '../', 'target')))
+            .listen(this.port);
         Utils.log(('\nServer listening on port ' + this.port + '...').magenta);
     },
 

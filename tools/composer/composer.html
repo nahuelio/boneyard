@@ -1,0 +1,22 @@
+<!DOCTYPE html5>
+<html>
+	<head>
+		<title>Spinal Composer | <%= project.name %></title>
+		<!-- Change Main Spinal Lib.js -->
+		<script type="text/javascript" src="libs.js"></script>
+	</head>
+
+	<body>
+		<div id="global">
+			<h2><%= project.name %></h2>
+			<div id="components"></div>
+		</div>
+		<script type="text/javascript">
+			requirejs.config(<%= require %>);
+			require.onError = function() { console.log(arguments); };
+			require(['ioc/context'], function(Context) {
+				// Context.Initialize(UISpec);
+			});
+		</script>
+	</body>
+</html>
