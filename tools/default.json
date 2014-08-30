@@ -1,0 +1,23 @@
+{
+	"project": {
+		"name": "SpinalJS",
+		"mainSpecPath": "./composer/spinal-spec.js"
+	},
+	"require": {
+		"baseURL": "/",
+		"paths": {
+			"libs": "libs",
+			"core": "com/spinal/core",
+			"aop": "com/spinal/aop",
+			"ioc": "com/spinal/ioc",
+			"mvc": "com/spinal/mvc",
+			"ui": "com/spinal/ui",
+			"util": "com/spinal/util"
+		},
+		"shim": {
+			"libs/bootstrap": ["libs/jquery", "libs/modernizr"],
+			"libs/underscore": ["libs/bootstrap"],
+			"libs/backbone": ["libs/underscore"]
+		}
+	}
+}

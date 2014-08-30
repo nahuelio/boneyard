@@ -1,0 +1,31 @@
+{
+	"project": {
+        "mainConfigFile": "src/main.js",
+        "modules": [
+            { "name": "libs" },
+            { "name": "spinal-core", "exclude": ["libs"] },
+            { "name": "spinal-util", "exclude": ["libs", "spinal-core"] },
+            { "name": "spinal-ioc", "exclude": ["libs", "spinal-core", "spinal-util"] },
+            { "name": "spinal-aop", "exclude": ["libs", "spinal-core", "spinal-util"] },
+            { "name": "spinal-mvc", "exclude": ["libs", "spinal-core", "spinal-util"] },
+            { "name": "spinal-ui", "exclude": ["libs", "spinal-core", "spinal-util"] }
+        ],
+        "fileExclusionRegExp": "/.md$/",
+        "findNestedDependencies": true,
+        "removeCombined": true,
+        "optimize": "uglify2",
+        "uglify": {
+            "toplevel": false,
+            "ascii_only": true,
+            "beautify": false,
+            "max_line_length": 1000,
+            "no_mangle": true
+        },
+        "dir": "target"
+    },
+    "options": {
+		"debug": false,
+        "minify": true,
+        "banner": "./default-banner.txt"
+    }
+}

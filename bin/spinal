@@ -4,11 +4,13 @@ var program = require('commander'),
 	pkg = require('../package.json'),
 	fs = require('fs'),
 	path = require('path'),
+	resolve = path.resolve,
 	lib = path.join(path.dirname(fs.realpathSync(__filename)), '../'),
-	build = require(lib + 'tools/build');
+	benchmark = require(lib + 'tools/spinal/benchmark'),
+	build = require(lib + 'tools/spinal/build');
 
 /**
-*	Spinal Compile Tool
+*	Spinal Compile/Benchmark Tool
 **/
 program
 	.version(pkg.version)
@@ -20,7 +22,7 @@ program
 	.name = 'spinal';
 
 if(program.benchmark) {
-	build.exec('benchmark');
+	benchmark.exec();
 } else {
-	build.exec('build', { c: program.config, v: program.verbose });
+	build.exec({ c: program.config, v: program.verbose, basePath: resolve('../') });
 }
