@@ -14,7 +14,7 @@ var connect = require('connect'),
 	_s = require('underscore.string');
 
 // Project specific libs
-var Bundles = require('../utils/bundles'),
+var Package = require('../utils/package'),
 	Logger = require('../utils/logger'),
 	Utils = require('../utils/util');
 
@@ -24,13 +24,22 @@ var Bundles = require('../utils/bundles'),
 var Composer = {
 
 	/**
+	*	Composer Tool base path
+	*	@public
+	*	@property defaults
+	*	@type Object
+	**/
+	basePath: resolve(__dirname, '../../'),
+
+	/**
 	*	Composer defaults
 	*	@public
 	*	@property defaults
 	*	@type Object
 	**/
 	defaults: {
-		config: '../default.json',
+		spinalSource: './src',
+		spinalConfig: './default.json',
 		template: './composer.html',
 		clear: true,
 		verbose: false,
@@ -54,6 +63,14 @@ var Composer = {
 	target: './composer-app',
 
 	/**
+	*	Spinal Config
+	*	@public
+	*	@property spinalConfig
+	*	@type Object
+	**/
+	spinalConfig: {},
+
+	/**
 	*	Config
 	*	@public
 	*	@property config
@@ -71,9 +88,9 @@ var Composer = {
 		opts || (opts = {});
 		this.defaults = _.extend(opts, this.defaults);
 		this.output();
-		this.loadConfig();
-		//this.createTarget();
-		//this.spinUpAutoWatch();
+		this.setup();
+		this.createTarget();
+		this.spinUpAutoWatch();
 	},
 
 	/**
@@ -85,31 +102,68 @@ var Composer = {
 		Logger.log('Spinal Composer Tool', { nl: true });
 		Logger.debug('Settings:', { nl: true });
 		Logger.debug('\tSource Path: ' + this.source +
-			'\n\tLocal Folder: ' + this.target +
+			'\n\tConfig File: ' + ((!this.config) ? 'Not Specified' : this.config) +
 			'\n\tClear on Exit: ' + ((this.defaults.clear) ? 'Activated' : 'Deactivated') +
 			'\n\tVerbose: ' + ((this.defaults.verbose) ? 'Activated' : 'Deactivated'), { nl: true });
 	},
 
 	/**
-	*	Load Config file (custom for specific project or the default one)
+	*	Load Config files, default one and if provided custom one
 	*	@public
 	*	@method loadConfig
 	**/
-	loadConfig: function() {
+	setup: function() {
 		try {
-			if(!this.defaults.config) {
-				Logger.warn('Path to the config file not specify', { nl: true });
-				console.log(this.defaults.config);
-				this.defaults.config = resolve(__dirname, this.defaults.config);
-				Logger.debug('Loading Default Config file [' + this.defaults.config + ']', { nl: true });
+			this.setupDefault();
+			if(this.defaults.config) {
+				this.customConfig(this.defaults.config);
 			} else {
-				Logger.log('Loading Config file [' + resolve(__dirname, this.defaults.config) + ']', { nl: true });
+				Logger.warn('Custom Config file not specified.', { nl: true });
+				Logger.log('Loaded Default Config file.');
 			}
-			this.config = require(this.defaults.config);
+			_.extend(this.config, this.spinalConfig);
 		} catch(ex) {
 			Logger.error(ex.message);
 			process.exit();
 		}
+	},
+
+	/**
+	*	Load Custom Config and merges default config file
+	*	@public
+	*	@method customConfig
+	*	@param configPath {String} custom config path
+	**/
+	customConfig: function(configPath) {
+		Logger.log('Loading Config file [' + configPath + ']', { nl: true });
+		this.config = require(configPath);
+		if(!this.config || !_.isObject(this.config)) throw new Error('[CONFIG] Malformed custom config file.');
+	},
+
+	/**
+	*	Process Default config file
+	*	@public
+	*	@method processDefault
+	**/
+	setupDefault: function() {
+		var path = resolve(this.basePath, './tools/', this.defaults.spinalConfig);
+		this.spinalConfig = require(path);
+		this.spinalConfig.require.bundles = Package.bundles({
+			basePath: resolve(this.basePath, this.defaults.spinalSource),
+			paths: this.spinalConfig.require.paths
+		});
+		this.spinalConfig.require.paths = { libs: "libs" }; // @TryThis: Clean up paths for packages except libs
+	},
+
+	/**
+	*	Generate SpinalJS Spec
+	*	@public
+	*	@method generateSpec
+	**/
+	generateSpec: function(baseDir) {
+		var src = resolve(__dirname, this.config.project.mainSpec + '.js');
+		var target = resolve(baseDir, this.config.project.mainSpec + '.js');
+		Utils.copyFile(src, target);
 	},
 
 	/**
@@ -119,14 +173,12 @@ var Composer = {
 	**/
 	createTarget: function() {
 		Logger.log('Generating Composer Environment', { nl: true });
-		var baseDir = Utils.createDir(__dirname, this.target);
 		try {
+			var baseDir = Utils.createDir(this.basePath, this.target); // FIXME: Global Execution
+			if(!this.defaults.config) this.generateSpec(baseDir);
+			this.config.require = JSON.stringify(this.config.require);
 			var tpl = fs.readFileSync(resolve(__dirname, this.defaults.template), "utf8");
-			// TODO: Need to look for an strategy to tell in which bundle you will find the module ID.
-			Utils.createFile(baseDir + '/index.html', _.template(tpl, {
-				project: this.config.project,
-				require: JSON.stringify(_.omit(this.config.require, 'mainConfigFile', 'out'))
-			}), { encoding: 'utf8' });
+			Utils.createFile(baseDir + '/index.html', _.template(tpl, this.config), { encoding: 'utf8' });
 		} catch(ex) {
 			Logger.error(ex.message);
 		}
@@ -141,10 +193,11 @@ var Composer = {
 		Logger.log('Spinning Up Server...', { nl: true });
 		// TODO: Watch service do later
 		//watch.createMonitor(this.source, { ignoreDotFiles: true, ignoreUnreadableDir: true }, _.bind(this.onFileChange, this));
-		connect().use(connect.static(resolve(__dirname, this.target)))
-			.use(connect.static(resolve(__dirname, '../', 'target')))
-			.listen(this.port);
-		Logger.debug('Server listening on port ' + this.port + '...', { nl: true });
+		 // FIXME: Global Execution of 'this.target';
+		connect().use(connect.static(resolve(this.basePath, this.target)))
+			.use(connect.static(resolve(this.basePath, './target')))
+			.listen(this.defaults.port);
+		Logger.debug('Server listening on port ' + this.defaults.port + '...', { nl: true });
 	},
 
 	/**

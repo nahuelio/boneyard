@@ -117,7 +117,8 @@ define(['core/spinal',
 		factory: function(methodName) {
 			if(!methodName) return null;
 			var args = Array.prototype.slice.call(arguments, 1);
-			return (Context.BoneFactory[methodName]) ? Context.BoneFactory[methodName].apply(Context.BoneFactory, args) : null;
+			return (Context.BoneFactory[methodName]) ?
+				Context.BoneFactory[methodName].apply(Context.BoneFactory, args) : null;
 		},
 
 		/**
@@ -267,9 +268,26 @@ define(['core/spinal',
 			return (arguments.length === 1 && _.isFunction(spec)) ?
 				new Context().wire(null, spec) :
 				new Context().wire(spec, callback);
+		},
+
+		/**
+		*	Main Spec LazyLoad
+		*	@static
+		*	@method LazyLoad
+		*	@param pathSpec {String} main spec path
+		*	@param callback {Function} callback pass to the wire
+		*	@return com.spinal.ioc.Context
+		**/
+		LazyLoad: function(pathSpec, callback) {
+			require([pathSpec], callback);
 		}
 
 	}));
+
+	// Automatic Initializer
+	var $mainSpec = $('script[data-spec]');
+	if($mainSpec.length > 0)
+		Context.LazyLoad($mainSpec.data('spec'), function(spec) { Spinal.app = Context.Initialize(spec); });
 
 	return Context;
 

@@ -36,6 +36,13 @@ var Utils = {
 	},
 
 	/**
+	*	Copy a file specified in sourceFile parameter into the target folder
+	**/
+	copyFile: function(sourceFile, targetFile) {
+		fs.createReadStream(sourceFile).pipe(fs.createWriteStream(targetFile));
+	},
+
+	/**
 	*	Filter Files inside a path.
 	**/
 	filterFiles: function(path, excl, onlyFilename) {

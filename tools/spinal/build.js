@@ -16,7 +16,7 @@ var	requirejs = require('requirejs'),
 	_s = require('underscore.string');
 
 // Project specific libs
-var Bundles = require('../utils/bundles'),
+var Package = require('../utils/package'),
 	Logger = require('../utils/logger'),
 	Utils = require('../utils/util');
 
@@ -126,7 +126,6 @@ var Build = {
 			this.config.project.mainConfigFile = resolve(this.defaults.basePath, this.config.project.mainConfigFile);
 			this.config.project.dir = resolve(this.defaults.basePath, this.config.project.dir);
 			requirejs.optimize(this.config.project, _.bind(this.banner, this), function(err) {
-				console.log(arguments);
 				Logger.error(err.Error);
 				process.exit();
 			});

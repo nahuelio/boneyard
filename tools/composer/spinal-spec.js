@@ -9,21 +9,20 @@ define([], function() {
 		theme: 'standard',
 
 		global: {
-
 			$module: {
 				class: 'ui/container',
-				params: { el: 'div.global', css: '$bone!theme' }
+				params: { el: 'div#global' }
+			},
+			$ready: {
+				add: ['$bone!components', { renderOnAdd: true }]
 			}
-
 		},
 
-		custom: {
-
+		components: {
 			$module: {
-				class: 'ui/mycustomcomponent',
-				params: { el: 'div.global', css: '$bone!theme' }
+				class: 'ui/container',
+				params: { id: 'components' }
 			}
-
 		}
 
 	};

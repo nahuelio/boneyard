@@ -1,7 +1,7 @@
 {
 	"project": {
 		"name": "SpinalJS",
-		"mainSpecPath": "./composer/spinal-spec.js"
+		"mainSpec": "./spinal-spec"
 	},
 	"require": {
 		"baseURL": "/",
