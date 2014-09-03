@@ -3,7 +3,7 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['ioc/context',
-		'util/error/types/context-exception'], function(Context, ContextException) {
+		'util/exception/context'], function(Context, ContextException) {
 
 	/**
 	*	Bone Query Class
@@ -11,9 +11,8 @@ define(['ioc/context',
 	*	@class com.spinal.ioc.BoneQuery
 	*	@extends com.spinal.core.SpinalClass
 	*
-	*	@requires com.spinal.core.Spinal
 	*	@requires com.spinal.ioc.Context
-	*	@requires com.spinal.util.error.types.ContextException
+	*	@requires com.spinal.util.exception.ContextException
 	**/
 	var BoneQuery = Spinal.namespace('com.spinal.ioc.BoneQuery', Spinal.SpinalClass.inherit({
 

@@ -10,16 +10,19 @@ define(['ioc/context',
 	*	@namespace com.spinal.ioc.processor
 	*	@class com.spinal.ioc.processor.PluginProcessor
 	*	@extends com.spinal.ioc.processor.BoneProcessor
+	*
+	*	@requires com.spinal.ioc.Context
+	*	@requires com.spinal.ioc.processor.BoneProcessor
 	**/
 	var PluginProcessor = Spinal.namespace('com.spinal.ioc.processor.PluginProcessor', BoneProcessor.inherit({
 
 		/**
-		*	Supported Notations
+		*	Supported Notation Regular Expression
 		*	@public
-		*	@property notations
-		*	@type Array
+		*	@property notationRE
+		*	@type RegExp
 		**/
-		notations: ['plugins'],
+		notationRE: new RegExp('\\' + Context.PREFIX + '(plugins)$', 'i'),
 
 		/**
 		*	Initialize
@@ -33,16 +36,6 @@ define(['ioc/context',
 		},
 
 		/**
-		*	Create RegExp used by this processor
-		*	@private
-		*	@method _regexp
-		*	@return RegExp
-		**/
-		_regexp: function() {
-			return new RegExp('\\' + Context.PREFIX + '(' + this.notations.join('|') + ')$', 'i');
-		},
-
-		/**
 		*	Handles specifc notation with the current processor.
 		*	@public
 		*	@method handleNotation
@@ -52,7 +45,7 @@ define(['ioc/context',
 		*	@Note TODO: Implement Plugin job... For now just remove it from the spec/
 		**/
 		handleNotation: function(bone, id) {
-			var b = this.matchNotation(id);
+			var b = this.matchNotation(id, this.notationRE);
 			if(b) {
 				delete this.ctx.spec[id];
 				return true;

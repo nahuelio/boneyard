@@ -3,7 +3,7 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['util/string',
-		'util/error/exception'], function(StringUtil, SpinalException) {
+		'util/exception/exception'], function(StringUtil, SpinalException) {
 
 	describe('com.spinal.util.StringUtil', function() {
 

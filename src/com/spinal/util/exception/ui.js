@@ -1,23 +1,23 @@
 /**
-*	@module com.spinal.util.error.types
+*	@module com.spinal.util.exception
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['core/spinal',
-		'util/error/exception'], function(Spinal, Exception) {
+		'util/exception/exception'], function(Spinal, Exception) {
 
 	/**
 	*	UI Exception Type
-	*	@namespace com.spinal.util.error.types
-	*	@class com.spinal.util.error.types.UIException
-	*	@extends com.spinal.util.error.Exception
+	*	@namespace com.spinal.util.exception
+	*	@class com.spinal.util.exception.UIException
+	*	@extends com.spinal.util.exception.Exception
 	**/
-	var UIException = Spinal.namespace('com.spinal.util.error.types.UIException', Exception.inherit({
+	var UIException = Spinal.namespace('com.spinal.util.exception.UIException', Exception.inherit({
 
 		/**
 		*	Initialize
 		*	@public
 		*	@method initialize
-		*	@return {com.spinal.util.error.types.UIException}
+		*	@return {com.spinal.util.exception.UIException}
 		**/
 		initialize: function() {
 			return UIException.__super__.initialize.apply(this, arguments);
@@ -35,7 +35,7 @@ define(['core/spinal',
 		/**
 		*	__Type List__
 		*
-		*		Generic (inherited from com.spinal.util.error.exception)
+		*		Generic (inherited from com.spinal.util.exception.Exception)
 		*		InvalidIDType
 		*		SuccessorNotSpecified
 		*		InvalidSuccessorType

@@ -22,7 +22,7 @@ var Utils = {
 	*	Create Directory in the BasePath specified as parameter.
 	**/
 	createDir: function(basePath, dirname) {
-		var p = resolve(basePath, dirname);
+		var p = (dirname) ? resolve(basePath, dirname) : basePath;
 		if(!fs.existsSync(p)) fs.mkdirSync(p, 0777);
 		return p;
 	},
@@ -33,6 +33,13 @@ var Utils = {
 	createFile: function(filename, stream, opts) {
 		fs.writeFileSync(filename, stream, opts);
 		return filename;
+	},
+
+	/**
+	*	Copy a file specified in sourceFile parameter into the target folder
+	**/
+	copyFile: function(sourceFile, targetFile) {
+		fs.createReadStream(sourceFile).pipe(fs.createWriteStream(targetFile));
 	},
 
 	/**

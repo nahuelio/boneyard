@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Spinal Composer | <%= project.name %></title>
+		<script type="text/javascript" src="libs.js" data-spec="<%= project.mainSpec %>"></script>
+	</head>
+
+	<body>
+		<div id="global">
+			<h2><%= project.name %></h2>
+		</div>
+		<script type="text/javascript">
+			requirejs.config(<%= require %>);
+			require(['ioc/context']);
+		</script>
+	</body>
+</html>

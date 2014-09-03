@@ -7,8 +7,7 @@ define(['core/spinal',
 		'util/adt/iterator',
 		'ioc/bone-factory',
 		'ioc/bone-query',
-		'util/error/types/context-exception'], function(Spinal, StringUtil, Iterator,
-														BoneFactory, BoneQuery, ContextException) {
+		'util/exception/context'], function(Spinal, StringUtil, Iterator, BoneFactory, BoneQuery, ContextException) {
 
 	/**
 	*	IOC Context Class
@@ -18,8 +17,10 @@ define(['core/spinal',
 	*
 	*	@requires com.spinal.core.Spinal
 	*	@requires com.spinal.util.StringUtil
+	*	@requires com.spinal.util.adt.Iterator
 	*	@requires com.spinal.ioc.BoneFactory
-	*	@requires com.spinal.util.error.types.ContextException
+	*	@requires com.spinal.ioc.BoneQuery
+	*	@requires com.spinal.util.exception.ContextException
 	**/
 	var Context = Spinal.namespace('com.spinal.ioc.Context', Spinal.SpinalClass.inherit({
 
@@ -116,7 +117,8 @@ define(['core/spinal',
 		factory: function(methodName) {
 			if(!methodName) return null;
 			var args = Array.prototype.slice.call(arguments, 1);
-			return (Context.BoneFactory[methodName]) ? Context.BoneFactory[methodName].apply(Context.BoneFactory, args) : null;
+			return (Context.BoneFactory[methodName]) ?
+				Context.BoneFactory[methodName].apply(Context.BoneFactory, args) : null;
 		},
 
 		/**
@@ -124,7 +126,7 @@ define(['core/spinal',
 		*	@public
 		*	@chainable
 		*	@method wire
-		*	@throws {com.spinal.util.error.types.ContextException}
+		*	@throws {com.spinal.util.exception.ContextException}
 		*	@param spec {Object} context specification to be wired
 		*	@param callback {Function} callback function to be called after autowiring.
 		*	@return {com.spinal.ioc.Context}
@@ -266,9 +268,26 @@ define(['core/spinal',
 			return (arguments.length === 1 && _.isFunction(spec)) ?
 				new Context().wire(null, spec) :
 				new Context().wire(spec, callback);
+		},
+
+		/**
+		*	Main Spec LazyLoad
+		*	@static
+		*	@method LazyLoad
+		*	@param pathSpec {String} main spec path
+		*	@param callback {Function} callback pass to the wire
+		*	@return com.spinal.ioc.Context
+		**/
+		LazyLoad: function(pathSpec, callback) {
+			require([pathSpec], callback);
 		}
 
 	}));
+
+	// Automatic Initializer
+	var $mainSpec = $('script[data-spec]');
+	if($mainSpec.length > 0)
+		Context.LazyLoad($mainSpec.data('spec'), function(spec) { Spinal.app = Context.Initialize(spec); });
 
 	return Context;
 

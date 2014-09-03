@@ -3,7 +3,7 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['ioc/context',
-		'util/error/types/context-exception',
+		'util/exception/context',
 		'ui/view',
 		'ui/container',
 		'specs/simple.spec',
@@ -108,6 +108,19 @@ define(['ioc/context',
 					expect(e.message).to.be.equal(ContextException.TYPES.InvalidSpecFormat);
 				});
 			});
+
+		});
+
+		/**
+		*	Context#wire() Test Cases for possible semantics errors in Specs
+		*/
+		describe('#wire() - Semantics Errors', function() {
+
+			it('Error:', function() {
+				var errorSpec = {};
+			});
+
+			// Continue adding more error test cases
 
 		});
 

@@ -188,6 +188,49 @@ define(['core/spinal',
 
     	});
 
+        /**
+    	*	Collection#invoke() test
+    	**/
+        describe('#invoke()', function() {
+
+            it('Should invoke a method on each element inside the collection', function() {
+                this.testInterface.reset();
+                var added = this.testInterface.addAll([
+                    { model: new Backbone.Model({ name: 'foo' }) },
+                    { model: new Backbone.Model({ name: 'bar' }) }
+                ]);
+                expect(added).to.be.equal(true);
+                expect(this.testInterface.size()).to.be.equal(2);
+                var results = this.testInterface.invoke('render');
+                expect(results).to.be.ok();
+                expect(results).to.be.a('array');
+            });
+
+        });
+
+        /**
+    	*	Collection#each() test
+    	**/
+        describe('#each()', function() {
+
+            it('Should iterate over all the elements inside the collection', function() {
+                this.testInterface.reset();
+                var added = this.testInterface.addAll([
+                    { model: new Backbone.Model({ name: 'foo' }) },
+                    { model: new Backbone.Model({ name: 'bar' }) }
+                ]);
+                expect(added).to.be.equal(true);
+                expect(this.testInterface.size()).to.be.equal(2);
+                this.testInterface.each(function(v, k) {
+                    expect(v).to.be.ok();
+                    expect(v).to.be.a(Backbone.View);
+                    expect(k).to.be.a('number');
+                    expect(v.model.get('name')).to.be.ok();
+                });
+            });
+
+        });
+
     	/**
     	*	Collection#contains() test
     	**/
@@ -559,6 +602,26 @@ define(['core/spinal',
             });
 
     	});
+
+        /**
+    	*	Collection#swap() test
+    	**/
+        describe('#swap()', function() {
+
+            it('Should swap 2 elements position inside the collection based on a comparator function', function() {
+                this.testSimple.reset().addAll(['z', 'a', 'd', 'w']);
+                this.testSimple.swap(function(e, i) { return (i === 3) ? 1 : i; });
+                expect(this.testSimple.get(3)).to.be.equal('a');
+                expect(this.testSimple.get(1)).to.be.equal('w');
+            });
+
+            it('Should NOT swap position of elements inside the collection (comparator param undefined or not a function)', function() {
+                this.testSimple.reset().addAll(['z', 'a', 'd', 'w']);
+                expect(this.testSimple.swap()).to.be.ok();
+                expect(this.testSimple.swap('non-a-function')).to.be.ok();
+            });
+
+        });
 
     	/**
     	*	Collection#toString() test

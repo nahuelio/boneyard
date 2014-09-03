@@ -1,0 +1,3 @@
+//	SpinalJS <%= module %>@<%= version %> (c) <%= year %> <%= author %>, 3dimention.com
+//	SpinalJS may be freely distributed under the MIT license.
+//	For all details and documentation: http://3dimention.github.io/spinal

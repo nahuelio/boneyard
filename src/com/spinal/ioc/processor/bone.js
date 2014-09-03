@@ -3,8 +3,8 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['core/spinal',
-		'util/error/types/processor-exception',
-		'ioc/context'], function(Spinal, ProcessorException, Context) {
+		'ioc/context',
+		'util/exception/processor'], function(Spinal, Context, ProcessorException) {
 
 	/**
 	*	BaseClass Bone Processor
@@ -12,7 +12,8 @@ define(['core/spinal',
 	*	@class com.spinal.ioc.processor.BoneProcessor
 	*	@extends com.spinal.core.SpinalClass
 	*
-	*	@requires com.spinal.ioc.IoCProcessor
+	*	@requires com.spinal.ioc.Context
+	*	@requires com.spinal.util.exception.ProcessorException
 	**/
 	var BoneProcessor = Spinal.namespace('com.spinal.ioc.processor.BoneProcessor', Spinal.SpinalClass.inherit({
 
@@ -25,12 +26,12 @@ define(['core/spinal',
 		ctx: null,
 
 		/**
-		*	Supported Notations
+		*	Supported Notation Regular Expression
 		*	@public
-		*	@property notations
-		*	@type Array
+		*	@property notationRE
+		*	@type RegExp
 		**/
-		notations: ['bone'],
+		notationRE: new RegExp('\\' + Context.PREFIX + '(bone)(\!{1})', 'i'),
 
 		/**
 		*	Initialize
@@ -43,18 +44,7 @@ define(['core/spinal',
 		initialize: function(ctx) {
 			if(!ctx) throw new ContextException('UndefinedContext');
 			this.ctx = ctx;
-			this.notationRE = this._regexp();
 			return this;
-		},
-
-		/**
-		*	Create RegExp used by this processor
-		*	@private
-		*	@method _regexp
-		*	@return RegExp
-		**/
-		_regexp: function() {
-			return new RegExp('\\' + Context.PREFIX + '(' + this.notations.join('|') + ')(\!{1})', 'i');
 		},
 
 		/**
@@ -62,11 +52,12 @@ define(['core/spinal',
 		*	@public
 		*	@method matchNotation
 		*	@param notation {String} notation to be evaluated
+		*	@param re {RegExp} RegExp used to evaluate notation
 		*	@return Boolean
 		**/
-		matchNotation: function(notation) {
-			if(!this.notationRE) this.notationRE = this._regexp();
-			return this.notationRE.test(notation);
+		matchNotation: function(notation, re) {
+			if(!notation) return false;
+			return re.test(notation);
 		},
 
 		/**
@@ -84,21 +75,21 @@ define(['core/spinal',
 		},
 
 		/**
-		*	Handler when a module depends on a bone of 'String' type in order to be instanciated.
+		*	Process notation when a module depends on a bone of 'String' type in order to be instanciated.
 		*	@public
 		*	@method handleDependency
-		*	@param id {Object} current bone id
 		*	@param bone {Object} current bone to evaluate
+		*	@param id {String} current bone id
 		*	@param [parentBone] {Object} parent bone ref
 		*	@return Object
 		**/
-		handleDependency: function(bone, id, parentBone) {
+		process: function(bone, id, parentBone) {
 			if(!bone) throw new ProcessorException('BoneNotFound');
 			if(!this.ctx.query.isModule(bone)) return (parentBone.parent[id] = bone);
 		},
 
 		/**
-		*	Handles specifc notation with the current processor.
+		*	Validates the notation and handles it accordingly to the processor.
 		*	@public
 		*	@method handleNotation
 		*	@param id {Object} current bone id
@@ -106,15 +97,7 @@ define(['core/spinal',
 		*	@return Object
 		**/
 		handleNotation: function(bone, id) {
-			var result = this.matchNotation(id);
-			if(!result) {
-				if(_.isObject(bone) || _.isArray(bone)) {
-					this.constructor.__super__.execute.apply(this, [this.handleNotation, bone, id]);
-				} else if(this.constructor.__super__.matchNotation.call(this.constructor.__super__, bone)) {
-					this.handleDependency.apply(this, arguments);
-				}
-			}
-			return result;
+			return this.matchNotation(id, this.notationRE);
 		},
 
 		/**

@@ -11,6 +11,10 @@ define(['core/spinal',
 	*	@namespace com.spinal.ioc
 	*	@class com.spinal.ioc.BoneFactory
 	*	@extends com.spinal.core.SpinalClass
+	*
+	*	@requires com.spinal.core.Spinal
+	*	@requires com.spinal.util.adt.Stack
+	*	@requires com.spinal.util.Factory
 	**/
 	var BoneFactory = Spinal.namespace('com.spinal.ioc.BoneFactory', Factory.inherit({
 
