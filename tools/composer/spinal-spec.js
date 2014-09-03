@@ -13,9 +13,9 @@ define([], function() {
 				class: 'ui/container',
 				params: { el: 'div#global' }
 			},
-			$ready: {
-				add: ['$bone!components', { renderOnAdd: true }]
-			}
+			$ready: [
+				{ add: ['$bone!components', { renderOnAdd: true }] }
+			]
 		},
 
 		components: {
