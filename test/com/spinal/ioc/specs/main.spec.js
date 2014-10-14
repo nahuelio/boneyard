@@ -42,9 +42,9 @@ define(['specs/header.spec',
 			$ready: [
 				{ '$bone!content.add': ['$this', { renderOnAdd: true }] }
 			]
-		},
+		}
 
-		$plugins: ['aop', 'poly', 'i18n']
+		//$plugins: ['aop', 'poly', 'i18n']
 
 	};
 

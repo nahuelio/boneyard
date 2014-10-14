@@ -25,6 +25,14 @@ define(['ioc/context',
 		notationRE: new RegExp('\\' + Context.PREFIX + '(plugins)$', 'i'),
 
 		/**
+		*	Default plugins path processors
+		*	@public
+		*	@property defaultPath
+		*	@type String
+		**/
+		defaultPath: 'ioc/plugins/',
+
+		/**
 		*	Initialize
 		*	@public
 		*	@chainable
@@ -36,21 +44,44 @@ define(['ioc/context',
 		},
 
 		/**
-		*	Handles specifc notation with the current processor.
+		*	Plugin Load handler
+		*	@private
+		*	@method _onPluginLoaded
+		*	@param pluginName {String} Plugin module name
+		*	@param plugin {com.spinal.core.Spinal.SpinalClass} plugin module constructor
+		**/
+		_onPluginLoaded: function(pluginName, plugin) {
+			var params = (plugin.params) ? plugin.params : {};
+			plugin = Context.BoneFactory.create(pluginName, params, this.ctx);
+			plugin.execute();
+		},
+
+		/**
+		*	Process plugin detected by handle notation
+		*	@public
+		*	@method process
+		*	@param name {Object} plugin name
+		*	@param params {Object} plugin params passed to the plugin constructor
+		*	@return Object
+		**/
+		process: function(name, params) {
+			Context.BoneFactory.add({
+				id: name, class: (this.defaultPath + name),
+				params: params, success: _.bind(this._onPluginLoaded, this)
+			});
+			return name;
+		},
+
+		/**
+		*	Handles specifc notation with the current processor
 		*	@public
 		*	@method handleNotation
-		*	@param bone {Object} current bone to evaluate
-		*	@param id {Object} current bone id
+		*	@param params {Object} plugin params passed to the plugin constructor
+		*	@param pluginName {Object} plugin name
 		*	@return Boolean
-		*	@Note TODO: Implement Plugin job... For now just remove it from the spec/
 		**/
-		handleNotation: function(bone, id) {
-			var b = this.matchNotation(id, this.notationRE);
-			if(b) {
-				delete this.ctx.spec[id];
-				return true;
-			}
-			return false;
+		handleNotation: function(params, pluginName) {
+			return this.process(pluginName, params);
 		},
 
 		/**
@@ -60,8 +91,17 @@ define(['ioc/context',
 		*	@return {com.spinal.ioc.processor.CreateProcessor}
 		**/
 		execute: function() {
-			this.ctx.trigger(Context.EVENTS.plugin, this.ctx.query.findBonesBy(_.bind(this.handleNotation, this)));
-			this.ctx.trigger(Context.EVENTS.processed, { type: PluginProcessor.NAME });
+			var plugins = this.ctx.query.findBoneById('$plugins');
+			if(plugins) {
+				plugins = _.map(plugins, this.handleNotation, this);
+				Context.BoneFactory.load(_.bind(function() {
+					delete this.ctx.spec['$plugins'];
+					this.ctx.trigger(Context.EVENTS.plugin, plugins);
+					this.ctx.trigger(Context.EVENTS.processed, { type: PluginProcessor.NAME });
+				}, this));
+			} else {
+				this.ctx.trigger(Context.EVENTS.processed, { type: PluginProcessor.NAME });
+			}
 			return this;
 		}
 

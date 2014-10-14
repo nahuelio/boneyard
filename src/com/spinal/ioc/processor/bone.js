@@ -77,7 +77,7 @@ define(['core/spinal',
 		/**
 		*	Process notation when a module depends on a bone of 'String' type in order to be instanciated.
 		*	@public
-		*	@method handleDependency
+		*	@method process
 		*	@param bone {Object} current bone to evaluate
 		*	@param id {String} current bone id
 		*	@param [parentBone] {Object} parent bone ref

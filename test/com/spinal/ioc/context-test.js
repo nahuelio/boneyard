@@ -7,7 +7,9 @@ define(['ioc/context',
 		'ui/view',
 		'ui/container',
 		'specs/simple.spec',
-		'specs/advanced.spec'], function(Context, ContextException, View, Container, SimpleSpec, AdvancedSpec) {
+		'specs/advanced.spec',
+		'specs/plugin.spec'], function(Context, ContextException, View, Container,
+			SimpleSpec, AdvancedSpec, PluginSpec) {
 
 	describe('com.spinal.ioc.Context', function() {
 
@@ -168,6 +170,32 @@ define(['ioc/context',
 				var bones = this.appContext.getBonesByType(Container);
 				expect(bones).to.have.length(6);
 				_.each(bones, function(b) { expect(b).to.be.an(Container); });
+			});
+
+		});
+
+		/**
+		*	Context#wire() test
+		*	Plugin Specs
+		**/
+		describe('#wire() - PluginSpec', function() {
+
+			it('Should Wire Plugin Spec (Plugins tasks)', function(done) {
+				this.appContext.on(Context.EVENTS.initialized, _.bind(function(ctx) {
+					expect(ctx).to.be.ok();
+					this.appContext.off();
+					done();
+				}, this)).on(Context.EVENTS.plugin + ' ' + Context.EVENTS.created, _.bind(function(result) {
+					expect(result).to.be.ok();
+					expect(result).to.be.an('array');
+				}, this)).on(Context.EVENTS.ready, _.bind(function(result) {
+					expect(result).to.be.ok();
+				}, this));
+
+				this.appContext.wire(PluginSpec, function(ctx) {
+					expect(ctx).to.be.ok();
+					expect(ctx.spec).to.be.ok();
+				});
 			});
 
 		});
