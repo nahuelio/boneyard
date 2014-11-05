@@ -64,6 +64,23 @@ define(['core/spinal',
 		},
 
 		/**
+		*	Find a theme by name passed by parameter, it the theme is not found the function returns null.
+		*	@public
+		*	@method findTheme
+		*	@param themeName {String} theme name
+		*	@return Object
+		**/
+		findTheme: function(themeName) {
+			var t = null;
+			for(var theme in this.themes) {
+				if((!themeName || themeName === '' && theme.default) || themeName === theme) {
+					t = { name: theme, config: this.themes[theme] }; break;
+				}
+			}
+			return t;
+		},
+
+		/**
 		*	Process Plugin implementation
 		*	@public
 		*	@method process
@@ -73,8 +90,8 @@ define(['core/spinal',
 		process: function(themeName) {
 			if(!this.ctx.theme) return this;
 			var $existing = this._$header.children('link[theme!="'+ themeName +'"]');
-			if($existing.length > 0) $existing.remove();;
-			this._$header.append(this._domLink({ theme: themeName, href: this.ctx.theme.path }));
+			if($existing.length > 0) $existing.remove();
+			this._$header.append(this._domLink({ theme: themeName, href: this.ctx.theme.config.path }));
 			return this;
 		},
 
@@ -87,10 +104,8 @@ define(['core/spinal',
 		*	@return {com.spinal.ioc.plugins.ThemePlugin}
 		**/
 		change: function(themeName) {
-			this.ctx.theme = _.find(this.themes, _.bind(function(theme, name) {
-				if((!themeName || themeName === '') && theme.default) return (themeName = name);
-				return (themeName === name);
-			}, this));
+			this.ctx.theme = this.findTheme(themeName);
+			if(!themeName && this.ctx.theme) themeName = this.ctx.theme.name;
 			return this.process(themeName);
 		},
 

@@ -214,7 +214,21 @@ define(['ioc/context',
 			});
 
 			it('ThemePlugin: Should Change the theme', function() {
-				// TODO: Implement Unit Test
+				// Spinal Active
+				var $linkSpinal = $('head > link[theme="spinal"]');
+				var $linkBootstrap = $('head > link[theme="bootstrap"]');
+				expect($linkSpinal.length).to.be.equal(1);
+				expect($linkBootstrap.length).to.be.equal(0);
+				expect(this.appContext.theme.name).to.be.equal('spinal');
+
+				this.appContext.changeTheme('bootstrap');
+
+				// Bootstrap Active
+				var $linkSpinal = $('head > link[theme="spinal"]');
+				var $linkBootstrap = $('head > link[theme="bootstrap"]');
+				expect($linkSpinal.length).to.be.equal(0);
+				expect($linkBootstrap.length).to.be.equal(1);
+				expect(this.appContext.theme.name).to.be.equal('bootstrap');
 			});
 
 		});

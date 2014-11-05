@@ -19,15 +19,13 @@ define([], function() {
 		},
 
 		$plugins: {
-			// Usage: context.changeTheme('spinal');
+			html: {
+				spinal: { path: 'templates/spinal-tpl', lazyLoading: true },
+				ui: { path: 'templates/ui-tpl' }
+			},
 			theme: {
 				spinal: { path: 'base/test/com/spinal/ioc/themes/spinal.css', default: true },
 				bootstrap: { path: 'base/test/com/spinal/ioc/themes/bootstrap.css' }
-			},
-			// Usage: context.tpl('[package]!ui.button', { label: 'saraza', ... });
-			html: {
-				spinal: { path: 'templates/spinal-tpl', default: true, lazyLoading: true },
-				ui: { path: 'templates/ui-tpl' }
 			}
 		}
 
