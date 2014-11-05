@@ -14,6 +14,8 @@
   Useful when building dynamic paths as bone dependencies.
 * __Reminder:__ the major goal is to simplify business wiring and keep the bussiness logic completely decoupled through the composition layer.
 IoC Context must be the only entry point for accessing module instances (facade).
+* Look at the test/com/spinal/ioc/specs/main.specs.js -> Possible Change: $module$viewA: {}, $module$viewB: {}, etc as a simplification.
+It can be simplified even more...
 
 ### IoC Plugins development notes:
 

@@ -33,17 +33,6 @@ define(['core/spinal'], function(Spinal) {
 
 		/**
 		*	@public
-		*	@method matches
-		*	@param types {Array} collection of exception types
-		*	@return Boolean
-		**/
-		matches: function(types) {
-			if(_.isEmpty(_.pick(this.constructor.TYPES, types))) return false;
-			return _.contains(types, this.type);
-		},
-
-		/**
-		*	@public
 		*	@method getMessage
 		*	@param type {String} exception type
 		*	@param tpl {Object} key/value pairs to be used to template the message

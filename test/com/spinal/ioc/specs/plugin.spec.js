@@ -19,9 +19,15 @@ define([], function() {
 		},
 
 		$plugins: {
-			html: { path: 'templates', autowire: true }
-			//theme: { paths: [], default: 'default' },
-			//aop: { }
+			// usage: context.tpl('[package]]!ui.button', { label: 'saraza', ... });
+			html: {
+				spinal: { path: 'ioc/tpls/spinal-tpl', default: true }
+			},
+			// usage: context.changeTheme('spinal');
+			theme: {
+				spinal: { path: 'base/test/com/spinal/ioc/themes/spinal.css', default: true },
+				bootstrap: { path: 'base/test/com/spinal/ioc/themes/bootstrap.css' }
+			}
 		}
 
 	};

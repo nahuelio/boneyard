@@ -177,6 +177,7 @@ define(['ioc/context',
 		/**
 		*	Context#wire() test
 		*	Plugin Specs
+		*	@FIXME: Test ThemePlugin and HTMLPlugin
 		**/
 		describe('#wire() - PluginSpec', function() {
 

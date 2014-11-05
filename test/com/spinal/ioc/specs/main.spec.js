@@ -44,7 +44,18 @@ define(['specs/header.spec',
 			]
 		}
 
-		//$plugins: ['aop', 'poly', 'i18n']
+		//$plugins: ['aop', 'poly', 'i18n', 'theme']
+
+		/** Possible updated to the spec structure -> i.e:
+			viewB: {
+				$class: 'ui/container',
+				$params: { el: 'div.global', css: '$bone!theme' },
+				$ready: [
+					{ '$bone!content.add': ['args'] },
+					{ '$bone!content.add': ['args'] }
+				]
+			}
+		**/
 
 	};
 

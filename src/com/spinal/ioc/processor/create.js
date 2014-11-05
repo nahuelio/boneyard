@@ -99,7 +99,7 @@ define(['ioc/context',
 		/**
 		*	Handler when a module depends on a bone of '$module' type in order to be instanciated.
 		*	@public
-		*	@method handleDependency
+		*	@method process
 		*	@param id {Object} current bone id
 		*	@param bone {Object} current bone to evaluate
 		*	@param [parentBone] {Object} parent bone ref

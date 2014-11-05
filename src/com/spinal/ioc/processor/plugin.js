@@ -52,8 +52,7 @@ define(['ioc/context',
 		**/
 		_onPluginLoaded: function(pluginName, plugin) {
 			var params = (plugin.params) ? plugin.params : {};
-			plugin = Context.BoneFactory.create(pluginName, params, this.ctx);
-			plugin.execute();
+			Context.BoneFactory.create(pluginName, params, this.ctx).execute();
 		},
 
 		/**
