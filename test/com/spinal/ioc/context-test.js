@@ -177,7 +177,6 @@ define(['ioc/context',
 		/**
 		*	Context#wire() test
 		*	Plugin Specs
-		*	@FIXME: Test ThemePlugin and HTMLPlugin
 		**/
 		describe('#wire() - PluginSpec', function() {
 
@@ -197,6 +196,25 @@ define(['ioc/context',
 					expect(ctx).to.be.ok();
 					expect(ctx.spec).to.be.ok();
 				});
+			});
+
+			it('HTMLPlugin: Should Retrieve a template with params', function() {
+				var output = this.appContext.tpl('spinal!head.css', { href: 'URI' });
+				expect($(output).attr('href')).to.be.equal('URI');
+				expect($(output).prop('tagName').toLowerCase()).to.be.equal('link');
+			});
+
+			it('HTMLPlugin: Should Load a new Template package at runtime', function(done) {
+				this.appContext.loadTemplate('ui', _.bind(function() {
+					var output = this.appContext.tpl('ui!ui.div', { id: '', cls: 'myclass' });
+					expect($(output).hasClass('myclass')).to.be.equal(true);
+					expect($(output).prop('tagName').toLowerCase()).to.be.equal('div');
+					done();
+				}, this));
+			});
+
+			it('ThemePlugin: Should Change the theme', function() {
+				// TODO: Implement Unit Test
 			});
 
 		});

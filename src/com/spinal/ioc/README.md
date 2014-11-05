@@ -4,6 +4,7 @@
 
 * Refactor BoneQuery to be BoneEngine class and move the reference to the base class BoneProcessor
 * Move 'build' method implementation outside of Context class to be in BoneEngine
+* Move bone-factory into com.spinal.util.factory as 'AsyncFactory' Spinal Class.
 * BoneEngine should take care of partials specs loading (Clean up $created references before merging).
 * Swap usage of Regexp to the native 'indexOf' instead to query IoC notations inside specs (performance boost).
 * Review matchNotation and getDependency and processParams (several implemented methods in Ready/Create processors)

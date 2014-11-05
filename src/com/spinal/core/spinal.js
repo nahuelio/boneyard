@@ -26,11 +26,9 @@ define(['libs/backbone'], function() {
 		// Expose Backbone and Underscore hard dependency into Spinal Namespace
 		exports.Backbone = root.Backbone; exports._ = root._;
 
-		// Change Setting to Mustache Style
-		_.templateSettings = {
-			interpolate: /\{\{(.+?)\}\}/g,
-			escape: /\{\{-(.*?)\}\}/g
-		};
+		// Override Settings to evaluate Mustache Style
+		_.templateSettings.interpolate = /\{\{([\s\S]+?)\}\}/g;
+		_.templateSettings.escape = /\{\{-(.*?)\}\}/g;
 
 		/**
 		*	Namespacing Strategy

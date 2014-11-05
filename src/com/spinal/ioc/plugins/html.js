@@ -4,7 +4,8 @@
 *	@version 0.0.1
 **/
 define(['core/spinal',
-		'util/exception/context'], function(Spinal, ContextException) {
+		'util/string',
+		'util/exception/context'], function(Spinal, StringUtils, ContextException) {
 
 	/**
 	*	HTML IoC Plugin
@@ -25,12 +26,20 @@ define(['core/spinal',
 		ctx: null,
 
 		/**
-		*	Template Packages
+		*	Template Packages Config retrieve from spec
 		*	@private
 		*	@property packages
 		*	@type Object
 		**/
-		packages: null,
+		_packages: null,
+
+		/**
+		*	Templates
+		*	@private
+		*	@property _tpls
+		*	@type Object
+		**/
+		_tpls: {},
 
 		/**
 		*	Initialize
@@ -44,9 +53,36 @@ define(['core/spinal',
 		initialize: function(attrs, ctx) {
 			attrs || (attrs = {});
 			if(!ctx) throw new ContextException('UndefinedContext');
-			this.packages = (!_.isEmpty(attrs)) ? attrs : {};
+			this._packages = (!_.isEmpty(attrs)) ? attrs : {};
 			this.ctx = ctx;
 			return HTMLPlugin.__super__.initialize.apply(this, arguments);
+		},
+
+		/**
+		*	Query the list of packages using a query (dot notation) to get the template
+		*	If pkg is passed, will be use to prefix the specific package.
+		*	In each case, if doesn't match any results the method returns null
+		*	@private
+		*	@method _query
+		*	@param query {String}
+		*	@param pkg {String} package to narrow down the query
+		*	@return Function
+		**/
+		_query: function(query, pkg) {
+			if(pkg && pkg !== '') query = (pkg + '.').concat(query);
+			return StringUtils.search(query, this._tpls);
+		},
+
+		/**
+		*	Perform a lazy loading once the IoC Context is initialized for those template packages
+		*	flagged with the 'lazyloading' property set to true.
+		*	@private
+		*	@method _lazy
+		*	@return {com.spinal.ioc.plugins.HTMLPlugin}
+		**/
+		_lazy: function() {
+			var tplNames = _.compact(_.map(this._packages, function(p, n) { return (p.lazyLoading) ? n : null; }));
+			return this._loadTemplate(tplNames);
 		},
 
 		/**
@@ -54,11 +90,20 @@ define(['core/spinal',
 		*	the current context.
 		*	@private
 		*	@method _loadTemplate
-		*	@param tplName {String} template name
+		*	@param tpl {Array} list of template names
+		*	@param tpl {String} Template name
+		*	@param [callback] {Function} callback function
 		*	@return {com.spinal.ioc.plugins.HTMLPlugin}
 		**/
-		_loadTemplate: function(tplName) {
-			// TODO: Implementation
+		_loadTemplate: function(tpl, callback) {
+			if(!tpl) return this;
+			if(_.isString(tpl) && tpl !== '') tpl = [tpl];
+			var ps = _.compact(_.map(this._packages, function(p, n) { return (_.contains(tpl, n)) ? p.path : null; }));
+			require(ps, _.bind(function() {
+				_.extend(this._tpls, _.object(tpl, Array.prototype.slice.call(arguments)));
+				if(callback && _.isFunction(callback)) callback();
+			}, this));
+			return this;
 		},
 
 		/**
@@ -73,7 +118,11 @@ define(['core/spinal',
 		*	@return String
 		**/
 		_tpl: function(route, params) {
-			// TODO: Implementation
+			if(!route || route === '') return '';
+			if(!params) params = {};
+			var ps, pkg = ((ps = route.split('!')).length > 1) ? ps[0] : null,
+				compiled = this._query(ps[(!pkg) ? 0 : 1], pkg);
+			return (compiled && _.isFunction(compiled)) ? compiled(params) : '';
 		},
 
 		/**
@@ -86,7 +135,7 @@ define(['core/spinal',
 		execute: function() {
 			this.ctx.loadTemplate = _.bind(this._loadTemplate, this);
 			this.ctx.tpl = _.bind(this._tpl, this);
-			return this._loadTemplate();
+			return this._lazy();
 		}
 
 	}, {

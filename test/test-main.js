@@ -23,6 +23,7 @@ require.config({
     paths: {
         /** Rebase to point to specs folder **/
         'specs': 'test/com/spinal/ioc/specs',
+        'templates': 'test/com/spinal/ioc/tpls',
         'libs': 'src/libs',
         'core': 'src/com/spinal/core',
         'ioc': 'src/com/spinal/ioc',

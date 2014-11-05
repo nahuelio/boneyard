@@ -8,6 +8,9 @@ define(['core/spinal',
 
 	/**
 	*	BoneFactory Class
+	*	@FIXME: Need some rewrite and move out some of the methods here to the IoC specific logic.
+	*	Refactor this class into com.spinal.util package as AsyncFactory class. (Move the Generic Factory inside same
+	*	package as well).
 	*	@namespace com.spinal.ioc
 	*	@class com.spinal.ioc.BoneFactory
 	*	@extends com.spinal.core.SpinalClass
