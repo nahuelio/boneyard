@@ -149,13 +149,25 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 		*	@public
 		*	@method each
 		*	@param func {Function} predicate function used to iterate over the elements.
-		*	@param
 		*	@return Function
 		**/
-		each: function(func, ctx) {
+		each: function(func) {
 			var args = Array.prototype.slice.call(arguments);
 			args.unshift(this.collection);
 			return _.each.apply(this, args);
+		},
+
+		/**
+		*	Produces a new array of values by mapping each value in list through a transformation function (predicate)
+		*	@public
+		*	@method map
+		*	@param func {Function} predicate function used to iterate over the elements.
+		*	@return Array
+		**/
+		map: function(func) {
+			var args = Array.prototype.slice.call(arguments);
+			args.unshift(this.collection);
+			return _.map.apply(this, args);
 		},
 
 		/**

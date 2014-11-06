@@ -8,6 +8,21 @@ define(['core/spinal',
 
 	/**
 	*	AsyncFactory Class
+	*	This class uses a Stack ADT internally to enqueue resources and trigger the loading phase asynchronously.
+	*	After all the resources are loaded, it register them in the factory.
+	*	<h5>Usages:</h5>
+	*
+	*		var myAsyncFactory = new AsyncFactory();
+	*			myAsyncFactory.set([{
+	*				id: 'resourceA', path: 'path/to/resourceA',
+	*				id: 'resourceB', path: 'path/to/resourceB'
+	*			}]);
+	*			myAsyncFactory.on(AsyncFactory.EVENTS.loaded, myLoadedCallback);
+	*			// On each resource loaded and successfuly registered, the callback will be called.
+	*			myAsyncFactory.load(_.bind(function(resource) {
+	*				myAsyncFactory.getFactory(resource.id);
+	*			}, this));
+	*
 	*	@namespace com.spinal.util.factories
 	*	@class com.spinal.util.factories.AsyncFactory
 	*	@extends com.spinal.util.factories.Factory
@@ -30,6 +45,7 @@ define(['core/spinal',
 		*	Initialize
 		*	@public
 		*	@method initialize
+		*	@param [opts] {Object} options
 		*	@return {com.spinal.util.factories.AsyncFactory}
 		**/
 		initialize: function(opts) {
@@ -83,6 +99,7 @@ define(['core/spinal',
 		*	@return {com.spinal.util.factories.AsyncFactory}
 		**/
 		push: function(resource) {
+			if(!resource.id || !resource.path) return this;
 			this.stack.push(resource);
 			return this;
 		},
@@ -114,7 +131,7 @@ define(['core/spinal',
 		},
 
 		/**
-		*	Load all resources in the factory stack
+		*	Load all resources in the factory stack if the stack is not empty
 		*	@public
 		*	@method load
 		*	@param [opts] {Object} options
@@ -122,15 +139,38 @@ define(['core/spinal',
 		**/
 		load: function(opts) {
 			opts || (opts = {});
-			// CONTINUE HERE... Refactoring com.spinal.ioc.BoneFactory on this one and extract the logic.
-			// TODO: Trigger require() one by one will not have any benefit considering we are using
-			// requirejs and it does exactly the same thing.
-			// So let's trigger all at once ([resources]) and make use of callbacks like these:
-			/**
-			*	opts.success -> on every resource loaded
-			*	opts.fail -> on every resource failed to load -> throw exception.
-			*	opts.callback -> final one to be executed at the end of the load method.
-			**/
+			return _.defer(_.bind(function() {
+				if(this.stack.size() <= 0) return this;
+				if(!opts.silent) this.trigger(AsyncFactory.EVENTS.prepared, this.stack);
+				return this._execute(opts);
+			}, this);
+		},
+
+		/**
+		*	Handle Resources loaded by the current factory stack
+		*	@private
+		*	@method _handle
+		*	@param resources {Array} resource reference
+		**/
+		_handle: function(resources) {
+			// TODO:
+			// - Register resource by calling AysncFactory.__super__.register.apply(this, resource);
+			// - Fire up opts.success(resource)
+		},
+
+		/**
+		*	Triggers loading phase of the current resources in the factory stack
+		*	@private
+		*	@method _execute
+		*	@param [opts] {Object} options
+		*	@return Boolean
+		**/
+		_execute: function(opts) {
+			var paths = this.stack.map(function(resource) { return resource.path; });
+			require(paths, _.bind(function() {
+				this._handle(Array.prototype.slice.call(arguments));
+				if(!opts.silent) this.trigger(AsyncFactory.EVENTS.loaded, this.stack);
+			}, this),);
 		}
 
 	}, {
@@ -140,7 +180,27 @@ define(['core/spinal',
 		*	@property NAME
 		*	@type String
 		**/
-		NAME: 'AsyncFactory'
+		NAME: 'AsyncFactory',
+
+		/**
+		*	@static
+		*	@property EVENTS
+		*	@type Object
+		**/
+		EVENTS: {
+			/**
+			* @event loaded
+			**/
+			loaded: 'com:spinal:util:factories:async:loaded',
+			/**
+			* @event loaded
+			**/
+			failed: 'com:spinal:util:factories:async:failed',
+			/**
+			* @event prepared
+			**/
+			prepared: 'com:spinal:util:factories:async:prepared'
+		}
 
 	}));
 
