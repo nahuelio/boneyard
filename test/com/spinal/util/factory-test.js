@@ -2,12 +2,12 @@
 *	com.spinal.util.Factory Class Tests
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define(['util/factory',
+define(['util/factories/factory',
 		'util/exception/factory',
 		'ui/view',
 		'mvc/model'], function(Factory, FactoryException, View, Model) {
 
-	describe('com.spinal.util.Factory', function() {
+	describe('com.spinal.util.factories.Factory', function() {
 
 		/**
 		*	Factory#new() test

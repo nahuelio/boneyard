@@ -4,7 +4,7 @@
 **/
 define(['core/spinal',
 		'util/adt/stack',
-		'util/factory'], function(Spinal, Stack, Factory) {
+		'util/factories/factory'], function(Spinal, Stack, Factory) {
 
 	/**
 	*	BoneFactory Class
@@ -17,7 +17,7 @@ define(['core/spinal',
 	*
 	*	@requires com.spinal.core.Spinal
 	*	@requires com.spinal.util.adt.Stack
-	*	@requires com.spinal.util.Factory
+	*	@requires com.spinal.util.factories.Factory
 	**/
 	var BoneFactory = Spinal.namespace('com.spinal.ioc.BoneFactory', Factory.inherit({
 
@@ -63,7 +63,7 @@ define(['core/spinal',
 		*	@param m {Object} module data
 		*	@return {com.spinal.ioc.BoneFactory}
 		**/
-		add: function(m, callback) {
+		add: function(m) {
 			if(!m || !_.isObject(m)) return this;
 			var em = this.exists(m.id);
 			if(em) {

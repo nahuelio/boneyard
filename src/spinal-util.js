@@ -3,7 +3,8 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['util/string',
-		'util/factory',
+		'util/factories/factory',
+		'util/factories/async-factory',
 		'util/exception/exception',
 		'util/exception/ui',
 		'util/exception/factory',

@@ -1,5 +1,5 @@
 /**
-*	@module com.spinal.util
+*	@module com.spinal.util.factories
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['core/spinal',
@@ -8,15 +8,15 @@ define(['core/spinal',
 
 	/**
 	*	Generic Factory
-	*	@namespace com.spinal.util
-	*	@class com.spinal.util.Factory
+	*	@namespace com.spinal.util.factories
+	*	@class com.spinal.util.factories.Factory
 	*	@extends com.spinal.core.SpinalClass
 	*
 	*	@requires com.spinal.core.Spinal
 	*	@requires com.spinal.util.exception.FactoryException
 	*	@requires com.spinal.util.adt.Collection
 	**/
-	var Factory = Spinal.namespace('com.spinal.util.Factory', Spinal.SpinalClass.inherit({
+	var Factory = Spinal.namespace('com.spinal.util.factories.Factory', Spinal.SpinalClass.inherit({
 
 		/**
 		*	@public
@@ -29,7 +29,7 @@ define(['core/spinal',
 		*	Initialize
 		*	@public
 		*	@method initialize
-		*	@return {com.spinal.util.Factory}
+		*	@return {com.spinal.util.factories.Factory}
 		**/
 		initialize: function() {
 			this.factories = new Collection();
