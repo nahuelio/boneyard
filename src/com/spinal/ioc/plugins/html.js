@@ -51,7 +51,6 @@ define(['core/spinal',
 		*	@return {com.spinal.ioc.plugins.HTMLPlugin}
 		**/
 		initialize: function(attrs, ctx) {
-			attrs || (attrs = {});
 			if(!ctx) throw new ContextException('UndefinedContext');
 			this._packages = (!_.isEmpty(attrs)) ? attrs : {};
 			this.ctx = ctx;
@@ -120,8 +119,8 @@ define(['core/spinal',
 		_tpl: function(route, params) {
 			if(!route || route === '') return '';
 			if(!params) params = {};
-			var ps, pkg = ((ps = route.split('!')).length > 1) ? ps[0] : null,
-				compiled = this._query(ps[(!pkg) ? 0 : 1], pkg);
+			var ps, pkg = ((ps = route.split('!')).length > 1) ? ps[0] : null;
+			var compiled = this._query(ps[(!pkg) ? 0 : 1], pkg);
 			return (compiled && _.isFunction(compiled)) ? compiled(params) : '';
 		},
 

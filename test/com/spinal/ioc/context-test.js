@@ -209,8 +209,22 @@ define(['ioc/context',
 					var output = this.appContext.tpl('ui!ui.div', { id: '', cls: 'myclass' });
 					expect($(output).hasClass('myclass')).to.be.equal(true);
 					expect($(output).prop('tagName').toLowerCase()).to.be.equal('div');
+					// Without params
+					output = this.appContext.tpl('ui!ui.rule');
+					expect($(output).prop('tagName').toLowerCase()).to.be.equal('hr');
 					done();
 				}, this));
+			});
+
+			it('HTMLPlugin: Errors', function() {
+				// No Route
+				var output = this.appContext.tpl();
+				expect(output).to.be.equal('');
+				// Query with no package
+				var output = this.appContext.tpl('non.existent');
+				expect(output).to.be.equal('');
+				// No Template Package name specified
+				this.appContext.loadTemplate();
 			});
 
 			it('ThemePlugin: Should Change the theme', function() {

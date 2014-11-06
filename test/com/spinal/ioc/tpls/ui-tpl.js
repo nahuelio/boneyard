@@ -10,8 +10,8 @@ define(['underscore'], function() {
 		ui: {
 
 			div: _.template('<div id="{{id}}" class="{{cls}}"></div>'),
-			button: _.template('<button id="{{id}}">{{label}}</button>')
-
+			button: _.template('<button id="{{id}}">{{label}}</button>'),
+			rule: _.template('<hr />')
 		}
 
 	};

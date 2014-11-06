@@ -78,7 +78,10 @@ define(['core/spinal',
 		search: function(query, obj) {
 			if(!query || query === '') return null;
 			var q = query.split("."), o = obj;
-		    for (var i = 0; i < q.length; i++) o = o[q[i]];
+		    for (var i = 0; i < q.length; i++) {
+				if(!o[q[i]]) break;
+				o = o[q[i]];
+			}
 		    return o;
 		}
 
