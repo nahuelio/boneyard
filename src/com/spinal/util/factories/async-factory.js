@@ -98,7 +98,7 @@ define(['core/spinal',
 		remove: function(resource, opts) {
 			opts || (opts = {});
 			if(!resource) return this;
-			this.stack.remove(this.search(resource), opts);
+			this.stack.remove(this.stack.search(resource), opts);
 			return this;
 		},
 
