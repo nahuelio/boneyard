@@ -1,5 +1,5 @@
 /**
-*	com.spinal.util.Factory Class Tests
+*	com.spinal.util.factories.Factory Class Tests
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['util/factories/factory',
@@ -73,9 +73,9 @@ define(['util/factories/factory',
 				var modelfactory = this.factory.getFactory('Model');
 				expect(modelfactory).to.be.ok();
 				expect(modelfactory.id).to.be.ok();
-				expect(modelfactory.create).to.be.ok();
+				expect(modelfactory.factory).to.be.ok();
 				expect(modelfactory.id).to.be.equal('Model');
-				expect(modelfactory.create).to.be.a(Function);
+				expect(modelfactory.factory).to.be.a(Function);
 			});
 
 			it('Should throw an Exception: Factory Constructor function was not registered', function() {
@@ -117,9 +117,9 @@ define(['util/factories/factory',
 				var viewfactory = this.factory.unregister('View');
 				expect(viewfactory).to.be.ok();
 				expect(viewfactory.id).to.be.ok();
-				expect(viewfactory.create).to.be.ok();
+				expect(viewfactory.factory).to.be.ok();
 				expect(viewfactory.id).to.be.equal('View');
-				expect(viewfactory.create).to.be.a(Function);
+				expect(viewfactory.factory).to.be.a(Function);
 				expect(this.factory.factories.size()).to.be.equal(1);
 			});
 

@@ -19,6 +19,7 @@ define(['core/spinal',
 	var Factory = Spinal.namespace('com.spinal.util.factories.Factory', Spinal.SpinalClass.inherit({
 
 		/**
+		*	Collection of factory objects
 		*	@public
 		*	@property factories
 		*	@type {com.spinal.util.adt.Collection}
@@ -38,14 +39,18 @@ define(['core/spinal',
 
 		/**
 		*	Creates a pseudo constructor to allow passing an argument list with the new operator.
+		*	This utility function checks first if the factory obj is a constructor function or a simple object,
+		*	in order to decide to create a pseudo constructor or not.
+		*	In the case of a simple object, the arguments passed will be ignored returning the object reference.
 		*	@private
 		*	@method _construct
-		*	@param constructor {Function} Original Constructor function
+		*	@param factory {Object} Original factoryObj
 		*	@return {Function}
 		**/
-		_construct: function(constructor, args) {
-			function F() { return constructor.apply(this, args); }
-		    F.prototype = constructor.prototype;
+		_construct: function(factory, args) {
+			if(!_.isFunction(factory)) return factoryObj;
+			function F() { return factory.apply(this, args); }
+		    F.prototype = factory.prototype;
 		    return new F();
 		},
 
@@ -61,17 +66,17 @@ define(['core/spinal',
 		},
 
 		/**
-		*	Register a new generic constructor function as Factory
+		*	Register a new generic factoryObj as Factory
 		*	@public
 		*	@method Register
 		*	@param id {String} Factory Id
-		*	@param constructor {Function} constructor Function
+		*	@param factory {Object} factoryObj
 		*	@return Function
 		**/
-		register: function(id, constructor) {
-			if(!id || !constructor) return null;
-			if(!this.getFactory(id)) this.factories.add({ id: id, create: constructor });
-			return constructor;
+		register: function(id, factory) {
+			if(!id || !factory) return null;
+			if(!this.getFactory(id)) this.factories.add({ id: id, factory: factory });
+			return factory;
 		},
 
 		/**
@@ -87,15 +92,15 @@ define(['core/spinal',
 		},
 
 		/**
-		*	Factory Method create
+		*	Factory Method Create
 		*	@public
 		*	@method Create
 		*	@return Object
 		**/
 		create: function(id) {
-			var factory = this.getFactory(id);
-			if(!factory) throw new FactoryException('UnregisteredFactory', { id: id });
-			return this._construct(factory.create, Array.prototype.slice.call(arguments, 1));
+			var f = this.getFactory(id);
+			if(!f) throw new FactoryException('UnregisteredFactory', { id: id });
+			return this._construct(f.factory, Array.prototype.slice.call(arguments, 1));
 		}
 
 	}, {

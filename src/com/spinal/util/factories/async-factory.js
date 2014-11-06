@@ -134,16 +134,17 @@ define(['core/spinal',
 		*	Load all resources in the factory stack if the stack is not empty
 		*	@public
 		*	@method load
+		*	@param callback {Function} callback to execute on every resource loaded
 		*	@param [opts] {Object} options
 		*	@return {com.spinal.util.factories.AsyncFactory}
 		**/
-		load: function(opts) {
+		load: function(callback, opts) {
 			opts || (opts = {});
 			return _.defer(_.bind(function() {
 				if(this.stack.size() <= 0) return this;
-				if(!opts.silent) this.trigger(AsyncFactory.EVENTS.prepared, this.stack);
-				return this._execute(opts);
-			}, this);
+				if(!opts.silent) this.trigger(AsyncFactory.EVENTS.prepared, this.stack.collection);
+				return this._execute(callback, opts);
+			}, this));
 		},
 
 		/**
@@ -151,26 +152,32 @@ define(['core/spinal',
 		*	@private
 		*	@method _handle
 		*	@param resources {Array} resource reference
+		*	@param callback {Function} callback to execute on every resource loaded
+		*	@param [opts] {Object} options
+		*	@return Array
 		**/
-		_handle: function(resources) {
-			// TODO:
-			// - Register resource by calling AysncFactory.__super__.register.apply(this, resource);
-			// - Fire up opts.success(resource)
+		_handle: function(resources, callback, opts) {
+			return _.map(resources, function(resource) {
+				var registered = AsyncFactory.__super__.register.call(this, this.stack.pop().id, resource);
+				if(callback && _.isFunction(callback)) callback(registered);
+				return registered;
+			}, this);
 		},
 
 		/**
 		*	Triggers loading phase of the current resources in the factory stack
 		*	@private
 		*	@method _execute
+		*	@param callback {Function} callback to execute on every resource loaded
 		*	@param [opts] {Object} options
 		*	@return Boolean
 		**/
-		_execute: function(opts) {
+		_execute: function(callback, opts) {
 			var paths = this.stack.map(function(resource) { return resource.path; });
 			require(paths, _.bind(function() {
-				this._handle(Array.prototype.slice.call(arguments));
-				if(!opts.silent) this.trigger(AsyncFactory.EVENTS.loaded, this.stack);
-			}, this),);
+				var resources = this._handle(Array.prototype.slice.call(arguments), callback, opts);
+				if(!opts.silent) this.trigger(AsyncFactory.EVENTS.loaded, resources);
+			}, this), _.bind(function() { this.trigger(AsyncFactory.EVENTS.failed, arguments); }, this));
 		}
 
 	}, {
