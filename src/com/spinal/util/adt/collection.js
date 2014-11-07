@@ -219,7 +219,7 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 		**/
 		remove: function(ix, opts) {
 			opts || (opts = {});
-			if(!_.isUndefined(ix) && _.isNumber(ix) && ix < this.size()) {
+			if(!_.isUndefined(ix) && _.isNumber(ix) && ix >= 0 && ix < this.size()) {
 				var rmArr = this.collection.splice(ix, 1);
 				if(!opts.silent) this.trigger(Collection.EVENTS.removed, { removed: rmArr[0], collection: this });
 				return rmArr[0];

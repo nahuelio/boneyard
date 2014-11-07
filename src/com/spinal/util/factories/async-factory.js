@@ -19,8 +19,8 @@ define(['core/spinal',
 	*			}]);
 	*			myAsyncFactory.on(AsyncFactory.EVENTS.loaded, myLoadedCallback);
 	*			// On each resource loaded and successfuly registered, the callback will be called.
-	*			myAsyncFactory.load(_.bind(function(resource) {
-	*				myAsyncFactory.getFactory(resource.id);
+	*			myAsyncFactory.load(_.bind(function(id, resource) {
+	*				// make use of resource or the id of the resource ('resourceA' or 'resourceB');
 	*			}, this));
 	*
 	*	@namespace com.spinal.util.factories
@@ -55,8 +55,22 @@ define(['core/spinal',
 		},
 
 		/**
+		*	Resets the factory stack
+		*	@public
+		*	@chainable
+		*	@method reset
+		*	@param [opts] {Object} options
+		*	@return {com.spinal.util.factories.AsyncFactory}
+		**/
+		reset: function(opts) {
+			this.stack.reset(opts);
+			return this;
+		},
+
+		/**
 		*	Set a new collection of elements to be inserted in the factory stack
 		*	@public
+		*	@chainable
 		*	@method set
 		*	@param arr {Array} new collection to be replaced
 		*	@return {com.spinal.util.factories.AsyncFactory}
@@ -76,7 +90,7 @@ define(['core/spinal',
 		*	@return Object
 		**/
 		findById: function(id) {
-			return this.stack.find(_.bind(function(r) { return (r.id && id && id === id); }, this));
+			return this.stack.find(_.bind(function(r) { return (r.id && id && r.id === id); }, this));
 		},
 
 		/**
@@ -99,7 +113,7 @@ define(['core/spinal',
 		*	@return {com.spinal.util.factories.AsyncFactory}
 		**/
 		push: function(resource) {
-			if(!resource.id || !resource.path) return this;
+			if(!resource || !resource.id || !resource.path) return this;
 			this.stack.push(resource);
 			return this;
 		},
@@ -127,12 +141,13 @@ define(['core/spinal',
 		*	@return Boolean
 		**/
 		exists: function(id) {
-			return (this.findById(id) !== null);
+			return !_.isUndefined(this.findById(id));
 		},
 
 		/**
 		*	Load all resources in the factory stack if the stack is not empty
 		*	@public
+		*	@chainable
 		*	@method load
 		*	@param callback {Function} callback to execute on every resource loaded
 		*	@param [opts] {Object} options
@@ -140,6 +155,7 @@ define(['core/spinal',
 		**/
 		load: function(callback, opts) {
 			opts || (opts = {});
+			// Check on _.defer() here...
 			return _.defer(_.bind(function() {
 				if(this.stack.size() <= 0) return this;
 				if(!opts.silent) this.trigger(AsyncFactory.EVENTS.prepared, this.stack.collection);
@@ -158,8 +174,9 @@ define(['core/spinal',
 		**/
 		_handle: function(resources, callback, opts) {
 			return _.map(resources, function(resource) {
-				var registered = AsyncFactory.__super__.register.call(this, this.stack.pop().id, resource);
-				if(callback && _.isFunction(callback)) callback(registered);
+				var resourceId = this.stack.pop().id;
+					registered = AsyncFactory.__super__.register.call(this, resourceId, resource);
+				if(callback && _.isFunction(callback)) callback(resourceId, registered);
 				return registered;
 			}, this);
 		},
@@ -170,7 +187,7 @@ define(['core/spinal',
 		*	@method _execute
 		*	@param callback {Function} callback to execute on every resource loaded
 		*	@param [opts] {Object} options
-		*	@return Boolean
+		*	@return {com.spinal.util.factories.AsyncFactory}
 		**/
 		_execute: function(callback, opts) {
 			var paths = this.stack.map(function(resource) { return resource.path; });
@@ -178,6 +195,7 @@ define(['core/spinal',
 				var resources = this._handle(Array.prototype.slice.call(arguments), callback, opts);
 				if(!opts.silent) this.trigger(AsyncFactory.EVENTS.loaded, resources);
 			}, this), _.bind(function() { this.trigger(AsyncFactory.EVENTS.failed, arguments); }, this));
+			return this;
 		}
 
 	}, {

@@ -48,7 +48,7 @@ define(['core/spinal',
 		*	@return {Function}
 		**/
 		_construct: function(factory, args) {
-			if(!_.isFunction(factory)) return factoryObj;
+			if(!_.isFunction(factory)) return factory;
 			function F() { return factory.apply(this, args); }
 		    F.prototype = factory.prototype;
 		    return new F();
