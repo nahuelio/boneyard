@@ -60,8 +60,8 @@ define(['core/spinal'], function(Spinal) {
 	*	@type Object
 	**/
 	SpinalException.TYPES = {
-		Generic: 'Generic Exception',
-		StaticClass: 'Class cannot be instanciated. All methods and variable members are static.'
+		Generic: _.template('Generic Exception'),
+		StaticClass: _.template('Class cannot be instanciated. All methods and variable members are static.')
 	};
 
 	/**
@@ -74,7 +74,7 @@ define(['core/spinal'], function(Spinal) {
 	SpinalException.getMessage = function(type, tpl) {
 		var ctx = (this instanceof SpinalException) ? this.constructor : this;
 		return (type && ctx.TYPES[type]) ?
-			_.template(ctx.TYPES[type], (!_.isUndefined(tpl) ? tpl : {})) :
+			ctx.TYPES[type]((!_.isUndefined(tpl) ? tpl : {})) :
 			'Unknown Exception Message';
 	},
 

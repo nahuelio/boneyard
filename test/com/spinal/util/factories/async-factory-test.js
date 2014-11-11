@@ -183,14 +183,31 @@ define(['util/factories/async-factory',
 						expect(resource).to.have.property('view2');
 						expect(resource).to.have.property('subcontent');
 					}
+					expect(this.asyncFactory.create(id)).to.be.ok();
 				}, this));
-				console.log(result);
+			});
+
+			it('Should Failed to load unexisting resources on the factory stack', function(done) {
+				this.asyncFactory.off().on(AsyncFactory.EVENTS.failed, _.bind(function(err) {
+					expect(err).to.be.ok();
+					expect(err.message).to.be.ok();
+					done();
+				}, this));
+				this.asyncFactory.reset();
+				this.asyncFactory.push({ id: 'unexisting', path: '/nonexisting/resource' });
+				this.asyncFactory.load();
+			});
+
+			it('Should NOT load resources when stack is empty', function() {
+				this.asyncFactory.off();
+				this.asyncFactory.reset();
+				this.asyncFactory.load(null);
 			});
 
 			it('Should load resources but no callback specified and no events (silent "on")', function() {
-				// Add One
-				//this.asyncFactory.push({ id: 'simple', path: 'specs/simple.spec' });
-				//this.asyncFactory.load(null, { silent: true });
+				this.asyncFactory.reset();
+				this.asyncFactory.push({ id: 'simple', path: 'specs/simple.spec' });
+				this.asyncFactory.load(null, { silent: true });
 			});
 
 		});

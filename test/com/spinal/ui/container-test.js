@@ -59,7 +59,7 @@ define(['core/spinal',
 					new Container({ interface: Spinal.SpinalClass });
 				}).to.throwException(function(e) {
 					expect(e).to.be.ok();
-					expect(e.message).to.be.equal(UIException.TYPES.InvalidInterfaceType);
+					expect(e.message).to.be.equal(UIException.TYPES.InvalidInterfaceType());
 				});
 			});
 

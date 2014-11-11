@@ -43,8 +43,8 @@ define(['core/spinal',
 		*	@type Object
 		**/
 		TYPES: {
-			UndefinedContext: 'Context Not Defined',
-			InvalidSpecFormat: 'Invalid Spec Format'
+			UndefinedContext: _.template('Context Not Defined'),
+			InvalidSpecFormat: _.template('Invalid Spec Format')
 		}
 
 	}));

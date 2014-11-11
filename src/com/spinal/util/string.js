@@ -61,7 +61,7 @@ define(['core/spinal',
 			var p = {}, o = p, ps = expr.split('.');
 			for(var i = 0; i < ps.length; i++) {
 				p[ps[i]] = {}; p = p[ps[i]];
-				if(i === ps.length) delete p;
+				if(i === (ps.length-1)) delete p;
 			}
 			return o;
 		},
@@ -76,7 +76,8 @@ define(['core/spinal',
 		*	@return Object
 		**/
 		search: function(query, obj) {
-			if(!query || query === '') return null;
+			if(!query || !obj || query === '') return null;
+			if(_.isEmpty(obj)) return obj;
 			var q = query.split("."), o = obj;
 		    for (var i = 0; i < q.length; i++) {
 				if(!o[q[i]]) break;

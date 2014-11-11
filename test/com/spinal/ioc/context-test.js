@@ -107,7 +107,7 @@ define(['ioc/context',
 					this.appContext.wire('non-valid-format');
 				}, this)).to.throwException(function(e) {
 					expect(e).to.be.ok();
-					expect(e.message).to.be.equal(ContextException.TYPES.InvalidSpecFormat);
+					expect(e.message).to.be.equal(ContextException.TYPES.InvalidSpecFormat());
 				});
 			});
 

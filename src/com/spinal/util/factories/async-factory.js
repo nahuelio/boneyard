@@ -155,12 +155,9 @@ define(['core/spinal',
 		**/
 		load: function(callback, opts) {
 			opts || (opts = {});
-			// Check on _.defer() here...
-			return _.defer(_.bind(function() {
-				if(this.stack.size() <= 0) return this;
-				if(!opts.silent) this.trigger(AsyncFactory.EVENTS.prepared, this.stack.collection);
-				return this._execute(callback, opts);
-			}, this));
+			if(this.stack.size() <= 0) return this;
+			if(!opts.silent) this.trigger(AsyncFactory.EVENTS.prepared, this.stack.collection);
+			return this._execute(callback, opts);
 		},
 
 		/**
@@ -194,7 +191,7 @@ define(['core/spinal',
 			require(paths, _.bind(function() {
 				var resources = this._handle(Array.prototype.slice.call(arguments), callback, opts);
 				if(!opts.silent) this.trigger(AsyncFactory.EVENTS.loaded, resources);
-			}, this), _.bind(function() { this.trigger(AsyncFactory.EVENTS.failed, arguments); }, this));
+			}, this), _.bind(function(err) { this.trigger(AsyncFactory.EVENTS.failed, err); }, this));
 			return this;
 		}
 
