@@ -23,6 +23,13 @@ define(['core/spinal',
 	*				// make use of resource or the id of the resource ('resourceA' or 'resourceB');
 	*			}, this));
 	*
+	*	Needless to say that the main purpose of having a Stack class supporting the asynchronous factory implementation
+	*	is essentially, to provide a common interface to manage the resources list by easily 'convention' rather than
+	*	supporting the intrinsect mechanisms to load the resources "one by one", since the resource queue is being managed
+	*	internally by requirejs itself.
+	*	With that being said, this class is suceptible to be changed to "inject" different async strategies as
+	*	"Adapter" classes instead. (The developer should NOT notice any difference on the High-level API).
+	*
 	*	@namespace com.spinal.util.factories
 	*	@class com.spinal.util.factories.AsyncFactory
 	*	@extends com.spinal.util.factories.Factory
