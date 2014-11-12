@@ -4,22 +4,13 @@
 **/
 define(['core/spinal'], function(Spinal) {
 
-	// TODO: Review the implementation of this
 	/**
-	*	Define a generic model structure based on Backbone.Model
-	*	@namespace com.spinal.mvc
-	*	@class com.spinal.mvc.Model
-	*	@extends Spinal.Backbone.Model
+	*	Define a Generic Schema definition structure to validate and parse model data
+	*	@namespace com.spinal.util
+	*	@class com.spinal.util.Schema
+	*	@extends com.spinal.core.SpinalClass
 	**/
-	var Model = Spinal.namespace('com.spinal.util.Model', Spinal.Backbone.Model.inherit({
-
-		/**
-		*	Model Schema
-		*	@public
-		*	@property schema
-		*	@type Object
-		**/
-		schema: null,
+	var Schema = Spinal.namespace('com.spinal.util.Schema', Spinal.SpinalClass.inherit({
 
 		/**
 		*	Initialize
@@ -28,62 +19,71 @@ define(['core/spinal'], function(Spinal) {
 		*	@method initialize
 		*	@return {com.spinal.mvc.Model}
 		**/
-		initialize: function(opts) {
-			opts || (opts = {});
-			this.schema = (opts.schema) ? opts.schema : {};
-			Model.__super__.initialize.apply(this, arguments);
-			return this;
+		initialize: function() {
+			return Schema.__super__.initialize.apply(this, arguments);
 		},
 
 		/**
-		*	Model Set checks schema data types before taking the properties
+		*	Schema Set checks schema data types before taking the properties
 		*	@public
-		*	@method set
+		*	@method parse
 		*	@param key {Object} Key String or Object (hashmap) to be set as properties.
-		*	@param val {Object} Value to be set for the key property specified in p
+		*	@param value {Object} Value to be set for the key property specified in p
 		*	@return Object
 		**/
-		set: function(key, val, options) {
-			var attrs;
-			if(typeof key === 'object') {
-				attrs = key; options = val;
-			} else {
-				(attrs = {})[key] = val;
-			}
+		parse: function(key, value, options) {
+			var attrs = {};
+			if(_.isObject(key)) { attrs = key; options = value; }
+			if(_.isString(key)) attrs[key] = value;
 			_.each(attrs, _.bind(function(v, k) {
-				try {
-					switch (this.schema[k]) {
-						case 'boolean':
-							attrs[k] = v === 'true' ? true : v === 'false' ? false : v;
-							break;
-						case 'int':
-							attrs[k] = parseInt(v, 10);
-							break;
-						case 'float':
-							attrs[k] = parseFloat(v);
-							break;
-						case 'string':
-							attrs[k] = v.toString();
-							break;
-						default:
-							attrs[k] = v;
-							break;
-					}
-				} catch (ex) {
-					// Throw a custom exception ???
-				}
+				var m = ('_' + attrs[k]);
+				attrs[v] = (attrs[k] && this[m]) ? this[m](v) : v;
 			}, this));
-			return Model.__super__.set.apply(this, [attrs, options]);
+			return attrs;
 		},
 
 		/**
-		*	String representation of an instance of this class
-		*	@public
-		*	@method toString
+		*	Boolean data type parser
+		*	@private
+		*	@method _boolean
+		*	@param value {Object} value to be transform
+		*	@return Boolean
+		**/
+		_boolean: function(value) {
+			return (value === 'true') ? true : (value === 'false') ? false : value;
+		},
+
+		/**
+		*	Integer data type parser
+		*	@private
+		*	@method _int
+		*	@param value {Object} value to be transform
+		*	@return Number
+		**/
+		_int: function(value) {
+			return parseInt(value, 10);
+		},
+
+		/**
+		*	Float data type parser
+		*	@private
+		*	@method _float
+		*	@param value {Object} value to be transform
+		*	@return Number
+		**/
+		_float: function(value) {
+			return parseFloat(value);
+		},
+
+		/**
+		*	String data type parser
+		*	@private
+		*	@method _string
+		*	@param value {Object} value to be transform
 		*	@return String
 		**/
-		toString: function() {
-			return '[object Model]';
+		_string: function(value) {
+			return value.toString();
 		}
 
 	}, {
@@ -93,10 +93,10 @@ define(['core/spinal'], function(Spinal) {
 		*	@property NAME
 		*	@type String
 		**/
-		NAME: 'Model'
+		NAME: 'Schema'
 
 	}));
 
-	return Model;
+	return Schema;
 
 });
