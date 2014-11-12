@@ -11,7 +11,6 @@ requirejs.config({
 		'core': 'com/spinal/core',
 		'aop': 'com/spinal/aop',
 		'ioc': 'com/spinal/ioc',
-		'mvc': 'com/spinal/mvc',
 		'ui': 'com/spinal/ui',
 		'util': 'com/spinal/util'
 	},

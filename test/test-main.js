@@ -28,7 +28,6 @@ require.config({
         'core': 'src/com/spinal/core',
         'ioc': 'src/com/spinal/ioc',
         'aop': 'src/com/spinal/aop',
-        'mvc': 'src/com/spinal/mvc',
         'ui': 'src/com/spinal/ui',
         'util': 'src/com/spinal/util',
         /** Hack Backbone requirejs **/
@@ -47,7 +46,6 @@ require.config({
         'spinal-core': 'target/spinal-core',
         'spinal-ioc': 'target/spinal-ioc',
         'spinal-aop': 'target/spinal-aop',
-        'spinal-mvc': 'target/spinal-mvc',
         'spinal-ui': 'target/spinal-ui',
         'spinal-util': 'target/spinal-util',
     },
@@ -57,7 +55,6 @@ require.config({
         'spinal-core': ['core/spinal'],
         'spinal-ioc': ['ioc/ioc'],
         'spinal-aop': ['aop/aop'],
-        'spinal-mvc': ['mvc/controller', 'mvc/service'],
         'spinal-ui': ['ui/view', 'ui/container'],
         'spinal-util': ['util/adt/collection', 'util/adt/iterator', 'util/adt/queue']
     },**/

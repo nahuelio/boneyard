@@ -1,16 +1,17 @@
 /**
-*	@module com.spinal.mvc
+*	@module com.spinal.util
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['core/spinal'], function(Spinal) {
 
+	// TODO: Review the implementation of this
 	/**
 	*	Define a generic model structure based on Backbone.Model
 	*	@namespace com.spinal.mvc
 	*	@class com.spinal.mvc.Model
 	*	@extends Spinal.Backbone.Model
 	**/
-	var Model = Spinal.namespace('com.spinal.mvc.Model', Spinal.Backbone.Model.inherit({
+	var Model = Spinal.namespace('com.spinal.util.Model', Spinal.Backbone.Model.inherit({
 
 		/**
 		*	Model Schema

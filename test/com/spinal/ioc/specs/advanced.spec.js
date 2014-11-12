@@ -10,7 +10,7 @@ define(['specs/main.spec'], function(MainSpec) {
 
 		model: {
 			$module: {
-				class: 'mvc/model',
+				class: 'util/schema',
 				params: {
 					schema: {
 						_boolean: 'boolean',

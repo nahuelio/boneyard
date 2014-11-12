@@ -5,7 +5,7 @@
 define(['util/factories/factory',
 		'util/exception/factory',
 		'ui/view',
-		'mvc/model'], function(Factory, FactoryException, View, Model) {
+		'util/schema'], function(Factory, FactoryException, View, Model) {
 
 	describe('com.spinal.util.factories.Factory', function() {
 

@@ -18,7 +18,7 @@ define(['specs/main.spec'], function(MainSpec) {
 
 		model: {
 			$module: {
-				class: 'mvc/model',
+				class: 'util/schema',
 				params: {
 					_b: '$bone!b',
 					_s: '$bone!s',

@@ -5,7 +5,7 @@
 define(['util/factories/async-factory',
 		'util/exception/factory',
 		'ui/view',
-		'mvc/model'], function(AsyncFactory, FactoryException, View, Model) {
+		'util/schema'], function(AsyncFactory, FactoryException, View, Model) {
 
 	describe('com.spinal.util.factories.AsyncFactory', function() {
 
