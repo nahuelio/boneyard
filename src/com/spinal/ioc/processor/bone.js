@@ -127,7 +127,20 @@ define(['core/spinal',
 		*	@property NAME
 		*	@type String
 		**/
-		NAME: 'BoneProcessor'
+		NAME: 'BoneProcessor',
+
+		/**
+		*	BoneProcessor Events
+		*	@static
+		*	@property Object
+		*	@type Object
+		**/
+		EVENTS: {
+			/**
+			*	@event processed
+			**/
+			processed: 'com:spinal:ioc:processor:processed'
+		}
 
 	}));
 

@@ -233,6 +233,21 @@ define(['libs/backbone'], function() {
 			},
 
 			/**
+			*	Invoke a method of this class specified by 'methodName' and pass each
+			*	individual object in the array specified by args as an argument.
+			*	This method will return an array of objects as a result of any method call.
+			*	@public
+			*	@method invoke
+			*	@param methodName {String} method name of this class
+			*	@param args {Array} array of elements to be passed to the method
+			*	@return Array
+			**/
+			invoke: function(methodName, args) {
+				if(!methodName || !args || !_.isString(methodName) || _.isArray(args)) return [];
+				return _.map(args, function(v) { return (this[methodName]) ? this[methodName](v) : null; }, this);
+			},
+
+			/**
 			*	Serializes the Class instance into a plain javascript object.
 			*	@public
 			*	@method toJSON

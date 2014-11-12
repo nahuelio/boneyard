@@ -1,7 +1,6 @@
 /**
 *	Main Spec Test
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
-*
 **/
 define(['specs/header.spec',
 		'specs/footer.spec'], function(HeaderSpec, FooterSpec) {

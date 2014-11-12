@@ -5,9 +5,9 @@
 define(['core/spinal',
 		'util/string',
 		'util/adt/iterator',
-		'ioc/bone-factory',
-		'ioc/bone-query',
-		'util/exception/context'], function(Spinal, StringUtil, Iterator, BoneFactory, BoneQuery, ContextException) {
+		'util/async-factory',
+		'ioc/engine',
+		'util/exception/context'], function(Spinal, StringUtil, Iterator, AsyncFactory, Engine, ContextException) {
 
 	/**
 	*	IOC Context Class
@@ -41,70 +41,60 @@ define(['core/spinal',
 		spec: {},
 
 		/**
-		*	Bone Query Engine Class
+		*	Engine Class
 		*	@public
 		*	@property query
-		*	@type com.spinal.ioc.BoneQuery
+		*	@type com.spinal.ioc.Engine
 		**/
-		query: null,
+		engine: null,
+
+		/**
+		*	Async Bone Factory
+		*	@public
+		*	@property boneFactory
+		*	@type {com.spinal.util.AsyncFactory}
+		**/
+		boneFactory: null,
 
 		/**
 		*	Initialize
 		*	@public
 		*	@chainable
 		*	@method initialize
-		*	@param [opts] {Object} Initial Options
 		*	@return {com.spinal.ioc.Context}
 		**/
-		initialize: function(opts) {
-			opts || (opts = {});
-			this.query = new BoneQuery({ context: this });
+		initialize: function() {
+			this.boneFactory = new AsyncFactory();
+			this.engine = new Engine({ context: this });
 			return Context.__super__.initialize.apply(this, arguments);
 		},
 
 		/**
-		*	Processors loaded callback
+		*	Processor load Handler
 		*	@private
-		*	@method _onProcessorsLoaded
-		*	@param [callback] {Function} Optional Callback
-		*	@param processors {Array} Array of Processor Modules
+		*	@method _onProcessorLoaded
+		*	@param processorId {String} Processor Module Id
+		*	@param processor {Object} registered processor module
+		*	@return com.spinal.ioc.Context
 		**/
-		_onProcessorsLoaded: function(callback, processors) {
-			this.on(Context.EVENTS.processed, _.bind(this._onProcessorFinished, this, callback));
-			_.each(processors, function(p) { Context[p.NAME] = this.factory('create', p.NAME, this); }, this);
-			this._onProcessorFinished(callback);
+		_onProcessorLoaded: function(callback, processorId, processor) {
+			var p = Context.PROCESSORS.next();
+			p.module = this.factory('create', processorId, this);
+			p.module.once(Context[processorId].EVENTS.processed, this._next, this);
+			return (!Context.PROCESSORS.hasNext() && Context.PROCESSORS.rewind()) ? this._next(callback) : this;
 		},
 
 		/**
-		*	Processor Finish Handler
+		*	Next Processor Execution Complete Handler
 		*	@private
-		*	@method _onProcessorFinished
-		*	@param data {Object} event data
+		*	@method _next
+		*	@param [callback] {Function} callback reference
+		*	@return com.spinal.ioc.Context
 		**/
-		_onProcessorFinished: function(callback, event) {
-			if(Context.PROCESSORS.hasNext()) {
-				Context[Context.PROCESSORS.next().id].execute();
-			} else {
-				Context.PROCESSORS.rewind();
-				if(callback && _.isFunction(callback)) callback(this);
-				this.trigger(Context.EVENTS.initialized, this);
-			}
-		},
-
-		/**
-		*	Build specs into a single object unit suitable to query by boneQuery class
-		*	@private
-		*	@method _build
-		*	@param bone {Object} current bone
-		*	@return {com.spinal.ioc.Context}
-		**/
-		_build: function(bone) {
-			_.each(bone, function(b, id) {
-		        (id === (Context.PREFIX + 'specs')) ?
-					_.each((!_.isArray(b) && _.isObject(b)) ? [b] : b, this._build, this) :
-					this.spec[id] = b;
-		    }, this);
-			return this;
+		_next: function(callback) {
+			return (Context.PROCESSORS.hasNext()) ?
+				Context.PROCESSORS.next().module.execute(this) :
+				this.notify(Context.EVENTS.initialized, callback);
 		},
 
 		/**
@@ -117,8 +107,7 @@ define(['core/spinal',
 		factory: function(methodName) {
 			if(!methodName) return null;
 			var args = Array.prototype.slice.call(arguments, 1);
-			return (Context.BoneFactory[methodName]) ?
-				Context.BoneFactory[methodName].apply(Context.BoneFactory, args) : null;
+			return (this.boneFactory[methodName]) ? this.boneFactory[methodName].apply(this.boneFactory, args) : null;
 		},
 
 		/**
@@ -134,10 +123,22 @@ define(['core/spinal',
 		wire: function(spec, callback) {
 			if(!spec) { callback(this); return this; }
 			if(!_.isObject(spec)) throw new ContextException('InvalidSpecFormat');
-			this.spec = {};
-			this._build(spec);
-			Context.BoneFactory.set(Context.PROCESSORS.collection).load(_.bind(this._onProcessorsLoaded, this, callback));
+			this.spec = {}; // Partial Specs not ready yet.
+			this.engine.build(spec);
+			this.boneFactory.set(Context.PROCESSORS.collection).load(_.bind(this._onProcessorLoaded, this, callback));
 			return this;
+		},
+
+		/**
+		*	Trigger Context notifications
+		*	@public
+		*	@method notify
+		*	@param eventName {String} event name to be trigger
+		*	@param [callback] {Function} optional callback to be called
+		**/
+		notify: function(eventName, callback) {
+			if(callback && _.isFunction(callback)) callback(this);
+			if(eventName && _.isString(eventName)) this.trigger(eventName, this);
 		},
 
 		/**
@@ -211,31 +212,8 @@ define(['core/spinal',
 			/**
 			*	@event initialized
 			**/
-			initialized: 'com:spinal:ioc:context:initialized',
-			/**
-			*	@event processed
-			**/
-			processed: 'com:spinal:ioc:processor:processed',
-			/**
-			*	@event plugin
-			**/
-			plugin: 'com:spinal:ioc:context:bone:plugin',
-			/**
-			*	@event created
-			**/
-			created: 'com:spinal:ioc:context:bone:created',
-			/**
-			*	@event ready
-			**/
-			ready: 'com:spinal:ioc:context:bone:ready'
+			initialized: 'com:spinal:ioc:context:initialized'
 		},
-
-		/**
-		*	@static
-		*	@property PREFIX
-		*	@type String
-		**/
-		PREFIX: '$',
 
 		/**
 		*	Processors List used by the context
@@ -248,13 +226,6 @@ define(['core/spinal',
 			{ id: 'CreateProcessor', class: 'ioc/processor/create' },
 			{ id: 'ReadyProcessor', class: 'ioc/processor/ready' }
 		]),
-
-		/**
-		*	@static
-		*	@property BoneFactory
-		*	@type {com.spinal.ioc.BoneFactory}
-		**/
-		BoneFactory: new BoneFactory(),
 
 		/**
 		*	Static IoC Initializer
@@ -285,9 +256,8 @@ define(['core/spinal',
 	}));
 
 	// Automatic Initializer
-	var $mainSpec = $('script[data-spec]');
-	if($mainSpec.length > 0)
-		Context.LazyLoad($mainSpec.data('spec'), function(spec) { Spinal.app = Context.Initialize(spec); });
+	var mainSpec = $('script[data-spec]').data('spec');
+	if(mainSpec) Context.LazyLoad(mainSpec, function(spec) { Spinal.app = Context.Initialize(spec); });
 
 	return Context;
 

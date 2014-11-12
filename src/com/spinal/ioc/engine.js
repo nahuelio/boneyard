@@ -6,15 +6,15 @@ define(['ioc/context',
 		'util/exception/context'], function(Context, ContextException) {
 
 	/**
-	*	Bone Query Class
+	*	Bone Engine Class
 	*	@namespace com.spinal.ioc
-	*	@class com.spinal.ioc.BoneQuery
+	*	@class com.spinal.ioc.Engine
 	*	@extends com.spinal.core.SpinalClass
 	*
 	*	@requires com.spinal.ioc.Context
 	*	@requires com.spinal.util.exception.ContextException
 	**/
-	var BoneQuery = Spinal.namespace('com.spinal.ioc.BoneQuery', Spinal.SpinalClass.inherit({
+	var Engine = Spinal.namespace('com.spinal.ioc.Engine', Spinal.SpinalClass.inherit({
 
 		/**
 		*	Context Reference
@@ -25,17 +25,43 @@ define(['ioc/context',
 		ctx: null,
 
 		/**
+		*	Notation
+		*	@public
+		*	@property notation
+		*	@type String
+		**/
+		notation: 'specs',
+
+		/**
 		*	Initialize
 		*	@public
 		*	@chainable
 		*	@method initialize
 		*	@param [opts] {Object} Initial Options
-		*	@return {com.spinal.ioc.BoneQuery}
+		*	@return {com.spinal.ioc.Engine}
 		**/
 		initialize: function(opts) {
 			opts || (opts = {});
 			if(!opts.context) throw new ContextException('UndefinedContext');
 			this.ctx = opts.context;
+			this.notation = (Engine.PREFIX + this.notation);
+			// FIXME: Augment Context Class method definition by transfering the Bone Query methods.
+			// declared here. So we can remove the 'this.ctx' reference (Still need to pass to the contructor)
+			// but not host it inside this class.
+			return this;
+		},
+
+		/**
+		*	Build specs into a single object unit suitable for querying by this class
+		*	@public
+		*	@method build
+		*	@param bone {Object} current bone
+		*	@return {com.spinal.ioc.Engine}
+		**/
+		build: function(bone) {
+			if(!_.isObject(bone)) throw new ContextException('InvalidSpecFormat');
+			_.extend(this.ctx.spec, _.omit(bone, this.notation));
+			if(bone[this.notation]) this.invoke('build', bone[this.notation]);
 			return this;
 		},
 
@@ -117,10 +143,17 @@ define(['ioc/context',
 		*	@property NAME
 		*	@type String
 		**/
-		NAME: 'BoneQuery'
+		NAME: 'Engine',
+
+		/**
+		*	@static
+		*	@property PREFIX
+		*	@type String
+		**/
+		PREFIX: '$'
 
 	}));
 
-	return BoneQuery;
+	return Engine;
 
 });
