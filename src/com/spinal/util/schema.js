@@ -10,7 +10,7 @@ define(['core/spinal'], function(Spinal) {
 	*	@class com.spinal.util.Schema
 	*	@extends com.spinal.core.SpinalClass
 	**/
-	var Schema = Spinal.namespace('com.spinal.util.Schema', Spinal.SpinalClass.inherit({
+	var Schema = Spinal.namespace('com.spinal.util.Schema', Backbone.Model.inherit({
 
 		/**
 		*	Initialize

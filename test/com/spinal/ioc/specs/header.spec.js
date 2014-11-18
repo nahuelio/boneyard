@@ -6,10 +6,8 @@ define({
 
 	header: {
 
-		$module: {
-			class: 'ui/container',
-			params: { id: 'header' }
-		}
+		$class: 'ui/container',
+		$params: { id: 'header' }
 
 	}
 

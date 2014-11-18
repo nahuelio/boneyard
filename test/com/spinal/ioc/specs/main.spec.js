@@ -12,10 +12,8 @@ define(['specs/header.spec',
 		theme: 'chrome',
 
 		global: {
-			$module: {
-				class: 'ui/container',
-				params: { el: 'div.global', css: '$bone!theme' }
-			},
+			$class: 'ui/container',
+			$params: { el: 'div.global', css: '$bone!theme' },
 			$ready: [
 				{ add: ['$bone!header'] },
 				{ add: ['$bone!content'], update: [{ silent: true }] },
@@ -24,37 +22,20 @@ define(['specs/header.spec',
 		},
 
 		viewA: {
-			$module: {
-				class: 'ui/view',
-				params: { id: 'viewA' }
-			},
+			$class: 'ui/view',
+			$params: { id: 'viewA' },
 			$ready: [
 				{ '$bone!content.add': ['$this', { renderOnAdd: true }] }
 			]
 		},
 
 		viewB: {
-			$module: {
-				class: 'ui/view',
-				params: { id: 'viewB' }
-			},
+			$class: 'ui/view',
+			$params: { id: 'viewB' },
 			$ready: [
 				{ '$bone!content.add': ['$this', { renderOnAdd: true }] }
 			]
 		}
-
-		//$plugins: ['aop', 'poly', 'i18n', 'theme']
-
-		/** Possible updated to the spec structure -> i.e:
-			viewB: {
-				$class: 'ui/container',
-				$params: { el: 'div.global', css: '$bone!theme' },
-				$ready: [
-					{ '$bone!content.add': ['args'] },
-					{ '$bone!content.add': ['args'] }
-				]
-			}
-		**/
 
 	};
 

@@ -90,6 +90,7 @@ define(['ioc/context',
 		*	@return {com.spinal.ioc.processor.CreateProcessor}
 		**/
 		execute: function() {
+			/**
 			var plugins = this.ctx.query.findBoneById('$plugins');
 			if(plugins) {
 				plugins = _.map(plugins, this.handleNotation, this);
@@ -101,6 +102,8 @@ define(['ioc/context',
 			} else {
 				this.ctx.trigger(Context.EVENTS.processed, { type: PluginProcessor.NAME });
 			}
+			**/
+			this.trigger(PluginProcessor.EVENTS.processed, {  type: PluginProcessor.NAME });
 			return this;
 		}
 

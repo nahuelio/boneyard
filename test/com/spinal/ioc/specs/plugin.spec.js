@@ -7,7 +7,8 @@ define([], function() {
 	return {
 
 		container: {
-			$module: { class: 'ui/container', params: { el: 'div.global' } },
+			$class: 'ui/container',
+			$params: { el: 'div.global' },
 			$ready: [
 				{ add: ['$bone!view', { renderOnAdd: true }] },
 				{ render: [] }
@@ -15,7 +16,8 @@ define([], function() {
 		},
 
 		view: {
-			$module: { class: 'ui/view', params: { id: 'child' } }
+			$class: 'ui/view',
+			$params: { id: 'child' }
 		},
 
 		$plugins: {

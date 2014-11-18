@@ -6,7 +6,7 @@ define(['specs/main.spec'], function(MainSpec) {
 
 	return {
 
-		$specs: MainSpec,
+		$specs: [MainSpec],
 
 		b: true,
 		s: 'Hello',
@@ -17,25 +17,21 @@ define(['specs/main.spec'], function(MainSpec) {
 		r: new RegExp('/\./', 'i'),
 
 		model: {
-			$module: {
-				class: 'util/schema',
-				params: {
-					_b: '$bone!b',
-					_s: '$bone!s',
-					_n: '$bone!n',
-					_o: '$bone!o',
-					_a: '$bone!a',
-					_d: '$bone!d',
-					_r: '$bone!r'
-				}
+			$module: 'util/schema',
+			$params: {
+				_b: '$bone!b',
+				_s: '$bone!s',
+				_n: '$bone!n',
+				_o: '$bone!o',
+				_a: '$bone!a',
+				_d: '$bone!d',
+				_r: '$bone!r'
 			}
 		},
 
 		content: {
-			$module: {
-				class: 'ui/container',
-				params: { id: 'content' }
-			}
+			$module: 'ui/container',
+			$params: { id: 'content' }
 		}
 
 	};

@@ -38,13 +38,17 @@ define(['core/spinal',
 		*		Generic (inherited from com.spinal.util.exception.Exception)
 		*		UndefinedContext
 		*		InvalidSpecFormat
+		*		UndefinedRootSpec
+		*		EngineNotDeclared
 		*	@static
 		*	@property TYPES
 		*	@type Object
 		**/
 		TYPES: {
 			UndefinedContext: _.template('Context Not Defined'),
-			InvalidSpecFormat: _.template('Invalid Spec Format')
+			InvalidSpecFormat: _.template('Invalid Spec Format'),
+			UndefinedRootSpec: _.template('Context Root Spec was undefined'),
+			EngineNotDeclared: _.template('Engine not declared')
 		}
 
 	}));

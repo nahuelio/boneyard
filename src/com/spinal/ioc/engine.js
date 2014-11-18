@@ -11,18 +11,25 @@ define(['ioc/context',
 	*	@class com.spinal.ioc.Engine
 	*	@extends com.spinal.core.SpinalClass
 	*
-	*	@requires com.spinal.ioc.Context
 	*	@requires com.spinal.util.exception.ContextException
 	**/
 	var Engine = Spinal.namespace('com.spinal.ioc.Engine', Spinal.SpinalClass.inherit({
 
 		/**
-		*	Context Reference
+		*	Main Spec root reference
 		*	@public
-		*	@property ctx
-		*	@type {com.spinal.ioc.Context}
+		*	@property root
+		*	@type {Object}
 		**/
-		ctx: null,
+		root: null,
+
+		/**
+		*	Async Module Factory
+		*	@public
+		*	@property factory
+		*	@type {com.spinal.util.AsyncFactory}
+		**/
+		factory: null,
 
 		/**
 		*	Notation
@@ -37,22 +44,22 @@ define(['ioc/context',
 		*	@public
 		*	@chainable
 		*	@method initialize
-		*	@param [opts] {Object} Initial Options
+		*	@param root {Object} reference to the spec root
+		*	@param factory {com.spinal.util.factories.AsyncFactory} factory reference
 		*	@return {com.spinal.ioc.Engine}
 		**/
-		initialize: function(opts) {
-			opts || (opts = {});
-			if(!opts.context) throw new ContextException('UndefinedContext');
-			this.ctx = opts.context;
+		initialize: function(root, factory) {
+			if(!root) throw new ContextException('UndefinedRootSpec');
+			this.root = root;
+			this.factory = factory;
 			this.notation = (Engine.PREFIX + this.notation);
-			// FIXME: Augment Context Class method definition by transfering the Bone Query methods.
-			// declared here. So we can remove the 'this.ctx' reference (Still need to pass to the contructor)
-			// but not host it inside this class.
-			return this;
+			return Engine.__super__.initialize.apply(this, arguments);
 		},
 
 		/**
 		*	Build specs into a single object unit suitable for querying by this class
+		*	This method is also responsible to build composite spec trees by merging them
+		*	into a single object to speed up querying and reducing the amount of nesting loops.
 		*	@public
 		*	@method build
 		*	@param bone {Object} current bone
@@ -60,7 +67,7 @@ define(['ioc/context',
 		**/
 		build: function(bone) {
 			if(!_.isObject(bone)) throw new ContextException('InvalidSpecFormat');
-			_.extend(this.ctx.spec, _.omit(bone, this.notation));
+			_.extend(this.root, _.omit(bone, this.notation));
 			if(bone[this.notation]) this.invoke('build', bone[this.notation]);
 			return this;
 		},
@@ -69,38 +76,59 @@ define(['ioc/context',
 		*	Perform a look up of bones by a predicate passed as parameter.
 		*	If a bone is specified as a extra argument, it will narrow the search down to the specific bone context.
 		*	@public
-		*	@method findBonesBy
+		*	@method getBonesBy
 		*	@param finder {Function} predicate evaluation
 		*	@param [bone] {Object} Optional Bone context in which the lookup will be narrowed down
 		*	@return Array
 		**/
-		findBonesBy: function(finder, bone) {
+		getBonesBy: function(finder, bone) {
+			if(!this.root) return [];
 			var args = Array.prototype.slice.call(arguments);
-			args.unshift((bone) ? bone : this.ctx.spec);
+			args.unshift((bone) ? bone : this.root);
 			return _.filter.apply(this, args);
 		},
 
 		/**
+		*	Perform a bone look up by id.
+		*	If the bone is a module and it was already created, this method will return the instance of the bone.
+		*	@public
+		*	@method getBone
+		*	@param id {String} bone id
+		*	@return Object
+		**/
+		getBone: function(id) {
+			return (this.root && this.root[id]) ?
+				((this.isCreated(this.root[id])) ? this.root[id]._$created : this.root[id]) : null;
+		},
+
+		/**
 		*	Perform a look up of bones by type passed as parameter.
+		*	In order to use this method, the context must be completly initialized.
+		*	@public
+		*	@method getBonesByType
+		*	@param type {String} bone type
+		*	@param [bone] {Object} Optional Bone context in which the lookup will be narrowed down
+		*	@return Array
+		**/
+		getBonesByType: function(type, bone) {
+			return this.getBonesBy(_.bind(function(b, i) {
+				return (this.isReady(b) && b instanceof type);
+			}, this), bone);
+		},
+
+		/**
+		*	Perform a look up of bones by className passed as parameter.
+		*	In order to use this method, the context must be completly initialized.
 		*	@public
 		*	@method findBonesByType
 		*	@param type {String} bone type
 		*	@param [bone] {Object} Optional Bone context in which the lookup will be narrowed down
 		*	@return Array
 		**/
-		findBonesByType: function(type, bone) {
-			return this.findBonesBy(function(b, i) { return (b instanceof type); }, bone);
-		},
-
-		/**
-		*	Perform a look up by bone id passed as parameter
-		*	@public
-		*	@method findBoneById
-		*	@param id {String} bone id
-		*	@return Object
-		**/
-		findBoneById: function(id) {
-			return (this.ctx.spec[id]) ? this.ctx.spec[id] : null;
+		getBonesByClass: function(className, bone) {
+			return this.getBonesBy(_.bind(function(b, i) {
+				return (this.isModule(b) && this.isReady(b) && b._$created.constructor.NAME === className);
+			}, this), bone);
 		},
 
 		/**

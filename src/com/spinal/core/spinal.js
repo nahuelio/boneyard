@@ -92,9 +92,7 @@ define(['libs/backbone'], function() {
 		*	@return Object
 		**/
 		var _deepCopy = function (source, destination, existing) {
-			if (_isWindow(source)) {
-				throw new Error("Can't copy! Making copies of Window or Scope instances is not supported.");
-			}
+			if (_isWindow(source)) throw new Error("Making copies of Window or Scope instances is not supported.");
 			if(!destination) {
 				destination = source;
 				if(source) {
@@ -176,10 +174,8 @@ define(['libs/backbone'], function() {
 
 		// If Backbone exists, expose new inherit method to Backbone Classes
 		if(exports.Backbone) {
-			Backbone.View.inherit = _inherit;
-			Backbone.Collection.inherit = _inherit;
-			Backbone.Model.inherit = _inherit;
-			Backbone.Router.inherit = _inherit;
+			Backbone.View.inherit = Backbone.Collection.inherit =
+			Backbone.Model.inherit = Backbone.Router.inherit = _inherit;
 		}
 
 		/**
@@ -243,8 +239,27 @@ define(['libs/backbone'], function() {
 			*	@return Array
 			**/
 			invoke: function(methodName, args) {
-				if(!methodName || !args || !_.isString(methodName) || _.isArray(args)) return [];
+				if(!methodName || !args || !_.isString(methodName) || !_.isArray(args)) return [];
 				return _.map(args, function(v) { return (this[methodName]) ? this[methodName](v) : null; }, this);
+			},
+
+			/**
+			*	Proxifies the list of methods (instance) specified as extra arguments into the instance caller.
+			*	<h5>Usages:</h5>
+			*		instanceA.proxify(instanceB, 'method1', 'method2', 'methodN');
+			*		instanceA.method1(); // executes method1 declared in instanceB.
+			*		instanceA.method2(); // executes method2 declared in instanceB.
+			*		instanceA.methodN(); // executes methodN declared in instanceB.
+			*	@public
+			*	@method proxify
+			*	@param instance {Object} source instance to rent the methods from
+			*	@return Object
+			**/
+			proxify: function(instance) {
+				if(!instance) return this;
+				var methods = Array.prototype.slice.call(arguments, 1);
+				_.each(methods, function(m) { this[m] = _.bind(instance[m], instance); }, this);
+				return this;
 			},
 
 			/**

@@ -76,6 +76,7 @@ define(['core/spinal',
 
 		/**
 		*	Set a new collection of elements to be inserted in the factory stack
+		*	@FIXME: Must validate same rules as 'push' but atomically.
 		*	@public
 		*	@chainable
 		*	@method set
@@ -172,15 +173,14 @@ define(['core/spinal',
 		*	@private
 		*	@method _handle
 		*	@param resources {Array} resource reference
-		*	@param callback {Function} callback to execute on every resource loaded
 		*	@param [opts] {Object} options
 		*	@return Array
 		**/
-		_handle: function(resources, callback, opts) {
+		_handle: function(resources, opts) {
 			return _.map(resources, function(resource) {
-				var resourceId = this.stack.pop().id;
-					registered = AsyncFactory.__super__.register.call(this, resourceId, resource);
-				if(callback && _.isFunction(callback)) callback(resourceId, registered);
+				var res = this.stack.pop(),
+					registered = AsyncFactory.__super__.register.call(this, res.id, resource);
+				if(!opts.silent && res.callback && _.isFunction(res.callback)) res.callback(res.id, resource);
 				return registered;
 			}, this);
 		},
@@ -189,17 +189,25 @@ define(['core/spinal',
 		*	Triggers loading phase of the current resources in the factory stack
 		*	@private
 		*	@method _execute
-		*	@param callback {Function} callback to execute on every resource loaded
+		*	@param callback {Function} callback to be executed after all resources are loaded
 		*	@param [opts] {Object} options
 		*	@return {com.spinal.util.factories.AsyncFactory}
 		**/
 		_execute: function(callback, opts) {
 			var paths = this.stack.map(function(resource) { return resource.path; });
 			require(paths, _.bind(function() {
-				var resources = this._handle(Array.prototype.slice.call(arguments), callback, opts);
+				var resources = this._handle(Array.prototype.slice.call(arguments), opts);
+				if(callback && _.isFunction(callback)) callback(resources);
 				if(!opts.silent) this.trigger(AsyncFactory.EVENTS.loaded, resources);
 			}, this), _.bind(function(err) { this.trigger(AsyncFactory.EVENTS.failed, err); }, this));
 			return this;
+		},
+
+		/**
+		*	Debug Function
+		**/
+		_debug: function() {
+			return this.stack.map(function(resource) { return resource.path; }).join(', ');
 		}
 
 	}, {

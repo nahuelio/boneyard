@@ -8,7 +8,7 @@ define(['core/spinal',
 
 	/**
 	*	BoneFactory Class
-	*	THIS CLASS IS GOING TO BE REMOVED!
+	*	IT GOT REMOVED
 	*	@FIXME: Need some rewrite and move out some of the methods here to the IoC specific logic.
 	*	Refactor this class into com.spinal.util package as AsyncFactory class. (Move the Generic Factory inside same
 	*	package as well).

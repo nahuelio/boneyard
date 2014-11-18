@@ -1,9 +1,9 @@
 /**
-*	com.spinal.ioc.BoneQuery Class Tests
+*	com.spinal.ioc.Engine Class Tests
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['ioc/context',
-		'ioc/bone-query'], function(Context, BoneQuery) {
+		'ioc/engine'], function(Context, Engine) {
 
 	describe('com.spinal.ioc.BoneQuery', function() {
 

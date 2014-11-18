@@ -139,9 +139,10 @@ define(['ioc/context',
 		*	@return {com.spinal.ioc.processor.ReadyProcessor}
 		**/
 		execute: function(bone, id) {
+			/**
 			var result = ReadyProcessor.__super__.execute.call(this, this.handleNotation, bone, id);
-			this.ctx.trigger(Context.EVENTS.ready, result);
-			this.ctx.trigger(Context.EVENTS.processed, { type: ReadyProcessor.NAME });
+			**/
+			this.trigger(ReadyProcessor.EVENTS.processed, { type: ReadyProcessor.NAME });
 			return this;
 		}
 

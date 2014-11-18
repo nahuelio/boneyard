@@ -161,8 +161,15 @@ define(['util/factories/async-factory',
 		describe('#load()', function() {
 
 			it('Should load the resources that are currently in the factory stack', function(done) {
+				// mycallback
+				var mycallback = _.bind(function(id, resource) {
+					expect(resource).to.have.property('view1');
+					expect(resource).to.have.property('view2');
+					expect(resource).to.have.property('subcontent');
+					expect(this.asyncFactory.create(id)).to.be.ok();
+				}, this);
 				// Add one more
-				this.asyncFactory.push({ id: 'advanced', path: 'specs/advanced.spec' });
+				this.asyncFactory.push({ id: 'advanced', path: 'specs/advanced.spec', callback: mycallback });
 				// Events Set Up
 				this.asyncFactory.off().on(AsyncFactory.EVENTS.prepared, _.bind(function(resources) {
 					expect(resources).to.be.ok();
@@ -173,17 +180,9 @@ define(['util/factories/async-factory',
 					expect(this.asyncFactory.stack.size()).to.be.equal(0);
 					done();
 				}, this));
-				var result = this.asyncFactory.load(_.bind(function(id, resource) {
-					if(id === 'simple') {
-						expect(resource).to.have.property('b');
-						expect(resource).to.have.property('s');
-						expect(resource).to.have.property('n');
-					} else if(id === 'advanced') {
-						expect(resource).to.have.property('view1');
-						expect(resource).to.have.property('view2');
-						expect(resource).to.have.property('subcontent');
-					}
-					expect(this.asyncFactory.create(id)).to.be.ok();
+				var result = this.asyncFactory.load(_.bind(function(resources) {
+					expect(resources).to.be.ok();
+					expect(resources).to.have.length(2);
 				}, this));
 			});
 

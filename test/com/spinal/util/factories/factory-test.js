@@ -70,11 +70,11 @@ define(['util/factories/factory',
 		describe('#getFactory()', function() {
 
 			it('Should return the Constructor function retrieved by factory id', function() {
-				var modelfactory = this.factory.getFactory('Model');
+				var modelfactory = this.factory.getFactory('Schema');
 				expect(modelfactory).to.be.ok();
 				expect(modelfactory.id).to.be.ok();
 				expect(modelfactory.factory).to.be.ok();
-				expect(modelfactory.id).to.be.equal('Model');
+				expect(modelfactory.id).to.be.equal('Schema');
 				expect(modelfactory.factory).to.be.a(Function);
 			});
 
@@ -91,7 +91,7 @@ define(['util/factories/factory',
 		describe('#create()', function() {
 
 			it('Should instanciate an object from the factory constructor function', function() {
-				var model = this.factory.create('Model', { prop: 'myprop'});
+				var model = this.factory.create('Schema', { prop: 'myprop'});
 				expect(model).to.be.ok();
 				expect(model).to.be.an(Model);
 				expect(model.get('prop')).to.be.equal('myprop');

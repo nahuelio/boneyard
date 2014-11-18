@@ -6,10 +6,8 @@ define({
 
 	footer: {
 
-		$module: {
-			class: 'ui/container',
-			params: { id: 'footer' }
-		}
+		$class: 'ui/container',
+		$params: { id: 'footer' }
 
 	}
 
