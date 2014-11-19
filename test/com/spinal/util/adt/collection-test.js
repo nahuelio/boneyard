@@ -493,9 +493,9 @@ define(['core/spinal',
     	});
 
         /**
-    	*	Collection#findBy() test
+    	*	Collection#find() test
     	**/
-    	describe('#findBy()', function() {
+    	describe('#find()', function() {
 
             it('Should find one element by a function predicate', function() {
                 this.testSimple.reset().addAll([

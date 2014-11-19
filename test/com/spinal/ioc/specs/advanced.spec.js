@@ -1,6 +1,15 @@
 /**
 *	Advanced Spec Test
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
+*	IMPORTANT NOTE:
+*	There is still one more use case:
+*	In a previous wiring operation: let say that the bone 'footer' was already registered in the factory
+*	But wiped out from the spec, due to a reset. so it means that when it was 'put back again',
+*	the _$created doesn't exists anymore, but it's still registered in the factory (previously loaded).
+*
+*	THIS IS THE partial specs functionality, we should be able to keep those _$created variables in place
+*	So later we can do: subcontent: { $params: dependency3: '$bone!footer'} (already parsed by simple.spec.js)
+*	I NEED TO DO SOMETHING WITH THE Engine.build method to keep those (Partial 'Specting')
 **/
 define(['specs/main.spec'], function(MainSpec) {
 
@@ -9,7 +18,7 @@ define(['specs/main.spec'], function(MainSpec) {
 		$specs: [MainSpec],
 
 		model: {
-			$class: 'util/schema',
+			$module: 'util/schema',
 			$params: {
 				schema: {
 					_boolean: 'boolean',
@@ -29,34 +38,36 @@ define(['specs/main.spec'], function(MainSpec) {
 		},
 
 		content: {
-			$class: 'ui/container',
+			$module: 'ui/container',
 			$params: { id: 'content', dependencyA: '$bone!viewC' }
 		},
 
 		view1: {
-			$class: 'ui/view',
+			$module: 'ui/view',
 			$params: { id: 'view1' }
 		},
 
 		viewD: {
-			$class: 'ui/view',
+			$module: 'ui/view',
 			$params: { id: 'viewD' }
 		},
 
 		view2: {
-			$class: 'ui/view',
+			$module: 'ui/view',
 			$params: { id: 'view2' }
 		},
 
 		viewC: {
-			$class: 'ui/container',
+			$module: 'ui/container',
 			$params: { id: 'viewC', css: '$bone!theme', dependencyA: '$bone!viewD' }
 		},
 
 		subcontent: {
-			$class: 'ui/container',
+			$module: 'ui/container',
 			$params: {
 				id: 'subcontent',
+				// this is why the model is being added into the loading queue (even though, the simple.spec already
+				// loaded it with the same bone 'id')
 				model: '$bone!model',
 				dependency1: '$bone!view1',
 				dependency2: '$bone!view2'

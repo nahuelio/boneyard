@@ -20,8 +20,9 @@ define(['core/spinal',
 	*	@requires com.spinal.util.StringUtil
 	*	@requires com.spinal.util.adt.Iterator
 	*	@requires com.spinal.util.AsyncFactory
-	*	@requires com.spinal.ioc.Engine
 	*	@requires com.spinal.util.exception.ContextException
+	*	@requires com.spinal.ioc.processor.BoneProcessor
+	*	@requires com.spinal.ioc.Engine
 	**/
 	var Context = Spinal.namespace('com.spinal.ioc.Context', Spinal.SpinalClass.inherit({
 
@@ -32,14 +33,6 @@ define(['core/spinal',
 		*	@type String
 		**/
 		id: StringUtil.uuid(),
-
-		/**
-		*	Current Spec
-		*	@public
-		*	@property spec
-		*	@type Object
-		**/
-		spec: {},
 
 		/**
 		*	Engine Class
@@ -78,10 +71,24 @@ define(['core/spinal',
 		**/
 		initialize: function() {
 			this.factory = new AsyncFactory();
-			this.factory.set(this.processors.collection);
-			this.engine = new Engine(this.spec, this.factory);
+			this.engine = new Engine(this.factory);
 			this.proxify(this.engine, 'getBone', 'getBonesByType', 'getBonesByClass');
 			return Context.__super__.initialize.apply(this, arguments);
+		},
+
+		/**
+		*	Load Processors if they were not loaded previously.
+		*	@private
+		*	@method _loadProcessors
+		*	@param [callback] {Function} callback reference
+		*	@return {com.spinal.ioc.Context}
+		**/
+		_loadProcessors: function(callback) {
+			this.processors.rewind();
+			(!this.factory.getFactory('CreateProcesor')) ?
+				this.factory.set(this.processors.collection).load(_.bind(this._onProcessorsLoaded, this, callback)) :
+				this._onProcessorsLoaded(callback);
+			return this;
 		},
 
 		/**
@@ -140,10 +147,8 @@ define(['core/spinal',
 		wire: function(spec, callback) {
 			if(!spec) { callback(this); return this; }
 			if(!_.isObject(spec)) throw new ContextException('InvalidSpecFormat');
-			this.spec = {}; // No Spec Partial implementation yet;
-			this.engine.build(spec);
-			this.factory.load(_.bind(this._onProcessorsLoaded, this, callback));
-			return this;
+			this.engine.reset().build(spec);
+			return this._loadProcessors(callback);
 		},
 
 		/**
@@ -159,13 +164,6 @@ define(['core/spinal',
 				var args = Array.prototype.slice.call(arguments, 2); args.unshift(eventName);
 				this.trigger.apply(this, args);
 			}
-		},
-
-		/**
-		*	Debug Function
-		**/
-		_debug: function() {
-			return _.each(this.spec, function(o) { console.log(o); });
 		}
 
 	}, {

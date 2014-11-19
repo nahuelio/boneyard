@@ -96,7 +96,7 @@ define(['util/factories/async-factory',
 		});
 
 		/**
-		*	AsyncFactory#findPos() test
+		*	AsyncFactory#findPosBy() test
 		**/
 		describe('#findPos', function() {
 

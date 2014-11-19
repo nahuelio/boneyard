@@ -5,7 +5,7 @@
 define(['ioc/context',
 		'ioc/engine'], function(Context, Engine) {
 
-	describe('com.spinal.ioc.BoneQuery', function() {
+	describe('com.spinal.ioc.Engine', function() {
 
 		before(function() {
 			// TODO
@@ -16,11 +16,11 @@ define(['ioc/context',
 		});
 
 		/**
-		*	BoneQuery#new() test
+		*	Engine#new() test
 		**/
 		describe('#new()', function() {
 
-			it('Should Instanciate BoneQuery Class', function() {
+			it('Should Instanciate Engine Class', function() {
 
 			});
 

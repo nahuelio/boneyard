@@ -76,7 +76,7 @@ define(['core/spinal',
 		**/
 		isModuleDependency: function(expr) {
 			if(!expr || !_.isString(expr)) return false;
-			return (this._engine.isModule(this.getDependency(expr)));
+			return (this._engine.isModule(this._engine.getBone(this.getDependency(expr))));
 		},
 
 		/**
@@ -106,7 +106,7 @@ define(['core/spinal',
 			if(!predicate || !_.isFunction(predicate)) return false;
 			var bones = [], context = (bone) ? bone : this._engine.root;
 			for(var id in context) {
-				// console.log((bone) ? 'Sub Ite: ' : 'Ite: ', context[id]);
+				//console.log((bone) ? 'Sub Ite: ' : 'Ite: ', context[id]);
 				var r = predicate.call(this, context[id], id, (bone) ? context : null);
 				if(r) { bones.push(r) } else { break; }
 			}

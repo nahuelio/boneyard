@@ -21,7 +21,7 @@ define(['ioc/context',
 		*	@property root
 		*	@type {Object}
 		**/
-		root: null,
+		root: {},
 
 		/**
 		*	Async Module Factory
@@ -48,12 +48,22 @@ define(['ioc/context',
 		*	@param factory {com.spinal.util.factories.AsyncFactory} factory reference
 		*	@return {com.spinal.ioc.Engine}
 		**/
-		initialize: function(root, factory) {
-			if(!root) throw new ContextException('UndefinedRootSpec');
-			this.root = root;
+		initialize: function(factory) {
+			if(!factory) throw new ContextException('UndefinedRootSpec');
 			this.factory = factory;
 			this.notation = (Engine.PREFIX + this.notation);
 			return Engine.__super__.initialize.apply(this, arguments);
+		},
+
+		/**
+		*	Reset root spec
+		*	@public
+		*	@method reset
+		*	@return {com.spinal.ioc.Engine}
+		**/
+		reset: function() {
+			this.root = {};
+			return this;
 		},
 
 		/**
@@ -62,7 +72,7 @@ define(['ioc/context',
 		*	into a single object to speed up querying and reducing the amount of nesting loops.
 		*	@public
 		*	@method build
-		*	@param bone {Object} current bone
+		*	@param bone {Object} current bone or sub spec
 		*	@return {com.spinal.ioc.Engine}
 		**/
 		build: function(bone) {

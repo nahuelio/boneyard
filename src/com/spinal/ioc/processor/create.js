@@ -36,11 +36,30 @@ define(['ioc/context',
 		*	@method _enqueue
 		*	@param id {String} module id
 		*	@param success {Function} callback function to be executed once the module is loaded
+		*	@param dependencies {Array} dependencies for the current module being enqueued
 		*	@return Object
 		**/
-		_enqueue: function(id, success) {
+		_enqueue: function(id, success, dependencies) {
 			if(!(module = this._engine.getBone(id))) throw new ProcessorException('BoneNotFound');
 			this._engine.factory.push({ id: id, path: module.$module, callback: success });
+			return this._sorting(id, module, dependencies);
+		},
+
+		/**
+		*	Resolves module's ordering based on module's dependencies inside the current factory stack
+		*	@private
+		*	@method _sorting
+		*	@param id {String} module id
+		*	@param module {Object} module reference
+		*	@param dependencies {Array} dependencies for the current module id
+		*	@return
+		**/
+		_sorting: function(id, module, dependencies) {
+			if(dependencies.length === 0) return module;
+			var dpos = _.map(dependencies, function(d) { return this._engine.factory.findPosById(d.id); }, this);
+			this._engine.factory.swap(_.bind(function(maxp, minp, m, ix) {
+				return (id === m.id && ix <= maxp) ? maxp : ix;
+			}, this, _.max(dpos), _.min(dpos)));
 			return module;
 		},
 
@@ -66,12 +85,10 @@ define(['ioc/context',
 		*	@private
 		*	@method _inject
 		*	@param obj {Object} object in which the dependency will be injected
-		*	@param dependencies {Array} list of dependencies (modules ids)
+		*	@param deps {Array} list of dependencies (modules ids)
 		**/
-		_inject: function(obj, dependencies) {
-			_.each(dependencies, function(dependency) {
-				obj[dependency.property] = this._engine.getBone(dependency.id)._$created;
-			}, this);
+		_inject: function(obj, deps) {
+			_.each(deps, function(dep) { obj[dep.property] = this._engine.getBone(dep.id); }, this);
 		},
 
 		/**
@@ -85,7 +102,6 @@ define(['ioc/context',
 		_dependencies: function(params) {
 			return _.compact(_.map(params, function(value, key, obj) {
 				if(!this._resolve(value, obj, key)) return { id: this.getDependency(value), property: key };
-				return null;
 			}, this));
 		},
 
@@ -101,9 +117,8 @@ define(['ioc/context',
 		**/
 		_resolve: function(expr, parent, key) {
 			if(!expr || !parent) return null;
-			if(this.validate(expr) && !this.isModuleDependency(expr))
-				return (parent[key] = this._engine.getBone(this.getDependency(expr)));
-			return key;
+			if(!this.validate(expr)) return key;
+			if(!this.isModuleDependency(expr)) return (parent[key] = this._engine.getBone(this.getDependency(expr)));
 		},
 
 		/**
@@ -118,7 +133,8 @@ define(['ioc/context',
 		**/
 		process: function(bone, id, parent) {
 			if(this._engine.isModule(bone)) {
-				return this._enqueue(id, _.bind(_.partial(this._create, this._dependencies(bone.$params), bone), this));
+				var deps = this._dependencies(bone.$params);
+				return this._enqueue(id, _.bind(_.partial(this._create, deps, bone), this), deps);
 			} else if(_.isObject(bone) || _.isArray(bone)) {
 				return CreateProcessor.__super__.execute.call(this, this.process, bone, id);
 			}

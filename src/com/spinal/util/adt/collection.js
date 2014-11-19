@@ -308,8 +308,8 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 		*	@param finder {Function} matcher function
 		*	@return Object
 		**/
-		findPos: function(finder) {
-			for(var i = 0, ix = null; i < this.size(); i++) {
+		findPosBy: function(finder) {
+			for(var i = 0, ix = -1; i < this.size(); i++) {
 				if(finder(this.collection[i])) { ix = i; break; }
 			}
 			return ix;

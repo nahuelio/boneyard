@@ -12,7 +12,7 @@ define(['specs/header.spec',
 		theme: 'chrome',
 
 		global: {
-			$class: 'ui/container',
+			$module: 'ui/container',
 			$params: { el: 'div.global', css: '$bone!theme' },
 			$ready: [
 				{ add: ['$bone!header'] },
@@ -22,7 +22,7 @@ define(['specs/header.spec',
 		},
 
 		viewA: {
-			$class: 'ui/view',
+			$module: 'ui/view',
 			$params: { id: 'viewA' },
 			$ready: [
 				{ '$bone!content.add': ['$this', { renderOnAdd: true }] }
@@ -30,7 +30,7 @@ define(['specs/header.spec',
 		},
 
 		viewB: {
-			$class: 'ui/view',
+			$module: 'ui/view',
 			$params: { id: 'viewB' },
 			$ready: [
 				{ '$bone!content.add': ['$this', { renderOnAdd: true }] }

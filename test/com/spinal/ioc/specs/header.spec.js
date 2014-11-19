@@ -6,7 +6,7 @@ define({
 
 	header: {
 
-		$class: 'ui/container',
+		$module: 'ui/container',
 		$params: { id: 'header' }
 
 	}

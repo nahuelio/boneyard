@@ -91,7 +91,7 @@ define(['core/spinal',
 		},
 
 		/**
-		*	Find a the resource inside the factory stack
+		*	Find a resource inside the factory stack by id
 		*	@public
 		*	@method findById
 		*	@param id {String} resource id
@@ -102,14 +102,26 @@ define(['core/spinal',
 		},
 
 		/**
-		*	Find a the resource position (0-based) in the factory stack
+		*	Find a resource position (0-based) in the factory stack by passing the resource reference
 		*	@public
 		*	@method findPos
-		*	@param resource {String} resource reference
+		*	@param resource {Function} resource reference
 		*	@return Number
 		**/
 		findPos: function(resource) {
 			return this.stack.search(resource);
+		},
+
+		/**
+		*	Find a resource position in the factory stack by resource id
+		*	@public
+		*	@method findPosById
+		*	@param id {String} resource id
+		*	@return Number
+		**/
+		findPosById: function(id) {
+			if(!id) return -1;
+			return this.stack.findPosBy(function(resource) { return (resource.id === id); });
 		},
 
 		/**
@@ -150,6 +162,18 @@ define(['core/spinal',
 		**/
 		exists: function(id) {
 			return !_.isUndefined(this.findById(id));
+		},
+
+		/**
+		*	Swaps positions of 2 resources inside the factory stack.
+		*	@public
+		*	@method swap
+		*	@param comparator {Function} predicate that evaluates when the swap should take place
+		*	@return {com.spinal.util.factories.AsyncFactory}
+		**/
+		swap: function(comparator) {
+			this.stack.swap(comparator);
+			return this;
 		},
 
 		/**
@@ -201,13 +225,6 @@ define(['core/spinal',
 				if(!opts.silent) this.trigger(AsyncFactory.EVENTS.loaded, resources);
 			}, this), _.bind(function(err) { this.trigger(AsyncFactory.EVENTS.failed, err); }, this));
 			return this;
-		},
-
-		/**
-		*	Debug Function
-		**/
-		_debug: function() {
-			return this.stack.map(function(resource) { return resource.path; }).join(', ');
 		}
 
 	}, {

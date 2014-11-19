@@ -31,7 +31,7 @@ define(['ioc/context',
 			it('Should Initialize IoC Container', function(done) {
 				this.appContext = Context.Initialize(_.bind(function(ctx) {
 					expect(ctx).to.be.ok();
-					expect(ctx.spec).to.be.ok();
+					expect(ctx.engine).to.be.ok();
 					done();
 				}, this));
 			});
@@ -78,24 +78,23 @@ define(['ioc/context',
 				}));
 			});
 
-			it.skip('Should Wire Advanced Spec (Module Dependency)', function(done) {
+			it('Should Wire Advanced Spec (Module Dependency)', function(done) {
 				this.appContext.off().on(Context.EVENTS.initialized, _.bind(function(ctx) {
 					expect(ctx).to.be.ok();
 					done();
-				}, this)).on(Context.EVENTS.plugin + ' ' + Context.EVENTS.created, _.bind(function(result) {
+				}, this)).on(Context.EVENTS.processorCompleted, _.bind(function(result) {
 					expect(result).to.be.ok();
-					expect(result).to.be.an('array');
-				}, this)).on(Context.EVENTS.ready, _.bind(function(result) {
-					expect(result).to.be.ok();
-					var model = this.appContext.getBone('model'),
-						theme = this.appContext.getBone('theme');
-					expect(model.get('_string')).to.be.equal(theme);
 				}, this));
 
 				this.appContext.wire(AdvancedSpec, function(ctx) {
 					expect(ctx).to.be.ok();
-					expect(ctx.spec).to.be.ok();
-					expect(ctx.spec.viewC).to.be.ok();
+					expect(ctx.engine).to.be.ok();
+					var model = ctx.getBone('model'),
+						theme = ctx.getBone('theme'),
+						subcontent = ctx.getBone('subcontent');
+					expect(model.get('_string')).to.be.equal(theme);
+					expect(subcontent.model).to.be.ok();
+					expect(subcontent.model.get('_int')).to.be.equal(10);
 				});
 			});
 
@@ -168,7 +167,7 @@ define(['ioc/context',
 
 				this.appContext.wire(PluginSpec, function(ctx) {
 					expect(ctx).to.be.ok();
-					expect(ctx.spec).to.be.ok();
+					expect(ctx.engine.root).to.be.ok();
 				});
 			});
 
