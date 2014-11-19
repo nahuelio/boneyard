@@ -100,7 +100,7 @@ define(['core/spinal',
 		_onProcessorsLoaded: function(callback) {
 			while(this.processors.hasNext()) {
 				var p = this.processors.next();
-				p.module = this.fexec('create', p.id, this.engine);
+				p.module = this.bonefactory('create', p.id, this.engine);
 				p.module.once(BoneProcessor.EVENTS.processed, _.bind(this._next, this, p.module, callback));
 			}
 			return (this.processors.rewind() && this._next());
@@ -122,13 +122,13 @@ define(['core/spinal',
 		},
 
 		/**
-		*	Factory method wrapper
+		*	Bone Factory method wrapper
 		*	@public
-		*	@method fexec
+		*	@method bonefactory
 		*	@param methodName {String} factory method name
 		*	@return Object
 		**/
-		fexec: function(methodName) {
+		bonefactory: function(methodName) {
 			if(!methodName) return null;
 			var args = Array.prototype.slice.call(arguments, 1);
 			return (this.factory[methodName]) ? this.factory[methodName].apply(this.factory, args) : null;
@@ -147,7 +147,7 @@ define(['core/spinal',
 		wire: function(spec, callback) {
 			if(!spec) { callback(this); return this; }
 			if(!_.isObject(spec)) throw new ContextException('InvalidSpecFormat');
-			this.engine.reset().build(spec);
+			this.engine.build(spec);
 			return this._loadProcessors(callback);
 		},
 

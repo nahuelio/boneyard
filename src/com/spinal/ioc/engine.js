@@ -52,17 +52,6 @@ define(['ioc/context',
 			if(!factory) throw new ContextException('UndefinedRootSpec');
 			this.factory = factory;
 			this.notation = (Engine.PREFIX + this.notation);
-			return Engine.__super__.initialize.apply(this, arguments);
-		},
-
-		/**
-		*	Reset root spec
-		*	@public
-		*	@method reset
-		*	@return {com.spinal.ioc.Engine}
-		**/
-		reset: function() {
-			this.root = {};
 			return this;
 		},
 

@@ -17,15 +17,17 @@ define(['specs/main.spec'], function(MainSpec) {
 
 		$specs: [MainSpec],
 
+		schema: {
+			_boolean: 'boolean',
+			_string: 'string',
+			_int: 'int',
+			_float: 'float'
+		},
+
 		model: {
 			$module: 'util/schema',
 			$params: {
-				schema: {
-					_boolean: 'boolean',
-					_string: 'string',
-					_int: 'int',
-					_float: 'float'
-				},
+				schema: '$bone!schema',
 				_boolean: true,
 				_string: '$bone!theme',
 				_int: 10,
@@ -66,11 +68,17 @@ define(['specs/main.spec'], function(MainSpec) {
 			$module: 'ui/container',
 			$params: {
 				id: 'subcontent',
-				// this is why the model is being added into the loading queue (even though, the simple.spec already
-				// loaded it with the same bone 'id')
 				model: '$bone!model',
 				dependency1: '$bone!view1',
 				dependency2: '$bone!view2'
+			}
+		},
+
+		integrity: {
+			$module: 'util/schema',
+			$params: {
+				schema: '$bone!schema',
+				simple: '$bone!simple'
 			}
 		}
 

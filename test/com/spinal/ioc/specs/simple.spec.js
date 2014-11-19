@@ -32,6 +32,11 @@ define(['specs/main.spec'], function(MainSpec) {
 		content: {
 			$module: 'ui/container',
 			$params: { id: 'content' }
+		},
+
+		simple: {
+			$module: 'ui/view',
+			$params: { id: 'simple' }
 		}
 
 	};

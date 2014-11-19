@@ -44,12 +44,12 @@ define(['ioc/context',
 		describe('#factory()', function() {
 
 			it('Should NOT execute a factory method (method not defined)', function() {
-				var result = this.appContext.fexec();
+				var result = this.appContext.bonefactory();
 				expect(result).not.be.ok();
 			});
 
 			it('Should NOT execute a factory method (method is not declared in BoneFactory Class)', function() {
-				var result = this.appContext.fexec('method-non-existent');
+				var result = this.appContext.bonefactory('method-non-existent');
 				expect(result).not.be.ok();
 			});
 
@@ -91,10 +91,12 @@ define(['ioc/context',
 					expect(ctx.engine).to.be.ok();
 					var model = ctx.getBone('model'),
 						theme = ctx.getBone('theme'),
-						subcontent = ctx.getBone('subcontent');
+						subcontent = ctx.getBone('subcontent'),
+						integrity = ctx.getBone('integrity');
 					expect(model.get('_string')).to.be.equal(theme);
 					expect(subcontent.model).to.be.ok();
 					expect(subcontent.model.get('_int')).to.be.equal(10);
+					expect(integrity.get('simple').$el).to.be.ok();
 				});
 			});
 
