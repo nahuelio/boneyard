@@ -114,7 +114,7 @@ define(['ioc/context',
 		/**
 		*	Context#wire() Test Cases for possible semantics errors in Specs
 		*/
-		describe.skip('#wire() - Semantics Errors', function() {
+		describe('#wire() - Semantics Errors', function() {
 
 			it('Error 1 - TODO', function() { var errorSpec = {}; });
 

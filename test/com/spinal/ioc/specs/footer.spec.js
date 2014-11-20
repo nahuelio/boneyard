@@ -4,6 +4,8 @@
 **/
 define({
 
+	$id: 'footer',
+
 	footer: {
 
 		$module: 'ui/container',

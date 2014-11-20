@@ -1,20 +1,12 @@
 /**
 *	Advanced Spec Test
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
-*	IMPORTANT NOTE:
-*	There is still one more use case:
-*	In a previous wiring operation: let say that the bone 'footer' was already registered in the factory
-*	But wiped out from the spec, due to a reset. so it means that when it was 'put back again',
-*	the _$created doesn't exists anymore, but it's still registered in the factory (previously loaded).
-*
-*	THIS IS THE partial specs functionality, we should be able to keep those _$created variables in place
-*	So later we can do: subcontent: { $params: dependency3: '$bone!footer'} (already parsed by simple.spec.js)
-*	I NEED TO DO SOMETHING WITH THE Engine.build method to keep those (Partial 'Specting')
 **/
 define(['specs/main.spec'], function(MainSpec) {
 
 	return {
 
+		$id: 'advanced',
 		$specs: [MainSpec],
 
 		schema: {
@@ -76,11 +68,16 @@ define(['specs/main.spec'], function(MainSpec) {
 
 		integrity: {
 			$module: 'util/schema',
+			// Offer support with this: $params: '$bone!schema'
 			$params: {
 				schema: '$bone!schema',
 				simple: '$bone!simple'
 			}
-		}
+		},
+
+		$ready: [
+			{ '$bone!content.add': ['$bone!view1'] }
+		]
 
 	};
 

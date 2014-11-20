@@ -8,7 +8,7 @@ define(['core/spinal'], function(Spinal) {
 	*	Define a Generic Schema definition structure to validate and parse model data
 	*	@namespace com.spinal.util
 	*	@class com.spinal.util.Schema
-	*	@extends com.spinal.core.SpinalClass
+	*	@extends Backbone.Model
 	**/
 	var Schema = Spinal.namespace('com.spinal.util.Schema', Backbone.Model.inherit({
 
@@ -31,13 +31,12 @@ define(['core/spinal'], function(Spinal) {
 		*	@param value {Object} Value to be set for the key property specified in p
 		*	@return Object
 		**/
-		parse: function(key, value, options) {
+		parse: function(key, value) {
 			var attrs = {};
-			if(_.isObject(key)) { attrs = key; options = value; }
 			if(_.isString(key)) attrs[key] = value;
+			if(_.isObject(key)) attrs = key;
 			_.each(attrs, _.bind(function(v, k) {
-				var m = ('_' + attrs[k]);
-				attrs[v] = (attrs[k] && this[m]) ? this[m](v) : v;
+				var m = ('_' + attrs[k]); attrs[v] = (attrs[k] && this[m]) ? this[m](v) : v;
 			}, this));
 			return attrs;
 		},

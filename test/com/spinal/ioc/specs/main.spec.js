@@ -7,35 +7,38 @@ define(['specs/header.spec',
 
 	return {
 
+		$id: 'main',
+
 		$specs: [HeaderSpec, FooterSpec],
 
 		theme: 'chrome',
 
 		global: {
 			$module: 'ui/container',
-			$params: { el: 'div.global', css: '$bone!theme' },
-			$ready: [
-				{ add: ['$bone!header'] },
-				{ add: ['$bone!content'], update: [{ silent: true }] },
-				{ add: ['$bone!footer'] }
-			]
+			$params: { el: 'div.global', css: '$bone!theme' }
 		},
 
 		viewA: {
 			$module: 'ui/view',
-			$params: { id: 'viewA' },
-			$ready: [
-				{ '$bone!content.add': ['$this', { renderOnAdd: true }] }
-			]
+			$params: { id: 'viewA' }
 		},
 
 		viewB: {
 			$module: 'ui/view',
-			$params: { id: 'viewB' },
-			$ready: [
-				{ '$bone!content.add': ['$this', { renderOnAdd: true }] }
-			]
-		}
+			$params: { id: 'viewB' }
+		},
+
+		$ready: [
+			{ '$bone!global.add': ['$bone!header'] },
+			{ '$bone!global.add': ['$bone!footer'] },
+			{
+				'$bone!global.add': ['$bone!content'],
+				'$bone!global.update': [{ silent: true }]
+			},
+			{ '$bone!content.add': ['$bone!viewA', { renderOnAdd: true }] },
+			{ '$bone!content.add': ['$bone!viewB', { renderOnAdd: true }] },
+			{ '$bone!content.render': [] }
+		]
 
 	};
 

@@ -34,7 +34,8 @@ define(['core/spinal',
 		*	@type Object
 		**/
 		annotations: {
-			_r: 'bone!'
+			_r: 'bone!',
+			_d: '!'
 		},
 
 		/**
@@ -44,12 +45,22 @@ define(['core/spinal',
 		*	@method initialize
 		*	@param engine {com.spinal.ioc.Engine} engine reference
 		*	@return {com.spinal.ioc.processor.BoneProcessor}
-		*	@FIXME: Investigate why calling super, the structure gets messed up!!
 		**/
 		initialize: function(engine) {
 			if(!engine) throw new ContextException('EngineNotDeclared');
 			this._engine = engine;
 			return this;
+		},
+
+		/**
+		*	Default Spec root filtering method useful to dicard bones from the main spec
+		*	suitable for matching specific processor behaviors.
+		*	@private
+		*	@method _root
+		*	@return Object
+		**/
+		_root: function() {
+			return this._engine.root;
 		},
 
 		/**
@@ -76,20 +87,34 @@ define(['core/spinal',
 		**/
 		isModuleDependency: function(expr) {
 			if(!expr || !_.isString(expr)) return false;
-			return (this._engine.isModule(this._engine.getBone(this.getDependency(expr))));
+			return (this._engine.isModule(this.getDependency(expr)));
 		},
 
 		/**
-		*	Extract dependent bone id from the expression and return it.
+		*	Extracts and returns the dependent bone id from the expression passed by parameter
 		*	@public
-		*	@method getDependency
-		*	@param expr {String} dependency expression
+		*	@method getDependencyId
+		*	@param expr {String} dependency expression to be evaluated
+		*	@param [delimiter] {String} optional delimiter that identifies a bone reference
 		*	@return String
 		**/
-		getDependency: function(expr) {
+		getDependencyId: function(expr, delimiter) {
 			if(!expr || !_.isString(expr)) return null;
-			var pos = expr.indexOf('!');
+			var pos = expr.indexOf((delimiter && delimiter !== '') ? delimiter : this.annotations._d);
 			return (pos > 0) ? expr.substring((pos+1), expr.length) : null;
+		},
+
+		/**
+		*	Retrieves dependent bone from the spec by the expression passed as parameter
+		*	@public
+		*	@method getDependency
+		*	@param expr {String} expression to be evaluated
+		*	@param [delimiter] {String} optional delimiter that identifies a bone reference
+		*	@return Object
+		**/
+		getDependency: function(expr, delimiter) {
+			var dependencyId = this.getDependencyId.apply(this, arguments);
+			return (dependencyId) ? this._engine.getBone(dependencyId) : null;
 		},
 
 		/**
@@ -104,13 +129,12 @@ define(['core/spinal',
 		**/
 		execute: function(predicate, bone) {
 			if(!predicate || !_.isFunction(predicate)) return false;
-			var bones = [], context = (bone) ? bone : this._engine.root;
+			var bones = [], context = (bone) ? bone : this._root();
 			for(var id in context) {
-				//console.log((bone) ? 'Sub Ite: ' : 'Ite: ', context[id]);
 				var r = predicate.call(this, context[id], id, (bone) ? context : null);
 				if(r) { bones.push(r) } else { break; }
 			}
-			return _.flatten(bones);
+			return _.compact(_.flatten(bones));
 		}
 
 	}, {

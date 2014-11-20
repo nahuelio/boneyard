@@ -4,6 +4,8 @@
 **/
 define({
 
+	$id: 'header',
+
 	header: {
 
 		$module: 'ui/container',

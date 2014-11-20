@@ -3,7 +3,8 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['ioc/context',
-		'util/exception/context'], function(Context, ContextException) {
+		'util/adt/collection',
+		'util/exception/context'], function(Context, Collection, ContextException) {
 
 	/**
 	*	Bone Engine Class
@@ -11,6 +12,8 @@ define(['ioc/context',
 	*	@class com.spinal.ioc.Engine
 	*	@extends com.spinal.core.SpinalClass
 	*
+	*	@requires com.spinal.ioc.Context
+	*	@requires com.spinal.util.adt.Collection
 	*	@requires com.spinal.util.exception.ContextException
 	**/
 	var Engine = Spinal.namespace('com.spinal.ioc.Engine', Spinal.SpinalClass.inherit({
@@ -24,6 +27,14 @@ define(['ioc/context',
 		root: {},
 
 		/**
+		*	List of specs
+		*	@public
+		*	@property specs
+		*	@type {com.spinal.util.adt.Collection}
+		**/
+		specs: null,
+
+		/**
 		*	Async Module Factory
 		*	@public
 		*	@property factory
@@ -32,12 +43,16 @@ define(['ioc/context',
 		factory: null,
 
 		/**
-		*	Notation
+		*	Supported annotations
 		*	@public
-		*	@property notation
-		*	@type String
+		*	@property annotations,
+		*	@type Object
 		**/
-		notation: 'specs',
+		annotations: {
+			_id: 'id',
+			_specs: 'specs',
+			_ready: 'ready'
+		},
 
 		/**
 		*	Initialize
@@ -49,10 +64,41 @@ define(['ioc/context',
 		*	@return {com.spinal.ioc.Engine}
 		**/
 		initialize: function(factory) {
-			if(!factory) throw new ContextException('UndefinedRootSpec');
+			if(!factory) throw new ContextException('FactoryNotDeclared', { clazz: Engine.NAME });
 			this.factory = factory;
-			this.notation = (Engine.PREFIX + this.notation);
+			this.specs = new Collection([]);
+			// FIXME: Improve a little bit this
+			this.__id = (Engine.PREFIX + this.annotations._id);
+			this.__specs = (Engine.PREFIX + this.annotations._specs);
+			this.__ready = (Engine.PREFIX + this.annotations._ready);
 			return this;
+		},
+
+		/**
+		*	Performs validations against a given spec
+		*	@private
+		*	@method _valid
+		*	@param spec {Object} spec reference
+		*	@return Boolean
+		**/
+		_valid: function(spec) {
+			if(!_.isObject(spec)) throw new ContextException('InvalidSpecFormat');
+			if(!spec[this.__id]) throw new ContextException('SpecIdRequired');
+		},
+
+		/**
+		*	Merges a new spec into the root and adds it into the specs collection
+		*	Additionally, if there is any $ready annotation in the new spec, this method will merge it.
+		*	@private
+		*	@method _addSpec
+		*	@param spec {Object} spec reference
+		**/
+		_addSpec: function(spec) {
+			_.extend(this.root, _.omit(spec, this.__id, this.__specs, this.__ready));
+			if(this.specs.add(spec[this.__id]) && spec[this.__ready]) {
+				if(_.isUndefined(this.root[this.__ready])) this.root[this.__ready] = [];
+				this.root[this.__ready] = _.union(this.root[this.__ready], spec[this.__ready]);
+			}
 		},
 
 		/**
@@ -61,14 +107,27 @@ define(['ioc/context',
 		*	into a single object to speed up querying and reducing the amount of nesting loops.
 		*	@public
 		*	@method build
-		*	@param bone {Object} current bone or sub spec
+		*	@param spec {Object} spec
 		*	@return {com.spinal.ioc.Engine}
 		**/
-		build: function(bone) {
-			if(!_.isObject(bone)) throw new ContextException('InvalidSpecFormat');
-			_.extend(this.root, _.omit(bone, this.notation));
-			if(bone[this.notation]) this.invoke('build', bone[this.notation]);
+		build: function(spec) {
+			this._valid(spec);
+			if(!this.specs.contains(spec[this.__id])) this._addSpec(spec);
+			if(spec[this.__specs]) this.invoke('build', spec[this.__specs]);
 			return this;
+		},
+
+		/**
+		*	Checks if any of the actions declared in the ready annotation were completed.
+		*	If $ready annotation is not defined or it's not an array, it returns true.
+		*	@public
+		*	@method ready
+		*	@return Boolean
+		**/
+		ready: function() {
+			return (this.root.$ready &&
+				_.isArray(this.root.$ready) &&
+				_.every(_.pluck(this.root.$ready, '_$ready')));
 		},
 
 		/**
@@ -150,17 +209,6 @@ define(['ioc/context',
 		**/
 		isCreated: function(bone) {
 			return (bone && bone._$created);
-		},
-
-		/**
-		*	Checks if the bone completed the ready phase
-		*	@public
-		*	@method isReady
-		*	@param bone {Object} current bone to be evaluated
-		*	@return Boolean
-		**/
-		isReady: function(bone) {
-			return (bone && bone._$ready);
 		}
 
 	}, {

@@ -3,8 +3,9 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['ioc/context',
+	'ioc/engine',
 	'ioc/processor/bone',
-	'util/exception/processor'], function(Context, BoneProcessor, ProcessorException) {
+	'util/exception/processor'], function(Context, Engine, BoneProcessor, ProcessorException) {
 
 	/**
 	*	Create Processor
@@ -27,6 +28,16 @@ define(['ioc/context',
 		**/
 		initialize: function() {
 			return CreateProcessor.__super__.initialize.apply(this, arguments);
+		},
+
+		/**
+		*	Filters out bones without any type of prefixes suitable for this processor
+		*	@private
+		*	@method _root
+		*	@return Object
+		**/
+		_root: function() {
+			return _.omit(this._engine.root, function(v, k) { return (k.indexOf(Engine.PREFIX) === 0); });
 		},
 
 		/**
@@ -95,13 +106,12 @@ define(['ioc/context',
 		*	Handles bone's metadata declarations to determine dependencies and act accordingly.
 		*	@private
 		*	@method _dependencies
-		*	@throws {com.spinal.util.error.types.ProcessorException}
 		*	@param params {Object} object to be evaluated
 		*	@return Object
 		**/
 		_dependencies: function(params) {
 			return _.compact(_.map(params, function(value, key, obj) {
-				if(!this._resolve(value, obj, key)) return { id: this.getDependency(value), property: key };
+				if(!this._resolve(value, obj, key)) return { id: this.getDependencyId(value), property: key };
 			}, this));
 		},
 
@@ -118,14 +128,13 @@ define(['ioc/context',
 		_resolve: function(expr, parent, key) {
 			if(!expr || !parent) return null;
 			if(!this.validate(expr)) return key;
-			if(!this.isModuleDependency(expr)) return (parent[key] = this._engine.getBone(this.getDependency(expr)));
+			if(!this.isModuleDependency(expr)) return (parent[key] = this.getDependency(expr));
 		},
 
 		/**
-		*	Evaluation over all bones inside the spec by this processor and return them one by one.
+		*	Evaluates and process all bones inside the spec and return them one by one.
 		*	@public
 		*	@method process
-		*	@throws {com.spinal.util.error.types.ProcessorException}
 		*	@param bone {Object} bone reference to be evaluated
 		*	@param id {String} bone id to be evaluated
 		*	@param [parent] {Object} optional parent bone (when nesting through arrays or objects)

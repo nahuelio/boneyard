@@ -38,7 +38,8 @@ define(['core/spinal',
 		*		Generic (inherited from com.spinal.util.exception.Exception)
 		*		UndefinedContext
 		*		InvalidSpecFormat
-		*		UndefinedRootSpec
+		*		SpecIdRequired
+		*		FactoryNotDeclared
 		*		EngineNotDeclared
 		*	@static
 		*	@property TYPES
@@ -47,7 +48,8 @@ define(['core/spinal',
 		TYPES: {
 			UndefinedContext: _.template('Context Not Defined'),
 			InvalidSpecFormat: _.template('Invalid Spec Format'),
-			UndefinedRootSpec: _.template('Context Root Spec was undefined'),
+			SpecIdRequired: _.template('Spec ID was not defined'),
+			FactoryNotDeclared: _.template('Factory is required to be able to instanciate {{clazz}}'),
 			EngineNotDeclared: _.template('Engine not declared')
 		}
 
