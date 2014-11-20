@@ -127,11 +127,11 @@ define(['ioc/context',
 		/**
 		*	Context#getBonesByClass() test
 		**/
-		describe.skip('#getBonesByClass()', function() {
+		describe('#getBonesByClass()', function() {
 
 			it('Should return a list of bones filtered by class', function() {
 				var bones = this.appContext.getBonesByClass(View.NAME);
-				expect(bones).to.have.length(5);
+				expect(bones).to.have.length(6);
 				_.each(bones, function(b) { expect(b).to.be.an(View); });
 			});
 
@@ -140,7 +140,7 @@ define(['ioc/context',
 		/**
 		*	Context#getBonesByType() test
 		**/
-		describe.skip('#getBonesByType()', function() {
+		describe('#getBonesByType()', function() {
 
 			it('Should return a list of bones filtered by type', function() {
 				var bones = this.appContext.getBonesByType(Container);

@@ -136,14 +136,11 @@ define(['ioc/context',
 		*	@public
 		*	@method getBonesBy
 		*	@param finder {Function} predicate evaluation
-		*	@param [bone] {Object} Optional Bone context in which the lookup will be narrowed down
 		*	@return Array
 		**/
-		getBonesBy: function(finder, bone) {
+		getBonesBy: function(finder) {
 			if(!this.root) return [];
-			var args = Array.prototype.slice.call(arguments);
-			args.unshift((bone) ? bone : this.root);
-			return _.filter.apply(this, args);
+			return _.compact(_.map(this.root, function(b, id) { return (finder(b, id)) ? this.getBone(id) : null; }, this));
 		},
 
 		/**
@@ -160,33 +157,31 @@ define(['ioc/context',
 		},
 
 		/**
-		*	Perform a look up of bones by type passed as parameter.
-		*	In order to use this method, the context must be completly initialized.
-		*	@public
-		*	@method getBonesByType
-		*	@param type {String} bone type
-		*	@param [bone] {Object} Optional Bone context in which the lookup will be narrowed down
-		*	@return Array
-		**/
-		getBonesByType: function(type, bone) {
-			return this.getBonesBy(_.bind(function(b, i) {
-				return (this.isReady(b) && b instanceof type);
-			}, this), bone);
-		},
-
-		/**
 		*	Perform a look up of bones by className passed as parameter.
 		*	In order to use this method, the context must be completly initialized.
 		*	@public
 		*	@method findBonesByType
 		*	@param type {String} bone type
-		*	@param [bone] {Object} Optional Bone context in which the lookup will be narrowed down
 		*	@return Array
 		**/
-		getBonesByClass: function(className, bone) {
-			return this.getBonesBy(_.bind(function(b, i) {
-				return (this.isModule(b) && this.isReady(b) && b._$created.constructor.NAME === className);
-			}, this), bone);
+		getBonesByClass: function(className) {
+			return this.getBonesBy(_.bind(function(b, id) {
+				return (this.isModule(b) && this.isCreated(b) && b._$created.constructor.NAME === className);
+			}, this));
+		},
+
+		/**
+		*	Perform a look up of bones by type passed as parameter.
+		*	In order to use this method, the context must be completly initialized.
+		*	@public
+		*	@method getBonesByType
+		*	@param type {String} bone type
+		*	@return Array
+		**/
+		getBonesByType: function(type) {
+			return this.getBonesBy(_.bind(function(b, id) {
+				return (this.isModule(b) && this.isCreated(b)) ? (this.getBone(id) instanceof type) : (b instanceof type);
+			}, this));
 		},
 
 		/**
