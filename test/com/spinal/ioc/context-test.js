@@ -3,11 +3,14 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['ioc/context',
+		'ioc/engine',
 		'util/exception/context',
 		'ui/view',
 		'ui/container',
 		'specs/simple.spec',
-		'specs/advanced.spec'], function(Context, ContextException, View, Container, SimpleSpec, AdvancedSpec) {
+		'specs/advanced.spec',
+		'specs/plugin.spec'], function(Context, Engine, ContextException, View, Container,
+			SimpleSpec, AdvancedSpec, PluginSpec) {
 
 	describe('com.spinal.ioc.Context', function() {
 
@@ -29,7 +32,7 @@ define(['ioc/context',
 			it('Should Initialize IoC Container', function(done) {
 				this.appContext = Context.Initialize(_.bind(function(ctx) {
 					expect(ctx).to.be.ok();
-					expect(ctx.spec).to.be.ok();
+					expect(ctx.engine).to.be.ok();
 					done();
 				}, this));
 			});
@@ -42,12 +45,12 @@ define(['ioc/context',
 		describe('#factory()', function() {
 
 			it('Should NOT execute a factory method (method not defined)', function() {
-				var result = this.appContext.factory();
+				var result = this.appContext.bonefactory();
 				expect(result).not.be.ok();
 			});
 
 			it('Should NOT execute a factory method (method is not declared in BoneFactory Class)', function() {
-				var result = this.appContext.factory('method-non-existent');
+				var result = this.appContext.bonefactory('method-non-existent');
 				expect(result).not.be.ok();
 			});
 
@@ -59,44 +62,42 @@ define(['ioc/context',
 		describe('#wire()', function() {
 
 			it('Should Wire Simple specs (Boolean, String, Numbers, Object, Array, Date, RegExp, etc)', function(done) {
-				this.appContext.on(Context.EVENTS.initialized, _.bind(function(ctx) {
+				this.appContext.off().on(Context.EVENTS.initialized, _.bind(function(ctx) {
 					expect(ctx).to.be.ok();
-					this.appContext.off();
 					done();
-				}, this)).on(Context.EVENTS.plugin + ' ' + Context.EVENTS.created, _.bind(function(result) {
+				}, this)).on(Context.EVENTS.processorCompleted, _.bind(function(result) {
 					expect(result).to.be.ok();
-					expect(result).to.be.an('array');
-				}, this)).on(Context.EVENTS.ready, _.bind(function(result) {
-					expect(result).to.be.ok();
-					var model = this.appContext.getBone('model');
+				}, this));
+
+				this.appContext.wire(SimpleSpec, _.bind(function(ctx) {
+					expect(ctx).to.be.ok();
+					var model = ctx.getBone('model');
 					expect(model.get('_o')).to.be.an('object');
 					expect(model.get('_b')).to.be.an('boolean');
 					expect(model.get('_a')[0]).to.be.equal(model.get('_n'));
 					expect(model.get('_o').prop).to.be.equal(model.get('_s'));
-				}, this));
-
-				this.appContext.wire(SimpleSpec);
+				}));
 			});
 
 			it('Should Wire Advanced Spec (Module Dependency)', function(done) {
-				this.appContext.on(Context.EVENTS.initialized, _.bind(function(ctx) {
+				this.appContext.off().on(Context.EVENTS.initialized, _.bind(function(ctx) {
 					expect(ctx).to.be.ok();
-					this.appContext.off();
 					done();
-				}, this)).on(Context.EVENTS.plugin + ' ' + Context.EVENTS.created, _.bind(function(result) {
+				}, this)).on(Context.EVENTS.processorCompleted, _.bind(function(result) {
 					expect(result).to.be.ok();
-					expect(result).to.be.an('array');
-				}, this)).on(Context.EVENTS.ready, _.bind(function(result) {
-					expect(result).to.be.ok();
-					var model = this.appContext.getBone('model'),
-						theme = this.appContext.getBone('theme');
-					expect(model.get('_string')).to.be.equal(theme);
 				}, this));
 
 				this.appContext.wire(AdvancedSpec, function(ctx) {
 					expect(ctx).to.be.ok();
-					expect(ctx.spec).to.be.ok();
-					expect(ctx.spec.viewC).to.be.ok();
+					expect(ctx.engine).to.be.ok();
+					var model = ctx.getBone('model'),
+						theme = ctx.getBone('theme'),
+						subcontent = ctx.getBone('subcontent'),
+						integrity = ctx.getBone('integrity');
+					expect(model.get('_string')).to.be.equal(theme);
+					expect(subcontent.model).to.be.ok();
+					expect(subcontent.model.get('_int')).to.be.equal(10);
+					expect(integrity.get('simple').$el).to.be.ok();
 				});
 			});
 
@@ -105,7 +106,7 @@ define(['ioc/context',
 					this.appContext.wire('non-valid-format');
 				}, this)).to.throwException(function(e) {
 					expect(e).to.be.ok();
-					expect(e.message).to.be.equal(ContextException.TYPES.InvalidSpecFormat);
+					expect(e.message).to.be.equal(ContextException.TYPES.InvalidSpecFormat());
 				});
 			});
 
@@ -116,33 +117,11 @@ define(['ioc/context',
 		*/
 		describe('#wire() - Semantics Errors', function() {
 
-			it('Error:', function() {
-				var errorSpec = {};
-			});
+			it('Error 1 - TODO', function() { var errorSpec = {}; });
 
-			// Continue adding more error test cases
+			it('Error 2 - TODO', function() { var errorSpec = {}; });
 
-		});
-
-		/**
-		*	Context#getBonesBy() test
-		**/
-		describe('#getBonesBy()', function() {
-
-			it('Should return a list of bones by a predicate', function() {
-				var bones = this.appContext.getBonesBy(function(bone, id) {
-					return (bone.id && bone.id.indexOf('content') != -1);
-				});
-				expect(bones).to.have.length(2);
-				expect(bones[0]).to.be.a(Container);
-			});
-
-			it('Should return an empty list of bones by a predicate', function() {
-				var bones = this.appContext.getBonesBy(function(bone, id) {
-					return (bone.id && bone.id === 'non-existent');
-				});
-				expect(bones).to.have.length(0);
-			});
+			it('Error N - TODO', function() { var errorSpec = {}; });
 
 		});
 
@@ -153,7 +132,7 @@ define(['ioc/context',
 
 			it('Should return a list of bones filtered by class', function() {
 				var bones = this.appContext.getBonesByClass(View.NAME);
-				expect(bones).to.have.length(5);
+				expect(bones).to.have.length(6);
 				_.each(bones, function(b) { expect(b).to.be.an(View); });
 			});
 
@@ -168,6 +147,88 @@ define(['ioc/context',
 				var bones = this.appContext.getBonesByType(Container);
 				expect(bones).to.have.length(6);
 				_.each(bones, function(b) { expect(b).to.be.an(Container); });
+			});
+
+		});
+
+		/**
+		*	Context#wire() test
+		*	Plugin Specs
+		**/
+		describe('#wire() - PluginSpec', function() {
+
+			it('Should Wire Plugin Spec (Plugins tasks)', function(done) {
+				this.appContext.off().on(Context.EVENTS.initialized, _.bind(function(ctx) {
+					expect(ctx).to.be.ok();
+					done();
+				}, this)).on(Context.EVENTS.processorCompleted, _.bind(function(result) {
+					expect(result).to.be.ok();
+				}, this));
+
+				this.appContext.wire(PluginSpec, function(ctx) {
+					expect(ctx).to.be.ok();
+					expect(ctx.engine.root).to.be.ok();
+					// Checks Context wrapped methods from plugins
+					// Theme
+					expect(ctx.theme_change).to.be.ok();
+					expect(ctx.theme_current).to.be.ok();
+					// HTML Plugin
+					expect(ctx.html_loaded).to.be.ok();
+					expect(ctx.html_load).to.be.ok();
+					expect(ctx.html_tpl).to.be.ok();
+				});
+			});
+
+			it('HTMLPlugin: Should Retrieve a template with params', function(done) {
+				var evaluation = _.bind(function() {
+					var output = this.appContext.html_tpl('spinal!head.css', { href: 'URI' });
+					expect($(output).attr('href')).to.be.equal('URI');
+					expect($(output).prop('tagName').toLowerCase()).to.be.equal('link');
+					done();
+				}, this);
+				(!this.appContext.html_loaded('spinal')) ?
+					this.appContext.off().on(Engine.EVENTS.plugin, _.bind(evaluation, this)) : evaluation();
+			});
+
+			it('HTMLPlugin: Should Load a new Template package at runtime', function(done) {
+				this.appContext.off().html_load('ui', _.bind(function() {
+					var output = this.appContext.html_tpl('ui!ui.div', { id: '', cls: 'myclass' });
+					expect($(output).hasClass('myclass')).to.be.equal(true);
+					expect($(output).prop('tagName').toLowerCase()).to.be.equal('div');
+					// Without params
+					output = this.appContext.html_tpl('ui!ui.rule');
+					expect($(output).prop('tagName').toLowerCase()).to.be.equal('hr');
+					done();
+				}, this));
+			});
+
+			it('HTMLPlugin: Errors', function() {
+				// No Route
+				var output = this.appContext.html_tpl();
+				expect(output).to.be.equal('');
+				// Query with no package
+				var output = this.appContext.html_tpl('non.existent');
+				expect(output).to.be.equal('');
+				// No Template Package name specified
+				this.appContext.html_load();
+			});
+
+			it('ThemePlugin: Should Change the theme', function() {
+				// Spinal Active
+				var $linkSpinal = $('head > link[theme="spinal"]');
+				var $linkBootstrap = $('head > link[theme="bootstrap"]');
+				expect($linkSpinal.length).to.be.equal(1);
+				expect($linkBootstrap.length).to.be.equal(0);
+				expect(this.appContext.theme_current().name).to.be.equal('spinal');
+
+				this.appContext.theme_change('bootstrap');
+
+				// Bootstrap Active
+				var $linkSpinal = $('head > link[theme="spinal"]');
+				var $linkBootstrap = $('head > link[theme="bootstrap"]');
+				expect($linkSpinal.length).to.be.equal(0);
+				expect($linkBootstrap.length).to.be.equal(1);
+				expect(this.appContext.theme_current().name).to.be.equal('bootstrap');
 			});
 
 		});

@@ -47,6 +47,43 @@ define(['core/spinal',
 					v = (c === 'x') ? r : (r & 0x3 | 0x8);
 				return v.toString(16);
 			});
+		},
+
+		/**
+		*	Convert a String in dot notation format into a JSON object
+		*	@static
+		*	@method strToJSON
+		*	@param expr {String} dot notation
+		*	@retur Object
+		**/
+		strToJSON: function(expr) {
+			if(!expr || !_.isString(expr) || expr === '') return {};
+			var p = {}, o = p, ps = expr.split('.');
+			for(var i = 0; i < ps.length; i++) {
+				p[ps[i]] = {}; p = p[ps[i]];
+				if(i === (ps.length-1)) delete p;
+			}
+			return o;
+		},
+
+		/**
+		*	Perform a query using a string (dot notation) on the obj passed as parameter.
+		*	If the input doesn't match, it returns null.
+		*	@static
+		*	@method search
+		*	@param query {String} query in dot notation format
+		*	@param obj {Object} JSON object ref
+		*	@return Object
+		**/
+		search: function(query, obj) {
+			if(!query || !obj || query === '') return null;
+			if(_.isEmpty(obj)) return obj;
+			var q = query.split("."), o = obj;
+		    for (var i = 0; i < q.length; i++) {
+				if(!o[q[i]]) break;
+				o = o[q[i]];
+			}
+		    return o;
 		}
 
 	}));

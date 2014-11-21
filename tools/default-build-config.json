@@ -7,7 +7,6 @@
             { "name": "spinal-util", "exclude": ["libs", "spinal-core"] },
             { "name": "spinal-ioc", "exclude": ["libs", "spinal-core", "spinal-util"] },
             { "name": "spinal-aop", "exclude": ["libs", "spinal-core", "spinal-util"] },
-            { "name": "spinal-mvc", "exclude": ["libs", "spinal-core", "spinal-util"] },
             { "name": "spinal-ui", "exclude": ["libs", "spinal-core", "spinal-util"] }
         ],
         "fileExclusionRegExp": "/.md$/",

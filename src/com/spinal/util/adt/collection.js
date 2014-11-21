@@ -149,13 +149,25 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 		*	@public
 		*	@method each
 		*	@param func {Function} predicate function used to iterate over the elements.
-		*	@param
 		*	@return Function
 		**/
-		each: function(func, ctx) {
+		each: function(func) {
 			var args = Array.prototype.slice.call(arguments);
 			args.unshift(this.collection);
 			return _.each.apply(this, args);
+		},
+
+		/**
+		*	Produces a new array of values by mapping each value in list through a transformation function (predicate)
+		*	@public
+		*	@method map
+		*	@param func {Function} predicate function used to iterate over the elements.
+		*	@return Array
+		**/
+		map: function(func) {
+			var args = Array.prototype.slice.call(arguments);
+			args.unshift(this.collection);
+			return _.map.apply(this, args);
 		},
 
 		/**
@@ -207,7 +219,7 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 		**/
 		remove: function(ix, opts) {
 			opts || (opts = {});
-			if(!_.isUndefined(ix) && _.isNumber(ix) && ix < this.size()) {
+			if(!_.isUndefined(ix) && _.isNumber(ix) && ix >= 0 && ix < this.size()) {
 				var rmArr = this.collection.splice(ix, 1);
 				if(!opts.silent) this.trigger(Collection.EVENTS.removed, { removed: rmArr[0], collection: this });
 				return rmArr[0];
@@ -296,8 +308,8 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 		*	@param finder {Function} matcher function
 		*	@return Object
 		**/
-		findPos: function(finder) {
-			for(var i = 0, ix = null; i < this.size(); i++) {
+		findPosBy: function(finder) {
+			for(var i = 0, ix = -1; i < this.size(); i++) {
 				if(finder(this.collection[i])) { ix = i; break; }
 			}
 			return ix;

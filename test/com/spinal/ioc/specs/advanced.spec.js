@@ -6,76 +6,78 @@ define(['specs/main.spec'], function(MainSpec) {
 
 	return {
 
-		$specs: MainSpec,
+		$id: 'advanced',
+		$specs: [MainSpec],
+
+		schema: {
+			_boolean: 'boolean',
+			_string: 'string',
+			_int: 'int',
+			_float: 'float'
+		},
 
 		model: {
-			$module: {
-				class: 'mvc/model',
-				params: {
-					schema: {
-						_boolean: 'boolean',
-						_string: 'string',
-						_int: 'int',
- 						_float: 'float'
-					},
-					_boolean: true,
-					_string: '$bone!theme',
-					_int: 10,
-					_float: 0.5,
-					_object: { prop: 'value' },
-					_array: [1, 2, 3],
-					_date: new Date(),
-					_regexp: new RegExp()
-				}
+			$module: 'util/schema',
+			$params: {
+				schema: '$bone!schema',
+				_boolean: true,
+				_string: '$bone!theme',
+				_int: 10,
+				_float: 0.5,
+				_object: { prop: 'value' },
+				_array: [1, 2, 3],
+				_date: new Date(),
+				_regexp: new RegExp()
 			}
 		},
 
 		content: {
-			$module: {
-				class: 'ui/container',
-				params: { id: 'content', dependencyA: '$bone!viewC' }
-			}
+			$module: 'ui/container',
+			$params: { id: 'content', dependencyA: '$bone!viewC' }
 		},
 
 		view1: {
-			$module: {
-				class: 'ui/view',
-				params: { id: 'view1' }
-			}
+			$module: 'ui/view',
+			$params: { id: 'view1' }
 		},
 
 		viewD: {
-			$module: {
-				class: 'ui/view',
-				params: { id: 'viewD' }
-			}
+			$module: 'ui/view',
+			$params: { id: 'viewD' }
 		},
 
 		view2: {
-			$module: {
-				class: 'ui/view',
-				params: { id: 'view2' }
-			}
+			$module: 'ui/view',
+			$params: { id: 'view2' }
 		},
 
 		viewC: {
-			$module: {
-				class: 'ui/container',
-				params: { id: 'viewC', css: '$bone!theme', dependencyA: '$bone!viewD' }
-			}
+			$module: 'ui/container',
+			$params: { id: 'viewC', css: '$bone!theme', dependencyA: '$bone!viewD' }
 		},
 
 		subcontent: {
-			$module: {
-				class: 'ui/container',
-				params: {
-					id: 'subcontent',
-					model: '$bone!model',
-					dependency1: '$bone!view1',
-					dependency2: '$bone!view2'
-				}
+			$module: 'ui/container',
+			$params: {
+				id: 'subcontent',
+				model: '$bone!model',
+				dependency1: '$bone!view1',
+				dependency2: '$bone!view2'
 			}
-		}
+		},
+
+		integrity: {
+			$module: 'util/schema',
+			// Offer support with this: $params: '$bone!schema'
+			$params: {
+				schema: '$bone!schema',
+				simple: '$bone!simple'
+			}
+		},
+
+		$ready: [
+			{ '$bone!content.add': ['$bone!view1'] }
+		]
 
 	};
 

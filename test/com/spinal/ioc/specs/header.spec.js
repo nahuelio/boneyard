@@ -4,12 +4,12 @@
 **/
 define({
 
+	$id: 'header',
+
 	header: {
 
-		$module: {
-			class: 'ui/container',
-			params: { id: 'header' }
-		}
+		$module: 'ui/container',
+		$params: { id: 'header' }
 
 	}
 

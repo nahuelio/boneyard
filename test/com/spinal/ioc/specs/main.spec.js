@@ -1,50 +1,44 @@
 /**
 *	Main Spec Test
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
-*
 **/
 define(['specs/header.spec',
 		'specs/footer.spec'], function(HeaderSpec, FooterSpec) {
 
 	return {
 
+		$id: 'main',
+
 		$specs: [HeaderSpec, FooterSpec],
 
 		theme: 'chrome',
 
 		global: {
-			$module: {
-				class: 'ui/container',
-				params: { el: 'div.global', css: '$bone!theme' }
-			},
-			$ready: [
-				{ add: ['$bone!header'] },
-				{ add: ['$bone!content'], update: [{ silent: true }] },
-				{ add: ['$bone!footer'] }
-			]
+			$module: 'ui/container',
+			$params: { el: 'div.global', css: '$bone!theme' }
 		},
 
 		viewA: {
-			$module: {
-				class: 'ui/view',
-				params: { id: 'viewA' }
-			},
-			$ready: [
-				{ '$bone!content.add': ['$this', { renderOnAdd: true }] }
-			]
+			$module: 'ui/view',
+			$params: { id: 'viewA' }
 		},
 
 		viewB: {
-			$module: {
-				class: 'ui/view',
-				params: { id: 'viewB' }
-			},
-			$ready: [
-				{ '$bone!content.add': ['$this', { renderOnAdd: true }] }
-			]
+			$module: 'ui/view',
+			$params: { id: 'viewB' }
 		},
 
-		$plugins: ['aop', 'poly', 'i18n']
+		$ready: [
+			{ '$bone!global.add': ['$bone!header'] },
+			{ '$bone!global.add': ['$bone!footer'] },
+			{
+				'$bone!global.add': ['$bone!content'],
+				'$bone!global.update': [{ silent: true }]
+			},
+			{ '$bone!content.add': ['$bone!viewA', { renderOnAdd: true }] },
+			{ '$bone!content.add': ['$bone!viewB', { renderOnAdd: true }] },
+			{ '$bone!content.render': [] }
+		]
 
 	};
 

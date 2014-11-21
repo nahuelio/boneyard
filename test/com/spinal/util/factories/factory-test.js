@@ -1,13 +1,13 @@
 /**
-*	com.spinal.util.Factory Class Tests
+*	com.spinal.util.factories.Factory Class Tests
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define(['util/factory',
+define(['util/factories/factory',
 		'util/exception/factory',
 		'ui/view',
-		'mvc/model'], function(Factory, FactoryException, View, Model) {
+		'util/schema'], function(Factory, FactoryException, View, Model) {
 
-	describe('com.spinal.util.Factory', function() {
+	describe('com.spinal.util.factories.Factory', function() {
 
 		/**
 		*	Factory#new() test
@@ -70,12 +70,12 @@ define(['util/factory',
 		describe('#getFactory()', function() {
 
 			it('Should return the Constructor function retrieved by factory id', function() {
-				var modelfactory = this.factory.getFactory('Model');
+				var modelfactory = this.factory.getFactory('Schema');
 				expect(modelfactory).to.be.ok();
 				expect(modelfactory.id).to.be.ok();
-				expect(modelfactory.create).to.be.ok();
-				expect(modelfactory.id).to.be.equal('Model');
-				expect(modelfactory.create).to.be.a(Function);
+				expect(modelfactory.factory).to.be.ok();
+				expect(modelfactory.id).to.be.equal('Schema');
+				expect(modelfactory.factory).to.be.a(Function);
 			});
 
 			it('Should throw an Exception: Factory Constructor function was not registered', function() {
@@ -91,7 +91,7 @@ define(['util/factory',
 		describe('#create()', function() {
 
 			it('Should instanciate an object from the factory constructor function', function() {
-				var model = this.factory.create('Model', { prop: 'myprop'});
+				var model = this.factory.create('Schema', { prop: 'myprop'});
 				expect(model).to.be.ok();
 				expect(model).to.be.an(Model);
 				expect(model.get('prop')).to.be.equal('myprop');
@@ -117,9 +117,9 @@ define(['util/factory',
 				var viewfactory = this.factory.unregister('View');
 				expect(viewfactory).to.be.ok();
 				expect(viewfactory.id).to.be.ok();
-				expect(viewfactory.create).to.be.ok();
+				expect(viewfactory.factory).to.be.ok();
 				expect(viewfactory.id).to.be.equal('View');
-				expect(viewfactory.create).to.be.a(Function);
+				expect(viewfactory.factory).to.be.a(Function);
 				expect(this.factory.factories.size()).to.be.equal(1);
 			});
 

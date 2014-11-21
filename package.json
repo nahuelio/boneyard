@@ -24,7 +24,7 @@
 		"karma-spec-reporter": "0.0.12",
 		"karma-expect": "*",
 		"karma-coverage": "*",
-	    "karma-requirejs": "*",
+	    "karma-requirejs": "~0.2.2",
 		"karma-phantomjs-launcher": "~0.1",
 		"karma-script-launcher": "0.1.0",
 		"karma-chrome-launcher": "0.1.2",

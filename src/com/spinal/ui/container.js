@@ -151,7 +151,7 @@ define(['core/spinal',
 		*	@return Object
 		**/
 		getPos: function(view) {
-			return this.views.findPos(function(ele) { return (ele.id && ele.id === view.id); });
+			return this.views.findPosBy(function(ele) { return (ele.id && ele.id === view.id); });
 		},
 
 		/**

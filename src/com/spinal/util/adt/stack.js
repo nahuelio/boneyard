@@ -64,7 +64,7 @@ define(['core/spinal',
 		},
 
 		/**
-		*	Inserts the specified element into this stack if it is possible to do so immediately without violating capacity restrictions.
+		*	Inserts the specified element into this stack.
 		*	@public
 		*	@method push
 		*	@param element {Object} element to be inserted.

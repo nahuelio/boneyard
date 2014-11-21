@@ -3,8 +3,9 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['core/spinal',
-		'ioc/context',
-		'util/exception/processor'], function(Spinal, Context, ProcessorException) {
+		'ioc/engine',
+		'util/exception/context',
+		'util/exception/processor'], function(Spinal, Engine, ContextException, ProcessorException) {
 
 	/**
 	*	BaseClass Bone Processor
@@ -13,121 +14,151 @@ define(['core/spinal',
 	*	@extends com.spinal.core.SpinalClass
 	*
 	*	@requires com.spinal.ioc.Context
+	*	@requires com.spinal.util.exception.ContextException
 	*	@requires com.spinal.util.exception.ProcessorException
 	**/
 	var BoneProcessor = Spinal.namespace('com.spinal.ioc.processor.BoneProcessor', Spinal.SpinalClass.inherit({
 
 		/**
-		*	Context Reference
-		*	@public
-		*	@property ctx
-		*	@type {com.spinal.ioc.Context}
+		*	Engine
+		*	@private
+		*	@property _engine
+		*	@type {com.spinal.ioc.Engine}
 		**/
-		ctx: null,
+		_engine: null,
 
 		/**
-		*	Supported Notation Regular Expression
+		*	Supported annotations
 		*	@public
-		*	@property notationRE
-		*	@type RegExp
+		*	@property annotations,
+		*	@type Object
 		**/
-		notationRE: new RegExp('\\' + Context.PREFIX + '(bone)(\!{1})', 'i'),
+		annotations: {
+			_r: 'bone!',
+			_d: '!'
+		},
 
 		/**
 		*	Initialize
 		*	@public
 		*	@chainable
 		*	@method initialize
-		*	@param ctx {com.spinal.ioc.Context} Context Reference
+		*	@param engine {com.spinal.ioc.Engine} engine reference
 		*	@return {com.spinal.ioc.processor.BoneProcessor}
 		**/
-		initialize: function(ctx) {
-			if(!ctx) throw new ContextException('UndefinedContext');
-			this.ctx = ctx;
+		initialize: function(engine) {
+			if(!engine) throw new ContextException('EngineNotDeclared');
+			this._engine = engine;
 			return this;
 		},
 
 		/**
-		*	Validates if the current processor supports the notation passed as parameter
+		*	Default Spec root filtering method useful to dicard bones from the main spec
+		*	suitable for matching specific processor behaviors.
+		*	@private
+		*	@method _root
+		*	@return Object
+		**/
+		_root: function() {
+			return this._engine.root;
+		},
+
+		/**
+		*	Check if expr matches the annotation passed as parameter
+		*	If the annotation is omitted, the annotation declared in this processor will be used.
 		*	@public
-		*	@method matchNotation
-		*	@param notation {String} notation to be evaluated
-		*	@param re {RegExp} RegExp used to evaluate notation
+		*	@method validate
+		*	@param expr {String} expression to be evaluated
+		*	@param [annotation] {String} annotation used to be matched with the expression
 		*	@return Boolean
 		**/
-		matchNotation: function(notation, re) {
-			if(!notation) return false;
-			return re.test(notation);
+		validate: function(expr, annotation) {
+			if(!expr || !_.isString(expr)) return false;
+			if(!annotation) annotation = this.annotations._r;
+			return ((Engine.PREFIX + expr).indexOf(annotation) !== -1);
 		},
 
 		/**
-		*	Extract dependent bone id from the String notation and return it.
+		*	Checks if the expression is a module bone dependency
 		*	@public
-		*	@method getDependency
-		*	@param notation {String} bone dependency notation
+		*	@method isModuleDependency
+		*	@param expr {String} expression to be evaluated
+		*	@return Boolean
+		**/
+		isModuleDependency: function(expr) {
+			if(!expr || !_.isString(expr)) return false;
+			return (this._engine.isModule(this.getDependency(expr)));
+		},
+
+		/**
+		*	Extracts and returns the dependent bone id from the expression passed by parameter
+		*	@public
+		*	@method getDependencyId
+		*	@param expr {String} dependency expression to be evaluated
+		*	@param [delimiter] {String} optional delimiter that identifies a bone reference
 		*	@return String
 		**/
-		getDependency: function(notation) {
-			if(!notation || !_.isString(notation)) return null;
-			var pos = notation.search(/\!{1}/i);
-			return (pos > 0) ? notation.substring((pos+1), notation.length) : null;
-
+		getDependencyId: function(expr, delimiter) {
+			if(!expr || !_.isString(expr)) return null;
+			var pos = expr.indexOf((delimiter && delimiter !== '') ? delimiter : this.annotations._d);
+			return (pos > 0) ? expr.substring((pos+1), expr.length) : null;
 		},
 
 		/**
-		*	Process notation when a module depends on a bone of 'String' type in order to be instanciated.
+		*	Retrieves dependent bone from the spec by the expression passed as parameter
 		*	@public
-		*	@method handleDependency
-		*	@param bone {Object} current bone to evaluate
-		*	@param id {String} current bone id
-		*	@param [parentBone] {Object} parent bone ref
+		*	@method getDependency
+		*	@param expr {String} expression to be evaluated
+		*	@param [delimiter] {String} optional delimiter that identifies a bone reference
 		*	@return Object
 		**/
-		process: function(bone, id, parentBone) {
-			if(!bone) throw new ProcessorException('BoneNotFound');
-			if(!this.ctx.query.isModule(bone)) return (parentBone.parent[id] = bone);
-		},
-
-		/**
-		*	Validates the notation and handles it accordingly to the processor.
-		*	@public
-		*	@method handleNotation
-		*	@param id {Object} current bone id
-		*	@param bone {Object} current bone to evaluate
-		*	@return Object
-		**/
-		handleNotation: function(bone, id) {
-			return this.matchNotation(id, this.notationRE);
+		getDependency: function(expr, delimiter) {
+			var dependencyId = this.getDependencyId.apply(this, arguments);
+			return (dependencyId) ? this._engine.getBone(dependencyId) : null;
 		},
 
 		/**
 		*	Filters out and call the predicate function over the notations supported by the processor.
-		*	If bone parameter is passed, the predicate function will be evaluated inside the bone context.
+		*	Predicate function must return the reference to the bone processed, otherwise the rest of the evaluations
+		*	will be skipped.
 		*	@public
 		*	@method execute
 		*	@param predicate {Function} predicate function that filters out bones that are suitable to be processed
-		*	@param [bone] {Object} Bone context in which the execution will be narrowed down
+		*	@param [bone] {Object} recursive context
 		*	@return Array
 		**/
-		execute: function(predicate, bone, id) {
+		execute: function(predicate, bone) {
 			if(!predicate || !_.isFunction(predicate)) return false;
-			var result = false, context = (bone) ? bone : this.ctx.spec;
-			if(!bone) this.matches = [];
-			for(var bId in context) {
-				result = predicate.call(this, context[bId], bId, { parent: context, id: id });
-				if(result) { this.matches.push(id); break; }
+			var bones = [], context = (bone) ? bone : this._root();
+			for(var id in context) {
+				var r = predicate.call(this, context[id], id, (bone) ? context : null);
+				if(r) { bones.push(r) } else { break; }
 			}
-			return (!bone) ? this.matches : result;
+			return _.compact(_.flatten(bones));
 		}
 
 	}, {
 
 		/**
+		*	Class Name
 		*	@static
 		*	@property NAME
 		*	@type String
 		**/
-		NAME: 'BoneProcessor'
+		NAME: 'BoneProcessor',
+
+		/**
+		*	BoneProcessor Events
+		*	@static
+		*	@property Object
+		*	@type Object
+		**/
+		EVENTS: {
+			/**
+			*	@event processed
+			**/
+			processed: 'com:spinal:ioc:processor:processed'
+		}
 
 	}));
 

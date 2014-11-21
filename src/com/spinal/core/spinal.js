@@ -26,11 +26,9 @@ define(['libs/backbone'], function() {
 		// Expose Backbone and Underscore hard dependency into Spinal Namespace
 		exports.Backbone = root.Backbone; exports._ = root._;
 
-		// Change Setting to Mustache Style
-		_.templateSettings = {
-			interpolate: /\{\{(.+?)\}\}/g,
-			escape: /\{\{-(.*?)\}\}/g
-		};
+		// Override Settings to evaluate Mustache Style
+		_.templateSettings.interpolate = /\{\{([\s\S]+?)\}\}/g;
+		_.templateSettings.escape = /\{\{-(.*?)\}\}/g;
 
 		/**
 		*	Namespacing Strategy
@@ -94,9 +92,7 @@ define(['libs/backbone'], function() {
 		*	@return Object
 		**/
 		var _deepCopy = function (source, destination, existing) {
-			if (_isWindow(source)) {
-				throw new Error("Can't copy! Making copies of Window or Scope instances is not supported.");
-			}
+			if (_isWindow(source)) throw new Error("Making copies of Window or Scope instances is not supported.");
 			if(!destination) {
 				destination = source;
 				if(source) {
@@ -178,10 +174,8 @@ define(['libs/backbone'], function() {
 
 		// If Backbone exists, expose new inherit method to Backbone Classes
 		if(exports.Backbone) {
-			Backbone.View.inherit = _inherit;
-			Backbone.Collection.inherit = _inherit;
-			Backbone.Model.inherit = _inherit;
-			Backbone.Router.inherit = _inherit;
+			Backbone.View.inherit = Backbone.Collection.inherit =
+			Backbone.Model.inherit = Backbone.Router.inherit = _inherit;
 		}
 
 		/**
@@ -231,6 +225,41 @@ define(['libs/backbone'], function() {
 				// FIXME: Review the following implementation! there is something wrong here.
 				// In BoneProcessor Class: if super.initialize is being called, we get a blocking inifinite loop crash!!
 				(p === Object(p)) ? extend.apply(this, [this, p]) : this[p] = v;
+				return this;
+			},
+
+			/**
+			*	Invoke a method of this class specified by 'methodName' and pass each
+			*	individual object in the array specified by args as an argument.
+			*	This method will return an array of objects as a result of any method call.
+			*	@public
+			*	@method invoke
+			*	@param methodName {String} method name of this class
+			*	@param args {Array} array of elements to be passed to the method
+			*	@return Array
+			**/
+			invoke: function(methodName, args) {
+				if(!methodName || !args || !_.isString(methodName) || !_.isArray(args)) return [];
+				return _.map(args, function(v) { return (this[methodName]) ? this[methodName](v) : null; }, this);
+			},
+
+			/**
+			*	Proxifies the list of methods/properties (instance) specified as extra arguments
+			*	into the instance caller by reference.
+			*	<h5>Usages:</h5>
+			*		instanceA.proxify(instanceB, 'method1', 'property1', 'methodN');
+			*		instanceA.method1(); // executes method1 declared in instanceB.
+			*		instanceA.property1; // access to property1 declared in instanceB.
+			*		instanceA.methodN(); // executes methodN declared in instanceB.
+			*	@public
+			*	@method proxify
+			*	@param o {Object} source instance to 'rent' the methods from
+			*	@return Object
+			**/
+			proxify: function(o) {
+				if(!o) return this;
+				var members = Array.prototype.slice.call(arguments, 1);
+				_.each(members, function(m) { this[m] = (_.isFunction(o[m])) ? _.bind(o[m], o) : o[m]; }, this);
 				return this;
 			},
 

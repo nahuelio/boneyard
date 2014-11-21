@@ -231,6 +231,33 @@ define(['core/spinal',
 
         });
 
+        /**
+    	*	Collection#map() test
+    	**/
+        describe('#map()', function() {
+
+            it('Should produce a new array of values by mapping values through a transformation function', function() {
+                this.testInterface.reset();
+                var added = this.testInterface.addAll([
+                    { model: new Backbone.Model({ name: 'foo' }) },
+                    { model: new Backbone.Model({ name: 'bar' }) }
+                ]);
+                expect(added).to.be.equal(true);
+                expect(this.testInterface.size()).to.be.equal(2);
+                var transformed = this.testInterface.map(function(v, k) {
+                    expect(v).to.be.ok();
+                    expect(v).to.be.a(Backbone.View);
+                    expect(k).to.be.a('number');
+                    expect(v.model.get('name')).to.be.ok();
+                    return v.model.get('name');
+                });
+                expect(transformed).to.be.ok();
+                expect(transformed.length).to.be.equal(2);
+                expect(transformed[0]).to.be.equal('foo');
+            });
+
+        });
+
     	/**
     	*	Collection#contains() test
     	**/
@@ -466,9 +493,9 @@ define(['core/spinal',
     	});
 
         /**
-    	*	Collection#findBy() test
+    	*	Collection#find() test
     	**/
-    	describe('#findBy()', function() {
+    	describe('#find()', function() {
 
             it('Should find one element by a function predicate', function() {
                 this.testSimple.reset().addAll([
