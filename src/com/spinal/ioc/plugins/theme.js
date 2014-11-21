@@ -1,26 +1,21 @@
 /**
 *	@module com.spinal.ioc.plugins
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
+*	@version 0.0.1
 **/
-define(['core/spinal',
-		'util/adt/collection',
-		'util/exception/context'], function(Spinal, Collection, ContextException) {
+define(['ioc/engine',
+		'util/adt/collection'], function(Engine, Collection) {
 
 	/**
 	*	Theme IoC Plugin
 	*	@namespace com.spinal.ioc.plugins
 	*	@class com.spinal.ioc.plugins.ThemePlugin
 	*	@extends com.spinal.core.Spinal.SpinalClass
+	*
+	*	@requires com.spinal.ioc.Engine
+	*	@requires com.spinal.util.adt.Collection
 	**/
 	var ThemePlugin = Spinal.namespace('com.spinal.ioc.plugins.ThemePlugin', Spinal.SpinalClass.inherit({
-
-		/**
-		*	Context Reference
-		*	@public
-		*	@property ctx
-		*	@type {com.spinal.ioc.Context}
-		**/
-		ctx: null,
 
 		/**
 		*	Skins
@@ -29,6 +24,14 @@ define(['core/spinal',
 		*	@type Object
 		**/
 		themes: null,
+
+		/**
+		*	Engine reference
+		*	@public
+		*	@property _engine
+		*	@type {com.spinal.ioc.Engine}
+		**/
+		_engine: null,
 
 		/**
 		*	Header HTML element
@@ -52,15 +55,14 @@ define(['core/spinal',
 		*	@chainable
 		*	@method initialize
 		*	@param themes {Object} themes
-		*	@param ctx {com.spinal.ioc.Context} context reference
+		*	@param engine {com.spinal.ioc.Engine} engine reference
 		*	@return {com.spinal.ioc.plugins.ThemePlugin}
 		**/
-		initialize: function(themes, ctx) {
-			themes || (themes = {});
-			if(!ctx) throw new ContextException('UndefinedContext');
-			this.themes = themes; this.ctx = ctx;
+		initialize: function(themes, engine) {
+			this.themes = themes;
+			this._engine = engine;
 			this._$header = $('head');
-			return ThemePlugin.__super__.initialize.apply(this, arguments);
+			return this;
 		},
 
 		/**
@@ -71,13 +73,10 @@ define(['core/spinal',
 		*	@return Object
 		**/
 		findTheme: function(themeName) {
-			var t = null;
-			for(var theme in this.themes) {
-				if((!themeName || themeName === '' && theme.default) || themeName === theme) {
-					t = { name: theme, config: this.themes[theme] }; break;
-				}
-			}
-			return t;
+			var config = _.find(this.themes, function(theme, name) {
+				return ((!themeName && theme.default && (themeName = name)) || (themeName === name));
+			});
+			return { name: themeName, config: config };
 		},
 
 		/**
@@ -87,26 +86,35 @@ define(['core/spinal',
 		*	@param themeName {String} Theme name
 		*	@return {com.spinal.ioc.plugins.ThemePlugin}
 		**/
-		process: function(themeName) {
-			if(!this.ctx.theme) return this;
-			var $existing = this._$header.children('link[theme!="'+ themeName +'"]');
+		process: function() {
+			var theme = this.theme_current();
+			var $existing = this._$header.children('link[theme!="'+ theme.name +'"]');
 			if($existing.length > 0) $existing.remove();
-			this._$header.append(this._domLink({ theme: themeName, href: this.ctx.theme.config.path }));
+			this._$header.append(this._domLink({ theme: theme.name, href: theme.config.path }));
 			return this;
 		},
 
 		/**
-		*	Delegated Method to the Current Context to change theme
+		*	Retrieves the current theme
+		*	@public
+		*	@method current
+		*	@return Object
+		**/
+		theme_current: function() {
+			return this.theme;
+		},
+
+		/**
+		*	Delegated Method to the context via engine to be able to change the current theme
 		*	@public
 		*	@chainable
-		*	@method change
+		*	@method changeTheme
 		*	@param [themeName] {String} theme name
 		*	@return {com.spinal.ioc.plugins.ThemePlugin}
 		**/
-		change: function(themeName) {
-			this.ctx.theme = this.findTheme(themeName);
-			if(!themeName && this.ctx.theme) themeName = this.ctx.theme.name;
-			return this.process(themeName);
+		theme_change: function(themeName) {
+			this.theme = this.findTheme(themeName);
+			return this.process();
 		},
 
 		/**
@@ -118,8 +126,8 @@ define(['core/spinal',
 		**/
 		execute: function() {
 			if(!_.isEmpty(this.themes)) {
-				this.ctx.changeTheme = _.bind(this.change, this);
-				return this.ctx.changeTheme();
+				this.theme_change();
+				this._engine.trigger(Engine.EVENTS.proxified, this, 'theme_change', 'theme_current');
 			}
 			return this;
 		}

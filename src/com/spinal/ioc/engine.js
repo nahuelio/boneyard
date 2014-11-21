@@ -51,7 +51,8 @@ define(['ioc/context',
 		annotations: {
 			_id: 'id',
 			_specs: 'specs',
-			_ready: 'ready'
+			_ready: 'ready',
+			_plugins: 'plugins'
 		},
 
 		/**
@@ -67,10 +68,7 @@ define(['ioc/context',
 			if(!factory) throw new ContextException('FactoryNotDeclared', { clazz: Engine.NAME });
 			this.factory = factory;
 			this.specs = new Collection([]);
-			// FIXME: Improve a little bit this
-			this.__id = (Engine.PREFIX + this.annotations._id);
-			this.__specs = (Engine.PREFIX + this.annotations._specs);
-			this.__ready = (Engine.PREFIX + this.annotations._ready);
+			_.each(this.annotations, function(v, k) { this['__' + v] = (Engine.PREFIX + v); }, this);
 			return this;
 		},
 
@@ -118,7 +116,7 @@ define(['ioc/context',
 		},
 
 		/**
-		*	Checks if any of the actions declared in the ready annotation were completed.
+		*	Checks if any of the actions declared in the $ready annotation were completed.
 		*	If $ready annotation is not defined or it's not an array, it returns true.
 		*	@public
 		*	@method ready
@@ -128,6 +126,16 @@ define(['ioc/context',
 			return (this.root.$ready &&
 				_.isArray(this.root.$ready) &&
 				_.every(_.pluck(this.root.$ready, '_$ready')));
+		},
+
+		/**
+		*	Checks if $plugin annotation is present inside the current root spec.
+		*	@public
+		*	@method plugin
+		*	@return Boolean
+		**/
+		plugin: function() {
+			return (this.root.$plugins);
 		},
 
 		/**
@@ -220,7 +228,23 @@ define(['ioc/context',
 		*	@property PREFIX
 		*	@type String
 		**/
-		PREFIX: '$'
+		PREFIX: '$',
+
+		/**
+		*	@static
+		*	@property EVENTS
+		*	@type Object
+		**/
+		EVENTS: {
+			/**
+			*	@event initialized
+			**/
+			proxified: 'com:spinal:ioc:engine:proxified',
+			/**
+			*	@event pluginNotification
+			**/
+			plugin: 'com:spinal:ioc:engine:plugin-notification'
+		}
 
 	}));
 

@@ -43,7 +43,6 @@ define(['ioc/context',
 		/**
 		*	Add the module into the async factory stack
 		*	@private
-		*	@chainable
 		*	@method _enqueue
 		*	@param id {String} module id
 		*	@param success {Function} callback function to be executed once the module is loaded
@@ -63,7 +62,7 @@ define(['ioc/context',
 		*	@param id {String} module id
 		*	@param module {Object} module reference
 		*	@param dependencies {Array} dependencies for the current module id
-		*	@return
+		*	@return Object
 		**/
 		_sorting: function(id, module, dependencies) {
 			if(dependencies.length === 0) return module;
@@ -82,7 +81,7 @@ define(['ioc/context',
 		*	@throws {com.spinal.util.error.types.ProcessorException}
 		*	@param dependecies {Array} array of dependencies (module ids)
 		*	@param bone {Object} bone reference
-		*	@param moduleName {String} module name to pass to factory to instanciate
+		*	@param moduleName {String} module name to pass to factory to create an instance
 		*	@return Object
 		**/
 		_create: function(dependencies, bone, moduleName) {

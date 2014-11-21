@@ -7,4 +7,6 @@ define(['ioc/context',
 		'ioc/processor/bone',
 		'ioc/processor/plugin',
 		'ioc/processor/create',
-		'ioc/processor/ready'], function() { });
+		'ioc/processor/ready',
+		'ioc/plugins/html',
+		'ioc/plugins/theme'], function() { });

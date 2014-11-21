@@ -2,10 +2,13 @@
 *	@module com.spinal.ioc.plugins
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 *	@version 0.0.1
+*	@TODO:
+*		- Improve logic here, there are a lot of queries that can be simplfied like,
+*		  loops, look ups, make use of util/adt classes and general statements.
+*		- Verification if a template package was already loaded in the html_load function.
 **/
-define(['core/spinal',
-		'util/string',
-		'util/exception/context'], function(Spinal, StringUtils, ContextException) {
+define(['ioc/engine',
+		'util/string'], function(Engine, StringUtils) {
 
 	/**
 	*	HTML IoC Plugin
@@ -14,16 +17,19 @@ define(['core/spinal',
 	*	@namespace com.spinal.ioc.plugins
 	*	@class com.spinal.ioc.plugins.HTMLPlugin
 	*	@extends com.spinal.core.Spinal.SpinalClass
+	*
+	*	@requires com.spianl.ioc.Engine
+	*	@requires com.spinal.util.StringUtils
 	**/
 	var HTMLPlugin = Spinal.namespace('com.spinal.ioc.plugins.HTMLPlugin', Spinal.SpinalClass.inherit({
 
 		/**
-		*	Context Reference
+		*	Engine reference
 		*	@public
-		*	@property ctx
-		*	@type {com.spinal.ioc.Context}
+		*	@property _engine
+		*	@type {com.spinal.ioc.Engine}
 		**/
-		ctx: null,
+		_engine: null,
 
 		/**
 		*	Template Packages Config retrieve from spec
@@ -47,14 +53,13 @@ define(['core/spinal',
 		*	@chainable
 		*	@method initialize
 		*	@param attrs {Object} attributes
-		*	@param ctx {com.spinal.ioc.Context} context reference
+		*	@param engine {com.spinal.ioc.Engine} engine reference
 		*	@return {com.spinal.ioc.plugins.HTMLPlugin}
 		**/
-		initialize: function(attrs, ctx) {
-			if(!ctx) throw new ContextException('UndefinedContext');
+		initialize: function(attrs, engine) {
+			this._engine = engine;
 			this._packages = (!_.isEmpty(attrs)) ? attrs : {};
-			this.ctx = ctx;
-			return HTMLPlugin.__super__.initialize.apply(this, arguments);
+			return this;
 		},
 
 		/**
@@ -81,42 +86,54 @@ define(['core/spinal',
 		**/
 		_lazy: function() {
 			var tplNames = _.compact(_.map(this._packages, function(p, n) { return (p.lazyLoading) ? n : null; }));
-			return this._loadTemplate(tplNames);
+			return this.html_load(tplNames);
 		},
 
 		/**
-		*	Load Template module using requirejs strategy to be injected as part of
+		*	Proxified Checks if a template package is already loaded
+		*	@public
+		*	@method html_loaded
+		*	@param templatePackageName {String} template package name
+		*	@return Boolean
+		**/
+		html_loaded: function(templatePackageName) {
+			return (_.has(this._packages, templatePackageName) && !_.isUndefined(this._tpls[templatePackageName]));
+		},
+
+		/**
+		*	Proxified Load Template module using requirejs strategy to be injected as part of
 		*	the current context.
-		*	@private
-		*	@method _loadTemplate
-		*	@param tpl {Array} list of template names
-		*	@param tpl {String} Template name
+		*	@public
+		*	@method html_load
+		*	@param tpl {String,Array} template name or list of template names
 		*	@param [callback] {Function} callback function
 		*	@return {com.spinal.ioc.plugins.HTMLPlugin}
 		**/
-		_loadTemplate: function(tpl, callback) {
+		html_load: function(tpl, callback) {
 			if(!tpl) return this;
 			if(_.isString(tpl) && tpl !== '') tpl = [tpl];
+			var ename = Engine.EVENTS.plugin;
 			var ps = _.compact(_.map(this._packages, function(p, n) { return (_.contains(tpl, n)) ? p.path : null; }));
 			require(ps, _.bind(function() {
 				_.extend(this._tpls, _.object(tpl, Array.prototype.slice.call(arguments)));
 				if(callback && _.isFunction(callback)) callback();
+				this._engine.trigger(Engine.EVENTS.plugin, ename, tpl);
 			}, this));
 			return this;
 		},
 
 		/**
-		*	Template Proxy function that performs a look up over all the template packages
+		*	Proxified Template function that performs a look up over all the template packages
 		*	using the route passed as parameter (in dot notation format) and pass the additional params
 		*	to the existing compiled template function. If the template function is not found
 		*	returns an empty string
-		*	@private
-		*	@method _tpl
+		*	@public
+		*	@method html_tpl
 		*	@param route {String} route using dot notation format
 		*	@param [params] {Object} parameters to pass to the template
 		*	@return String
 		**/
-		_tpl: function(route, params) {
+		html_tpl: function(route, params) {
 			if(!route || route === '') return '';
 			if(!params) params = {};
 			var ps, pkg = ((ps = route.split('!')).length > 1) ? ps[0] : null;
@@ -132,8 +149,7 @@ define(['core/spinal',
 		*	@return {com.spinal.ioc.plugins.HTMLPlugin}
 		**/
 		execute: function() {
-			this.ctx.loadTemplate = _.bind(this._loadTemplate, this);
-			this.ctx.tpl = _.bind(this._tpl, this);
+			this._engine.trigger(Engine.EVENTS.proxified, this, 'html_load', 'html_loaded', 'html_tpl');
 			return this._lazy();
 		}
 

@@ -3,12 +3,13 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['ioc/context',
+		'ioc/engine',
 		'util/exception/context',
 		'ui/view',
 		'ui/container',
 		'specs/simple.spec',
 		'specs/advanced.spec',
-		'specs/plugin.spec'], function(Context, ContextException, View, Container,
+		'specs/plugin.spec'], function(Context, Engine, ContextException, View, Container,
 			SimpleSpec, AdvancedSpec, PluginSpec) {
 
 	describe('com.spinal.ioc.Context', function() {
@@ -154,38 +155,48 @@ define(['ioc/context',
 		*	Context#wire() test
 		*	Plugin Specs
 		**/
-		describe.skip('#wire() - PluginSpec', function() {
+		describe('#wire() - PluginSpec', function() {
 
 			it('Should Wire Plugin Spec (Plugins tasks)', function(done) {
 				this.appContext.off().on(Context.EVENTS.initialized, _.bind(function(ctx) {
 					expect(ctx).to.be.ok();
 					done();
-				}, this)).on(Context.EVENTS.plugin + ' ' + Context.EVENTS.created, _.bind(function(result) {
-					expect(result).to.be.ok();
-					expect(result).to.be.an('array');
-				}, this)).on(Context.EVENTS.ready, _.bind(function(result) {
+				}, this)).on(Context.EVENTS.processorCompleted, _.bind(function(result) {
 					expect(result).to.be.ok();
 				}, this));
 
 				this.appContext.wire(PluginSpec, function(ctx) {
 					expect(ctx).to.be.ok();
 					expect(ctx.engine.root).to.be.ok();
+					// Checks Context wrapped methods from plugins
+					// Theme
+					expect(ctx.theme_change).to.be.ok();
+					expect(ctx.theme_current).to.be.ok();
+					// HTML Plugin
+					expect(ctx.html_loaded).to.be.ok();
+					expect(ctx.html_load).to.be.ok();
+					expect(ctx.html_tpl).to.be.ok();
 				});
 			});
 
-			it('HTMLPlugin: Should Retrieve a template with params', function() {
-				var output = this.appContext.tpl('spinal!head.css', { href: 'URI' });
-				expect($(output).attr('href')).to.be.equal('URI');
-				expect($(output).prop('tagName').toLowerCase()).to.be.equal('link');
+			it('HTMLPlugin: Should Retrieve a template with params', function(done) {
+				var evaluation = _.bind(function() {
+					var output = this.appContext.html_tpl('spinal!head.css', { href: 'URI' });
+					expect($(output).attr('href')).to.be.equal('URI');
+					expect($(output).prop('tagName').toLowerCase()).to.be.equal('link');
+					done();
+				}, this);
+				(!this.appContext.html_loaded('spinal')) ?
+					this.appContext.off().on(Engine.EVENTS.plugin, _.bind(evaluation, this)) : evaluation();
 			});
 
 			it('HTMLPlugin: Should Load a new Template package at runtime', function(done) {
-				this.appContext.loadTemplate('ui', _.bind(function() {
-					var output = this.appContext.tpl('ui!ui.div', { id: '', cls: 'myclass' });
+				this.appContext.off().html_load('ui', _.bind(function() {
+					var output = this.appContext.html_tpl('ui!ui.div', { id: '', cls: 'myclass' });
 					expect($(output).hasClass('myclass')).to.be.equal(true);
 					expect($(output).prop('tagName').toLowerCase()).to.be.equal('div');
 					// Without params
-					output = this.appContext.tpl('ui!ui.rule');
+					output = this.appContext.html_tpl('ui!ui.rule');
 					expect($(output).prop('tagName').toLowerCase()).to.be.equal('hr');
 					done();
 				}, this));
@@ -193,13 +204,13 @@ define(['ioc/context',
 
 			it('HTMLPlugin: Errors', function() {
 				// No Route
-				var output = this.appContext.tpl();
+				var output = this.appContext.html_tpl();
 				expect(output).to.be.equal('');
 				// Query with no package
-				var output = this.appContext.tpl('non.existent');
+				var output = this.appContext.html_tpl('non.existent');
 				expect(output).to.be.equal('');
 				// No Template Package name specified
-				this.appContext.loadTemplate();
+				this.appContext.html_load();
 			});
 
 			it('ThemePlugin: Should Change the theme', function() {
@@ -208,16 +219,16 @@ define(['ioc/context',
 				var $linkBootstrap = $('head > link[theme="bootstrap"]');
 				expect($linkSpinal.length).to.be.equal(1);
 				expect($linkBootstrap.length).to.be.equal(0);
-				expect(this.appContext.theme.name).to.be.equal('spinal');
+				expect(this.appContext.theme_current().name).to.be.equal('spinal');
 
-				this.appContext.changeTheme('bootstrap');
+				this.appContext.theme_change('bootstrap');
 
 				// Bootstrap Active
 				var $linkSpinal = $('head > link[theme="spinal"]');
 				var $linkBootstrap = $('head > link[theme="bootstrap"]');
 				expect($linkSpinal.length).to.be.equal(0);
 				expect($linkBootstrap.length).to.be.equal(1);
-				expect(this.appContext.theme.name).to.be.equal('bootstrap');
+				expect(this.appContext.theme_current().name).to.be.equal('bootstrap');
 			});
 
 		});

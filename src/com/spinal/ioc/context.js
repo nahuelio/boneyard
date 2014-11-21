@@ -72,8 +72,10 @@ define(['core/spinal',
 		initialize: function() {
 			this.factory = new AsyncFactory();
 			this.engine = new Engine(this.factory);
+			this.listenTo(this.engine, Engine.EVENTS.proxified, _.bind(this.proxify, this));
+			this.listenTo(this.engine, Engine.EVENTS.plugin, _.bind(this.notify, this));
 			this.proxify(this.engine, 'getBone', 'getBonesByType', 'getBonesByClass');
-			return Context.__super__.initialize.apply(this, arguments);
+			return this;
 		},
 
 		/**

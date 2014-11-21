@@ -244,21 +244,22 @@ define(['libs/backbone'], function() {
 			},
 
 			/**
-			*	Proxifies the list of methods (instance) specified as extra arguments into the instance caller.
+			*	Proxifies the list of methods/properties (instance) specified as extra arguments
+			*	into the instance caller by reference.
 			*	<h5>Usages:</h5>
-			*		instanceA.proxify(instanceB, 'method1', 'method2', 'methodN');
+			*		instanceA.proxify(instanceB, 'method1', 'property1', 'methodN');
 			*		instanceA.method1(); // executes method1 declared in instanceB.
-			*		instanceA.method2(); // executes method2 declared in instanceB.
+			*		instanceA.property1; // access to property1 declared in instanceB.
 			*		instanceA.methodN(); // executes methodN declared in instanceB.
 			*	@public
 			*	@method proxify
-			*	@param instance {Object} source instance to rent the methods from
+			*	@param o {Object} source instance to 'rent' the methods from
 			*	@return Object
 			**/
-			proxify: function(instance) {
-				if(!instance) return this;
-				var methods = Array.prototype.slice.call(arguments, 1);
-				_.each(methods, function(m) { this[m] = _.bind(instance[m], instance); }, this);
+			proxify: function(o) {
+				if(!o) return this;
+				var members = Array.prototype.slice.call(arguments, 1);
+				_.each(members, function(m) { this[m] = (_.isFunction(o[m])) ? _.bind(o[m], o) : o[m]; }, this);
 				return this;
 			},
 

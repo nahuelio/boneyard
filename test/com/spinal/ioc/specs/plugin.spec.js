@@ -10,17 +10,17 @@ define([], function() {
 
 		container: {
 			$module: 'ui/container',
-			$params: { el: 'div.global' },
-			$ready: [
-				{ add: ['$bone!view', { renderOnAdd: true }] },
-				{ render: [] }
-			]
+			$params: { el: 'div.global' }
 		},
 
 		view: {
 			$module: 'ui/view',
 			$params: { id: 'child' }
 		},
+
+		$ready: [
+			{ '$bone!container.add': ['$bone!view', { renderOnAdd: true }] }
+		],
 
 		$plugins: {
 			html: {

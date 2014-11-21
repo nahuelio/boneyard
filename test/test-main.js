@@ -61,7 +61,7 @@ require.config({
 
     // we have to kickoff jasmine, as it is asynchronous
     callback: function() {
-        require.onError = function(err) { };
+        require.onError = function(err) { console.log(err) };
         window.__karma__.start();
     }
 });

@@ -3,7 +3,8 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['ioc/context',
-		'ioc/processor/bone'], function(Context, BoneProcessor) {
+		'ioc/processor/bone',
+		'util/exception/processor'], function(Context, BoneProcessor, ProcessorException) {
 
 	/**
 	*	Defines a processor that acts as a wrapper to trigger plugins functionality
@@ -15,14 +16,6 @@ define(['ioc/context',
 	*	@requires com.spinal.ioc.processor.BoneProcessor
 	**/
 	var PluginProcessor = Spinal.namespace('com.spinal.ioc.processor.PluginProcessor', BoneProcessor.inherit({
-
-		/**
-		*	Supported Notation Regular Expression
-		*	@public
-		*	@property notationRE
-		*	@type RegExp
-		**/
-		notationRE: new RegExp('\\' + Context.PREFIX + '(plugins)$', 'i'),
 
 		/**
 		*	Default plugins path processors
@@ -44,43 +37,45 @@ define(['ioc/context',
 		},
 
 		/**
-		*	Plugin Load handler
+		*	Adds a new plugin module into the async factory stack
 		*	@private
-		*	@method _onPluginLoaded
-		*	@param pluginName {String} Plugin module name
-		*	@param plugin {com.spinal.core.Spinal.SpinalClass} plugin module constructor
-		**/
-		_onPluginLoaded: function(pluginName, plugin) {
-			var params = (plugin.params) ? plugin.params : {};
-			Context.BoneFactory.create(pluginName, params, this.ctx).execute();
-		},
-
-		/**
-		*	Process plugin detected by handle notation
-		*	@public
-		*	@method process
-		*	@param name {Object} plugin name
-		*	@param params {Object} plugin params passed to the plugin constructor
+		*	@chainable
+		*	@method _enqueue
+		*	@param id {String} module id
+		*	@param success {Function} callback function to be executed once the module is loaded
 		*	@return Object
 		**/
-		process: function(name, params) {
-			Context.BoneFactory.add({
-				id: name, class: (this.defaultPath + name),
-				params: params, success: _.bind(this._onPluginLoaded, this)
-			});
-			return name;
+		_enqueue: function(id, success) {
+			this._engine.factory.push({ id: id, path: (this.defaultPath + id), callback: success });
+			return this;
 		},
 
 		/**
-		*	Handles specifc notation with the current processor
-		*	@public
-		*	@method handleNotation
-		*	@param params {Object} plugin params passed to the plugin constructor
-		*	@param pluginName {Object} plugin name
-		*	@return Boolean
+		*	Function as partial that creates an instance of the module plugin by passing the parameters to
+		*	the constructor function (including params)
+		*	@private
+		*	@method _create
+		*	@throws {com.spinal.util.error.types.ProcessorException}
+		*	@param params {Object} plugin params
+		*	@param pluginName {String} plugin name to pass to the factory to create an instance
+		*	@return Object
 		**/
-		handleNotation: function(params, pluginName) {
-			return this.process(pluginName, params);
+		_create: function(params, pluginName) {
+			return this._engine.factory.create(pluginName, ((params) ? params : {}), this._engine).execute();
+		},
+
+		/**
+		*	Process all plugins extracted from the root spec
+		*	@public
+		*	@method process
+		*	@param plugins {Object} plugins reference
+		*	@return Array
+		**/
+		process: function(plugins) {
+			return _.map(plugins, function(params, id) {
+				this._enqueue(id, _.bind(_.partial(this._create, params), this));
+				return id;
+			}, this);
 		},
 
 		/**
@@ -90,20 +85,11 @@ define(['ioc/context',
 		*	@return {com.spinal.ioc.processor.CreateProcessor}
 		**/
 		execute: function() {
-			/**
-			var plugins = this.ctx.query.findBoneById('$plugins');
-			if(plugins) {
-				plugins = _.map(plugins, this.handleNotation, this);
-				Context.BoneFactory.load(_.bind(function() {
-					delete this.ctx.spec['$plugins'];
-					this.ctx.trigger(Context.EVENTS.plugin, plugins);
-					this.ctx.trigger(Context.EVENTS.processed, { type: PluginProcessor.NAME });
-				}, this));
-			} else {
-				this.ctx.trigger(Context.EVENTS.processed, { type: PluginProcessor.NAME });
-			}
-			**/
-			this.trigger(PluginProcessor.EVENTS.processed, {  type: PluginProcessor.NAME });
+			var plugins = (this._engine.plugin()) ? this.process(this._engine.root[this._engine.__plugins]) : [];
+			this._engine.factory.load(_.bind(function() {
+				delete this._engine.root[this._engine.__plugins];
+				this.trigger(PluginProcessor.EVENTS.processed, {  type: PluginProcessor.NAME, plugins: plugins });
+			}, this));
 			return this;
 		}
 

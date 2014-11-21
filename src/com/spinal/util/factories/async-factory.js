@@ -187,7 +187,10 @@ define(['core/spinal',
 		**/
 		load: function(callback, opts) {
 			opts || (opts = {});
-			if(this.stack.size() <= 0) return this;
+			if(this.stack.size() <= 0) {
+				if(callback && _.isFunction(callback)) callback([]);
+				return this;
+			}
 			if(!opts.silent) this.trigger(AsyncFactory.EVENTS.prepared, this.stack.collection);
 			return this._execute(callback, opts);
 		},
@@ -202,8 +205,8 @@ define(['core/spinal',
 		**/
 		_handle: function(resources, opts) {
 			return _.map(resources, function(resource) {
-				var res = this.stack.pop(),
-					registered = AsyncFactory.__super__.register.call(this, res.id, resource);
+				var res = this.stack.pop();
+				var registered = AsyncFactory.__super__.register.call(this, res.id, resource);
 				if(!opts.silent && res.callback && _.isFunction(res.callback)) res.callback(res.id, resource);
 				return registered;
 			}, this);
