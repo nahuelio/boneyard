@@ -9,10 +9,10 @@
             { "name": "spinal-aop", "exclude": ["libs", "spinal-core", "spinal-util"] },
             { "name": "spinal-ui", "exclude": ["libs", "spinal-core", "spinal-util"] }
         ],
-        "fileExclusionRegExp": "/.md$/",
+        "fileExclusionRegExp": "^\\.|\\.md$",
         "findNestedDependencies": true,
         "removeCombined": true,
-        "optimize": "uglify2",
+        "optimize": "none",
         "uglify": {
             "toplevel": false,
             "ascii_only": true,

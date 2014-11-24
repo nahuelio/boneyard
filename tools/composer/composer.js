@@ -5,16 +5,19 @@
 var fs = require('fs'),
 	path = require('path'),
 	resolve = path.resolve,
-	join = path.join;
+	join = path.join,
+	http = require('http');
 
 // Third-party libs
 var connect = require('connect'),
 	watch = require('watch'),
 	_ = require('underscore'),
-	_s = require('underscore.string');
+	_s = require('underscore.string'),
+	io = require('socket.io');
 
 // Project specific libs
-var Package = require('../utils/package'),
+var Build = require('../spinal/build'),
+	Package = require('../utils/package'),
 	Logger = require('../utils/logger'),
 	Utils = require('../utils/util');
 
@@ -44,6 +47,17 @@ var Composer = {
 		clear: true,
 		verbose: false,
 		port: 9393
+	},
+
+	/**
+	*	Live Reload Server/SocketIO
+	*	@public
+	*	@property live
+	*	@type Object
+	**/
+	live: {
+		server: null,
+		socket: null
 	},
 
 	/**
@@ -90,7 +104,7 @@ var Composer = {
 		this.output();
 		this.setup();
 		this.createTarget();
-		this.spinUpAutoWatch();
+		this.spinUpServer();
 	},
 
 	/**
@@ -189,15 +203,29 @@ var Composer = {
 	*	@public
 	*	@method spinUpAutowatch
 	**/
-	spinUpAutoWatch: function() {
+	spinUpServer: function() {
 		Logger.log('Spinning Up Server...', { nl: true });
-		// TODO: Watch service do later
-		//watch.createMonitor(this.source, { ignoreDotFiles: true, ignoreUnreadableDir: true }, _.bind(this.onFileChange, this));
-		 // FIXME: Global Execution of 'this.target';
+		// Static Serving
 		connect().use(connect.static(resolve(this.basePath, this.target)))
 			.use(connect.static(resolve(this.basePath, './target')))
 			.listen(this.defaults.port);
 		Logger.debug('Server listening on port ' + this.defaults.port + '...', { nl: true });
+		// AutoWatch
+		watch.createMonitor(resolve(this.basePath, this.source), {
+			ignoreDotFiles: true, ignoreUnreadableDir: true
+		}, _.bind(this.onFileChange, this));
+		this.spinUpAutoWatch();
+	},
+
+	spinUpAutoWatch: function() {
+		Build.loadConfig();
+		this.live.server = http.createServer();
+		this.live.socket = io(this.live.server);
+		this.live.socket.on('connection', function(client) {});
+			this.live.server.listen(9494, function() {
+				Logger.debug('LiveReload listening on port 9494...', { nl: true });
+			});
+		}
 	},
 
 	/**
@@ -207,19 +235,27 @@ var Composer = {
 	*	@param monitor {Object} monitor reference
 	**/
 	onFileChange: function(monitor) {
-		monitor.on("created", function (f, stat) {
+		var onRelease = _.bind(this._onRelease, this);
+		monitor.on("created", _.bind(function (f, stat) {
 			Logger.debug('File Created [' + f + ']', { nl: true });
-			// TODO: Fire emitter to the browser to reload
-		});
+			Build.release(onRelease);
+		}, this));
 		monitor.on("changed", function (f, curr, prev) {
 			Logger.debug('File Modified [' + f + ']', { nl: true });
-			// TODO: Fire emitter to the browser to reload
+			Build.release(onRelease);
 		});
 		monitor.on("removed", function (f, stat) {
 			Logger.debug('File Removed [' + f + ']', { nl: true });
-			// TODO: Fire emitter to the browser to reload
+			Build.release(onRelease);
 		});
-	}
+	},
+
+	/**
+	*	Build Release Handler
+	*	@private
+	*	@method _onRelease
+	**/
+	_onRelease: function() { this.live.socket.emit('reload'); },
 
 };
 

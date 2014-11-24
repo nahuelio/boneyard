@@ -118,14 +118,18 @@ var Build = {
 	*	Releaase project packages using requirejs optimizer
 	*	@public
 	*	@method release
+	*	@param [callback] {Function} optional callback
 	**/
-	release: function() {
+	release: function(callback) {
 		Logger.log('[RELEASE] Creating Release...', { nl: true });
 		try {
 			Utils.createDir(resolve(this.defaults.basePath, this.config.project.dir));
 			this.config.project.mainConfigFile = resolve(this.defaults.basePath, this.config.project.mainConfigFile);
 			this.config.project.dir = resolve(this.defaults.basePath, this.config.project.dir);
-			requirejs.optimize(this.config.project, _.bind(this.banner, this), function(err) {
+			requirejs.optimize(this.config.project, _.bind(function() {
+				this.banner();
+				if(callback && _.isFunction(callback)) callback();
+			}, this)), function(err) {
 				Logger.error(err.Error);
 				process.exit();
 			});

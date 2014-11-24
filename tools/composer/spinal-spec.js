@@ -6,22 +6,28 @@ define([], function() {
 
 	return {
 
+		$id: 'ui',
+
 		theme: 'standard',
 
 		global: {
-			$module: {
-				class: 'ui/container',
-				params: { el: 'div#global' }
-			},
-			$ready: [
-				{ add: ['$bone!components', { renderOnAdd: true }] }
-			]
+			$module: 'ui/container',
+			$params: { el: 'div#global' }
 		},
 
 		components: {
-			$module: {
-				class: 'ui/container',
-				params: { id: 'components' }
+			$module: 'ui/container',
+			$params: { id: 'components', theme: '$bone!theme' }
+		},
+
+		$ready: [
+			{ '$bone!global.add': ['$bone!components', { renderOnAdd: true }] }
+		],
+
+		$plugins: {
+			theme: {
+				bootstrap: { path: 'themes/spinal/core.css', default: true },
+				build: { path: 'themes/bootstrap/core.css' }
 			}
 		}
 
