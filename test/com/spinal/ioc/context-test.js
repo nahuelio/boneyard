@@ -181,25 +181,30 @@ define(['ioc/context',
 
 			it('HTMLPlugin: Should Retrieve a template with params', function(done) {
 				var evaluation = _.bind(function() {
-					var output = this.appContext.html_tpl('spinal!head.css', { href: 'URI' });
-					expect($(output).attr('href')).to.be.equal('URI');
-					expect($(output).prop('tagName').toLowerCase()).to.be.equal('link');
+					var output = this.appContext.html_tpl('my!content.menu', { cls: 'menu' });
+					expect($(output).attr('class')).to.be.equal('menu');
+					expect($(output).prop('tagName').toLowerCase()).to.be.equal('div');
 					done();
 				}, this);
-				(!this.appContext.html_loaded('spinal')) ?
+				(!this.appContext.html_loaded('my')) ?
 					this.appContext.off().on(Engine.EVENTS.plugin, _.bind(evaluation, this)) : evaluation();
 			});
 
 			it('HTMLPlugin: Should Load a new Template package at runtime', function(done) {
-				this.appContext.off().html_load('ui', _.bind(function() {
-					var output = this.appContext.html_tpl('ui!ui.div', { id: '', cls: 'myclass' });
+				this.appContext.off().html_load('other', _.bind(function() {
+					var output = this.appContext.html_tpl('other!content.other', { cls: 'myclass' });
 					expect($(output).hasClass('myclass')).to.be.equal(true);
-					expect($(output).prop('tagName').toLowerCase()).to.be.equal('div');
+					expect($(output).prop('tagName').toLowerCase()).to.be.equal('p');
 					// Without params
-					output = this.appContext.html_tpl('ui!ui.rule');
+					output = this.appContext.html_tpl('other!content.rule');
 					expect($(output).prop('tagName').toLowerCase()).to.be.equal('hr');
 					done();
 				}, this));
+			});
+
+			it.skip('HTMLPlugin: Should Retrieve a template using the default provided by spinal', function() {
+				var output = this.appContext.html_tpl('spinal!basic.span', {});
+				expect($(output).prop('tagName').toLowerCase()).to.be.equal('span');
 			});
 
 			it('HTMLPlugin: Errors', function() {
@@ -213,22 +218,22 @@ define(['ioc/context',
 				this.appContext.html_load();
 			});
 
-			it('ThemePlugin: Should Change the theme', function() {
+			it.skip('ThemePlugin: Should Change the theme', function() {
 				// Spinal Active
 				var $linkSpinal = $('head > link[theme="spinal"]');
-				var $linkBootstrap = $('head > link[theme="bootstrap"]');
+				var $linkMy = $('head > link[theme="my"]');
 				expect($linkSpinal.length).to.be.equal(1);
-				expect($linkBootstrap.length).to.be.equal(0);
+				expect($linkMy.length).to.be.equal(0);
 				expect(this.appContext.theme_current().name).to.be.equal('spinal');
 
-				this.appContext.theme_change('bootstrap');
+				this.appContext.theme_change('my');
 
 				// Bootstrap Active
 				var $linkSpinal = $('head > link[theme="spinal"]');
-				var $linkBootstrap = $('head > link[theme="bootstrap"]');
+				var $linkMy = $('head > link[theme="my"]');
 				expect($linkSpinal.length).to.be.equal(0);
-				expect($linkBootstrap.length).to.be.equal(1);
-				expect(this.appContext.theme_current().name).to.be.equal('bootstrap');
+				expect($linkMy.length).to.be.equal(1);
+				expect(this.appContext.theme_current().name).to.be.equal('my');
 			});
 
 		});

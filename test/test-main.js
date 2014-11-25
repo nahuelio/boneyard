@@ -22,14 +22,18 @@ require.config({
 
     paths: {
         /** Rebase to point to specs folder **/
-        'specs': 'test/com/spinal/ioc/specs',
-        'templates': 'test/com/spinal/ioc/tpls',
         'libs': 'src/libs',
         'core': 'src/com/spinal/core',
         'ioc': 'src/com/spinal/ioc',
         'aop': 'src/com/spinal/aop',
         'ui': 'src/com/spinal/ui',
         'util': 'src/com/spinal/util',
+
+        /** Configurable Resources by end-developer **/
+        'specs': 'test/com/spinal/ioc/specs',
+        'templates': 'test/com/spinal/ioc/tpls',
+        'themes': 'test/com/spinal/ioc/themes',
+
         /** Hack Backbone requirejs **/
         'underscore': 'src/libs/underscore',
         'jquery': 'src/libs/jquery'

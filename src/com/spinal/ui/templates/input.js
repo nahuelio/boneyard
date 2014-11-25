@@ -2,9 +2,9 @@
 *	@module com.spinal.ui.templates
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define([], function() {
+define(['core/spinal'], function(Spinal) {
 
-	return {
+	return Spinal.namespace('templates.input', {
 
 		text: '<input type="text" />',
 		radio: '<input type="radio" />',
@@ -18,6 +18,6 @@ define([], function() {
 		textarea: '<textarea></textarea>',
 		button: '<button></button>'
 
-	};
+	});
 
 });

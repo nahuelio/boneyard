@@ -1,14 +1,12 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>Spinal Composer | <%= project.name %></title>
+		<title><%= project.name %> | Spinal Composer Tool v0.0.1</title>
 		<script type="text/javascript" src="http://localhost:9494/socket.io/socket.io.js"></script>
 		<script type="text/javascript" src="spinal-core.js" data-spec="<%= project.mainSpec %>"></script>
 		<script type="text/javascript">
-			var client = io.connect('http://localhost:9494/');
-			client.on('connection', function(socket){
-				socket.on('reload', function() { document.location.reload(); });
-			});
+			var socket = io.connect('http://localhost:9494/');
+			socket.on('reload', function() { document.location.reload(); });
 		</script>
 	</head>
 

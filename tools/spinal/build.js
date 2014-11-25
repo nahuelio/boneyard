@@ -80,11 +80,11 @@ var Build = {
 	*	@method loadConfig
 	**/
 	loadConfig: function() {
-		Logger.debug('[CONFIG] Loading Configuration...', { nl: true });
+		Logger.debug('[CONFIG] Loading Build Configuration...', { nl: true });
 		try {
 			this.config = require(resolve(__dirname, this.defaults.config));
 		} catch(ex) {
-			Logger.warn('[CONFIG] Config File doesn\'t exists or an error came through the syntax', { nl: true });
+			Logger.warn('[CONFIG] Build Config File doesn\'t exists or an error came through the syntax', { nl: true });
 			Logger.error(ex.message, { nl: true });
 		}
 	},
@@ -129,7 +129,7 @@ var Build = {
 			requirejs.optimize(this.config.project, _.bind(function() {
 				this.banner();
 				if(callback && _.isFunction(callback)) callback();
-			}, this)), function(err) {
+			}, this), function(err) {
 				Logger.error(err.Error);
 				process.exit();
 			});

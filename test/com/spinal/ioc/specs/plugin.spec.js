@@ -24,12 +24,11 @@ define([], function() {
 
 		$plugins: {
 			html: {
-				spinal: { path: 'templates/spinal-tpl', lazyLoading: true },
-				ui: { path: 'templates/ui-tpl' }
+				my: { path: 'templates/my-tpl', lazyLoading: true },
+				other: { path: 'templates/other-tpl' }
 			},
 			theme: {
-				spinal: { path: 'base/test/com/spinal/ioc/themes/spinal.css', default: true },
-				bootstrap: { path: 'base/test/com/spinal/ioc/themes/bootstrap.css' }
+				my: { path: 'themes/my.css', _default: true }
 			}
 		}
 

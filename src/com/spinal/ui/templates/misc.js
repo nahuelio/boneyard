@@ -2,9 +2,9 @@
 *	@module com.spinal.ui.templates
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define([], function() {
+define(['core/spinal'], function(Spinal) {
 
-	return {
+	return Spinal.namespace('templates.misc', {
 
 		article: "<article></article>",
 		cite: '<cite></cite>',
@@ -13,6 +13,6 @@ define([], function() {
 		img: '<img />',
 		rule: '<hr/>'
 
-	};
+	});
 
 });

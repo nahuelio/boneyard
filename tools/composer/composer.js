@@ -127,13 +127,14 @@ var Composer = {
 	*	@method loadConfig
 	**/
 	setup: function() {
+		Build.loadConfig();
 		try {
 			this.setupDefault();
 			if(this.defaults.config) {
 				this.customConfig(this.defaults.config);
 			} else {
-				Logger.warn('Custom Config file not specified.', { nl: true });
-				Logger.log('Loaded Default Config file.');
+				Logger.warn('[COMPOSER] Custom Application Config file not specified.', { nl: true });
+				Logger.log('[COMPOSER] Loaded Default Application Config file.');
 			}
 			_.extend(this.config, this.spinalConfig);
 		} catch(ex) {
@@ -149,9 +150,9 @@ var Composer = {
 	*	@param configPath {String} custom config path
 	**/
 	customConfig: function(configPath) {
-		Logger.log('Loading Config file [' + configPath + ']', { nl: true });
+		Logger.log('[COMPOSER] Loading Config file [' + configPath + ']', { nl: true });
 		this.config = require(configPath);
-		if(!this.config || !_.isObject(this.config)) throw new Error('[CONFIG] Malformed custom config file.');
+		if(!this.config || !_.isObject(this.config)) throw new Error('[COMPOSER] Malformed Custom Config Aapplication File.');
 	},
 
 	/**
@@ -186,7 +187,7 @@ var Composer = {
 	*	@method createTarget
 	**/
 	createTarget: function() {
-		Logger.log('Generating Composer Environment', { nl: true });
+		Logger.log('[COMPOSER] Generating Composer Environment', { nl: true });
 		try {
 			var baseDir = Utils.createDir(this.basePath, this.target); // FIXME: Global Execution
 			if(!this.defaults.config) this.generateSpec(baseDir);
@@ -204,12 +205,12 @@ var Composer = {
 	*	@method spinUpAutowatch
 	**/
 	spinUpServer: function() {
-		Logger.log('Spinning Up Server...', { nl: true });
+		Logger.log('[COMPOSER] Spinning Up Server...', { nl: true });
 		// Static Serving
 		connect().use(connect.static(resolve(this.basePath, this.target)))
 			.use(connect.static(resolve(this.basePath, './target')))
 			.listen(this.defaults.port);
-		Logger.debug('Server listening on port ' + this.defaults.port + '...', { nl: true });
+		Logger.debug('[COMPOSER] Server listening on port ' + this.defaults.port + '...', { nl: true });
 		// AutoWatch
 		watch.createMonitor(resolve(this.basePath, this.source), {
 			ignoreDotFiles: true, ignoreUnreadableDir: true
@@ -218,14 +219,15 @@ var Composer = {
 	},
 
 	spinUpAutoWatch: function() {
-		Build.loadConfig();
 		this.live.server = http.createServer();
 		this.live.socket = io(this.live.server);
-		this.live.socket.on('connection', function(client) {});
-			this.live.server.listen(9494, function() {
-				Logger.debug('LiveReload listening on port 9494...', { nl: true });
-			});
-		}
+		console.log()
+		this.live.socket.on('connection', _.bind(function(client) {
+			Logger.log('[COMPOSER] Browser binded [' + client + ']');
+		}, this));
+		this.live.server.listen(9494, function() {
+			Logger.debug('[COMPOSER] ServeSocket listening on port 9494...', { nl: true });
+		});
 	},
 
 	/**
@@ -236,18 +238,18 @@ var Composer = {
 	**/
 	onFileChange: function(monitor) {
 		var onRelease = _.bind(this._onRelease, this);
-		monitor.on("created", _.bind(function (f, stat) {
+		monitor.on("created", _.bind(function(f, stat) {
 			Logger.debug('File Created [' + f + ']', { nl: true });
 			Build.release(onRelease);
 		}, this));
-		monitor.on("changed", function (f, curr, prev) {
+		monitor.on("changed", _.bind(function (f, curr, prev) {
 			Logger.debug('File Modified [' + f + ']', { nl: true });
 			Build.release(onRelease);
-		});
-		monitor.on("removed", function (f, stat) {
+		}, this));
+		monitor.on("removed", _.bind(function (f, stat) {
 			Logger.debug('File Removed [' + f + ']', { nl: true });
 			Build.release(onRelease);
-		});
+		}, this));
 	},
 
 	/**
@@ -255,7 +257,10 @@ var Composer = {
 	*	@private
 	*	@method _onRelease
 	**/
-	_onRelease: function() { this.live.socket.emit('reload'); },
+	_onRelease: function() {
+		Logger.debug('[COMPOSER] Refreshing browser...');
+		this.live.socket.emit('reload');
+	}
 
 };
 

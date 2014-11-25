@@ -2,9 +2,9 @@
 *	@module com.spinal.ui.templates
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define([], function() {
+define(['core/spinal'], function(Spinal) {
 
-	return {
+	return Spinal.namespace('templates.table', {
 
 		caption: '<caption></caption>',
 		thead: '<thead></thead>',
@@ -14,6 +14,6 @@ define([], function() {
 		tr: '<tr></tr>',
 		td: '<td></td>'
 
-	};
+	});
 
 });

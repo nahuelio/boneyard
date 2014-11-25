@@ -74,7 +74,7 @@ define(['ioc/engine',
 		**/
 		findTheme: function(themeName) {
 			var config = _.find(this.themes, function(theme, name) {
-				return ((!themeName && theme.default && (themeName = name)) || (themeName === name));
+				return ((!themeName && theme._default && (themeName = name)) || (themeName === name));
 			});
 			return { name: themeName, config: config };
 		},

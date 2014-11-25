@@ -26,8 +26,7 @@ define([], function() {
 
 		$plugins: {
 			theme: {
-				bootstrap: { path: 'themes/spinal/core.css', default: true },
-				build: { path: 'themes/bootstrap/core.css' }
+				spinal: { path: 'themes/spinal/core.css', _default: true },
 			}
 		}
 
