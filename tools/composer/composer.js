@@ -127,7 +127,6 @@ var Composer = {
 	*	@method loadConfig
 	**/
 	setup: function() {
-		Build.loadConfig();
 		try {
 			this.setupDefault();
 			if(this.defaults.config) {
@@ -208,7 +207,7 @@ var Composer = {
 		Logger.log('[COMPOSER] Spinning Up Server...', { nl: true });
 		// Static Serving
 		connect().use(connect.static(resolve(this.basePath, this.target)))
-			.use(connect.static(resolve(this.basePath, './target')))
+			.use(connect.static(resolve(this.basePath, this.source)))
 			.listen(this.defaults.port);
 		Logger.debug('[COMPOSER] Server listening on port ' + this.defaults.port + '...', { nl: true });
 		// AutoWatch
@@ -221,9 +220,9 @@ var Composer = {
 	spinUpAutoWatch: function() {
 		this.live.server = http.createServer();
 		this.live.socket = io(this.live.server);
-		console.log()
-		this.live.socket.on('connection', _.bind(function(client) {
-			Logger.log('[COMPOSER] Browser binded [' + client + ']');
+		this.live.socket.on('connect', _.bind(function(client) {
+			Logger.log('[COMPOSER] Client Binded [' + client.id + ']');
+			console.log('[COMPOSER] Total clients connected', _.keys(this.live.socket.sockets.connected).length);
 		}, this));
 		this.live.server.listen(9494, function() {
 			Logger.debug('[COMPOSER] ServeSocket listening on port 9494...', { nl: true });
@@ -237,29 +236,21 @@ var Composer = {
 	*	@param monitor {Object} monitor reference
 	**/
 	onFileChange: function(monitor) {
-		var onRelease = _.bind(this._onRelease, this);
 		monitor.on("created", _.bind(function(f, stat) {
-			Logger.debug('File Created [' + f + ']', { nl: true });
-			Build.release(onRelease);
+			Logger.debug('File Created [' + f + ']');
+			Logger.debug('[COMPOSER] Refreshing browser...');
+			this.live.socket.emit('reload');
 		}, this));
 		monitor.on("changed", _.bind(function (f, curr, prev) {
-			Logger.debug('File Modified [' + f + ']', { nl: true });
-			Build.release(onRelease);
+			Logger.debug('File Modified [' + f + ']');
+			Logger.debug('[COMPOSER] Refreshing browser...');
+			this.live.socket.emit('reload');
 		}, this));
 		monitor.on("removed", _.bind(function (f, stat) {
-			Logger.debug('File Removed [' + f + ']', { nl: true });
-			Build.release(onRelease);
+			Logger.debug('File Removed [' + f + ']');
+			Logger.debug('[COMPOSER] Refreshing browser...');
+			this.live.socket.emit('reload');
 		}, this));
-	},
-
-	/**
-	*	Build Release Handler
-	*	@private
-	*	@method _onRelease
-	**/
-	_onRelease: function() {
-		Logger.debug('[COMPOSER] Refreshing browser...');
-		this.live.socket.emit('reload');
 	}
 
 };
