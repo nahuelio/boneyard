@@ -13,7 +13,7 @@ define(['underscore'], function() {
 
 		content: {
 
-			other: _.template('<p class="{{cls}}"></p>'),
+			other: _.template('<p class="<%= cls %>"></p>'),
 			rule: _.template('<hr />')
 
 		},

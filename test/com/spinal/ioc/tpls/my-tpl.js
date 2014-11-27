@@ -13,7 +13,7 @@ define(['underscore'], function() {
 
 		content: {
 
-			menu: _.template('<div class="{{cls}}"></div>')
+			menu: _.template('<div class="<%= cls %>"></div>')
 
 		},
 

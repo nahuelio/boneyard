@@ -4,6 +4,8 @@ target
 benchmark/spinal-*.html
 apidocs
 composer-app
+test/templates
+test/themes
 *-SNAPSHOT.*
 *.seed
 *.log

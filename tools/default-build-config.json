@@ -9,7 +9,10 @@
             { "name": "spinal-aop", "exclude": ["libs", "spinal-core", "spinal-util"] },
             { "name": "spinal-ui", "exclude": ["libs", "spinal-core", "spinal-util"] }
         ],
-        "fileExclusionRegExp": "^\\.|\\.md$",
+		"paths": {
+			"templates": "empty:"
+		},
+        "fileExclusionRegExp": "^\\.|\\.html$|\\.css$|\\.sass$|\\.md$",
         "findNestedDependencies": true,
         "removeCombined": true,
         "optimize": "none",
@@ -22,6 +25,18 @@
         },
         "dir": "target"
     },
+	"templates": {
+		"spinal": {
+			"src": "src/templates",
+			"target": "target"
+		}
+	},
+	"themes": {
+		"spinal": {
+			"src": "src/themes",
+			"target": "target"
+		}
+	},
     "options": {
 		"debug": false,
         "minify": true,

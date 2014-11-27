@@ -47,7 +47,7 @@ define(['ioc/engine',
 		*	@property _domLink
 		*	@type Function
 		**/
-		_domLink: _.template('<link rel="stylesheet" href="{{href}}" theme="{{theme}}" />'),
+		_domLink: _.template('<link rel="stylesheet" href="<%= href %>" theme="<%= theme %>" />'),
 
 		/**
 		*	Initialize

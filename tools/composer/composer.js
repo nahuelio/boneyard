@@ -16,8 +16,7 @@ var connect = require('connect'),
 	io = require('socket.io');
 
 // Project specific libs
-var Build = require('../spinal/build'),
-	Package = require('../utils/package'),
+var Package = require('../utils/package'),
 	Logger = require('../utils/logger'),
 	Utils = require('../utils/util');
 
@@ -206,7 +205,8 @@ var Composer = {
 	spinUpServer: function() {
 		Logger.log('[COMPOSER] Spinning Up Server...', { nl: true });
 		// Static Serving
-		connect().use(connect.static(resolve(this.basePath, this.target)))
+		connect().use(connect.static(resolve(this.basePath, './target')))
+			.use(connect.static(resolve(this.basePath, this.target)))
 			.use(connect.static(resolve(this.basePath, this.source)))
 			.listen(this.defaults.port);
 		Logger.debug('[COMPOSER] Server listening on port ' + this.defaults.port + '...', { nl: true });

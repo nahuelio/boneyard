@@ -22,13 +22,7 @@ define([], function() {
 
 		$ready: [
 			{ '$bone!global.add': ['$bone!components', { renderOnAdd: true }] }
-		],
-
-		$plugins: {
-			theme: {
-				spinal: { path: 'themes/spinal/core.css', _default: true },
-			}
-		}
+		]
 
 	};
 

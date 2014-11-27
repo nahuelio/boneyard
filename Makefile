@@ -38,7 +38,7 @@ test:
 doc:
 	@make clean-docs
 	@echo "\nCreating API DOCS (YUIDOC)...\n"
-	@node ./node_modules/yuidocjs/lib/cli -c ./yuidoc.json --exclude libs ./src
+	@node ./node_modules/yuidocjs/lib/cli -q -c ./yuidoc.json --exclude libs ./src
 
 ## Build
 

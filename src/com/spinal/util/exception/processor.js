@@ -44,8 +44,8 @@ define(['core/spinal',
 		*	@type Object
 		**/
 		TYPES: {
-			BoneNotFound: _.template('Bone {{id}} was not found.'),
-			InvalidModuleDeclaration: _.template('Module bone {{id}} is missing required \'class\' declaration.'),
+			BoneNotFound: _.template('Bone <%= id %> was not found.'),
+			InvalidModuleDeclaration: _.template('Module bone <%= id %> is missing required \'class\' declaration.'),
 			CreateModuleException: _.template('Create Model operation requires a \'className\' and module \'data\' in order to work.')
 		}
 

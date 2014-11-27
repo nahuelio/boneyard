@@ -69,12 +69,11 @@ define(['ioc/engine',
 		*	@private
 		*	@method _query
 		*	@param query {String}
-		*	@param pkg {String} package to narrow down the query
+		*	@param core {Boolean} Flag that allow performing lookup on core templates
 		*	@return Function
 		**/
-		_query: function(query, pkg) {
-			if(pkg && pkg !== '') query = (pkg + '.').concat(query);
-			return StringUtils.search(query, this._tpls);
+		_query: function(query, core) {
+			return StringUtils.search(query, (core) ? Spinal.templates : this._tpls);
 		},
 
 		/**
@@ -103,6 +102,7 @@ define(['ioc/engine',
 		/**
 		*	Proxified Load Template module using requirejs strategy to be injected as part of
 		*	the current context.
+		*	@FIXME: Logic and Engine event triggering need to be improved.
 		*	@public
 		*	@method html_load
 		*	@param tpl {String,Array} template name or list of template names
@@ -136,9 +136,10 @@ define(['ioc/engine',
 		html_tpl: function(route, params) {
 			if(!route || route === '') return '';
 			if(!params) params = {};
-			var ps, pkg = ((ps = route.split('!')).length > 1) ? ps[0] : null;
-			var compiled = this._query(ps[(!pkg) ? 0 : 1], pkg);
-			return (compiled && _.isFunction(compiled)) ? compiled(params) : '';
+			var inCore = (route.indexOf('!') === -1),
+				tpl = this._query(route.replace('!', '.'), inCore);
+			if(tpl && _.isString(tpl)) tpl = _.template(unescape(tpl));
+			return (tpl && _.isFunction(tpl)) ? tpl(params) : '';
 		},
 
 		/**

@@ -2,73 +2,86 @@
 // Generated on Mon May 12 2014 16:36:27 GMT-0700 (PDT)
 
 module.exports = function(config) {
-  config.set({
 
-    // base path that will be used to resolve all patterns (eg. files, exclude)
-    basePath: './',
+    var _ = require('underscore'),
+        Sass = require('./tools/utils/sass'),
+        HTML = require('./tools/utils/html');
 
-    // frameworks to use
-    // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-    frameworks: ['mocha', 'expect', 'requirejs'],
+    // External Resources Setup
+    var resourceConfig = { target: 'test', name: 'spinal' };
 
+    // Compilation for testing
+    Sass.init(_.extend({ src: 'src/themes' }, resourceConfig)).process();
+    HTML.init(_.extend({ src: 'src/templates' }, resourceConfig)).process();
 
-    // list of files / patterns to load in the browser
-    files: [
-        'test/test-main.js',
-        { pattern: 'src/**/*.js', included: false },
-        { pattern: 'test/**/*.js', included: false },
-        { pattern: 'test/**/*.css', included: false }
-    ],
+    config.set({
 
+        // base path that will be used to resolve all patterns (eg. files, exclude)
+        basePath: './',
 
-    // list of files to exclude
-    exclude: ['src/main.js', 'src/libs/require.js'],
-
-    // preprocess matching files before serving them to the browser
-    // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
-    preprocessors: {
-        'src/*/!(libs)/**/*.js': ['coverage']
-    },
-
-    // test results reporter to use
-    // possible values: 'dots', 'progress'
-    // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: ['spec', 'html', 'coverage'],
-
-    htmlReporter: {
-        outputFile: 'coverage/unit-test-results.html'
-    },
-
-    // optionally, configure the reporter
-    coverageReporter: {
-        type : 'html',
-        dir : 'coverage/'
-    },
-
-    // web server port
-    port: 9876,
+        // frameworks to use
+        // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
+        frameworks: ['mocha', 'expect', 'requirejs'],
 
 
-    // enable / disable colors in the output (reporters and logs)
-    colors: true,
+        // list of files / patterns to load in the browser
+        files: [
+            'test/test-main.js',
+            { pattern: 'src/**/*.js', included: false },
+            { pattern: 'test/**/*.js', included: false },
+            { pattern: 'test/**/*.css', included: false }
+        ],
 
 
-    // level of logging
-    // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
-    logLevel: config.LOG_INFO,
+        // list of files to exclude
+        exclude: ['src/main.js', 'src/libs/require.js'],
+
+        // preprocess matching files before serving them to the browser
+        // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
+        preprocessors: {
+            'src/*/!(libs)/**/*.js': ['coverage']
+        },
+
+        // test results reporter to use
+        // possible values: 'dots', 'progress'
+        // available reporters: https://npmjs.org/browse/keyword/karma-reporter
+        reporters: ['spec', 'html', 'coverage'],
+
+        htmlReporter: {
+            outputFile: 'coverage/unit-test-results.html'
+        },
+
+        // optionally, configure the reporter
+        coverageReporter: {
+            type : 'html',
+            dir : 'coverage/'
+        },
+
+        // web server port
+        port: 9876,
 
 
-    // enable / disable watching file and executing tests whenever any file changes
-    autoWatch: true,
+        // enable / disable colors in the output (reporters and logs)
+        colors: true,
 
 
-    // start these browsers
-    // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ['PhantomJS'],
+        // level of logging
+        // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
+        logLevel: config.LOG_INFO,
 
 
-    // Continuous Integration mode
-    // if true, Karma captures browsers, runs the tests and exits
-    singleRun: false
-  });
+        // enable / disable watching file and executing tests whenever any file changes
+        autoWatch: true,
+
+
+        // start these browsers
+        // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
+        browsers: ['PhantomJS'],
+
+
+        // Continuous Integration mode
+        // if true, Karma captures browsers, runs the tests and exits
+        singleRun: false
+
+    });
 };

@@ -30,9 +30,9 @@ require.config({
         'util': 'src/com/spinal/util',
 
         /** Configurable Resources by end-developer **/
+        'templates': 'test/templates',
         'specs': 'test/com/spinal/ioc/specs',
-        'templates': 'test/com/spinal/ioc/tpls',
-        'themes': 'test/com/spinal/ioc/themes',
+        'tpls': 'test/com/spinal/ioc/tpls',
 
         /** Hack Backbone requirejs **/
         'underscore': 'src/libs/underscore',

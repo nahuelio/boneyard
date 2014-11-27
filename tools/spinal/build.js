@@ -17,6 +17,8 @@ var	requirejs = require('requirejs'),
 
 // Project specific libs
 var Package = require('../utils/package'),
+	Sass = require('../utils/sass'),
+	HTML = require('../utils/html'),
 	Logger = require('../utils/logger'),
 	Utils = require('../utils/util');
 
@@ -60,7 +62,9 @@ var Build = {
 		this.output();
 		this.loadConfig();
 		this.libs();
-		this.release();
+		this.release(_.bind(function() {
+			process.nextTick(_.bind(function() { this.templates(); this.themes(); }, this));
+		}, this));
 	},
 
 	/**
@@ -115,13 +119,33 @@ var Build = {
 	},
 
 	/**
+	*	Build templates (HTML)
+	*	@public
+	*	@method templates
+	**/
+	templates: function() {
+		if(!this.config.templates || _.isEmpty(this.config.templates)) return this;
+		_.each(this.config.templates, function(t, name) { HTML.init(_.extend(t, { name: name })).process(); }, this);
+	},
+
+	/**
+	*	Build Themes (Sass)
+	*	@public
+	*	@method themes
+	**/
+	themes: function() {
+		if(!this.config.themes || _.isEmpty(this.config.themes)) return this;
+		_.each(this.config.themes, function(t, name) { Sass.init(_.extend(t, { name: name })).process(); }, this);
+	},
+
+	/**
 	*	Releaase project packages using requirejs optimizer
 	*	@public
 	*	@method release
 	*	@param [callback] {Function} optional callback
 	**/
 	release: function(callback) {
-		Logger.log('[RELEASE] Creating Release...', { nl: true });
+		Logger.log('\n[JS-BUILD] Building...');
 		try {
 			Utils.createDir(resolve(this.defaults.basePath, this.config.project.dir));
 			this.config.project.mainConfigFile = resolve(this.defaults.basePath, this.config.project.mainConfigFile);
@@ -130,11 +154,12 @@ var Build = {
 				this.banner();
 				if(callback && _.isFunction(callback)) callback();
 			}, this), function(err) {
+				console.error(err);
 				Logger.error(err.Error);
 				process.exit();
 			});
 		} catch(ex) {
-			Logger.error('[RELEASE] Error ocurred while building modules: ' + ex.message, { nl: true });
+			Logger.error('[JS-BUILD] Error ocurred while building modules: ' + ex.message, { nl: true });
 			process.exit();
 		}
 	},
@@ -172,7 +197,7 @@ var Build = {
 				Utils.createFile(m._buildPath, contents, { mode: 0777, encoding: 'utf8', flags: 'w' });
 			}
 		}, this);
-		Logger.log('[RELEASE] Build Process DONE.');
+		Logger.debug('[JS-BUILD] Deployment DONE', { nl: true });
 	}
 
 };
