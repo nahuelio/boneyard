@@ -17,6 +17,7 @@ define(['core/spinal',
 	*	@requires com.spinal.core.Spinal
 	*	@requires com.spinal.util.StringUtil
 	*	@requires com.spinal.util.exception.UIException
+	*	@requires templates.spinal
 	*	@requires libs.bootstrap
 	**/
 	var View = Spinal.namespace('com.spinal.ui.View', Spinal.Backbone.View.inherit({
