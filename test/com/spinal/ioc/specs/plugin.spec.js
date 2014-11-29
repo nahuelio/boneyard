@@ -28,7 +28,9 @@ define([], function() {
 				other: { path: 'tpls/other-tpl' }
 			},
 			theme: {
-				my: { path: '/base/test/com/spinal/ioc/skins/my.css', _default: true }
+				config: { basePath: '/base/test/themes/', bootstrap: true },
+				my: { url: '/base/test/com/spinal/ioc/skins/my.css', _default: true },
+				yours: { url: '/base/test/com/spinal/ioc/skins/yours.css' }
 			}
 		}
 

@@ -26,6 +26,14 @@ define(['ioc/engine',
 		themes: null,
 
 		/**
+		*	General Settings for Theme management
+		*	@public
+		*	@property _config
+		*	@type Object
+		**/
+		_config: null,
+
+		/**
 		*	Engine reference
 		*	@public
 		*	@property _engine
@@ -44,25 +52,65 @@ define(['ioc/engine',
 		/**
 		*	Link Template
 		*	@private
-		*	@property _domLink
+		*	@property _link
 		*	@type Function
 		**/
-		_domLink: _.template('<link rel="stylesheet" href="<%= href %>" theme="<%= theme %>" />'),
+		_link: _.template('<link rel="stylesheet" href="<%= href %>" theme="<%= theme %>" />'),
+
+		/**
+		*	Boostrap Files
+		*	@private
+		*	@property _bootstrap
+		*	@type String
+		**/
+		_bootstrap: {
+			core: 'bootstrap/css/bootstrap.min.css',
+			theme: 'bootstrap/css/bootstrap-theme.min.css'
+		},
 
 		/**
 		*	Initialize
 		*	@public
 		*	@chainable
 		*	@method initialize
-		*	@param themes {Object} themes
+		*	@param setup {Object} setup
 		*	@param engine {com.spinal.ioc.Engine} engine reference
 		*	@return {com.spinal.ioc.plugins.ThemePlugin}
 		**/
-		initialize: function(themes, engine) {
-			this.themes = themes;
+		initialize: function(setup, engine) {
+			if(!setup || !setup.config || !setup.config.basePath) throw new PluginException('ConfigNotSpecified');
+			this.themes = _.omit(setup, 'config');
+			this._config = setup.config;
 			this._engine = engine;
 			this._$header = $('head');
+			return this._useDefault();
+		},
+
+		/**
+		*	Check if option to use Default Bootstrap Theme is set to true and will inject the css accordingly
+		*	@private
+		*	@method _useDefault
+		*	@return {com.spinal.ioc.plugins.ThemePlugin}
+		**/
+		_useDefault: function() {
+			if(this._config.bootstrap) {
+				var links = this._link({ theme: 'bootstrap', href: this._resolveURI({ path: this._bootstrap.core }) }) +
+					this._link({ theme: 'bootstrap-theme', href: this._resolveURI({ path: this._bootstrap.theme }) });
+				this._$header.append(links);
+			}
 			return this;
+		},
+
+		/**
+		*	Resolve Theme Path
+		*	@private
+		*	@method _resolveURI
+		*	@param config {Object} theme config reference
+		*	@return String
+		**/
+		_resolveURI: function(config) {
+			if(config.url) return config.url;
+			return (this._config.basePath + config.path);
 		},
 
 		/**
@@ -76,7 +124,7 @@ define(['ioc/engine',
 			var config = _.find(this.themes, function(theme, name) {
 				return ((!themeName && theme._default && (themeName = name)) || (themeName === name));
 			});
-			return { name: themeName, config: config };
+			return (config) ? { name: themeName, config: config } : this.theme_current();
 		},
 
 		/**
@@ -88,9 +136,10 @@ define(['ioc/engine',
 		**/
 		process: function() {
 			var theme = this.theme_current();
-			var $existing = this._$header.children('link[theme!="'+ theme.name +'"]');
+			var rmvEval = 'link[theme!="'+ theme.name +'"][theme!="bootstrap"][theme!="bootstrap-theme"]';
+			var $existing = this._$header.children(rmvEval);
 			if($existing.length > 0) $existing.remove();
-			this._$header.append(this._domLink({ theme: theme.name, href: theme.config.path }));
+			this._$header.append(this._link({ theme: theme.name, href: this._resolveURI(theme.config) }));
 			return this;
 		},
 

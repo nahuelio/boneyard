@@ -220,22 +220,26 @@ define(['ioc/context',
 				this.appContext.html_load();
 			});
 
-			it.skip('ThemePlugin: Should Change the theme', function() {
-				// Spinal Active
-				var $linkSpinal = $('head > link[theme="spinal"]');
-				var $linkMy = $('head > link[theme="my"]');
-				expect($linkSpinal.length).to.be.equal(1);
-				expect($linkMy.length).to.be.equal(0);
-				expect(this.appContext.theme_current().name).to.be.equal('spinal');
-
-				this.appContext.theme_change('my');
-
+			it('ThemePlugin: Should Change the theme (with Bootstrap active)', function() {
 				// Bootstrap Active
-				var $linkSpinal = $('head > link[theme="spinal"]');
+				var $linkBootstrap = $('head > link[theme="bootstrap"]');
+				expect($linkBootstrap.length).to.be.equal(1);
+
+				// User-defined default theme "My"
 				var $linkMy = $('head > link[theme="my"]');
-				expect($linkSpinal.length).to.be.equal(0);
+				var $linkYours = $('head > link[theme="yours"]');
 				expect($linkMy.length).to.be.equal(1);
+				expect($linkYours.length).to.be.equal(0);
 				expect(this.appContext.theme_current().name).to.be.equal('my');
+
+				this.appContext.theme_change('yours');
+
+				// "Yours" Theme active
+				var $linkMy = $('head > link[theme="my"]');
+				var $linkYours = $('head > link[theme="yours"]');
+				expect($linkMy.length).to.be.equal(0);
+				expect($linkYours.length).to.be.equal(1);
+				expect(this.appContext.theme_current().name).to.be.equal('yours');
 			});
 
 		});
