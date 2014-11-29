@@ -3,7 +3,7 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 
-var fs = require('fs'),
+var fse = require('fs-extra'),
 	path = require('path'),
 	resolve = path.resolve,
 	join = path.join,
@@ -23,15 +23,15 @@ var Utils = {
 	**/
 	createDir: function(basePath, dirname) {
 		var p = (dirname) ? resolve(basePath, dirname) : basePath;
-		if(!fs.existsSync(p)) fs.mkdirSync(p, 0777);
+		fse.ensureDirSync(p, 0777);
 		return p;
 	},
 
 	/**
 	*	Create a file in the filename specified as parameter with a given content (stream).
 	**/
-	createFile: function(filename, stream, opts) {
-		fs.writeFileSync(filename, stream, opts);
+	createFile: function(filename, stream) {
+		fse.outputFileSync(filename, stream);
 		return filename;
 	},
 
@@ -39,20 +39,40 @@ var Utils = {
 	*	Copy a file specified in sourceFile parameter into the target folder
 	**/
 	copyFile: function(sourceFile, targetFile) {
-		fs.createReadStream(sourceFile).pipe(fs.createWriteStream(targetFile));
+		fse.createReadStream(sourceFile).pipe(fse.createWriteStream(targetFile));
+	},
+
+	/**
+	*	Extracts the filename form a full filename path
+	**/
+	getFilename: function(fullFilename, noext) {
+		if(!fullFilename || fullFilename === '') return '';
+		var fn = fullFilename.substring((fullFilename.lastIndexOf('/') + 1), fullFilename.length);
+		if(!noext) return fn;
+		return (fn && fn.indexOf('/') === -1) ? fn.substring(0, fn.lastIndexOf('.')): '';
 	},
 
 	/**
 	*	Filter Files inside a path.
 	**/
 	filterFiles: function(path, excl, onlyFilename) {
-		var files = this.excludePaths(path, fs.readdirSync(path), excl);
+		var files = this.excludePaths(path, fse.readdirSync(path), excl);
 		if(files.length == 0) return [];
 		return _.flatten(_.compact(_.map(files, function(fd) {
 			var p = resolve(path, fd);
-			var st = fs.statSync(p);
+			var st = fse.statSync(p);
 			return (st && st.isFile()) ? ((onlyFilename) ? fd : p) : this.filterFiles(p, excl, onlyFilename);
 		}, this)));
+	},
+
+	/**
+	* 	Filters files only (no directories) from a list of filepaths
+	**/
+	noDirs: function(paths) {
+		return _.compact(_.map(paths, function(p) {
+			var st = fse.statSync(p);
+			return (st && st.isFile()) ? p : null;
+		}));
 	},
 
 	/**
@@ -72,13 +92,6 @@ var Utils = {
 	**/
 	findFiles: function(pattern, opts) {
 		return glob.sync(pattern, opts);
-	},
-
-	/**
-	*	Log messages into the console.stdout
-	**/
-	log: function(message) {
-		if(!this.verbose) console.log(message);
 	}
 
 };

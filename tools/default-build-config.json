@@ -32,8 +32,8 @@
 		}
 	},
 	"themes": {
-		"spinal": {
-			"src": "src/themes",
+		"bootstrap": {
+			"src": "bower_components/bootstrap/dist",
 			"target": "target"
 		}
 	},

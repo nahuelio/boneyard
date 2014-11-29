@@ -191,7 +191,7 @@ var Composer = {
 			if(!this.defaults.config) this.generateSpec(baseDir);
 			this.config.require = JSON.stringify(this.config.require);
 			var tpl = fs.readFileSync(resolve(__dirname, this.defaults.template), "utf8");
-			Utils.createFile(baseDir + '/index.html', _.template(tpl, this.config), { encoding: 'utf8' });
+			Utils.createFile(baseDir + '/index.html', _.template(tpl, this.config));
 		} catch(ex) {
 			Logger.error(ex.message);
 		}

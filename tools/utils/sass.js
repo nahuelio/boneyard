@@ -1,6 +1,11 @@
 /**
 *	Build Sass Utils
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
+*	Important Note:
+*		General purpose of this module was to integrate lib-sass to allow compilation of built-in themes
+*		provided by this framework as well as a setup to allow developers to build their own themes or css bundles based
+*		on bootstrap. In our next release, we will be offering this feature, so this module will be executing node-sass.
+*		For now, this module will only copy the assets from bootstrap (css and fonts) into the target directory.
 **/
 var fs = require('fs'),
 	path = require('path'),
@@ -66,7 +71,7 @@ var Sass = {
 	init: function(opts) {
 		opts || (opts = {});
 		if(!opts.src || !opts.target || !_.isString(opts.src) || !_.isString(opts.target))
-			throw new Error('[THEMES] Build Themes util requires a \'src\' and \'target\' parameters in order to work');
+			throw new Error('[THEMES-BUILD] Build Themes util requires a \'src\' and \'target\' parameters in order to work');
 		return this.setup(opts);
 	},
 
@@ -90,20 +95,23 @@ var Sass = {
 	*	@param opts {Object} options
 	**/
 	process: function() {
-		// TODO: Implement
-		Logger.debug('[THEMES] Exporting Template [' + this.name + '] from [' + this.src + '] to [' + this.target + ']', { nl: true });
-		return this.export();
+		var files = Utils.noDirs(Utils.findFiles(resolve(this.basePath, this.src) + '/**/!(*.js)', {}));
+		if(files.length > 0) {
+			var targetPath = Utils.createDir(resolve(this.basePath, this.target), ('themes/' + this.name));
+			_.each(files, function(f, name) { this.export(f, targetPath); }, this);
+			Logger.debug('[THEMES-BUILD] Exporting Template [' + this.name + '] from [' + this.src + '] to [' + this.target + ']', { nl: true });
+		}
+		return this;
 	},
 
 	/**
-	*	Export HTML Templates into the target folder
-	*	@public
-	*	@method export
-	*	@return HTML
+	*	Export files
 	**/
-	export: function() {
-		// TODO: Implement
-		return this;
+	export: function(file, targetPath) {
+		var filePath = (file.indexOf(this.src) !== -1) ?
+			file.substring((this.src.length + 1), file.length) : Utils.getFilename(file),
+			output = resolve(targetPath, filePath);
+		Utils.createFile(output, fs.readFileSync(file, 'utf8'));
 	}
 
 };

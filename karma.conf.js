@@ -5,14 +5,19 @@ module.exports = function(config) {
 
     var _ = require('underscore'),
         Sass = require('./tools/utils/sass'),
-        HTML = require('./tools/utils/html');
+        HTML = require('./tools/utils/html'),
+        Logger = require('./tools/utils/logger');
+
+    Logger.mute = true;
 
     // External Resources Setup
-    var resourceConfig = { target: 'test', name: 'spinal' };
+    var resourceConfig = { target: 'test' };
 
     // Compilation for testing
-    Sass.init(_.extend({ src: 'src/themes' }, resourceConfig)).process();
-    HTML.init(_.extend({ src: 'src/templates' }, resourceConfig)).process();
+    Sass.init(_.extend({ src: 'bower_components/bootstrap/dist', name: 'bootstrap' }, resourceConfig)).process();
+    HTML.init(_.extend({ src: 'src/templates', name: 'spinal' }, resourceConfig)).process();
+
+    Logger.mute = false;
 
     config.set({
 

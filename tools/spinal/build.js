@@ -106,8 +106,7 @@ var Build = {
 				var filename = libPath + '/' + name + '.js';
 				var files = Utils.findFiles(resolve(resolve(this.defaults.basePath, './bower_components')) + '/**/' + name + '.js', {});
 				if(files.length > 0) {
-					var o = fs.readFileSync(files[0], 'utf8');
-					Utils.createFile(filename, this.minify(o), { mode: 0777, encoding: 'utf8', flags: 'w' });
+					var o = fs.readFileSync(files[0], 'utf8'); Utils.createFile(filename, this.minify(o));
 					Logger.debug('[PREBUILD] Exported [' + name + ']');
 				} else {
 					Logger.debug('[PREBUILD] Error while exporting library dependency. Skipping...', { nl: true });
@@ -139,7 +138,7 @@ var Build = {
 	},
 
 	/**
-	*	Releaase project packages using requirejs optimizer
+	*	Release project packages using requirejs optimizer
 	*	@public
 	*	@method release
 	*	@param [callback] {Function} optional callback
@@ -194,7 +193,7 @@ var Build = {
 				contents = fs.readFileSync(m._buildPath, 'utf8');
 				contents = _s.insert(contents, 0, _.template(banner, data));
 				if(m.name === 'spinal-core') contents = _.template(contents, { __VERSION__: pkg.version });
-				Utils.createFile(m._buildPath, contents, { mode: 0777, encoding: 'utf8', flags: 'w' });
+				Utils.createFile(m._buildPath, contents);
 			}
 		}, this);
 		Logger.debug('[JS-BUILD] Deployment DONE', { nl: true });

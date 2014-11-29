@@ -21,6 +21,11 @@ var Logger = {
 	},
 
 	/**
+	*	Logger Mute
+	**/
+	mute: false,
+
+	/**
 	*	Logs the message into the STDOUT
 	*	@private
 	*	@method _out
@@ -28,6 +33,7 @@ var Logger = {
 	*	@param [opts] {Object} extra options
 	**/
 	_out: function(msg, opts) {
+		if(this.mute) return;
 		if(opts.nl) msg = ('\n' + msg);
 		console.log(msg[opts.color]);
 	},

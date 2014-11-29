@@ -76,7 +76,7 @@ var HTML = {
 		opts || (opts = {});
 		this.output = {};
 		if(!opts.src || !opts.target || !_.isString(opts.src) || !_.isString(opts.target))
-			throw new Error('[HTML] Build HTML util requires a \'src\' and \'target\' parameters in order to work');
+			throw new Error('[HTML-BUILD] Build HTML util requires a \'src\' and \'target\' parameters in order to work');
 		return this.setup(opts);
 	},
 
@@ -135,7 +135,7 @@ var HTML = {
 	**/
 	process: function() {
 		var files = Utils.findFiles(this.src + '/**/*.html', {});
-		if(files.length === 0) Logger.warn('[HTML] No HTML template files found. Skipping...', { nl: true });
+		if(files.length === 0) Logger.warn('[HTML-BUILD] No HTML template files found. Skipping...', { nl: true });
 		_.each(files, function(f, n) {
 			var ns = this.getNamespace(f), input = fs.readFileSync(f, 'utf8');
 			if(ns) this.namespace(this.output[this.name], ns, input);
@@ -151,10 +151,10 @@ var HTML = {
 	**/
 	export: function() {
 		if(!_.isEmpty(this.output[this.name])) {
-			Logger.debug('[HTML] Exporting Template [' + this.name + '] from [' + this.src + '] to [' + this.target + ']', { nl: true });
+			Logger.debug('[HTML-BUILD] Exporting Template [' + this.name + '] from [' + this.src + '] to [' + this.target + ']', { nl: true });
 			var out = _.template(this.exportTpl, { tpls: JSON.stringify(this.output, null, '\t') });
 			Utils.createDir(this.target, 'templates');
-			Utils.createFile(resolve(this.target, 'templates', (this.name + '.js')), out, { mode: 0777, encoding: 'utf8', flags: 'w' });
+			Utils.createFile(resolve(this.target, 'templates', (this.name + '.js')), out);
 		}
 		return this;
 	}
