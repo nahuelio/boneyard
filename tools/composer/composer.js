@@ -5,13 +5,15 @@
 var fs = require('fs'),
 	path = require('path'),
 	resolve = path.resolve,
-	join = path.join;
+	join = path.join,
+	http = require('http');
 
 // Third-party libs
 var connect = require('connect'),
 	watch = require('watch'),
 	_ = require('underscore'),
-	_s = require('underscore.string');
+	_s = require('underscore.string'),
+	io = require('socket.io');
 
 // Project specific libs
 var Package = require('../utils/package'),
@@ -44,6 +46,17 @@ var Composer = {
 		clear: true,
 		verbose: false,
 		port: 9393
+	},
+
+	/**
+	*	Live Reload Server/SocketIO
+	*	@public
+	*	@property live
+	*	@type Object
+	**/
+	live: {
+		server: null,
+		socket: null
 	},
 
 	/**
@@ -90,7 +103,7 @@ var Composer = {
 		this.output();
 		this.setup();
 		this.createTarget();
-		this.spinUpAutoWatch();
+		this.spinUpServer();
 	},
 
 	/**
@@ -118,8 +131,8 @@ var Composer = {
 			if(this.defaults.config) {
 				this.customConfig(this.defaults.config);
 			} else {
-				Logger.warn('Custom Config file not specified.', { nl: true });
-				Logger.log('Loaded Default Config file.');
+				Logger.warn('[COMPOSER] Custom Application Config file not specified.', { nl: true });
+				Logger.log('[COMPOSER] Loaded Default Application Config file.');
 			}
 			_.extend(this.config, this.spinalConfig);
 		} catch(ex) {
@@ -135,9 +148,9 @@ var Composer = {
 	*	@param configPath {String} custom config path
 	**/
 	customConfig: function(configPath) {
-		Logger.log('Loading Config file [' + configPath + ']', { nl: true });
+		Logger.log('[COMPOSER] Loading Config file [' + configPath + ']', { nl: true });
 		this.config = require(configPath);
-		if(!this.config || !_.isObject(this.config)) throw new Error('[CONFIG] Malformed custom config file.');
+		if(!this.config || !_.isObject(this.config)) throw new Error('[COMPOSER] Malformed Custom Config Aapplication File.');
 	},
 
 	/**
@@ -172,13 +185,13 @@ var Composer = {
 	*	@method createTarget
 	**/
 	createTarget: function() {
-		Logger.log('Generating Composer Environment', { nl: true });
+		Logger.log('[COMPOSER] Generating Composer Environment', { nl: true });
 		try {
 			var baseDir = Utils.createDir(this.basePath, this.target); // FIXME: Global Execution
 			if(!this.defaults.config) this.generateSpec(baseDir);
 			this.config.require = JSON.stringify(this.config.require);
 			var tpl = fs.readFileSync(resolve(__dirname, this.defaults.template), "utf8");
-			Utils.createFile(baseDir + '/index.html', _.template(tpl, this.config), { encoding: 'utf8' });
+			Utils.createFile(baseDir + '/index.html', _.template(tpl, this.config));
 		} catch(ex) {
 			Logger.error(ex.message);
 		}
@@ -189,15 +202,32 @@ var Composer = {
 	*	@public
 	*	@method spinUpAutowatch
 	**/
-	spinUpAutoWatch: function() {
-		Logger.log('Spinning Up Server...', { nl: true });
-		// TODO: Watch service do later
-		//watch.createMonitor(this.source, { ignoreDotFiles: true, ignoreUnreadableDir: true }, _.bind(this.onFileChange, this));
-		 // FIXME: Global Execution of 'this.target';
-		connect().use(connect.static(resolve(this.basePath, this.target)))
-			.use(connect.static(resolve(this.basePath, './target')))
+	spinUpServer: function() {
+		Logger.log('[COMPOSER] Spinning Up Server...', { nl: true });
+		// Static Serving
+		// FIXME: Remove harcoded ./dist folder
+		connect().use(connect.static(resolve(this.basePath, './dist')))
+			.use(connect.static(resolve(this.basePath, this.target)))
+			.use(connect.static(resolve(this.basePath, this.source)))
 			.listen(this.defaults.port);
-		Logger.debug('Server listening on port ' + this.defaults.port + '...', { nl: true });
+		Logger.debug('[COMPOSER] Server listening on port ' + this.defaults.port + '...', { nl: true });
+		// AutoWatch
+		watch.createMonitor(resolve(this.basePath, this.source), {
+			ignoreDotFiles: true, ignoreUnreadableDir: true
+		}, _.bind(this.onFileChange, this));
+		this.spinUpAutoWatch();
+	},
+
+	spinUpAutoWatch: function() {
+		this.live.server = http.createServer();
+		this.live.socket = io(this.live.server);
+		this.live.socket.on('connect', _.bind(function(client) {
+			Logger.log('[COMPOSER] Client Binded [' + client.id + ']');
+			console.log('[COMPOSER] Total clients connected', _.keys(this.live.socket.sockets.connected).length);
+		}, this));
+		this.live.server.listen(9494, function() {
+			Logger.debug('[COMPOSER] ServeSocket listening on port 9494...', { nl: true });
+		});
 	},
 
 	/**
@@ -207,18 +237,21 @@ var Composer = {
 	*	@param monitor {Object} monitor reference
 	**/
 	onFileChange: function(monitor) {
-		monitor.on("created", function (f, stat) {
-			Logger.debug('File Created [' + f + ']', { nl: true });
-			// TODO: Fire emitter to the browser to reload
-		});
-		monitor.on("changed", function (f, curr, prev) {
-			Logger.debug('File Modified [' + f + ']', { nl: true });
-			// TODO: Fire emitter to the browser to reload
-		});
-		monitor.on("removed", function (f, stat) {
-			Logger.debug('File Removed [' + f + ']', { nl: true });
-			// TODO: Fire emitter to the browser to reload
-		});
+		monitor.on("created", _.bind(function(f, stat) {
+			Logger.debug('File Created [' + f + ']');
+			Logger.debug('[COMPOSER] Refreshing browser...');
+			this.live.socket.emit('reload');
+		}, this));
+		monitor.on("changed", _.bind(function (f, curr, prev) {
+			Logger.debug('File Modified [' + f + ']');
+			Logger.debug('[COMPOSER] Refreshing browser...');
+			this.live.socket.emit('reload');
+		}, this));
+		monitor.on("removed", _.bind(function (f, stat) {
+			Logger.debug('File Removed [' + f + ']');
+			Logger.debug('[COMPOSER] Refreshing browser...');
+			this.live.socket.emit('reload');
+		}, this));
 	}
 
 };

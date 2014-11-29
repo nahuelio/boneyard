@@ -56,7 +56,7 @@ define(['core/spinal',
 
 			it('Should return instance of View with precompiled inline template as Function', function() {
 				this.testView = new View({
-					template: _.template('<input class="{{className}}" />')
+					template: _.template('<input class="<%= className %>" />')
 				});
 				expect(this.testView).to.be.ok();
 				expect(this.testView.template).to.be.a(Function);
@@ -162,7 +162,7 @@ define(['core/spinal',
 			it('Should render a View instance with template + model data', function() {
 				this.testView = {
 					model: new Backbone.Model({ name: 'Hello Spinal!' }),
-					template: '<p>{{name}}</p>'
+					template: '<p><%= name %></p>'
 				};
 				var view = this.cglobal.add(this.testView);
 				var result = view.render();
@@ -181,7 +181,7 @@ define(['core/spinal',
 					model: new Backbone.Model({ name: 'Hello Spinal from successor!' }),
 					interface: View
 				});
-				this.testView = { template: '<p>{{name}}</p>' };
+				this.testView = { template: '<p><%= name %></p>' };
 				var view = temporalContainer.add(this.testView);
 				var result = view.render();
 				expect(result).to.be.ok();

@@ -49,7 +49,7 @@ define(['core/spinal',
 			UndefinedContext: _.template('Context Not Defined'),
 			InvalidSpecFormat: _.template('Invalid Spec Format'),
 			SpecIdRequired: _.template('Spec ID was not defined'),
-			FactoryNotDeclared: _.template('Factory is required to be able to instanciate {{clazz}}'),
+			FactoryNotDeclared: _.template('Factory is required to be able to instanciate <%= clazz %>'),
 			EngineNotDeclared: _.template('Engine not declared')
 		}
 

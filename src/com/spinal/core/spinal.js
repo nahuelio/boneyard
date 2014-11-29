@@ -26,10 +26,6 @@ define(['libs/backbone'], function() {
 		// Expose Backbone and Underscore hard dependency into Spinal Namespace
 		exports.Backbone = root.Backbone; exports._ = root._;
 
-		// Override Settings to evaluate Mustache Style
-		_.templateSettings.interpolate = /\{\{([\s\S]+?)\}\}/g;
-		_.templateSettings.escape = /\{\{-(.*?)\}\}/g;
-
 		/**
 		*	Namespacing Strategy
 		*	@static
@@ -39,8 +35,8 @@ define(['libs/backbone'], function() {
 		*	@return Function
 		**/
 		var namespace = exports.namespace = function(path, constructor) {
-			if(!path || !_.isString(path) || !constructor || !_.isFunction(constructor))
-				throw new Error('Spinal.namespace accepts 2 arguments: path (string) and constructor (function).');
+			if(!path || !_.isString(path) || !constructor)
+				throw new Error('Spinal.namespace accepts 2 arguments: path (string) and constructor.');
 			var parts = path.split('.'), parent = exports, pl, i;
 			if (parts[0] == "spinal") parts = parts.slice(1);
 			pl = parts.length;

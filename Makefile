@@ -18,7 +18,7 @@ clean-docs:
 
 clean-build:
 	@echo "\nCleanning Build..."
-	@rm -fr target/*
+	@rm -fr dist/*
 
 ## Dependencies
 
@@ -38,7 +38,7 @@ test:
 doc:
 	@make clean-docs
 	@echo "\nCreating API DOCS (YUIDOC)...\n"
-	@node ./node_modules/yuidocjs/lib/cli -c ./yuidoc.json --exclude libs ./src
+	@node ./node_modules/yuidocjs/lib/cli -q -c ./yuidoc.json --exclude libs ./src
 
 ## Build
 
@@ -48,12 +48,14 @@ build:
 	@make clean-build
 	@node ./bin/spinal -v
 
+## Composer
+composer:
+	@node ./bin/composer
+
 ## Benchmark
 
 benchmark:
 	@echo "\nBenchmark SpinalJS..."
-	@make clean-benchmark
-	@node ./bin/spinal -b
 
 ## Spin Server
 
@@ -61,4 +63,4 @@ run:
 	@echo "\nRunning server..."
 	@node run
 
-.PHONY: clean clean-coverage clean-benchmark clean-docs clean-build install-dependencies test doc build benchmark run
+.PHONY: clean clean-coverage clean-benchmark clean-docs clean-build install-dependencies test doc build composer benchmark run

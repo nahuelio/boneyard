@@ -1,17 +1,19 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>Spinal Composer | <%= project.name %></title>
-		<script type="text/javascript" src="libs.js" data-spec="<%= project.mainSpec %>"></script>
+		<title><%= project.name %> | Spinal Composer Tool v0.0.1</title>
+		<script type="text/javascript" src="http://localhost:9494/socket.io/socket.io.js"></script>
+		<script type="text/javascript" src="libs/require.js" data-spec="<%= project.mainSpec %>"></script>
+		<script type="text/javascript">
+			var socket = io.connect('http://localhost:9494/', { 'sync disconnect on unload': true });
+			socket.on('reload', function() { document.location.reload(); });
+		</script>
 	</head>
 
 	<body>
 		<div id="global">
 			<h2><%= project.name %></h2>
 		</div>
-		<script type="text/javascript">
-			requirejs.config(<%= require %>);
-			require(['ioc/context']);
-		</script>
+		<script type="text/javascript">require(['main'], function() { require(['ioc/context']); });</script>
 	</body>
 </html>

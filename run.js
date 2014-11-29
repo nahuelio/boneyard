@@ -1,9 +1,9 @@
 /**
 *	Basic Web Service that servers content for
-*	Benchmarking, API docs, high level documentation (examples) and Spinal Composer.
+*	Benchmarking, API docs, high level documentation (examples).
 **/
 var connect = require('connect');
-connect().use(connect.static(__dirname + '/target'))
+connect().use(connect.static(__dirname + '/dist'))
 	.use(connect.static(__dirname + '/benchmark'))
 	.use(connect.static(__dirname + '/docs'))
 	.use(connect.static(__dirname + '/examples'))

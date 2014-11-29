@@ -9,10 +9,13 @@
             { "name": "spinal-aop", "exclude": ["libs", "spinal-core", "spinal-util"] },
             { "name": "spinal-ui", "exclude": ["libs", "spinal-core", "spinal-util"] }
         ],
-        "fileExclusionRegExp": "/.md$/",
+		"paths": {
+			"templates": "empty:"
+		},
+        "fileExclusionRegExp": "^\\.|\\.html$|\\.css$|\\.sass$|\\.md$",
         "findNestedDependencies": true,
         "removeCombined": true,
-        "optimize": "uglify2",
+        "optimize": "none",
         "uglify": {
             "toplevel": false,
             "ascii_only": true,
@@ -20,8 +23,20 @@
             "max_line_length": 1000,
             "no_mangle": true
         },
-        "dir": "target"
+        "dir": "dist"
     },
+	"templates": {
+		"spinal": {
+			"src": "src/templates",
+			"target": "dist"
+		}
+	},
+	"themes": {
+		"bootstrap": {
+			"src": "bower_components/bootstrap/dist",
+			"target": "dist"
+		}
+	},
     "options": {
 		"debug": false,
         "minify": true,

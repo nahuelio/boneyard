@@ -24,12 +24,13 @@ define([], function() {
 
 		$plugins: {
 			html: {
-				spinal: { path: 'templates/spinal-tpl', lazyLoading: true },
-				ui: { path: 'templates/ui-tpl' }
+				my: { path: 'tpls/my-tpl', lazyLoading: true },
+				other: { path: 'tpls/other-tpl' }
 			},
 			theme: {
-				spinal: { path: 'base/test/com/spinal/ioc/themes/spinal.css', default: true },
-				bootstrap: { path: 'base/test/com/spinal/ioc/themes/bootstrap.css' }
+				config: { basePath: '/base/test/themes/', bootstrap: true },
+				my: { url: '/base/test/com/spinal/ioc/skins/my.css', _default: true },
+				yours: { url: '/base/test/com/spinal/ioc/skins/yours.css' }
 			}
 		}
 

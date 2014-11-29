@@ -4,7 +4,7 @@
 ### Overall Project Status: In Progress
 
 Architectural ToolKit that unifies most of common libraries and provides a simplistic high level API
-to build scalable and robust webapps.
+to build scalable and robust web apps.
 
 * Backbone (_underscore_)
 * RequireJS
@@ -12,44 +12,68 @@ to build scalable and robust webapps.
 * Bootstrap
 * Modernizr
 
----
+### Requirements
 
-## Installation / Build
+* Node And NPM installed
 
-Build from source (master):
+### Installation
+
+* Run ```npm install spinaljs``` in your project folder
+* Or add ```"spinaljs": "version"``` in your dependency list in your package.json and then run ```npm install```
+
+### Usage
+
+Once installed, Spinal provides 2 command line tools that will help you with the development process.
+
+* Spinal Build Tool
+* Spinal Composer
+
+**Spinal Build Tool**, will allow you to compile your specific project modules and automate the build task to export all your code into your project specific folder.
+
+**Spinal Composer**, will allow you to test your modules/components code in real time.
+Just by using a simple config json file, this tool will generate a temporal folder, spin up a server to serve all your source code so you can access it with a browser to check the results.
+Also, the server will be listening for code changes (whenever the source code changes, the browser will reload automatically).
+
+Please, visit the documentation related to the usage of these tools.
+
+# Developers or Contributors
+
+If you want to provide feedback, suggest changes or simply check the source code, here are some quick notes and steps after pulling the code from master.
+
+### Build from source:
 
 1. Run ```npm install -g karma-cli```
 * Run ```npm install -g bower```
 * Run ```npm install```
 * Run ```make build```
 
-## API Documentation
+### API Documentation
 
 * YUIDoc Available after running ```make build``` on ```/apidocs```
 
-## Unit Testing / Code Coverage
+### Unit Testing / Code Coverage
 
 * Available after running ```make build``` on ```/coverage```
 
-## Development Roadmap
+# Development Roadmap
 
 * IoC Plugins
 * Spinal Composer Tool development
 * UI Package development with support of Themes and Template (IoC plugins)
 * Benchmark Spinal Core packages
 
-## Stretch Goals
+### Stretch Goals
 
 * AoP Implementation
 * IoC Storage (HTML5 LocalStorage API | Persistent Layer that will work as a Plugin) to store specs.
 * Poly package development (Will use Modernizr behind the scenes)
 
-## Documentation Roadmap
+### Documentation Roadmap
 
 * High Level documentation
 * Usage Examples, simple applications (Classic TODO application, IoC important use cases)
 
-## Design Roadmap
+### Design Roadmap
 
 * Official Website [3dimention/spinal](http://3dimention.github.io/spinal) | _In Progress_
 * Logo needs more work :)
