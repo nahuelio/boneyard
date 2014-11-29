@@ -1,12 +1,12 @@
 {
-	"name": "spinal",
+	"name": "spinaljs",
 	"version": "0.0.1",
 	"homepage": "https://github.com/3dimention/spinal",
 	"authors": [
 		"kuakman <3dimentionar@gmail.com>"
 	],
 	"description": "HighLevel UI framework built on top of BackboneJS",
-	"main": "target/spinal.*",
+	"main": "dist/spinal.*",
 	"dependencies": {
 		"require": "git@github.com:jrburke/requirejs-bower.git#2.1.11",
 		"backbone": "1.1.2",

@@ -1,6 +1,6 @@
 src/libs
 coverage
-target
+dist/build.txt
 benchmark/spinal-*.html
 apidocs
 composer-app

@@ -205,7 +205,8 @@ var Composer = {
 	spinUpServer: function() {
 		Logger.log('[COMPOSER] Spinning Up Server...', { nl: true });
 		// Static Serving
-		connect().use(connect.static(resolve(this.basePath, './target')))
+		// FIXME: Remove harcoded ./dist folder
+		connect().use(connect.static(resolve(this.basePath, './dist')))
 			.use(connect.static(resolve(this.basePath, this.target)))
 			.use(connect.static(resolve(this.basePath, this.source)))
 			.listen(this.defaults.port);

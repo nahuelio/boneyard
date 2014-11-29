@@ -1,25 +1,28 @@
 {
-	"name": "spinal",
+	"name": "spinaljs",
 	"version": "0.0.1",
 	"description": "UI Framework built on top of BackboneJS",
 	"main": "run.js",
-	"dependencies": {},
-	"devDependencies": {
+	"homepage": "http://3dimention.github.io/spinal",
+	"dependencies": {
 		"connect": "2.13.x",
 		"commander": "2.0.0",
 		"async": "*",
 		"glob": "3.2.9",
 		"fs-extra": "0.12.0",
+		"requirejs": "2.1.11",
 		"underscore": "1.6.x",
 		"underscore.string": "2.3.x",
 		"watch": "~0.11.x",
-		"colors": "~0.6.2",
-		"benchmark": "1.0.x",
 		"uglify-js": "1.3.5",
+		"socket.io": "~1.2",
+		"colors": "~0.6.2"
+	},
+	"devDependencies": {
+		"benchmark": "1.0.x",
 		"mocha": "1.10.x",
 		"jscoverage": "0.3.7",
 		"yuidocjs": "0.3.x",
-		"socket.io": "~1.2",
 		"karma": "~0.12.x",
 		"karma-mocha": "*",
 		"karma-mocha-reporter": "0.2.2",
@@ -40,8 +43,7 @@
 		"composer": "./bin/composer"
 	},
 	"scripts": {
-		"test": "make test",
-		"install": "make build"
+		"test": "make test"
 	},
 	"repository": {
 		"type": "git",
@@ -64,10 +66,9 @@
 	},
 	"files": [
 		"bin",
-		"target",
-		"docs",
-		"examples",
+		"dist",
 		"tools",
-		"LICENSE"
+		"LICENSE",
+		"Makefile"
 	]
 }

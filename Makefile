@@ -18,7 +18,7 @@ clean-docs:
 
 clean-build:
 	@echo "\nCleanning Build..."
-	@rm -fr target/*
+	@rm -fr dist/*
 
 ## Dependencies
 
@@ -56,8 +56,6 @@ composer:
 
 benchmark:
 	@echo "\nBenchmark SpinalJS..."
-	@make clean-benchmark
-	@node ./bin/spinal -b
 
 ## Spin Server
 

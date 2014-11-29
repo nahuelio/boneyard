@@ -6,7 +6,6 @@ var program = require('commander'),
 	path = require('path'),
 	resolve = path.resolve,
 	lib = path.join(path.dirname(fs.realpathSync(__filename)), '../'),
-	benchmark = require(lib + 'tools/spinal/benchmark'),
 	build = require(lib + 'tools/spinal/build');
 
 /**
@@ -17,12 +16,7 @@ program
 	.usage('[options]')
 	.option('-c, --config', 'Custom Config File')
 	.option('-v, --verbose', 'Display useful messages while building project files.')
-	.option('-b, --benchmark', 'Generates Benchmark page to evaluate performance of SpinalJS framework.')
 	.parse(process.argv)
 	.name = 'spinal';
 
-if(program.benchmark) {
-	benchmark.exec();
-} else {
-	build.exec({ c: program.config, v: program.verbose, basePath: resolve('../') });
-}
+build.exec({ c: program.config, v: program.verbose, basePath: resolve('../') });

@@ -23,18 +23,18 @@
             "max_line_length": 1000,
             "no_mangle": true
         },
-        "dir": "target"
+        "dir": "dist"
     },
 	"templates": {
 		"spinal": {
 			"src": "src/templates",
-			"target": "target"
+			"target": "dist"
 		}
 	},
 	"themes": {
 		"bootstrap": {
 			"src": "bower_components/bootstrap/dist",
-			"target": "target"
+			"target": "dist"
 		}
 	},
     "options": {
