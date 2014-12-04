@@ -8,6 +8,8 @@ var fse = require('fs-extra'),
 	resolve = path.resolve,
 	join = path.join,
 	glob = require('glob'),
+	jsp = require("uglify-js").parser,
+	pro = require("uglify-js").uglify,
 	_ = require('underscore'),
 	_s = require('underscore.string');
 
@@ -92,6 +94,47 @@ var Utils = {
 	**/
 	findFiles: function(pattern, opts) {
 		return glob.sync(pattern, opts);
+	},
+
+	/**
+	*	Minifies Stream
+	*	@public
+	*	@method exec
+	*	@param stream {String} input string to be minified
+	*	@return String
+	**/
+	minify: function(stream) {
+		var ast = jsp.parse(stream),
+		ast = pro.ast_mangle(ast),
+		ast = pro.ast_squeeze(ast),
+		minified = pro.gen_code(ast);
+		return minified;
+	},
+
+	/**
+	*	Inject a banner into a File by specified the file in which the contents will be retrieved
+	*	@public
+	*	@method banner
+	*	@param bannerFile {String} banner file path
+	*	@param targetFile {String} File in which the banner content will be injected
+	*	@param [data] {Object} optional data to pass to the banner template
+	**/
+	banner: function(bannerFile, targetFile, data) {
+		var banner = fse.readFileSync(bannerFile, { encoding: 'utf8'});
+		var stream = fse.readFileSync(targetFile, 'utf8');
+		stream = _s.insert(stream, 0, (data) ? _.template(banner, data) : banner);
+		this.createFile(targetFile, stream);
+	},
+
+	/**
+	*	Error Handler
+	*	@private
+	*	@method _onError
+	*	@param err {String} Error message
+	**/
+	onError: function(err) {
+		console.error(err);
+		process.exit();
 	}
 
 };

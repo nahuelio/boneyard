@@ -46,11 +46,12 @@ build:
 	@echo "\nBuilding SpinalJS..."
 	@make test && make doc
 	@make clean-build
-	@node ./bin/spinal -v
+	@node ./tools/spinal/build
 
 ## Composer
+
 composer:
-	@node ./bin/composer
+	@node ./tools/composer/composer
 
 ## Benchmark
 

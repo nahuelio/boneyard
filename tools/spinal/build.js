@@ -9,9 +9,6 @@ var fs = require('fs'),
 
 // Third-party libs
 var	requirejs = require('requirejs'),
-	jsp = require("uglify-js").parser,
-	pro = require("uglify-js").uglify,
-	async = require('async'),
 	_ = require('underscore'),
 	_s = require('underscore.string');
 
@@ -23,8 +20,7 @@ var Package = require('../utils/package'),
 	Utils = require('../utils/util');
 
 // Project Configs
-var pkg = require('../../package.json'),
-	bowerpkg = require('../../bower.json');
+var pkg = require('../../package.json');
 
 /**
 *	Build namespace
@@ -32,18 +28,23 @@ var pkg = require('../../package.json'),
 var Build = {
 
 	/**
-	*	Defaults
+	*	Base Path
 	*	@public
-	*	@property defaults
-	*	@type Object
+	*	@property basePath
+	*	@type String
 	**/
-	defaults: {
-		basePath: resolve(__dirname, '../../'),
-		config: '../default-build-config.json'
-	},
+	basePath: resolve(__dirname, '../../'),
 
 	/**
-	*	Build config
+	*	Config File Path
+	*	@public
+	*	@property configPath
+	*	@type String
+	**/
+	configPath: resolve(__dirname, '../default-build-config.json'),
+
+	/**
+	*	Config Object
 	*	@public
 	*	@property config
 	*	@type Object
@@ -54,43 +55,33 @@ var Build = {
 	*	Execute Build
 	*	@public
 	*	@method exec
-	*	@param [opts] {Object} extra options
 	**/
-	exec: function(opts) {
-		opts || (opts = {});
-		this.defaults = _.extend(opts, this.defaults);
-		this.output();
-		this.loadConfig();
-		this.libs();
-		this.release(_.bind(function() {
-			process.nextTick(_.bind(function() { this.templates(); this.themes(); }, this));
-		}, this));
+	exec: function() {
+		this.output(pkg);
+		this.loadConfig().libs();
+		this.release(_.bind(this._onRelease, this));
 	},
 
 	/**
 	*	Output Initial Message
 	*	@public
 	*	@method output
+	*	@param pkg {Object} package.json reference
 	**/
-	output: function() {
-		Logger.log('----------------------', { nl: true });
-		Logger.log('| Spinal Build v' + pkg.version + ' |');
-		Logger.log('----------------------');
+	output: function(pkg) {
+		Logger.log('| ' + _s.capitalize(pkg.name) + ' Build v' + pkg.version + ' |', { nl: true });
 	},
 
 	/**
-	*	Loads config
+	*	Load Default Config
 	*	@public
-	*	@method loadConfig
+	*	@method loadDefaultConfig
+	*	@return Build
 	**/
 	loadConfig: function() {
 		Logger.debug('[CONFIG] Loading Build Configuration...', { nl: true });
-		try {
-			this.config = require(resolve(__dirname, this.defaults.config));
-		} catch(ex) {
-			Logger.warn('[CONFIG] Build Config File doesn\'t exists or an error came through the syntax', { nl: true });
-			Logger.error(ex.message, { nl: true });
-		}
+		this.config = require(this.configPath);
+		return this;
 	},
 
 	/**
@@ -100,41 +91,18 @@ var Build = {
 	**/
 	libs: function() {
 		Logger.log('[PREBUILD] Building Dependencies...', { nl: true });
-		var libPath = Utils.createDir(resolve(this.defaults.basePath, './src/libs'));
-		_.each(bowerpkg.dependencies, function(version, name) {
-			try {
-				var filename = libPath + '/' + name + '.js';
-				var files = Utils.findFiles(resolve(resolve(this.defaults.basePath, './bower_components')) + '/**/' + name + '.js', {});
-				if(files.length > 0) {
-					var o = fs.readFileSync(files[0], 'utf8'); Utils.createFile(filename, this.minify(o));
-					Logger.debug('[PREBUILD] Exported [' + name + ']');
-				} else {
-					Logger.debug('[PREBUILD] Error while exporting library dependency. Skipping...', { nl: true });
-				}
-			} catch(ex) {
-				Logger.error(ex.message + '. Skipping...', { nl: true });
+		this.bowerpkg = require(resolve(this.basePath, './bower.json'));
+		var libPath = Utils.createDir(resolve(this.basePath, './src/libs')),
+			bowerDepPath = resolve(this.basePath, './bower_components');
+		_.each(this.bowerpkg.dependencies, function(version, name) {
+			var filename = libPath + '/' + name + '.js',
+				files = Utils.findFiles((bowerDepPath + '/**/' + name + '.js'), {});
+			if(files.length > 0) {
+				var o = fs.readFileSync(files[0], 'utf8');
+				Utils.createFile(filename, Utils.minify(o));
 			}
+			Logger.debug((o) ? ('[PREBUILD] Exported [' + name + ']') : ('[PREBUILD] Dependency [' + name + '] not found.'));
 		}, this);
-	},
-
-	/**
-	*	Build templates (HTML)
-	*	@public
-	*	@method templates
-	**/
-	templates: function() {
-		if(!this.config.templates || _.isEmpty(this.config.templates)) return this;
-		_.each(this.config.templates, function(t, name) { HTML.init(_.extend(t, { name: name })).process(); }, this);
-	},
-
-	/**
-	*	Build Themes (Sass)
-	*	@public
-	*	@method themes
-	**/
-	themes: function() {
-		if(!this.config.themes || _.isEmpty(this.config.themes)) return this;
-		_.each(this.config.themes, function(t, name) { Sass.init(_.extend(t, { name: name })).process(); }, this);
 	},
 
 	/**
@@ -146,59 +114,65 @@ var Build = {
 	release: function(callback) {
 		Logger.log('\n[JS-BUILD] Building...');
 		try {
-			Utils.createDir(resolve(this.defaults.basePath, this.config.project.dir));
-			this.config.project.mainConfigFile = resolve(this.defaults.basePath, this.config.project.mainConfigFile);
-			this.config.project.dir = resolve(this.defaults.basePath, this.config.project.dir);
-			requirejs.optimize(this.config.project, _.bind(function() {
-				this.banner();
-				if(callback && _.isFunction(callback)) callback();
-			}, this), function(err) {
-				console.error(err);
-				Logger.error(err.Error);
-				process.exit();
-			});
+			Utils.createDir(resolve(this.basePath, this.config.project.dir));
+			this.config.project.mainConfigFile = resolve(this.basePath, this.config.project.mainConfigFile);
+			this.config.project.dir = resolve(this.basePath, this.config.project.dir);
+			requirejs.optimize(this.config.project, _.bind(callback, this), Utils.onError);
 		} catch(ex) {
-			Logger.error('[JS-BUILD] Error ocurred while building modules: ' + ex.message, { nl: true });
-			process.exit();
+			this._onError('[JS-BUILD] Error ocurred while building modules: ' + ex.message);
 		}
 	},
 
-
 	/**
-	*	Minify Stream (Candidate to move into utils)
-	*	@public
-	*	@method exec
-	*	@param [opts] {Object} extra options
+	*	Release Complete Handler
+	*	@private
+	*	@method _onRelease
 	**/
-	minify: function(stream) {
-		var ast = jsp.parse(stream),
-		ast = pro.ast_mangle(ast),
-		ast = pro.ast_squeeze(ast),
-		minified = pro.gen_code(ast);
-		return minified;
+	_onRelease: function() {
+		Logger.debug('[JS-BUILD] DONE', { nl: true });
+		process.nextTick(_.bind(function() {
+			this.banner();
+			HTML.init(this.config.templates);
+			Sass.init(this.config.themes);
+			Logger.debug('[BUILD] Deployment DONE', { nl: true });
+		}, this));
 	},
 
 	/**
 	*	Banner inclusion
 	*	@public
-	*	@method exec
-	*	@param [opts] {Object} extra options
+	*	@method banner
 	**/
-	banner: function(result) {
-		var banner = fs.readFileSync(resolve(__dirname, '../', this.config.options.banner), { encoding: 'utf8'});
+	banner: function() {
+		var bannerFile = resolve(__dirname, '../', (this.config.banner) ? this.config.banner : '');
 		_.each(this.config.project.modules, function(m) {
 			if(m.name !== 'spinal-libs') {
-				var moduleName = _s.capitalize(_s.strRightBack(m.name, '-')),
-				data = { module: moduleName, version: pkg.version, year: new Date().getFullYear(), author: pkg.author },
-				contents = fs.readFileSync(m._buildPath, 'utf8');
-				contents = _s.insert(contents, 0, _.template(banner, data));
-				if(m.name === 'spinal-core') contents = _.template(contents, { __VERSION__: pkg.version });
-				Utils.createFile(m._buildPath, contents);
+				if(m.name === 'spinal-core') this.versioning(m);
+				if(this.config.banner) {
+					var data = {
+						module: _s.capitalize(_s.strRightBack(m.name, '-')),
+						version: pkg.version, year: new Date().getFullYear(), author: pkg.author
+					};
+					Utils.banner(bannerFile, m._buildPath, data);
+				}
 			}
 		}, this);
-		Logger.debug('[JS-BUILD] Deployment DONE', { nl: true });
+	},
+
+	/**
+	*	Injects Version into spinal core package
+	*	@public
+	*	@method versioning
+	*	@param {Object} package module
+	**/
+	versioning: function(module) {
+		var mStream = fs.readFileSync(module._buildPath, { encoding: 'utf8'});
+		mStream = _.template(mStream, { __VERSION__: pkg.version });
+		Utils.createFile(module._buildPath, mStream);
 	}
 
 };
+
+Build.exec();
 
 module.exports = Build;

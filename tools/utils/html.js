@@ -25,38 +25,6 @@ var HTML = {
 	basePath: resolve(__dirname, '../../'),
 
 	/**
-	*	Source Path
-	*	@public
-	*	@property src
-	*	@type String
-	**/
-	src: null,
-
-	/**
-	*	Target Path
-	*	@public
-	*	@property target
-	*	@type String
-	**/
-	target: null,
-
-	/**
-	*	Template package name
-	*	@public
-	*	@property name
-	*	@type String
-	**/
-	name: 'default',
-
-	/**
-	*	Output Object to be wrapped in a AMD module.
-	*	@public
-	*	@property output
-	*	@type Object
-	**/
-	output: null,
-
-	/**
 	*	AMD template for exporting HTML templates
 	*	@public
 	*	@property exportTpl
@@ -69,28 +37,38 @@ var HTML = {
 	*	Initialize HTML Util
 	*	@public
 	*	@method init
-	*	@param opts {Object} options
+	*	@param cfg {Object} templates config
 	*	@return HTML
 	**/
-	init: function(opts) {
-		opts || (opts = {});
-		this.output = {};
-		if(!opts.src || !opts.target || !_.isString(opts.src) || !_.isString(opts.target))
-			throw new Error('[HTML-BUILD] Build HTML util requires a \'src\' and \'target\' parameters in order to work');
-		return this.setup(opts);
+	init: function(cfg) {
+		if(!cfg || !_.isObject(cfg) || _.isEmpty(cfg)) return this;
+		return this.setup(cfg);
+	},
+
+	/**
+	*	Validates Template Config params
+	*	@public
+	*	@method validate
+	*	@param tpl {Object} template params
+	*	@return Boolean
+	**/
+	validate: function(tpl) {
+		return (tpl.src && tpl.target && tpl.src !== '' && tpl.target !== '');
 	},
 
 	/**
 	*	Setup Resolved Paths
 	*	@public
 	*	@method setup
-	*	@param opts {Object} options
+	*	@param cfg {Object} templates Config
 	**/
-	setup: function(opts) {
-		if(opts.name) this.name = opts.name;
-		this.src = resolve(this.basePath, opts.src);
-		this.target = resolve(this.basePath, opts.target);
-		this.output[this.name] = {};
+	setup: function(cfg) {
+		_.each(cfg, function(tpl, name) {
+			if(this.validate(tpl)) {
+				var src = resolve(this.basePath, tpl.src), target = resolve(this.basePath, tpl.target), out = {};
+				this.process({ out: out, name: name, src: src, target: target });
+			}
+		}, this);
 		return this;
 	},
 
@@ -98,11 +76,12 @@ var HTML = {
 	*	Get Package namespace Name
 	*	@public
 	*	@method getPackages
+	*	@param cfg {Object} template setup
 	*	@param filename {String} full path to filename
 	*	@return String
 	**/
-	getNamespace: function(filename) {
-		var paths = filename.split(this.src);
+	getNamespace: function(cfg, filename) {
+		var paths = filename.split(cfg.src);
 		var ns = (paths.length > 1) ? paths[1].split('/') : null,
 			path = (ns && ns.length > 0) ? _.compact(ns).join('.') : null;
 		return (path) ? path.substring(0, path.lastIndexOf('.html')) : null;
@@ -131,30 +110,32 @@ var HTML = {
 	*	Process
 	*	@public
 	*	@method setup
-	*	@param opts {Object} options
+	*	@param cfg {Object} template setup
 	**/
-	process: function() {
-		var files = Utils.findFiles(this.src + '/**/*.html', {});
+	process: function(cfg) {
+		cfg.out[cfg.name] = {};
+		var files = Utils.findFiles(cfg.src + '/**/*.html', {});
 		if(files.length === 0) Logger.warn('[HTML-BUILD] No HTML template files found. Skipping...', { nl: true });
 		_.each(files, function(f, n) {
-			var ns = this.getNamespace(f), input = fs.readFileSync(f, 'utf8');
-			if(ns) this.namespace(this.output[this.name], ns, input);
+			var ns = this.getNamespace(cfg, f), input = fs.readFileSync(f, 'utf8');
+			if(ns) this.namespace(cfg.out[cfg.name], ns, input);
 		}, this);
-		return this.export();
+		return this.export(cfg);
 	},
 
 	/**
 	*	Export HTML Templates into the target folder
 	*	@public
 	*	@method export
+	*	@param cfg {Object} template setup
 	*	@return HTML
 	**/
-	export: function() {
-		if(!_.isEmpty(this.output[this.name])) {
-			Logger.debug('[HTML-BUILD] Exporting Template [' + this.name + '] from [' + this.src + '] to [' + this.target + ']', { nl: true });
-			var out = _.template(this.exportTpl, { tpls: JSON.stringify(this.output, null, '\t') });
-			Utils.createDir(this.target, 'templates');
-			Utils.createFile(resolve(this.target, 'templates', (this.name + '.js')), out);
+	export: function(cfg) {
+		if(!_.isEmpty(cfg.out[cfg.name])) {
+			Logger.debug('[HTML-BUILD] Exporting Template [' + cfg.name + '] from [' + cfg.src + '] to [' + cfg.target + ']', { nl: true });
+			var out = _.template(this.exportTpl, { tpls: JSON.stringify(cfg.out, null, '\t') });
+			Utils.createDir(cfg.target, 'templates');
+			Utils.createFile(resolve(cfg.target, 'templates', (cfg.name + '.js')), out);
 		}
 		return this;
 	}

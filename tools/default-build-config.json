@@ -37,9 +37,5 @@
 			"target": "dist"
 		}
 	},
-    "options": {
-		"debug": false,
-        "minify": true,
-        "banner": "./default-banner.txt"
-    }
+    "banner": "./default-banner.txt"
 }
