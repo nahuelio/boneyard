@@ -23,16 +23,11 @@ to build scalable and robust web apps.
 
 ### Usage
 
-Once installed, Spinal provides 2 command line tools that will help you with the development process.
-
-* Spinal Build Tool
-* Spinal Composer
-
-**Spinal Build Tool**, will allow you to compile your specific project modules and automate the build task to export all your code into your project specific folder.
+Once installed, Spinal provides a command line tool ready -to-use that could help you with the development process.
 
 **Spinal Composer**, will allow you to test your modules/components code in real time.
 Just by using a simple config json file, this tool will generate a temporal folder, spin up a server to serve all your source code so you can access it with a browser to check the results.
-Also, the server will be listening for code changes (whenever the source code changes, the browser will reload automatically).
+Also, the server will be listening for code changes (whenever the source code changes, the browser will reload automatically). This should be very useful, specially while building spec configurations file from the Spinal IOC package.
 
 Please, visit the documentation related to the usage of these tools.
 
