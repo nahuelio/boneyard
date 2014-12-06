@@ -251,9 +251,11 @@ var Composer = {
 	*	@method spinUpAutowatch
 	**/
 	spinUpServer: function() {
-		connect().use(connect.static(this.target)).use(connect.static(this.source)).listen(this.defaults.port);
-		watch.createMonitor(this.source, { ignoreDotFiles: true, ignoreUnreadableDir: true }, _.bind(this.onFileChange, this));
+		var server = connect().use(connect.static(this.target)).use(connect.static(this.source));
+		if(!this.config) server.use(connect.static(resolve(this.bPath, './dist')));
+		server.listen(this.defaults.port);
 		this.spinUpAutoWatch();
+		watch.createMonitor(this.source, { ignoreDotFiles: true, ignoreUnreadableDir: true }, _.bind(this.onFileChange, this));
 		Logger.log('[COMPOSER] Server listening on port ' + this.defaults.port + '...', { nl: true });
 	},
 
