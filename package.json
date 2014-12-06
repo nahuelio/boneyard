@@ -38,7 +38,6 @@
 		"karma-htmlfile-reporter": "git+ssh://git@github.com:matthias-schuetz/karma-htmlfile-reporter.git#master"
 	},
 	"bin": {
-		"spinal": "./bin/spinal",
 		"composer": "./bin/composer"
 	},
 	"scripts": {
@@ -67,7 +66,6 @@
 		"bin",
 		"dist",
 		"tools",
-		"LICENSE",
-		"Makefile"
+		"LICENSE"
 	]
 }

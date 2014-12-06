@@ -145,8 +145,10 @@ var Composer = {
 	loadCustomConfig: function(cfg) {
 		if(!cfg.uPath) { Logger.log('[COMPOSER] Loaded Default Application Config file.', { nl: true }); return this; }
 		try {
-			this.config = require(cfg.config);
-			Logger.log('[COMPOSER] Loading Config file [' + cfg.config + ']', { nl: true });
+			var configPath = resolve(cfg.uPath, cfg.config);
+			this.uPath = cfg.uPath;
+			this.config = require(configPath);
+			Logger.log('[COMPOSER] Loading Config file [' + configPath + ']', { nl: true });
 		} catch(ex) { Utils.onError(ex.message); }
 		return this;
 	},
@@ -203,6 +205,7 @@ var Composer = {
 	*	@return Composer
 	**/
 	exportSpec: function() {
+		if(this.uPath) { this.mainSpec = this.config.mainSpec; return this; }
 		var src = resolve(this.source, this.mainSpec + '.js');
 		var target = resolve(this.target, Utils.getFilename(this.mainSpec) + '.js');
 		Utils.copyFile(src, target);
