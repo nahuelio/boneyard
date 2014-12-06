@@ -51,7 +51,7 @@ build:
 ## Composer
 
 composer:
-	@node ./tools/composer/composer
+	@node ./bin/composer -l
 
 ## Benchmark
 

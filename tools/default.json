@@ -1,8 +1,8 @@
 {
-	"project": {
-		"name": "SpinalJS",
-		"mainSpec": "./spinal-spec"
-	},
+	"name": "SpinalJS",
+	"source": "./src",
+	"target": "./composer-app",
+	"mainSpec": "../tools/composer/spinal-spec",
 	"require": {
 		"baseURL": "/",
 		"paths": {

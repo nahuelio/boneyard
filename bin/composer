@@ -4,27 +4,27 @@ var program = require('commander'),
 	pkg = require('../package.json'),
 	fs = require('fs'),
 	path = require('path'),
-	lib = path.join(path.dirname(fs.realpathSync(__filename)), '../');
-	composer = require(lib + 'tools/composer/composer');
+	_ = require('underscore'),
+	lib = path.join(path.dirname(fs.realpathSync(__filename)), '../'),
+	composer = require(lib + 'tools/composer/composer'),
+	args = Array.prototype.slice.call(process.argv, 2);
+
+// SpinalJS version
+if(_.contains(args, '-l')) return composer.exec();
 
 program
 	.version(pkg.version)
 	.usage('[options]')
-	.option('-s, --source <path>', 'Source path used to load your code')
-	.option('-c, --config <path>', 'Source path used to load your code')
+	.option('-c, --config <path>', 'Path to the config file that will be used to setup the tool')
 	.option('-e, --clear_on_exit', 'Composer tool will clear all the temporal files before exit')
-	.option('-v, --verbose', 'Display useful information about the process')
+	.option('-p, --port', 'Port number used to access the preview (default=9393)')
 	.on('--help', function() {
-		// TODO: Explain the temporal folder that compose will be generating the code preparation
 		console.log('  Examples:\n');
-		console.log('\tcomposer -s ./mysourcepath [-v]\n');
+		console.log('\tcomposer -c ./myapp.json [-e]\n');
 	})
 	.parse(process.argv)
 	.name = 'Spinal Composer Tool';
 
-composer.exec( {
-	source: program.source,
-	config: program.config,
-	clear: program.clear_on_exit,
-	verbose: program.verbose
-});
+// End-User version
+if(!program.config) return program.help();
+composer.exec({ config: program.config, uPath: process.cwd(), clear: program.clear_on_exit, port: program.port });
