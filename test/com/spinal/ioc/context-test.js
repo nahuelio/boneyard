@@ -203,10 +203,15 @@ define(['ioc/context',
 			});
 
 			it('HTMLPlugin: Should Retrieve a template using the default provided by spinal', function() {
+				// Spinal.basic.span
 				var output = this.appContext.html_tpl('spinal.basic.span', { _$: { id: 'testId', cls: 'testCls' } });
 				expect($(output).prop('tagName').toLowerCase()).to.be.equal('span');
 				expect($(output).attr('id')).to.be.equal('testId');
 				expect($(output).attr('class')).to.be.equal('testCls');
+				// Spinal.basic.a
+				var output = this.appContext.html_tpl('spinal.basic.a', { _$: { href: 'testHref' } });
+				expect($(output).prop('tagName').toLowerCase()).to.be.equal('a');
+				expect($(output).attr('href')).to.be.equal('testHref');
 			});
 
 			it('HTMLPlugin: Errors', function() {
