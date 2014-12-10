@@ -23,8 +23,8 @@ clean-build:
 ## Dependencies
 
 install-dependencies:
-	@echo "\nInstalling Dependencies..."
 	@bower install
+	@node ./tools/spinal/build -m libs
 
 ## Test & CodeCoverage via Karma
 

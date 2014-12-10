@@ -22,6 +22,9 @@ var Package = require('../utils/package'),
 // Project Configs
 var pkg = require('../../package.json');
 
+// command-line arguments
+var args = Array.prototype.slice.call(process.argv, 2);
+
 /**
 *	Build namespace
 **/
@@ -58,7 +61,7 @@ var Build = {
 	**/
 	exec: function() {
 		this.output(pkg);
-		this.loadConfig().libs();
+		this.loadConfig();
 		this.release(_.bind(this._onRelease, this));
 	},
 
@@ -90,7 +93,7 @@ var Build = {
 	*	@method exec
 	**/
 	libs: function() {
-		Logger.log('[PREBUILD] Building Dependencies...', { nl: true });
+		Logger.log('[DEPENDENCIES] Installing/Updating Dependencies...', { nl: true });
 		this.bowerpkg = require(resolve(this.basePath, './bower.json'));
 		var libPath = Utils.createDir(resolve(this.basePath, './src/libs')),
 			bowerDepPath = resolve(this.basePath, './bower_components');
@@ -101,7 +104,8 @@ var Build = {
 				var o = fs.readFileSync(files[0], 'utf8');
 				Utils.createFile(filename, Utils.minify(o));
 			}
-			Logger.debug((o) ? ('[PREBUILD] Exported [' + name + ']') : ('[PREBUILD] Dependency [' + name + '] not found.'));
+			Logger.debug((o) ?
+				('[DEPENDENCIES] Installed [' + name + ']') : ('[DEPENDENCIES] Dependency [' + name + '] not found.'));
 		}, this);
 	},
 
@@ -192,6 +196,7 @@ var Build = {
 
 };
 
-Build.exec();
+// Improve this later
+(_.contains(args, '-m') && args.length === 2) ? Build[args[1]]() : Build.exec();
 
 module.exports = Build;
