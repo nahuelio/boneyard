@@ -24,4 +24,3 @@ define('libs',['libs/jquery',
 		'libs/underscore',
 		'libs/backbone'], function() { });
 
-requirejs.config({ bundles: {"libs":["libs/backbone","libs/bootstrap","libs/jquery","libs/modernizr","libs/require","libs/underscore"],"spinal-core":["core/spinal"],"spinal-aop":["aop/advice","aop/advisor","aop/interceptor","aop/pointcut"],"spinal-ioc":["ioc/context","ioc/engine","ioc/plugins/html","ioc/plugins/theme","ioc/processor/bone","ioc/processor/create","ioc/processor/plugin","ioc/processor/ready"],"spinal-ui":["ui/container","ui/view"],"spinal-util":["util/adt/collection","util/adt/iterator","util/adt/queue","util/adt/stack","util/exception/context","util/exception/exception","util/exception/factory","util/exception/plugin","util/exception/processor","util/exception/ui","util/factories/async-factory","util/factories/factory","util/http/ajax-http","util/schema","util/string"]} });

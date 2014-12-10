@@ -136,12 +136,12 @@ var Build = {
 	*	@param data {Object} bundle data
 	**/
 	_bundles: function(data) {
-		if(data.name === 'libs') {
+		if(data.name === 'spinal-core') {
 			var paths = _.omit(this.config.project.paths, 'templates'),
 				bundles = Package.bundles({ path: resolve(this.basePath, './src'), paths: paths }),
 				bundlePath = resolve(this.basePath, this.config.project.dir, data.path),
 				file = fs.readFileSync(bundlePath),
-				output = _s.insert(file, file.length, Package._tplBundles({ bundles: JSON.stringify(bundles) }));
+				output = _s.insert(file, file.toString().indexOf('// ~~bundles'), Package._tplBundles({ bundles: JSON.stringify(bundles) }));
 			fs.writeFileSync(bundlePath, output);
 		}
 	},

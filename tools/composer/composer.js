@@ -55,6 +55,7 @@ var Composer = {
 		config: null,
 		template: './tools/composer/composer.html',
 		requireMain: 'main.js',
+		mainSpec: '../tools/composer/spinal-spec.js',
 		clear: false,
 		port: 9393
 	},
@@ -181,10 +182,8 @@ var Composer = {
 		if(!_.isUndefined(cfg.port)) this.defaults.port = cfg.port;
 		this.source = resolve((this.uPath) ? this.uPath : this.bPath, this.source);
 		this.target = resolve((this.uPath) ? this.uPath : this.bPath, this.target);
-		this.main = resolve(this.target, (this.config && this.config.requireMain) ?
-			this.config.requireMain : this.defaults.requireMain);
 		this.defaults.template = resolve(this.bPath, this.defaults.template);
-		return this.createTarget().exportSpec().setupRequire();
+		return this.createTarget().exportSpec().copyMain();
 	},
 
 	/**
@@ -206,26 +205,22 @@ var Composer = {
 	**/
 	exportSpec: function() {
 		if(this.uPath) { this.mainSpec = this.config.mainSpec; return this; }
-		var src = resolve(this.source, this.mainSpec + '.js');
-		var target = resolve(this.target, Utils.getFilename(this.mainSpec) + '.js');
+		var src = resolve(this.source, this.defaults.mainSpec);
+		var target = resolve(this.target, Utils.getFilename(this.defaults.mainSpec));
 		Utils.copyFile(src, target);
+		this.mainSpec = Utils.getFilename(this.defaults.mainSpec);
 		return this;
 	},
 
 	/**
-	*	Setup Require Main file to be deployed
+	*	Copy Main file used relative to the source path to be deployed in the target
 	*	@public
-	*	@method setupRequire
+	*	@method copyMain
 	*	@return Composer
 	**/
-	setupRequire: function() {
-		var drequire = this.defaults.config.require;
-		var bundles = Package.bundles({ path: resolve(this.bPath, this.source), paths: this.defaults.config.require.paths });
-		output = (this.config && this.config.require) ?
-			_.extend(this.config.require, { paths: drequire.paths, bundles: bundles }) :
-			this.defaults.config.require;
-		output = _.template(this.requireTpl, { cfg: JSON.stringify(output, null, '\t') });
-		Utils.createFile(this.main, output);
+	copyMain: function() {
+		this.main = (this.config && this.config.requireMain) ? this.config.requireMain : this.defaults.requireMain;
+		Utils.copyFile(resolve(this.source, this.main), resolve(this.target, this.main));
 		return this;
 	},
 
@@ -240,8 +235,9 @@ var Composer = {
 		var tpl = fs.readFileSync(this.defaults.template, "utf8"),
 			output = _.template(tpl, {
 				name: this.name, version: pkg.version,
-				main: Utils.getFilename(this.main, true),
-				mainSpec: Utils.getFilename(this.mainSpec)
+				requireMain: Utils.getFilename(this.main, true),
+				mainSpec: this.mainSpec,
+				spinalCore: this.spinalCore
 			});
 		Utils.createFile(resolve(this.target, './index.html'), output);
 		Logger.warn('[COMPOSER] Composer Environment [Ready]');

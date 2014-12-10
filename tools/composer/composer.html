@@ -7,11 +7,11 @@
 			var socket = io.connect('http://localhost:9494/', { 'sync disconnect on unload': true });
 			socket.on('reload', function() { document.location.reload(); });
 		</script>
-		<script type='text/javascript' src='libs/require.js' data-spec='<%= mainSpec %>'></script>
+		<script type='text/javascript' src='<%= spinalCore %>' data-spec='<%= mainSpec %>'></script>
 	</head>
 
 	<body>
 		<div id='global'><h2><%= name %></h2></div>
-		<script type='text/javascript'>require(['main'], function() { require(['ioc/context']); });</script>
+		<script type='text/javascript'>require(['<%= requireMain %>'], function() { require(['ioc/context']); });</script>
 	</body>
 </html>
