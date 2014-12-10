@@ -222,7 +222,7 @@ var Composer = {
 		var drequire = this.defaults.config.require;
 		var bundles = Package.bundles({ path: resolve(this.bPath, this.source), paths: this.defaults.config.require.paths });
 		output = (this.config && this.config.require) ?
-			_.extend(this.config.require, { paths: drequire.paths, bundles: bundles, shim: drequire.shim }) :
+			_.extend(this.config.require, { paths: drequire.paths, bundles: bundles }) :
 			this.defaults.config.require;
 		output = _.template(this.requireTpl, { cfg: JSON.stringify(output, null, '\t') });
 		Utils.createFile(this.main, output);

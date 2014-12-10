@@ -117,9 +117,28 @@ var Build = {
 			Utils.createDir(resolve(this.basePath, this.config.project.dir));
 			this.config.project.mainConfigFile = resolve(this.basePath, this.config.project.mainConfigFile);
 			this.config.project.dir = resolve(this.basePath, this.config.project.dir);
-			requirejs.optimize(this.config.project, _.bind(callback, this), Utils.onError);
+			requirejs.optimize(_.extend({}, { onModuleBundleComplete: _.bind(this._bundles, this) },
+				this.config.project), _.bind(callback, this), Utils.onError);
 		} catch(ex) {
 			this._onError('[JS-BUILD] Error ocurred while building modules: ' + ex.message);
+		}
+	},
+
+	/**
+	*	Injects Bundles inside the Spinal Libs Package to
+	*	resolve cross-package dependencies in production-ready distribution
+	*	@public
+	*	@method _bundles
+	*	@param data {Object} bundle data
+	**/
+	_bundles: function(data) {
+		if(data.name === 'libs') {
+			var paths = _.omit(this.config.project.paths, 'templates'),
+				bundles = Package.bundles({ path: resolve(this.basePath, './src'), paths: paths }),
+				bundlePath = resolve(this.basePath, this.config.project.dir, data.path),
+				file = fs.readFileSync(bundlePath),
+				output = _s.insert(file, file.length, Package._tplBundles({ bundles: JSON.stringify(bundles) }));
+			fs.writeFileSync(bundlePath, output);
 		}
 	},
 

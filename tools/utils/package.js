@@ -48,6 +48,14 @@ var Package = {
 	output: {},
 
 	/**
+	*	RequireJs Config Template for bundles
+	*	@public
+	*	@property _tplRequireBundles
+	*	@type Function
+	**/
+	_tplBundles: _.template('requirejs.config({ bundles: <%= bundles %> });'),
+
+	/**
 	*	Creates Paths JSON structure for requirejs
 	*	@public
 	*	@method build
