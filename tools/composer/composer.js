@@ -56,7 +56,6 @@ var Composer = {
 		config: null,
 		template: './tools/composer/composer.html',
 		requireMain: 'main.js',
-		mainSpec: '../tools/composer/spinal-spec.js',
 		clear: false,
 		port: 9393
 	},
@@ -71,14 +70,6 @@ var Composer = {
 		server: null,
 		socket: null
 	},
-
-	/**
-	*	Main IoC Spec
-	*	@public
-	*	@property mainSpec
-	*	@type String
-	**/
-	mainSpec: null,
 
 	/**
 	*	Source
@@ -184,7 +175,7 @@ var Composer = {
 		this.source = resolve((this.uPath) ? this.uPath : this.bPath, this.source);
 		this.target = resolve((this.uPath) ? this.uPath : this.bPath, this.target);
 		this.defaults.template = resolve(this.bPath, this.defaults.template);
-		return this.createTarget().exportSpec().copyMain();
+		return this.createTarget().copyMain();
 	},
 
 	/**
@@ -195,21 +186,6 @@ var Composer = {
 	**/
 	createTarget: function() {
 		Utils.createDir(this.target);
-		return this;
-	},
-
-	/**
-	*	Generate SpinalJS Spec
-	*	@public
-	*	@method exportSpec
-	*	@return Composer
-	**/
-	exportSpec: function() {
-		if(this.uPath) { this.mainSpec = this.config.mainSpec; return this; }
-		var src = resolve(this.source, this.defaults.mainSpec);
-		var target = resolve(this.target, Utils.getFilename(this.defaults.mainSpec));
-		Utils.copyFile(src, target);
-		this.mainSpec = Utils.getFilename(this.defaults.mainSpec);
 		return this;
 	},
 
@@ -237,7 +213,7 @@ var Composer = {
 			output = _.template(tpl, {
 				name: this.name, version: pkg.version,
 				requireMain: Utils.getFilename(this.main, true),
-				mainSpec: this.mainSpec,
+				mainSpec: (this.uPath) ? this.config.mainSpec : this.defaults.config.mainSpec,
 				spinalCore: this.spinalCore
 			});
 		Utils.createFile(resolve(this.target, './index.html'), output);
