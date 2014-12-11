@@ -6,6 +6,7 @@
 	"homepage": "http://3dimention.github.io/spinal",
 	"dependencies": {
 		"connect": "2.13.x",
+		"compression": "1.2.2",
 		"commander": "2.0.0",
 		"glob": "3.2.9",
 		"fs-extra": "0.12.0",
