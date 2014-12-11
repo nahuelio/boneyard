@@ -57,9 +57,9 @@ define(['core/spinal',
 		*	@type {com.spinal.util.adt.Iterator}
 		**/
 		processors: new Iterator([
+			{ id: 'PluginProcessor', path: 'ioc/processor/plugin' },
 			{ id: 'CreateProcessor', path: 'ioc/processor/create' },
-			{ id: 'ReadyProcessor', path: 'ioc/processor/ready' },
-			{ id: 'PluginProcessor', path: 'ioc/processor/plugin' }
+			{ id: 'ReadyProcessor', path: 'ioc/processor/ready' }
 		]),
 
 		/**

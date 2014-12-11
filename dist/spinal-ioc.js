@@ -482,9 +482,9 @@ define('ioc/context',['core/spinal',
 		*	@type {com.spinal.util.adt.Iterator}
 		**/
 		processors: new Iterator([
+			{ id: 'PluginProcessor', path: 'ioc/processor/plugin' },
 			{ id: 'CreateProcessor', path: 'ioc/processor/create' },
-			{ id: 'ReadyProcessor', path: 'ioc/processor/ready' },
-			{ id: 'PluginProcessor', path: 'ioc/processor/plugin' }
+			{ id: 'ReadyProcessor', path: 'ioc/processor/ready' }
 		]),
 
 		/**
@@ -1192,7 +1192,7 @@ define('ioc/plugins/html',['ioc/engine',
 			var inCore = (route.indexOf('!') === -1),
 				tpl = this._query(route.replace('!', '.'), inCore);
 			if(tpl && _.isString(tpl)) tpl = _.template(unescape(tpl));
-			return ((tpl && _.isFunction(tpl)) ? tpl(params) : '').replace(/\t|\n/g, '');
+			return ((tpl && _.isFunction(tpl)) ? tpl(params) : '').replace(/\n/g, '').replace(/\t/g, ' ');
 		},
 
 		/**
