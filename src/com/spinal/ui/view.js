@@ -44,7 +44,7 @@ define(['core/spinal',
 		*	@property className
 		*	@type String
 		**/
-		className: 'com-spinal-ui-view',
+		className: 'ui-view',
 
 		/**
 		*	Render Method
@@ -63,12 +63,23 @@ define(['core/spinal',
 		_successor: null,
 
 		/**
+		*	Theme Class name
+		*	@private
+		*	@property _theme
+		*	@type String
+		**/
+		_theme: null,
+
+		/**
 		*	Constructor
 		*	@method constructor
 		*	@param [options] {Object} View Options
 		**/
 		constructor: function(options) {
+			options || (options = {});
 			Backbone.View.apply(this, arguments);
+			this.id = (options.id) ? options.id : (this.$el.attr('id')) ? this.$el.attr('id') : this.id;
+			this.$el.attr('id', this.id);
 		},
 
 		/**
@@ -82,9 +93,9 @@ define(['core/spinal',
 		initialize: function(options) {
 			options || (options = {});
 			this._valid(options);
-			if(options.id) this.id = options.id;
-			if(options.method) this.method = options.method;
 			if(options.el) this.$el.addClass(this.className);
+			if(options.theme) { this._theme = options.theme; this.$el.addClass(this._theme); }
+			if(options.method) this.method = options.method;
 			this.template = this._compile((options.template) ? options.template : this.template);
 			return this;
 		},
@@ -131,6 +142,20 @@ define(['core/spinal',
 			tpl || (tpl = '');
 			if(_.isFunction(tpl)) return tpl;
 			return _.template(tpl);
+		},
+
+		/**
+		*	Change Theme set in this view
+		*	@public
+		*	@method theme
+		*	@param themeName {String} theme name
+		*	@return {com.spinal.ui.View}
+		**/
+		theme: function(themeName) {
+			if(!themeName || !_.isString(themeName)) return this;
+			this.$el.removeClass(this._theme).addClass(themeName);
+			this._theme = themeName;
+			return this;
 		},
 
 		/**

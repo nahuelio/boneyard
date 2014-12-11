@@ -80,6 +80,19 @@ define(['core/spinal',
 		},
 
 		/**
+		*	Change Theme set in this view
+		*	@public
+		*	@method theme
+		*	@param themeName {String} theme name
+		*	@return {com.spinal.ui.View}
+		**/
+		theme: function(themeName) {
+			if(!this.views.isEmpty()) this.invoke('theme', arguments);
+			Container.__super__.theme.apply(this, arguments);
+			return this;
+		},
+
+		/**
 		*	Add View
 		*	@public
 		*	@method add
