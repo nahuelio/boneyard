@@ -11,6 +11,7 @@ var fs = require('fs'),
 // Third-party libs
 var requirejs = require('requirejs'),
 	connect = require('connect'),
+	compression = require('compression'),
 	watch = require('watch'),
 	_ = require('underscore'),
 	_s = require('underscore.string'),
@@ -250,7 +251,7 @@ var Composer = {
 	*	@method spinUpAutowatch
 	**/
 	spinUpServer: function() {
-		var server = connect().use(connect.static(this.target)).use(connect.static(this.source));
+		var server = connect().use(compression({ threshold: 0 })).use(connect.static(this.target)).use(connect.static(this.source));
 		if(!this.config) server.use(connect.static(resolve(this.bPath, './dist')));
 		server.listen(this.defaults.port);
 		this.spinUpAutoWatch();
