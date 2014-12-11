@@ -7,7 +7,6 @@
 	"dependencies": {
 		"connect": "2.13.x",
 		"commander": "2.0.0",
-		"async": "*",
 		"glob": "3.2.9",
 		"fs-extra": "0.12.0",
 		"requirejs": "2.1.11",
@@ -39,7 +38,6 @@
 		"karma-htmlfile-reporter": "git+ssh://git@github.com:matthias-schuetz/karma-htmlfile-reporter.git#master"
 	},
 	"bin": {
-		"spinal": "./bin/spinal",
 		"composer": "./bin/composer"
 	},
 	"scripts": {
@@ -68,7 +66,6 @@
 		"bin",
 		"dist",
 		"tools",
-		"LICENSE",
-		"Makefile"
+		"LICENSE"
 	]
 }

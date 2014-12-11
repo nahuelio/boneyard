@@ -48,6 +48,14 @@ var Package = {
 	output: {},
 
 	/**
+	*	RequireJs Config Template for bundles
+	*	@public
+	*	@property _tplRequireBundles
+	*	@type Function
+	**/
+	_tplBundles: _.template('requirejs.config({ bundles: <%= bundles %> });'),
+
+	/**
 	*	Creates Paths JSON structure for requirejs
 	*	@public
 	*	@method build
@@ -81,9 +89,9 @@ var Package = {
 	_parse: function(opts) {
 		opts || (opts = {});
 		if(!opts.paths) throw new Error('Parameter \'paths\' is required.');
-		if(!opts.basePath) throw new Error('Parameter \'basePath\' is required.');
+		if(!opts.path) throw new Error('Parameter \'path\' is required.');
 		this.paths = opts.paths;
-		this.basePath = opts.basePath;
+		this.basePath = opts.path;
 		this.output = {};
 	},
 

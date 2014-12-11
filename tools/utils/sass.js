@@ -30,49 +30,26 @@ var Sass = {
 	basePath: resolve(__dirname, '../../'),
 
 	/**
-	*	Source Path
-	*	@public
-	*	@property src
-	*	@type String
-	**/
-	src: null,
-
-	/**
-	*	Target Path
-	*	@public
-	*	@property target
-	*	@type String
-	**/
-	target: null,
-
-	/**
-	*	Template package name
-	*	@public
-	*	@property name
-	*	@type String
-	**/
-	name: 'default',
-
-	/**
-	*	Output Object to be wrapped in a AMD module.
-	*	@public
-	*	@property output
-	*	@type Object
-	**/
-	output: null,
-
-	/**
 	*	Initialize HTML Util
 	*	@public
 	*	@method init
-	*	@param opts {Object} options
-	*	@return HTML
+	*	@param cfg {Object} Themes Config
+	*	@return Sass
 	**/
-	init: function(opts) {
-		opts || (opts = {});
-		if(!opts.src || !opts.target || !_.isString(opts.src) || !_.isString(opts.target))
-			throw new Error('[THEMES-BUILD] Build Themes util requires a \'src\' and \'target\' parameters in order to work');
-		return this.setup(opts);
+	init: function(cfg) {
+		if(!cfg || !_.isObject(cfg) || _.isEmpty(cfg)) return this;
+		return this.setup(cfg);
+	},
+
+	/**
+	*	Validates Theme Config params
+	*	@public
+	*	@method validate
+	*	@param theme {Object} theme params
+	*	@return Boolean
+	**/
+	validate: function(theme) {
+		return (theme.src && theme.target && theme.src !== '' && theme.target !== '');
 	},
 
 	/**
@@ -81,10 +58,13 @@ var Sass = {
 	*	@method setup
 	*	@param opts {Object} options
 	**/
-	setup: function(opts) {
-		if(opts.name) this.name = opts.name;
-		this.src = resolve(this.basePath, opts.src);
-		this.target = resolve(this.basePath, opts.target);
+	setup: function(cfg) {
+		_.each(cfg, function(theme, name) {
+			if(this.validate(theme)) {
+				var src = resolve(this.basePath, theme.src), target = resolve(this.basePath, theme.target);
+				this.process({ name: name, src: src, target: target });
+			}
+		}, this);
 		return this;
 	},
 
@@ -92,24 +72,29 @@ var Sass = {
 	*	Process
 	*	@public
 	*	@method setup
-	*	@param opts {Object} options
+	*	@param cfg {Object} theme setup
 	**/
-	process: function() {
-		var files = Utils.noDirs(Utils.findFiles(resolve(this.basePath, this.src) + '/**/!(*.js)', {}));
+	process: function(cfg) {
+		var files = Utils.noDirs(Utils.findFiles(resolve(this.basePath, cfg.src) + '/**/!(*.js)', {}));
 		if(files.length > 0) {
-			var targetPath = Utils.createDir(resolve(this.basePath, this.target), ('themes/' + this.name));
-			_.each(files, function(f, name) { this.export(f, targetPath); }, this);
-			Logger.debug('[THEMES-BUILD] Exporting Template [' + this.name + '] from [' + this.src + '] to [' + this.target + ']', { nl: true });
+			var targetPath = Utils.createDir(resolve(this.basePath, cfg.target), ('themes/' + cfg.name));
+			_.each(files, function(f, name) { this.export(cfg, f, targetPath); }, this);
+			Logger.debug('[THEMES-BUILD] Exporting Template [' + cfg.name + '] from [' + cfg.src + '] to [' + cfg.target + ']', { nl: true });
 		}
 		return this;
 	},
 
 	/**
 	*	Export files
+	*	@public
+	*	@method export
+	*	@param cfg {Object} theme setup
+	*	@param file {String} input file path
+	*	@param targetPath {Object} target path
 	**/
-	export: function(file, targetPath) {
-		var filePath = (file.indexOf(this.src) !== -1) ?
-			file.substring((this.src.length + 1), file.length) : Utils.getFilename(file),
+	export: function(cfg, file, targetPath) {
+		var filePath = (file.indexOf(cfg.src) !== -1) ?
+			file.substring((cfg.src.length + 1), file.length) : Utils.getFilename(file),
 			output = resolve(targetPath, filePath);
 		Utils.createFile(output, fs.readFileSync(file, 'utf8'));
 	}

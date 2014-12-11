@@ -139,7 +139,7 @@ define(['ioc/engine',
 			var inCore = (route.indexOf('!') === -1),
 				tpl = this._query(route.replace('!', '.'), inCore);
 			if(tpl && _.isString(tpl)) tpl = _.template(unescape(tpl));
-			return (tpl && _.isFunction(tpl)) ? tpl(params) : '';
+			return ((tpl && _.isFunction(tpl)) ? tpl(params) : '').replace(/\n/g, '').replace(/\t/g, ' ');
 		},
 
 		/**

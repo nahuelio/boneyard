@@ -23,8 +23,8 @@ clean-build:
 ## Dependencies
 
 install-dependencies:
-	@echo "\nInstalling Dependencies..."
 	@bower install
+	@node ./tools/spinal/build -m libs
 
 ## Test & CodeCoverage via Karma
 
@@ -46,11 +46,12 @@ build:
 	@echo "\nBuilding SpinalJS..."
 	@make test && make doc
 	@make clean-build
-	@node ./bin/spinal -v
+	@node ./tools/spinal/build
 
 ## Composer
+
 composer:
-	@node ./bin/composer
+	@node ./bin/composer -l
 
 ## Benchmark
 

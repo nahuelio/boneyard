@@ -9,7 +9,8 @@ var fs = require('fs'),
 	http = require('http');
 
 // Third-party libs
-var connect = require('connect'),
+var requirejs = require('requirejs'),
+	connect = require('connect'),
 	watch = require('watch'),
 	_ = require('underscore'),
 	_s = require('underscore.string'),
@@ -20,6 +21,8 @@ var Package = require('../utils/package'),
 	Logger = require('../utils/logger'),
 	Utils = require('../utils/util');
 
+var pkg = require('../../package.json');
+
 /**
 *	Composer namespace
 **/
@@ -28,10 +31,18 @@ var Composer = {
 	/**
 	*	Composer Tool base path
 	*	@public
-	*	@property defaults
-	*	@type Object
+	*	@property bPath
+	*	@type String
 	**/
-	basePath: resolve(__dirname, '../../'),
+	bPath: resolve(__dirname, '../../'),
+
+	/**
+	*	User Base Path
+	*	@public
+	*	@property uPath
+	*	@type String
+	**/
+	uPath: null,
 
 	/**
 	*	Composer defaults
@@ -40,11 +51,12 @@ var Composer = {
 	*	@type Object
 	**/
 	defaults: {
-		spinalSource: './src',
-		spinalConfig: './default.json',
-		template: './composer.html',
-		clear: true,
-		verbose: false,
+		configPath: './tools/default.json',
+		config: null,
+		template: './tools/composer/composer.html',
+		requireMain: 'main.js',
+		mainSpec: '../tools/composer/spinal-spec.js',
+		clear: false,
 		port: 9393
 	},
 
@@ -60,12 +72,20 @@ var Composer = {
 	},
 
 	/**
+	*	Main IoC Spec
+	*	@public
+	*	@property mainSpec
+	*	@type String
+	**/
+	mainSpec: null,
+
+	/**
 	*	Source
 	*	@public
 	*	@property source
 	*	@type String
 	**/
-	source: './src',
+	source: null,
 
 	/**
 	*	Target Path
@@ -73,15 +93,7 @@ var Composer = {
 	*	@property target
 	*	@type String
 	**/
-	target: './composer-app',
-
-	/**
-	*	Spinal Config
-	*	@public
-	*	@property spinalConfig
-	*	@type Object
-	**/
-	spinalConfig: {},
+	target: null,
 
 	/**
 	*	Config
@@ -89,112 +101,147 @@ var Composer = {
 	*	@property config
 	*	@type Object
 	**/
-	config: {},
+	config: null,
+
+	/**
+	*	Require Config Template
+	*	@public
+	*	@property requireTpl
+	*	@type String
+	**/
+	requireTpl: 'requirejs.config(<%= cfg %>);',
 
 	/**
 	*	Execute Composer
 	*	@public
 	*	@method execute
-	*	@param [opts] {Object} extra options
+	*	@param cfg {Object} Main Config input
 	**/
-	exec: function(opts) {
-		opts || (opts = {});
-		this.defaults = _.extend(opts, this.defaults);
-		this.output();
-		this.setup();
-		this.createTarget();
+	exec: function(cfg) {
+		cfg || (cfg = {});
+		Logger.log('Spinal Composer Tool', { nl: true });
+		this.loadConfig().loadCustomConfig(cfg);
+		this.setup(cfg).export().output(cfg);
 		this.spinUpServer();
+	},
+
+	/**
+	*	Load Default Config
+	*	@public
+	*	@method loadConfig
+	*	@return Composer
+	**/
+	loadConfig: function() {
+		this.defaults.config = require(resolve(this.bPath, this.defaults.configPath));
+		return this;
+	},
+
+	/**
+	*	Load Default Config
+	*	@public
+	*	@method loadCustomConfig
+	*	@param cfg {Object} composer config file
+	*	@return Composer
+	**/
+	loadCustomConfig: function(cfg) {
+		if(!cfg.uPath) { Logger.log('[COMPOSER] Loaded Default Application Config file.', { nl: true }); return this; }
+		try {
+			var configPath = resolve(cfg.uPath, cfg.config);
+			this.uPath = cfg.uPath;
+			this.config = require(configPath);
+			Logger.log('[COMPOSER] Loading Config file [' + configPath + ']', { nl: true });
+		} catch(ex) { Utils.onError(ex.message); }
+		return this;
 	},
 
 	/**
 	*	Output options selected in the command line
 	*	@public
 	*	@method output
+	*	@param cfg {Object} composer config file
 	**/
-	output: function() {
-		Logger.log('Spinal Composer Tool', { nl: true });
-		Logger.debug('Settings:', { nl: true });
+	output: function(cfg) {
+		Logger.debug('Configured Settings:', { nl: true });
 		Logger.debug('\tSource Path: ' + this.source +
-			'\n\tConfig File: ' + ((!this.config) ? 'Not Specified' : this.config) +
+			'\n\tConfig File: ' + ((!cfg.config) ? 'Using Default (Custom not specified)' : cfg.config) +
 			'\n\tClear on Exit: ' + ((this.defaults.clear) ? 'Activated' : 'Deactivated') +
-			'\n\tVerbose: ' + ((this.defaults.verbose) ? 'Activated' : 'Deactivated'), { nl: true });
+			'\n\tListening on: http://localhost:' + this.defaults.port + '/');
 	},
 
 	/**
 	*	Load Config files, default one and if provided custom one
 	*	@public
 	*	@method loadConfig
+	*	@param cfg {Object} composer config file
+	*	@return Composer
 	**/
-	setup: function() {
-		try {
-			this.setupDefault();
-			if(this.defaults.config) {
-				this.customConfig(this.defaults.config);
-			} else {
-				Logger.warn('[COMPOSER] Custom Application Config file not specified.', { nl: true });
-				Logger.log('[COMPOSER] Loaded Default Application Config file.');
-			}
-			_.extend(this.config, this.spinalConfig);
-		} catch(ex) {
-			Logger.error(ex.message);
-			process.exit();
-		}
+	setup: function(cfg) {
+		if(this.config && !_.isObject(this.config)) Utils.onError('[COMPOSER] Malformed Custom Config Aapplication File.');
+		_.extend(this, _.omit(this.defaults.config, 'require'), (this.config) ? _.omit(this.config, 'mainSpec', 'require') : {});
+		if(!_.isUndefined(cfg.clear)) this.defaults.clear = cfg.clear;
+		if(!_.isUndefined(cfg.port)) this.defaults.port = cfg.port;
+		this.source = resolve((this.uPath) ? this.uPath : this.bPath, this.source);
+		this.target = resolve((this.uPath) ? this.uPath : this.bPath, this.target);
+		this.defaults.template = resolve(this.bPath, this.defaults.template);
+		return this.createTarget().exportSpec().copyMain();
 	},
 
 	/**
-	*	Load Custom Config and merges default config file
-	*	@public
-	*	@method customConfig
-	*	@param configPath {String} custom config path
+	*	Create Target Folder
+	*	@private
+	*	@method createTarget
+	*	@return Composer
 	**/
-	customConfig: function(configPath) {
-		Logger.log('[COMPOSER] Loading Config file [' + configPath + ']', { nl: true });
-		this.config = require(configPath);
-		if(!this.config || !_.isObject(this.config)) throw new Error('[COMPOSER] Malformed Custom Config Aapplication File.');
-	},
-
-	/**
-	*	Process Default config file
-	*	@public
-	*	@method processDefault
-	**/
-	setupDefault: function() {
-		var path = resolve(this.basePath, './tools/', this.defaults.spinalConfig);
-		this.spinalConfig = require(path);
-		this.spinalConfig.require.bundles = Package.bundles({
-			basePath: resolve(this.basePath, this.defaults.spinalSource),
-			paths: this.spinalConfig.require.paths
-		});
-		this.spinalConfig.require.paths = { libs: "libs" }; // @TryThis: Clean up paths for packages except libs
+	createTarget: function() {
+		Utils.createDir(this.target);
+		return this;
 	},
 
 	/**
 	*	Generate SpinalJS Spec
 	*	@public
-	*	@method generateSpec
+	*	@method exportSpec
+	*	@return Composer
 	**/
-	generateSpec: function(baseDir) {
-		var src = resolve(__dirname, this.config.project.mainSpec + '.js');
-		var target = resolve(baseDir, this.config.project.mainSpec + '.js');
+	exportSpec: function() {
+		if(this.uPath) { this.mainSpec = this.config.mainSpec; return this; }
+		var src = resolve(this.source, this.defaults.mainSpec);
+		var target = resolve(this.target, Utils.getFilename(this.defaults.mainSpec));
 		Utils.copyFile(src, target);
+		this.mainSpec = Utils.getFilename(this.defaults.mainSpec);
+		return this;
+	},
+
+	/**
+	*	Copy Main file used relative to the source path to be deployed in the target
+	*	@public
+	*	@method copyMain
+	*	@return Composer
+	**/
+	copyMain: function() {
+		this.main = (this.config && this.config.requireMain) ? this.config.requireMain : this.defaults.requireMain;
+		Utils.copyFile(resolve(this.source, this.main), resolve(this.target, this.main));
+		return this;
 	},
 
 	/**
 	*	Creates the temporal target folder to launch the composer tool
+	*	By copying the an index.html, the require main file in use and a initial spec (if specified).
 	*	@public
 	*	@method createTarget
+	*	@return Composer
 	**/
-	createTarget: function() {
-		Logger.log('[COMPOSER] Generating Composer Environment', { nl: true });
-		try {
-			var baseDir = Utils.createDir(this.basePath, this.target); // FIXME: Global Execution
-			if(!this.defaults.config) this.generateSpec(baseDir);
-			this.config.require = JSON.stringify(this.config.require);
-			var tpl = fs.readFileSync(resolve(__dirname, this.defaults.template), "utf8");
-			Utils.createFile(baseDir + '/index.html', _.template(tpl, this.config));
-		} catch(ex) {
-			Logger.error(ex.message);
-		}
+	export: function() {
+		var tpl = fs.readFileSync(this.defaults.template, "utf8"),
+			output = _.template(tpl, {
+				name: this.name, version: pkg.version,
+				requireMain: Utils.getFilename(this.main, true),
+				mainSpec: this.mainSpec,
+				spinalCore: this.spinalCore
+			});
+		Utils.createFile(resolve(this.target, './index.html'), output);
+		Logger.warn('[COMPOSER] Composer Environment [Ready]');
+		return this;
 	},
 
 	/**
@@ -203,30 +250,28 @@ var Composer = {
 	*	@method spinUpAutowatch
 	**/
 	spinUpServer: function() {
-		Logger.log('[COMPOSER] Spinning Up Server...', { nl: true });
-		// Static Serving
-		// FIXME: Remove harcoded ./dist folder
-		connect().use(connect.static(resolve(this.basePath, './dist')))
-			.use(connect.static(resolve(this.basePath, this.target)))
-			.use(connect.static(resolve(this.basePath, this.source)))
-			.listen(this.defaults.port);
-		Logger.debug('[COMPOSER] Server listening on port ' + this.defaults.port + '...', { nl: true });
-		// AutoWatch
-		watch.createMonitor(resolve(this.basePath, this.source), {
-			ignoreDotFiles: true, ignoreUnreadableDir: true
-		}, _.bind(this.onFileChange, this));
+		var server = connect().use(connect.static(this.target)).use(connect.static(this.source));
+		if(!this.config) server.use(connect.static(resolve(this.bPath, './dist')));
+		server.listen(this.defaults.port);
 		this.spinUpAutoWatch();
+		watch.createMonitor(this.source, { ignoreDotFiles: true, ignoreUnreadableDir: true }, _.bind(this.onFileChange, this));
+		Logger.log('[COMPOSER] Server listening on port ' + this.defaults.port + '...', { nl: true });
 	},
 
+	/**
+	*	Spins Up AutoWatch service on source path
+	*	@public
+	*	@method spinUpAutoWatch
+	**/
 	spinUpAutoWatch: function() {
 		this.live.server = http.createServer();
 		this.live.socket = io(this.live.server);
 		this.live.socket.on('connect', _.bind(function(client) {
-			Logger.log('[COMPOSER] Client Binded [' + client.id + ']');
-			console.log('[COMPOSER] Total clients connected', _.keys(this.live.socket.sockets.connected).length);
+			Logger.debug('[COMPOSER] Client Binded [' + client.id + '] - Total Connected [' +
+				_.keys(this.live.socket.sockets.connected).length + ']');
 		}, this));
 		this.live.server.listen(9494, function() {
-			Logger.debug('[COMPOSER] ServeSocket listening on port 9494...', { nl: true });
+			Logger.log('[COMPOSER] AutoWatch Socket Service listening on port 9494...');
 		});
 	},
 
@@ -238,18 +283,15 @@ var Composer = {
 	**/
 	onFileChange: function(monitor) {
 		monitor.on("created", _.bind(function(f, stat) {
-			Logger.debug('File Created [' + f + ']');
-			Logger.debug('[COMPOSER] Refreshing browser...');
+			Logger.debug('[COMPOSER] File Created [' + f + '] Refreshing browser...');
 			this.live.socket.emit('reload');
 		}, this));
 		monitor.on("changed", _.bind(function (f, curr, prev) {
-			Logger.debug('File Modified [' + f + ']');
-			Logger.debug('[COMPOSER] Refreshing browser...');
+			Logger.debug('[COMPOSER] File Modified [' + f + '] Refreshing browser...');
 			this.live.socket.emit('reload');
 		}, this));
 		monitor.on("removed", _.bind(function (f, stat) {
-			Logger.debug('File Removed [' + f + ']');
-			Logger.debug('[COMPOSER] Refreshing browser...');
+			Logger.debug('[COMPOSER] File Removed [' + f + '] Refreshing browser...');
 			this.live.socket.emit('reload');
 		}, this));
 	}

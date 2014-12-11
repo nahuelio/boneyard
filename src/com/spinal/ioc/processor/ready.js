@@ -70,7 +70,7 @@ define(['ioc/context',
 		*	@return Boolean
 		**/
 		process: function(actions) {
-			if(actions.length === 0) return [];
+			if(!actions || actions.length === 0) return [];
 			return _.compact(_.map(actions, function(action) {
 				if(!_.isObject(action) || action._$ready) return null;
 				return (this._resolve(_.keys(action), _.values(action)) && (action._$ready = true));
