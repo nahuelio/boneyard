@@ -8,6 +8,7 @@ define(['core/spinal'], function(Spinal) { return Spinal.namespace('templates', 
 			"h": "<h<%= _$.w %> id=\"<%= (_$.id) ? _$.id : '' %>\" class=\"<%= (_$.cls) ? _$.cls : '' %>\"></h<%= _$.w %>>\n",
 			"label": "<label id=\"<%= (_$.id) ? _$.id : \"\" %>\"\n\tclass=\"<%= (_$.cls) ? _$.cls : \"\" %>\"\n\t<%= (_$._for) ? \"for=\\\"\" + _$._for + \"\\\"\" : \"\" %>>\n</label>\n",
 			"p": "<p id=\"<%= (_$.id) ? _$.id : \"\" %>\" class=\"<%= (_$.cls) ? _$.cls : \"\" %>\"></p>\n",
+			"panel": "<div class=\"panel-heading\"></div><div class=\"panel-body\"></div>\n",
 			"span": "<span id=\"<%= (_$.id) ? _$.id : \"\" %>\" class=\"<%= (_$.cls) ? _$.cls : \"\" %>\"></span>\n",
 			"table": "<table <%= (_$.id) ? \"id=\\\"\" + _$.id + \"\\\"\" : \"\" %>\n\t<%= (_$.cls) ? \"class=\\\"\" + _$.cls + \"\\\"\" : \"\" %>\n\t<%= (_$.attrs) ? _$.attrs  : \"\" %>></table>\n"
 		},

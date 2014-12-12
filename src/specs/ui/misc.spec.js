@@ -11,7 +11,7 @@ define(['specs/ui/misc/panel.spec'], function(PanelSpec) {
 
 		cpanel: {
 			$module: 'ui/misc/panel',
-			$params: { id: 'ui-misc-panel', title: 'Panel' }
+			$params: { id: 'ui-misc-panel', title: 'Panels' }
 		},
 
 		cdropdown: {

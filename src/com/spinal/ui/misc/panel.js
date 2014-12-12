@@ -52,8 +52,7 @@ define(['ui/container'], function(Container) {
 		*	@property template
 		*	@type Function
 		**/
-		template: Spinal.app.html_tpl('spinal.basic.div', { _$: { cls: 'panel-heading' }}) +
-			Spinal.app.html_tpl('spinal.basic.div', { _$: { cls: 'panel-body' }}),
+		template: Spinal.app.html_tpl('spinal.basic.panel', {}),
 
 		/**
 		*	Initialize
@@ -71,6 +70,16 @@ define(['ui/container'], function(Container) {
 		},
 
 		/**
+		*	Target element in which subviews will be rendered into
+		*	@public
+		*	@method _targetEl
+		*	@return Object
+		**/
+		_targetEl: function() {
+			return this.$el.children('.panel-body');
+		},
+
+		/**
 		*	Render Panel
 		*	@public
 		*	@chainable
@@ -79,7 +88,6 @@ define(['ui/container'], function(Container) {
 		*	@return {com.spinal.ui.misc.Panel}
 		**/
 		render: function(opts) {
-			// TODO: Change Render method to render view's collection into to div.panel-body
 			UIPanel.__super__.render.apply(this, arguments);
 			return this.title().type();
 		},
@@ -120,7 +128,7 @@ define(['ui/container'], function(Container) {
 		*	@property NAME
 		*	@type String
 		**/
-		NAME: 'UIPanel',
+		NAME: 'Panel',
 
 		/**
 		*	@static

@@ -171,7 +171,7 @@ define(['core/spinal',
 			this._beforeRender(arguments).detach();
 			var m = (opts.method && (View.RENDER[opts.method])) ? opts.method : this.method,
 				data = (!this.model) ? ((this._successor.model) ? this._successor.model.toJSON() : {}) : this.model.toJSON();
-			this._successor.$el[m]((this.template) ? this.$el.append(this.template(data)) : this.$el);
+			this._successor._targetEl()[m]((this.template) ? this.$el.append(this.template(data)) : this.$el);
 			if(!opts.silent) this.trigger(View.EVENTS.rendered, { view: this });
 			this.delegateEvents();
 			return this;

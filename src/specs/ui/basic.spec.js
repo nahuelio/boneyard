@@ -2,11 +2,13 @@
 *	SpinalJS Basic Spec
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 */
-define([], function() {
+define(['specs/ui/basic/paragraph.spec',
+	'specs/ui/basic/link.spec'], function(ParagraphSpec, LinkSpec) {
 
 	return {
 
 		$id: 'ui-basic',
+		$specs: [ParagraphSpec, LinkSpec],
 
 		cparagraph: {
 			$module: 'ui/misc/panel',
