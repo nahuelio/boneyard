@@ -3,12 +3,13 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 */
 define(['specs/ui/basic/paragraph.spec',
-	'specs/ui/basic/link.spec'], function(ParagraphSpec, LinkSpec) {
+	'specs/ui/basic/link.spec',
+	'specs/ui/basic/header.spec'], function(ParagraphSpec, LinkSpec, HeaderSpec) {
 
 	return {
 
 		$id: 'ui-basic',
-		$specs: [ParagraphSpec, LinkSpec],
+		$specs: [ParagraphSpec, LinkSpec, HeaderSpec],
 
 		cparagraph: {
 			$module: 'ui/misc/panel',
