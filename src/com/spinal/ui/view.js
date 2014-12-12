@@ -171,8 +171,9 @@ define(['core/spinal',
 			this._beforeRender(arguments).detach();
 			var m = (opts.method && (View.RENDER[opts.method])) ? opts.method : this.method,
 				data = (!this.model) ? ((this._successor.model) ? this._successor.model.toJSON() : {}) : this.model.toJSON();
-			this._successor.$el[m](this.$el.append(this.template(data)));
+			this._successor.$el[m]((this.template) ? this.$el.append(this.template(data)) : this.$el);
 			if(!opts.silent) this.trigger(View.EVENTS.rendered, { view: this });
+			this.delegateEvents();
 			return this;
 		},
 
@@ -201,6 +202,34 @@ define(['core/spinal',
 		lookup: function(id) {
 			if(!id) return null;
 			return this._next(id);
+		},
+
+		/**
+		*	Add CSS class to the $el element
+		*	@public
+		*	@chainable
+		*	@method addClass
+		*	@param className {String} CSS class name
+		*	@return {com.spinal.ui.View}
+		**/
+		addClass: function(className) {
+			if(!className) return this;
+			this.$el.addClass(className);
+			return this;
+		},
+
+		/**
+		*	Removes CSS class from the $el element
+		*	@public
+		*	@chainable
+		*	@method removeClass
+		*	@param className {String} CSS class name
+		*	@return {com.spinal.ui.View}
+		**/
+		removeClass: function(className) {
+			if(!className) return this;
+			this.$el.removeClass(className);
+			return this;
 		},
 
 		/**

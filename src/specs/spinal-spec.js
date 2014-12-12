@@ -3,16 +3,16 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 */
 define(['specs/ui/basic.spec',
-	'specs/ui/list.spec',
 	'specs/ui/form.spec',
-	'specs/ui/dialog.spec',
-	'specs/ui/misc.spec'], function(BasicSpec, ListSpec, FormSpec, DialogSpec, MiscSpec) {
+	'specs/ui/list.spec',
+	'specs/ui/table.spec',
+	'specs/ui/misc.spec'], function(BasicSpec, FormSpec, ListSpec, TableSpec, MiscSpec) {
 
 	return {
 
 		$id: 'ui',
 
-		$specs: [BasicSpec, ListSpec, FormSpec, DialogSpec, MiscSpec],
+		$specs: [BasicSpec, FormSpec, ListSpec, TableSpec, MiscSpec],
 
 		global: {
 			$module: 'ui/container',

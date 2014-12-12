@@ -26,7 +26,7 @@ define(['core/spinal',
 		*	@property className
 		*	@type String
 		**/
-		className: 'com-spinal-ui-container',
+		className: 'ui-container container',
 
 		/**
 		*	View Collection
@@ -109,6 +109,19 @@ define(['core/spinal',
 				if(!opts.silent) this.trigger(Container.EVENTS.added, { added: view, view: this });
 			}
 			return view;
+		},
+
+		/**
+		*	Add a collection of views
+		*	@public
+		*	@method addAll
+		*	@param views {Array} Array of Views
+		*	@param [opts] {Object} additional options
+		*	@return Array
+		**/
+		addAll: function(views, opts) {
+			opts || (opts = {});
+			return _.map(views, function(v) { return this.add(v, opts); }, this);
 		},
 
 		/**

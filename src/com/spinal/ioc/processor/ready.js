@@ -4,7 +4,8 @@
 **/
 define(['ioc/context',
 		'ioc/processor/bone',
-		'ioc/engine'], function(Context, BoneProcessor, Engine) {
+		'ioc/engine',
+		'util/string'], function(Context, BoneProcessor, Engine, StringUtils) {
 
 	/**
 	*	Ready Processor
@@ -36,8 +37,9 @@ define(['ioc/context',
 		*	@return Object
 		*/
 		_inject: function(exprs) {
-			if(!_.isArray(exprs)) return {};
-			return _.map(exprs, function(expr) {
+			if(!_.isArray(exprs) || !_.isObject(exprs)) return exprs;
+			return _.map(exprs, function(expr, k) {
+				if(_.isArray(expr)) return _.flatten(this._inject(expr));
 				return (this.validate(expr) && (bone = this.getDependency(expr))) ? bone : expr;
 			}, this);
 		},
@@ -52,10 +54,11 @@ define(['ioc/context',
 		*	@return Array
 		**/
 		_resolve: function(exprs, params) {
-			return _.compact(_.map(exprs, function(expr) {
+			return _.compact(_.map(exprs, function(expr, ix) {
+				var bone = null, info = null;
 				if(this.validate(expr) && (info = this.getDependencyId(expr).split('.'))) {
 					if(info.length > 1 && (bone = this._engine.getBone(info[0]))) {
-						bone[info[1]].apply(bone, this._inject(_.flatten(params)));
+						bone[info[1]].apply(bone, this._inject(params[ix]));
 						return expr;
 					}
 				}
