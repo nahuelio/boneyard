@@ -31,9 +31,9 @@ define(['ui/basic/paragraph'], function(Paragraph) {
 		tagName: 'a',
 
 		/**
-		*	Tag Name used to build the el
+		*	Link's default href
 		*	@public
-		*	@property tagName
+		*	@property _href
 		*	@type String
 		**/
 		_href: '',

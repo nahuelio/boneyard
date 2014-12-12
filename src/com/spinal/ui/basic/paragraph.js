@@ -31,7 +31,7 @@ define(['ui/view'], function(View) {
 		tagName: 'p',
 
 		/**
-		*	Paragraph's default title
+		*	Paragraph's default content
 		*	@private
 		*	@property _content
 		*	@type String
