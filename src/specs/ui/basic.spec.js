@@ -4,12 +4,14 @@
 */
 define(['specs/ui/basic/paragraph.spec',
 	'specs/ui/basic/link.spec',
-	'specs/ui/basic/header.spec'], function(ParagraphSpec, LinkSpec, HeaderSpec) {
+	'specs/ui/basic/header.spec',
+	'specs/ui/basic/label.spec'], function(ParagraphSpec, LinkSpec, HeaderSpec,
+		LabelSpec) {
 
 	return {
 
 		$id: 'ui-basic',
-		$specs: [ParagraphSpec, LinkSpec, HeaderSpec],
+		$specs: [ParagraphSpec, LinkSpec, HeaderSpec, LabelSpec],
 
 		cparagraph: {
 			$module: 'ui/misc/panel',

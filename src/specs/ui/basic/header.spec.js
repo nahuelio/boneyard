@@ -35,11 +35,11 @@ define([], function() {
 
 		$ready: [{
 			'$bone!cheader.addAll': [[
-			'$bone!h_1',
-			'$bone!h_2',
-			'$bone!h_3',
-			'$bone!h_4',
-			'$bone!h_5'
+				'$bone!h_1',
+				'$bone!h_2',
+				'$bone!h_3',
+				'$bone!h_4',
+				'$bone!h_5'
 			], { renderOnAdd: true }]
 		}]
 	};

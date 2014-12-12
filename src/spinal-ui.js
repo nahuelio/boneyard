@@ -7,5 +7,6 @@ define(['ui/view',
 		'ui/basic/paragraph',
 		'ui/basic/link',
 		'ui/basic/header',
+		'ui/basic/label',
 		'ui/misc/panel',
 		'ui/form/controls/button'], function() { });
