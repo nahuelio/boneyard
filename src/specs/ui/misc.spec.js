@@ -2,44 +2,45 @@
 *	SpinalJS Misc Spec
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 */
-define([], function() {
+define(['specs/ui/misc/panel.spec'], function(PanelSpec) {
 
 	return {
 
 		$id: 'ui-misc',
+		$specs: [PanelSpec],
 
 		cpanel: {
-			$module: 'ui/container',
+			$module: 'ui/misc/panel',
 			$params: { id: 'ui-misc-panel', title: 'Panel' }
 		},
 
 		cdropdown: {
-			$module: 'ui/container',
+			$module: 'ui/misc/panel',
 			$params: { id: 'ui-misc-dropdown', title: 'Dropdown' }
 		},
 
 		cdialog: {
-			$module: 'ui/container',
+			$module: 'ui/misc/panel',
 			$params: { id: 'ui-misc-dialog', title: 'Dialog' }
 		},
 
 		cautocomplete: {
-			$module: 'ui/container',
+			$module: 'ui/misc/panel',
 			$params: { id: 'ui-misc-autocomplete', title: 'Autocomplete' }
 		},
 
 		caffix: {
-			$module: 'ui/container',
+			$module: 'ui/misc/panel',
 			$params: { id: 'ui-misc-affix', title: 'Affix' }
 		},
 
 		ccarousel: {
-			$module: 'ui/container',
+			$module: 'ui/misc/panel',
 			$params: { id: 'ui-misc-carousel', title: 'Carousel' }
 		},
 
 		cpaginator: {
-			$module: 'ui/container',
+			$module: 'ui/misc/panel',
 			$params: { id: 'ui-misc-paginator', title: 'Paginator' }
 		},
 
@@ -53,14 +54,6 @@ define([], function() {
 				'$bone!ccarousel',
 				'$bone!cpaginator'
 			], { renderOnAdd: true }]
-		}, {
-			'$bone!cpanel.addClass': ['panel'],
-			'$bone!cdropdown.addClass': ['panel'],
-			'$bone!cdialog.addClass': ['panel'],
-			'$bone!cautocomplete.addClass': ['panel'],
-			'$bone!caffix.addClass': ['panel'],
-			'$bone!ccarousel.addClass': ['panel'],
-			'$bone!cpaginator.addClass': ['panel']
 		}]
 
 	};

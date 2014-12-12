@@ -9,14 +9,12 @@ define([], function() {
 		$id: 'ui-list',
 
 		clist: {
-			$module: 'ui/container',
-			$params: { id: 'ui-list-list', title: 'HTML List' }
+			$module: 'ui/misc/panel',
+			$params: { id: 'ui-list-list', title: 'List' }
 		},
 
 		$ready: [{
-			'$bone!global.add': ['$bone!clist']
-		}, {
-			'$bone!clist.addClass': ['panel']
+			'$bone!global.add': ['$bone!clist', { renderOnAdd: true }]
 		}]
 
 	};

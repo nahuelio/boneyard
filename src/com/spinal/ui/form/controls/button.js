@@ -1,18 +1,18 @@
 /**
-*	@module com.spinal.ui.form
+*	@module com.spinal.ui.form.controls
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['ui/view'], function(View) {
 
 	/**
 	*	Button Class
-	*	@namespace com.spinal.ui.form
-	*	@class com.spinal.ui.form.Button
+	*	@namespace com.spinal.ui.form.controls
+	*	@class com.spinal.ui.form.controls.Button
 	*	@extends com.spinal.ui.View
 	*
 	*	@requires com.spinal.ui.View
 	**/
-	var UIButton = Spinal.namespace('com.spinal.ui.form.Button', View.inherit({
+	var UIButton = Spinal.namespace('com.spinal.ui.form.controls.Button', View.inherit({
 
 		/**
 		*	Events
@@ -61,7 +61,7 @@ define(['ui/view'], function(View) {
 		*	@public
 		*	@method initialize
 		*	@param options {Object} view options
-		*	@return {com.spinal.ui.form.Button}
+		*	@return {com.spinal.ui.form.controls.Button}
 		**/
 		initialize: function(options) {
 			options || (options = {});
@@ -77,7 +77,7 @@ define(['ui/view'], function(View) {
 		*	@chainable
 		*	@method render
 		*	@param [opts] {Object} additional options
-		*	@return {com.spinal.ui.form.Button}
+		*	@return {com.spinal.ui.form.controls.Button}
 		**/
 		render: function(opts) {
 			UIButton.__super__.render.apply(this, arguments);
@@ -90,7 +90,7 @@ define(['ui/view'], function(View) {
 		*	@chainable
 		*	@method text
 		*	@param content {String} button's content
-		*	@return {com.spinal.ui.form.Button}
+		*	@return {com.spinal.ui.form.controls.Button}
 		**/
 		text: function(content) {
 			this._text = (content) ? content : this._text;
@@ -104,7 +104,7 @@ define(['ui/view'], function(View) {
 		*	@chainable
 		*	@method type
 		*	@param name {String} button's type
-		*	@return {com.spinal.ui.form.Button}
+		*	@return {com.spinal.ui.form.controls.Button}
 		**/
 		type: function(name) {
 			this.$el.removeClass(this._type);
@@ -141,7 +141,7 @@ define(['ui/view'], function(View) {
 			/**
 			*	@event shown
 			**/
-			clicked: 'com:spinal:ui:view:form:button'
+			clicked: 'com:spinal:ui:view:form:controls:button'
 		},
 
 		/**

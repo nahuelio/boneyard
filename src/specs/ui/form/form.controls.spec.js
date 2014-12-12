@@ -10,8 +10,8 @@ define(['specs/ui/form/controls/button.spec'], function(ButtonSpec) {
 		$specs: [ButtonSpec],
 
 		cbutton: {
-			$module: 'ui/container',
-			$params: { id: 'ui-form-controls-button' }
+			$module: 'ui/misc/panel',
+			$params: { id: 'ui-form-controls-button', title: 'HTML Buttons' }
 		},
 
 		$ready: [{
@@ -23,10 +23,9 @@ define(['specs/ui/form/controls/button.spec'], function(ButtonSpec) {
 				'$bone!btn_danger'
 			]]
 		}, {
-			'$bone!global.add': ['$bone!cbutton', { renderOnAdd: true }],
-			'$bone!cbutton.addClass': ['panel']
+			'$bone!global.add': ['$bone!cbutton', { renderOnAdd: true }]
 		}]
-		
+
 	};
 
 });

@@ -9,33 +9,33 @@ define([], function() {
 		$id: 'ui-basic',
 
 		cparagraph: {
-			$module: 'ui/container',
-			$params: { id: 'ui-basic-paragraph', title: 'HTML Paragraph' }
+			$module: 'ui/misc/panel',
+			$params: { id: 'ui-basic-paragraph', title: 'Paragraph' }
 		},
 
 		clink: {
-			$module: 'ui/container',
-			$params: { id: 'ui-basic-link', title: 'HTML Link' }
+			$module: 'ui/misc/panel',
+			$params: { id: 'ui-basic-link', title: 'Link' }
 		},
 
 		cheader: {
-			$module: 'ui/container',
-			$params: { id: 'ui-basic-header', title: 'HTML Headers' }
+			$module: 'ui/misc/panel',
+			$params: { id: 'ui-basic-header', title: 'Headers' }
 		},
 
 		clabel: {
-			$module: 'ui/container',
-			$params: { id: 'ui-basic-label', title: 'HTML Label' }
+			$module: 'ui/misc/panel',
+			$params: { id: 'ui-basic-label', title: 'Label' }
 		},
 
 		cspan: {
-			$module: 'ui/container',
-			$params: { id: 'ui-basic-span', title: 'HTML Spans' }
+			$module: 'ui/misc/panel',
+			$params: { id: 'ui-basic-span', title: 'Spans' }
 		},
 
 		cimage: {
-			$module: 'ui/container',
-			$params: { id: 'ui-basic-image', title: 'HTML Images' }
+			$module: 'ui/misc/panel',
+			$params: { id: 'ui-basic-image', title: 'Images' }
 		},
 
 		$ready: [{
@@ -47,13 +47,6 @@ define([], function() {
 				'$bone!cspan',
 				'$bone!cimage'
 			], { renderOnAdd: true }]
-		}, {
-			'$bone!cparagraph.addClass': ['panel'],
-			'$bone!clink.addClass': ['panel'],
-			'$bone!cheader.addClass': ['panel'],
-			'$bone!clabel.addClass': ['panel'],
-			'$bone!cspan.addClass': ['panel'],
-			'$bone!cimage.addClass': ['panel']
 		}]
 
 	};

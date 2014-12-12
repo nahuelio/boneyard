@@ -9,14 +9,12 @@ define([], function() {
 		$id: 'ui-table',
 
 		ctable: {
-			$module: 'ui/container',
-			$params: { id: 'ui-table-table', title: 'HTML Table' }
+			$module: 'ui/misc/panel',
+			$params: { id: 'ui-table-table', title: 'Table' }
 		},
 
 		$ready: [{
-			'$bone!global.add': ['$bone!ctable']
-		}, {
-			'$bone!ctable.addClass': ['panel']
+			'$bone!global.add': ['$bone!ctable', { renderOnAdd: true }]
 		}]
 
 	};
