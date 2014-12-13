@@ -8,6 +8,7 @@
 *		For now, this module will only copy the assets from bootstrap (css and fonts) into the target directory.
 **/
 var fs = require('fs'),
+	fse = require('fs-extra'),
 	path = require('path'),
 	resolve = path.resolve,
 	join = path.join;
@@ -96,7 +97,7 @@ var Sass = {
 		var filePath = (file.indexOf(cfg.src) !== -1) ?
 			file.substring((cfg.src.length + 1), file.length) : Utils.getFilename(file),
 			output = resolve(targetPath, filePath);
-		Utils.createFile(output, fs.readFileSync(file, 'utf8'));
+		Utils.copyFile(file, output);
 	}
 
 };
