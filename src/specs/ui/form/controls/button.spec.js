@@ -31,7 +31,17 @@ define([], function() {
 		btn_danger: {
 			$module: 'ui/form/controls/button',
 			$params: { id: 'btn_danger', text: 'Danger', type: 'btn-danger' }
-		}
+		},
+
+		$ready: [{
+			'$bone!cbutton.addAll': [[
+				'$bone!btn_simple',
+				'$bone!btn_primary',
+				'$bone!btn_info',
+				'$bone!btn_warning',
+				'$bone!btn_danger'
+			], { renderOnAdd: true }]
+		}]
 
 	};
 

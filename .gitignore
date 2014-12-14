@@ -6,6 +6,7 @@ apidocs
 composer-app
 test/templates
 test/themes
+.backup
 *-SNAPSHOT.*
 *.seed
 *.log

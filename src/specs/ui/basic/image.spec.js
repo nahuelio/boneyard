@@ -12,7 +12,7 @@ define([], function() {
 
 		i_simple: {
 			$module: 'ui/basic/image',
-			$params: { id: 'i_simple', src: 'https://www.google.com/images/srpr/logo11w.png', alt: 'Google Logo' }
+			$params: { id: 'i_simple', src: 'http://backbonejs.org/docs/images/backbone.png', alt: 'Backbone Logo' }
 		},
 
 		i_ph_rounded: {

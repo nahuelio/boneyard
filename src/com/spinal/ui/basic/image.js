@@ -2,17 +2,17 @@
 *	@module com.spinal.ui.basic
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define(['ui/basic/paragraph'], function(Paragraph) {
+define(['ui/view'], function(View) {
 
 	/**
 	*	Image Class
 	*	@namespace com.spinal.ui.basic
 	*	@class com.spinal.ui.basic.Image
-	*	@extends com.spinal.ui.basic.Paragraph
+	*	@extends com.spinal.ui.View
 	*
-	*	@requires com.spinal.ui.basic.Paragraph
+	*	@requires com.spinal.ui.basic.View
 	**/
-	var UIImage = Spinal.namespace('com.spinal.ui.basic.Image', Paragraph.inherit({
+	var UIImage = Spinal.namespace('com.spinal.ui.basic.Image', View.inherit({
 
 		/**
 		*	Internal CSS className

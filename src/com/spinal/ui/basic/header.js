@@ -33,7 +33,7 @@ define(['ui/basic/paragraph'], function(Paragraph) {
 		/**
 		*	Header's default heading
 		*	@public
-		*	@property tagName
+		*	@property _heading
 		*	@type String
 		**/
 		_heading: '1',
