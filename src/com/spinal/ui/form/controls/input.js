@@ -2,8 +2,7 @@
 *	@module com.spinal.ui.form.controls
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define(['ui/view',
-		'util/string'], function(View, StringUtil) {
+define(['ui/view', 'util/string'], function(View, StringUtil) {
 
 	/**
 	*	Input Class

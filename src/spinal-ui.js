@@ -14,5 +14,6 @@ define(['ui/view',
 		'ui/form/controls/fieldset',
 		'ui/form/controls/button',
 		'ui/form/controls/input',
+		'ui/form/controls/textarea',
 		'ui/form/controls/select',
 		'ui/form/controls/option'], function() { });
