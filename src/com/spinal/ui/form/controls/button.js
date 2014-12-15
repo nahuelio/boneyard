@@ -139,9 +139,9 @@ define(['ui/view'], function(View) {
 		**/
 		EVENTS: {
 			/**
-			*	@event shown
+			*	@event clicked
 			**/
-			clicked: 'com:spinal:ui:view:form:controls:button'
+			clicked: 'com:spinal:ui:view:form:controls:button:clicked'
 		},
 
 		/**

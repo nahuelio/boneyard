@@ -15,6 +15,15 @@ define(['specs/ui/basic/paragraph.spec',
 		$id: 'ui-basic',
 		$specs: [ParagraphSpec, LinkSpec, HeaderSpec, LabelSpec, SpanSpec, ImageSpec],
 
+		basic_header: {
+			$module: 'ui/basic/header',
+			$params: {
+				id: 'basic_header',
+				content: 'Basic <small><kbd>com.spinal.ui.basic</kbd></small>',
+				heading: '2'
+			}
+		},
+
 		cparagraph: {
 			$module: 'ui/misc/panel',
 			$params: { id: 'ui-basic-paragraph', title: 'Paragraph' }
@@ -47,6 +56,7 @@ define(['specs/ui/basic/paragraph.spec',
 
 		$ready: [{
 			'$bone!global.addAll': [[
+				'$bone!basic_header',
 				'$bone!cparagraph',
 				'$bone!clink',
 				'$bone!cheader',

@@ -67,6 +67,19 @@ define(['core/spinal',
 		},
 
 		/**
+		*	Prefixes props keys in props input object with a '_' to match the private members convention
+		*	and returns the object
+		*	@static
+		*	@method toPrivate
+		*	@param props {Object} Object to convert keys from
+		*	@return Object
+		**/
+		toPrivate: function(props) {
+			_.each(props, function(v, k, o) { o['_' + k] = v; delete o[k]; });
+			return props;
+		},
+
+		/**
 		*	Perform a query using a string (dot notation) on the obj passed as parameter.
 		*	If the input doesn't match, it returns null.
 		*	@static

@@ -9,6 +9,15 @@ define(['specs/ui/misc/panel.spec'], function(PanelSpec) {
 		$id: 'ui-misc',
 		$specs: [PanelSpec],
 
+		misc_header: {
+			$module: 'ui/basic/header',
+			$params: {
+				id: 'misc_header',
+				content: 'Miscellaneous <small><kbd>com.spinal.ui.misc</kbd></small>',
+				heading: '2'
+			}
+		},
+
 		cpanel: {
 			$module: 'ui/misc/panel',
 			$params: { id: 'ui-misc-panel', title: 'Panels' }
@@ -46,6 +55,7 @@ define(['specs/ui/misc/panel.spec'], function(PanelSpec) {
 
 		$ready: [{
 			'$bone!global.addAll': [[
+				'$bone!misc_header',
 				'$bone!cpanel',
 				'$bone!cdropdown',
 				'$bone!cdialog',

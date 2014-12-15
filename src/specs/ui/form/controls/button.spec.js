@@ -6,7 +6,7 @@ define([], function() {
 
 	return {
 
-		$id: 'ui-form-button',
+		$id: 'ui-form-controls-button',
 
 		btn_simple: {
 			$module: 'ui/form/controls/button',
