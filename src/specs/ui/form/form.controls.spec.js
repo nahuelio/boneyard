@@ -4,12 +4,13 @@
 */
 define(['specs/ui/form/controls/button.spec',
 		'specs/ui/form/controls/fieldset.spec',
-		'specs/ui/form/controls/input.spec'], function(ButtonSpec, FieldsetSpec, InputSpec) {
+		'specs/ui/form/controls/input.spec',
+		'specs/ui/form/controls/select.spec'], function(ButtonSpec, FieldsetSpec, InputSpec, SelectSpec) {
 
 	return {
 
 		$id: 'ui-form-controls',
-		$specs: [ButtonSpec, FieldsetSpec, InputSpec],
+		$specs: [ButtonSpec, FieldsetSpec, InputSpec, SelectSpec],
 
 		form_controls_header: {
 			$module: 'ui/basic/header',

@@ -36,14 +36,6 @@ define(['core/spinal',
 		views: null,
 
 		/**
-		*	Element query
-		*	@public
-		*	@property _$tel
-		*	@type String
-		**/
-		/**_$tel: null,**/
-
-		/**
 		*	Constructor
 		*	@method constructor
 		*	@example
