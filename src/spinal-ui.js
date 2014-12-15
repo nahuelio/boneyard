@@ -11,4 +11,8 @@ define(['ui/view',
 		'ui/basic/span',
 		'ui/basic/image',
 		'ui/misc/panel',
-		'ui/form/controls/button'], function() { });
+		'ui/form/controls/fieldset',
+		'ui/form/controls/button',
+		'ui/form/controls/input',
+		'ui/form/controls/select',
+		'ui/form/controls/option'], function() { });
