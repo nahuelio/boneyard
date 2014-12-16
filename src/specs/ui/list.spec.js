@@ -2,11 +2,12 @@
 *	SpinalJS List Spec
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 */
-define([], function() {
+define(['specs/ui/list/list.spec'], function(ListSpec) {
 
 	return {
 
 		$id: 'ui-list',
+		$specs: [ListSpec],
 
 		list_header: {
 			$module: 'ui/basic/header',
@@ -19,7 +20,7 @@ define([], function() {
 
 		clist: {
 			$module: 'ui/misc/panel',
-			$params: { id: 'ui-list-list', title: 'List' }
+			$params: { id: 'clist', title: 'List' }
 		},
 
 		$ready: [{

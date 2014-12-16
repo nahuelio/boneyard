@@ -54,14 +54,14 @@ define(['ui/container',
 		*	Initialize
 		*	@public
 		*	@method initialize
-		*	@param options {Object} view options
+		*	@param opts {Object} view options
 		*	@return {com.spinal.ui.form.controls.Select}
 		**/
-		initialize: function(options) {
-			options || (options = {});
-			options.interface = Option;
+		initialize: function(opts) {
+			opts || (opts = {});
+			opts.interface = Option;
+			if(opts.options && opts.options.length > 0) { opts.views = opts.options; delete opts.options; }
 			UISelect.__super__.initialize.apply(this, arguments);
-			if(options.options && options.options.length > 0) this.addAll(options.options, { silent: true });
 			return this;
 		},
 

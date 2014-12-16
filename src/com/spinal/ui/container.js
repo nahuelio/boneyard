@@ -61,6 +61,7 @@ define(['core/spinal',
 			options || (options = {});
 			Container.__super__.initialize.apply(this, arguments);
 			this.views = new Collection([], (options.interface) ? { interface: options.interface } : {});
+			if(options.views) this.addAll(options.views, { silent: true });
 			return this;
 		},
 

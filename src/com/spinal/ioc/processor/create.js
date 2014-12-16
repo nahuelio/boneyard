@@ -110,6 +110,7 @@ define(['ioc/context',
 		**/
 		_dependencies: function(params) {
 			return _.compact(_.map(params, function(value, key, obj) {
+				if(_.isArray(value)) return _.flatten(this._dependencies(value));
 				if(!this._resolve(value, obj, key)) return { id: this.getDependencyId(value), property: key };
 			}, this));
 		},
