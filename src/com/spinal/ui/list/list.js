@@ -12,6 +12,7 @@ define(['ui/container',
 	*	@extends com.spinal.ui.Container
 	*
 	*	@requires com.spinal.ui.Container
+	*	@requires com.spinal.ui.list.ListItem
 	**/
 	var UIList = Spinal.namespace('com.spinal.ui.list.List', Container.inherit({
 
@@ -35,13 +36,13 @@ define(['ui/container',
 		*	Initialize
 		*	@public
 		*	@method initialize
-		*	@param options {Object} view options
+		*	@param opts {Object} view options
 		*	@return {com.spinal.ui.list.List}
 		**/
-		initialize: function(options) {
-			options || (options = {});
-			options.interface = ListItem;
-			if(options.items && options.items.length > 0) { options.views = options.items; delete options.items; }
+		initialize: function(opts) {
+			opts || (opts = {});
+			opts.interface = ListItem;
+			if(opts.items && opts.items.length > 0) { opts.views = opts.items; delete opts.items; }
 			UIList.__super__.initialize.apply(this, arguments);
 			return this;
 		}

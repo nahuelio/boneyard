@@ -2,11 +2,12 @@
 *	SpinalJS Table Spec
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 */
-define([], function() {
+define(['specs/ui/table/table.spec'], function(TableSpec) {
 
 	return {
 
 		$id: 'ui-table',
+		$specs: [TableSpec],
 
 		table_header: {
 			$module: 'ui/basic/header',
