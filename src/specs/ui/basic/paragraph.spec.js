@@ -10,12 +10,12 @@ define([], function() {
 
 		p_simple: {
 			$module: 'ui/basic/paragraph',
-			$params: { id: 'p_simple', content: 'Simple Text Content' }
+			$params: { content: 'Simple Text Content' }
 		},
 
 		p_html: {
 			$module: 'ui/basic/paragraph',
-			$params: { id: 'p_html', content: '<strong>HTML Content</strong>' }
+			$params: { content: '<strong>HTML Content</strong>' }
 		},
 
 		$ready: [{

@@ -6,7 +6,7 @@ define(['core/spinal',
 		'util/string',
 		'util/exception/ui',
 		'templates/spinal',
-		'libs/bootstrap'], function(Spinal, StringUtils, UIException) {
+		'libs/bootstrap'], function(Spinal, StringUtil, UIException) {
 
 	/**
 	*	Define a generic view interface that extends classic Backbone.View
@@ -28,7 +28,7 @@ define(['core/spinal',
 		*	@property id
 		*	@type String
 		**/
-		id: StringUtils.uuid(),
+		id: null,
 
 		/**
 		*	Events
@@ -78,7 +78,8 @@ define(['core/spinal',
 		constructor: function(options) {
 			options || (options = {});
 			Backbone.View.apply(this, arguments);
-			this.id = (options.id) ? options.id : (this.$el.attr('id')) ? this.$el.attr('id') : this.id;
+			this.id = (options.id) ? options.id : (this.$el.attr('id')) ? this.$el.attr('id') : null;
+			if(options.autoId) this.id = StringUtil.uuid();
 			this.$el.attr('id', this.id);
 		},
 
@@ -125,7 +126,7 @@ define(['core/spinal',
 		_beforeRender: function(opts) {
 			if(!this._successor) throw new UIException('SuccessorNotSpecified');
 			if(!(this._successor instanceof Spinal.com.spinal.ui.Container)) throw new UIException('InvalidSuccessorType');
-			if(!this._successor.findById(this.id)) throw new UIException('UIStackViolation', {
+			if(this.id && !this._successor.findById(this.id)) throw new UIException('UIStackViolation', {
 				viewId: 'view-error', succesorId: 'container-declared-inline'
 			});
 			return this;
@@ -309,7 +310,7 @@ define(['core/spinal',
 		*	@return {com.spinal.ui.View}
 		**/
 		_next: function(id) {
-			if(this.id === id) return this;
+			if(this.id && this.id === id) return this;
 			if(this._successor) return this._successor.lookup(id);
 			return null;
 		},

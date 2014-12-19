@@ -10,7 +10,7 @@ define([], function() {
 
 		lbl_simple: {
 			$module: 'ui/basic/label',
-			$params: { id: 'lbl_simple', content: 'Label Text', afor: 'label-for' }
+			$params: { content: 'Label Text', afor: 'label-for' }
 		},
 
 		$ready: [{

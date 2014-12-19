@@ -17,7 +17,6 @@ define(['specs/ui/form/controls/button.spec',
 		form_controls_header: {
 			$module: 'ui/basic/header',
 			$params: {
-				id: 'form_controls_header',
 				content: 'Form Controls <small><kbd>com.spinal.ui.form.controls</kbd></small>',
 				heading: '2'
 			}
@@ -25,27 +24,27 @@ define(['specs/ui/form/controls/button.spec',
 
 		cfieldset: {
 			$module: 'ui/misc/panel',
-			$params: { id: 'ui-form-controls-fieldset', title: 'HTML Fieldset' }
+			$params: { title: 'HTML Fieldset' }
 		},
 
 		cbutton: {
 			$module: 'ui/misc/panel',
-			$params: { id: 'ui-form-controls-button', title: 'HTML Buttons' }
+			$params: { title: 'HTML Buttons' }
 		},
 
 		cinput: {
 			$module: 'ui/misc/panel',
-			$params: { id: 'ui-form-controls-input', title: 'HTML Inputs' }
+			$params: { title: 'HTML Inputs' }
 		},
 
 		ctextarea: {
 			$module: 'ui/misc/panel',
-			$params: { id: 'ui-form-controls-textarea', title: 'HTML Textarea' }
+			$params: { title: 'HTML Textarea' }
 		},
 
 		cselect: {
 			$module: 'ui/misc/panel',
-			$params: { id: 'ui-form-controls-select', title: 'HTML Select' }
+			$params: { title: 'HTML Select' }
 		},
 
 		$ready: [{

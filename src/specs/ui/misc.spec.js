@@ -12,7 +12,6 @@ define(['specs/ui/misc/panel.spec'], function(PanelSpec) {
 		misc_header: {
 			$module: 'ui/basic/header',
 			$params: {
-				id: 'misc_header',
 				content: 'Miscellaneous <small><kbd>com.spinal.ui.misc</kbd></small>',
 				heading: '2'
 			}
@@ -20,37 +19,37 @@ define(['specs/ui/misc/panel.spec'], function(PanelSpec) {
 
 		cpanel: {
 			$module: 'ui/misc/panel',
-			$params: { id: 'ui-misc-panel', title: 'Panels' }
+			$params: { title: 'Panels' }
 		},
 
 		cdropdown: {
 			$module: 'ui/misc/panel',
-			$params: { id: 'ui-misc-dropdown', title: 'Dropdown' }
+			$params: { title: 'Dropdown' }
 		},
 
 		cdialog: {
 			$module: 'ui/misc/panel',
-			$params: { id: 'ui-misc-dialog', title: 'Dialog' }
+			$params: { title: 'Dialog' }
 		},
 
 		cautocomplete: {
 			$module: 'ui/misc/panel',
-			$params: { id: 'ui-misc-autocomplete', title: 'Autocomplete' }
+			$params: { title: 'Autocomplete' }
 		},
 
 		caffix: {
 			$module: 'ui/misc/panel',
-			$params: { id: 'ui-misc-affix', title: 'Affix' }
+			$params: { title: 'Affix' }
 		},
 
 		ccarousel: {
 			$module: 'ui/misc/panel',
-			$params: { id: 'ui-misc-carousel', title: 'Carousel' }
+			$params: { title: 'Carousel' }
 		},
 
 		cpaginator: {
 			$module: 'ui/misc/panel',
-			$params: { id: 'ui-misc-paginator', title: 'Paginator' }
+			$params: { title: 'Paginator' }
 		},
 
 		$ready: [{

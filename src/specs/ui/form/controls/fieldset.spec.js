@@ -10,17 +10,17 @@ define([], function() {
 
 		fs_simple: {
 			$module: 'ui/form/controls/fieldset',
-			$params: { id: 'fs_simple' }
+			$params: { }
 		},
 
 		fs_label: {
 			$module: 'ui/basic/label',
-			$params: { id: 'fs_label', afor: 'fs_paragraph', content: 'Fieldset Label' }
+			$params: { afor: 'fs_paragraph', content: 'Fieldset Label' }
 		},
 
 		fs_input: {
 			$module: 'ui/form/controls/input',
-			$params: { id: 'fs_input', name: 'fs_input', placeholder: 'Input wrapped in Fieldset' }
+			$params: { name: 'fs_input', placeholder: 'Input wrapped in Fieldset' }
 		},
 
 		$ready: [{

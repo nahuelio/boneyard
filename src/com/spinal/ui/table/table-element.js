@@ -20,7 +20,7 @@ define(['ui/container'], function(Container) {
 		*	@property className
 		*	@type String
 		**/
-		className: 'ui-table-t',
+		className: 'ui-table-',
 
 		/**
 		*	Tag Name used to build the el
@@ -28,7 +28,7 @@ define(['ui/container'], function(Container) {
 		*	@property tagName
 		*	@type String
 		**/
-		tagName: 't',
+		tagName: '',
 
 		/**
 		*	TableElement's default section type
@@ -36,7 +36,7 @@ define(['ui/container'], function(Container) {
 		*	@property _t
 		*	@type String
 		**/
-		_t: 'd',
+		_t: 'td',
 
 		/**
 		*	Constructor
@@ -45,8 +45,8 @@ define(['ui/container'], function(Container) {
 		**/
 		constructor: function(options) {
 			options || (options = {});
-			if(options.t) this._t = options.t;
-			this.tagName = (this.tagName + this._t);
+			this._t = (options.t) ? options.t : this._t;
+			this.tagName = this._t;
 			this.className = (this.className + this._t);
 			UITableElement.__super__.constructor.apply(this, arguments);
 		},
@@ -60,7 +60,21 @@ define(['ui/container'], function(Container) {
 		**/
 		initialize: function(opts) {
 			opts || (opts = {});
+			if(opts.content) this.template = _.template(opts.content);
 			UITableElement.__super__.initialize.apply(this, arguments);
+			return this;
+		},
+
+		/**
+		*	Render TableElement
+		*	@public
+		*	@chainable
+		*	@method render
+		*	@param [opts] {Object} additional options
+		*	@return {com.spinal.ui.table.TableElement}
+		**/
+		render: function() {
+			UITableElement.__super__.render.apply(this, arguments);
 			return this;
 		}
 
@@ -71,7 +85,18 @@ define(['ui/container'], function(Container) {
 		*	@property NAME
 		*	@type String
 		**/
-		NAME: 'TableElement'
+		NAME: 'TableElement',
+
+		/**
+		*	@static
+		*	@property TYPES
+		*	@type Object
+		**/
+		TYPES: {
+			head: 'th',
+			row: 'td',
+			column: 'tr'
+		}
 
 	}));
 

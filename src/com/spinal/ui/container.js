@@ -159,7 +159,8 @@ define(['core/spinal',
 		**/
 		add: function(view, opts) {
 			opts || (opts = {});
-			if(!this.findById(view.id)) {
+			var exists = (view.id) ? this.findById(view.id) : this.findByCID(view.cid);
+			if(!exists) {
 				view = this.views.add(view);
 				view._successor = this;
 				if(opts.renderOnAdd) view.render(opts);
@@ -234,7 +235,19 @@ define(['core/spinal',
 		*	@return Object
 		**/
 		getPos: function(view) {
-			return this.views.findPosBy(function(ele) { return (ele.id && ele.id === view.id); });
+			return this.views.findPosBy(function(ele) { return (ele.cid && ele.cid === view.cid); });
+		},
+
+		/**
+		*	Find View by Backbone cid
+		*	@public
+		*	@method findByCID
+		*	@param cid {String} View cid
+		*	@return {com.spinal.ui.View}
+		**/
+		findByCID: function(cid) {
+			if(!cid) return null;
+			return this.views.find(function(v) { return (v.cid && v.cid === cid); });
 		},
 
 		/**

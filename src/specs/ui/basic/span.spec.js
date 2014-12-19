@@ -10,12 +10,12 @@ define([], function() {
 
 		s_glyph: {
 			$module: 'ui/basic/span',
-			$params: { id: 's_glyph' }
+			$params: { }
 		},
 
 		s_simple: {
 			$module: 'ui/basic/span',
-			$params: { id: 's_simple', content: 'Simple Span Text content' }
+			$params: { content: 'Simple Span Text content' }
 		},
 
 		$ready: [{

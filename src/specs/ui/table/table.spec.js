@@ -8,31 +8,49 @@ define([], function() {
 
 		$id: 'ui-table-table',
 
-		table_columns: ['Column A', 'Column B', 'Column C'],
+		table_p_s: { $module: 'ui/basic/paragraph', $params: { content: '<code>No Styling</code>' } },
+		table_p_ss: { $module: 'ui/basic/paragraph', $params: { content: '<code>Striped</code>' } },
+
+		table_columns: [
+			{ cls: 'custom-header', rows: ['Column A', 'Column B', 'Column C'] }
+		],
 
 		table_rows: [
-			['Row 1.A', { content: 'Row 1.B' }, { content: 'Row 1.C' }],
-			['Row 2.A', { content: 'Row 2.B', cls: 'middle-one' }, 'Row 2.C'],
-			[{ content: 'Row 3.A' }, { content: 'Row 3.B' }, 'Row 3.C']
+			{ rows: ['Row 1.A', 'Row 1.B', 'Row 1.C'] },
+			{ rows: ['Row 2.A', 'Row 2.B', 'Row 2.C'] },
+			{ rows: ['Row 3.A', 'Row 3.B', 'Row 3.C'] }
 		],
 
 		table_footer: [
-			[{ content: 'Footer A', cls: 'footer-row-A' }, 'Footer B', { content: 'Footer C', cls: 'footer-row-C' }]
+			{ rows: ['Footer A','Footer B', 'Footer C'] }
 		],
 
-		table_container: {
+		table_simple: {
 			$module: 'ui/table/table',
 			$params: {
-				id: 'table_container',
-				columns: '$bone!table_columns',
-				rows: '$bone!table_rows',
+				header: '$bone!table_columns',
+				body: '$bone!table_rows',
+				footer: '$bone!table_footer'
+			}
+		},
+
+		table_simple_striped: {
+			$module: 'ui/table/table',
+			$params: {
+				header: '$bone!table_columns',
+				body: '$bone!table_rows',
 				footer: '$bone!table_footer'
 			}
 		},
 
 		$ready: [{
-			'$bone!ctable.add': ['$bone!table_container', { renderOnAdd: true }],
-			'$bone!table_container.addClass': ['table-striped']
+			'$bone!ctable.addAll': [[
+				'$bone!table_p_s',
+				'$bone!table_simple',
+				'$bone!table_p_ss',
+				'$bone!table_simple_striped'
+			], { renderOnAdd: true }],
+			'$bone!table_simple_striped.addClass': ['table-striped']
 		}]
 
 	};

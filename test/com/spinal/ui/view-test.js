@@ -32,7 +32,7 @@ define(['core/spinal',
 				expect(this.testView).to.be.ok();
 				expect(this.testView.className).to.be.equal('ui-view');
 				expect(this.testView.tagName).to.be.equal('div');
-				expect(this.testView.$el.attr('id')).to.be.equal(this.testView.id);
+				expect(this.testView.$el.attr('id')).to.be.equal(undefined);
 			});
 
 			it('Should return an instance of View with el specified as part of the constructor', function() {
@@ -154,7 +154,6 @@ define(['core/spinal',
 				expect(result.template).to.be.a(Function);
 				expect(result.$el.find('input').hasClass('test')).to.be.equal(true);
 				expect(this.cglobal.$el.find('.ui-view').length).to.be.equal(1);
-				expect(this.cglobal.$el.find('#' + view.id).length).to.be.equal(1);
 				this.cglobal.removeAll();
 				delete view;
 			});

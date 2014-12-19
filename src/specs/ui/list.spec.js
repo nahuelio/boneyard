@@ -12,7 +12,6 @@ define(['specs/ui/list/list.spec'], function(ListSpec) {
 		list_header: {
 			$module: 'ui/basic/header',
 			$params: {
-				id: 'list_header',
 				content: 'List <small><kbd>com.spinal.ui.list</kbd></small>',
 				heading: '2'
 			}
@@ -20,7 +19,7 @@ define(['specs/ui/list/list.spec'], function(ListSpec) {
 
 		clist: {
 			$module: 'ui/misc/panel',
-			$params: { id: 'clist', title: 'List' }
+			$params: { title: 'List' }
 		},
 
 		$ready: [{

@@ -1,0 +1,10 @@
+<t<%= _$.type %> <%= (_$.id) ? "id=\"" + _$.id + "\"" : "" %>
+	<%= (_$.cls) ? "class=\"" + _$.cls + "\"" : "" %>
+	<%= (_$.attrs) ? _$.attrs  : "" %>>
+	<% if(_$.trs) { for(var tr in _$.trs) { var t = (typeof(_$.trs[tr]) !== 'undefined') ? _$.trs[tr] : {}; %>
+		<tr <%= (t.id) ? "id=\"" + t.id + "\"" : "" %>
+			<%= (t.cls) ? "class=\"" + t.cls + "\"" : "" %>
+			<%= (t.attrs) ? t.attrs  : "" %>>
+		</tr>
+	<% } } %>
+</t<%= _$.type %>>

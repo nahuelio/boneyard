@@ -50,6 +50,26 @@ define(['core/spinal',
 		},
 
 		/**
+		*	Convert a JSON object into a query string format
+		*	@static
+		*	@method create
+		*	@param o {Object} object to be converted
+		*	@param [ignoreQMark] {Boolean} optional to skip question mark as part of the query string
+		*	@param [separator] {String} separator used to split key-value pairs ('&' by default)
+		**/
+		createQueryString: function(o, noQMark, separator) {
+			var pairs = [], i, len;
+			_.each(o, function(k, v) {
+				if(_.isArray(v)) {
+					for (i = 0, len = v.length; i < len; i++) pairs.push(k + '=' + encodeURIComponent(decodeURIComponent(v[i])));
+				} else {
+					pairs.push(k + '=' + encodeURIComponent(decodeURIComponent(v)));
+				}
+			}, this);
+			return ((noQMark || _.isEmpty(o)) ? '' : '?') + pairs.join((separator) ? separator : '&');
+		},
+
+		/**
 		*	Convert a String in dot notation format into a JSON object
 		*	@static
 		*	@method strToJSON

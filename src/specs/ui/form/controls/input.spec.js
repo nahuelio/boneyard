@@ -10,8 +10,7 @@ define([], function() {
 
 		default_input: {
 			$module: 'ui/form/controls/input',
-			$params: { id: 'default_input', name: 'default_input',
-				value: 'Default Input', placeholder: 'Default Text' }
+			$params: { name: 'default_input', value: 'Default Input', placeholder: 'Default Text' }
 		},
 
 		$ready: [{

@@ -18,7 +18,6 @@ define(['specs/ui/basic/paragraph.spec',
 		basic_header: {
 			$module: 'ui/basic/header',
 			$params: {
-				id: 'basic_header',
 				content: 'Basic <small><kbd>com.spinal.ui.basic</kbd></small>',
 				heading: '2'
 			}
@@ -26,32 +25,32 @@ define(['specs/ui/basic/paragraph.spec',
 
 		cparagraph: {
 			$module: 'ui/misc/panel',
-			$params: { id: 'ui-basic-paragraph', title: 'Paragraph' }
+			$params: { title: 'Paragraph' }
 		},
 
 		clink: {
 			$module: 'ui/misc/panel',
-			$params: { id: 'ui-basic-link', title: 'Link' }
+			$params: { title: 'Link' }
 		},
 
 		cheader: {
 			$module: 'ui/misc/panel',
-			$params: { id: 'ui-basic-header', title: 'Headers' }
+			$params: { title: 'Headers' }
 		},
 
 		clabel: {
 			$module: 'ui/misc/panel',
-			$params: { id: 'ui-basic-label', title: 'Label' }
+			$params: { title: 'Label' }
 		},
 
 		cspan: {
 			$module: 'ui/misc/panel',
-			$params: { id: 'ui-basic-span', title: 'Spans' }
+			$params: { title: 'Spans' }
 		},
 
 		cimage: {
 			$module: 'ui/misc/panel',
-			$params: { id: 'ui-basic-image', title: 'Images' }
+			$params: { title: 'Images' }
 		},
 
 		$ready: [{

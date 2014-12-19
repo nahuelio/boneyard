@@ -10,37 +10,37 @@ define([], function() {
 
 		panelContent: {
 			$module: 'ui/basic/paragraph',
-			$params: { id: 'panelContent', content: 'Simple Text Content or with <strong>HTML</strong>' }
+			$params: { content: 'Simple Text Content or with <strong>HTML</strong>' }
 		},
 
 		panel_simple: {
 			$module: 'ui/misc/panel',
-			$params: { id: 'panel_simple', title: 'Simple Panel' }
+			$params: { title: 'Simple Panel' }
 		},
 
 		panel_primary: {
 			$module: 'ui/misc/panel',
-			$params: { id: 'panel_primary', title: 'Primary Panel', type: 'panel-primary' }
+			$params: { title: 'Primary Panel', type: 'panel-primary' }
 		},
 
 		panel_success: {
 			$module: 'ui/misc/panel',
-			$params: { id: 'panel_success', title: 'Success Panel', type: 'panel-success' }
+			$params: { title: 'Success Panel', type: 'panel-success' }
 		},
 
 		panel_info: {
 			$module: 'ui/misc/panel',
-			$params: { id: 'panel_info', title: 'Info Panel', type: 'panel-info' }
+			$params: { title: 'Info Panel', type: 'panel-info' }
 		},
 
 		panel_warning: {
 			$module: 'ui/misc/panel',
-			$params: { id: 'panel_warning', title: 'Warning Panel', type: 'panel-warning' }
+			$params: { title: 'Warning Panel', type: 'panel-warning' }
 		},
 
 		panel_danger: {
 			$module: 'ui/misc/panel',
-			$params: { id: 'panel_danger', title: 'Danger Panel', type: 'panel-danger' }
+			$params: { title: 'Danger Panel', type: 'panel-danger' }
 		},
 
 		$ready: [{

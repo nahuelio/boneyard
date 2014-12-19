@@ -12,7 +12,6 @@ define(['specs/ui/form/form.controls.spec'], function(FormControlsSpec) {
 		form_header: {
 			$module: 'ui/basic/header',
 			$params: {
-				id: 'form_header',
 				content: 'Form <small><kbd>com.spinal.ui.form</kbd></small>',
 				heading: '2'
 			}
@@ -20,7 +19,7 @@ define(['specs/ui/form/form.controls.spec'], function(FormControlsSpec) {
 
 		cform: {
 			$module: 'ui/misc/panel',
-			$params: { id: 'ui-form-form', title: 'Form' }
+			$params: { title: 'Form' }
 		},
 
 		/** Define Form Component **/

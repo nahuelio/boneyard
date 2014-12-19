@@ -1,14 +1,48 @@
 /**
 *	@module com.spinal.util.http
-*	@author Patricio Ferreira | https://github.com/kuakman
+*	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define(['core/spinal'], function(Spinal) {
+define(['core/spinal', 'util/string'], function(Spinal, StringUtil) {
 
 	/**
 	*	HTTP Ajax based Controller Class
 	*	Defines a Basic HTTP Controller structure to make ajax request calls
 	*	This interface supports the following HTTP methods: GET, POST, PUT AND DELETE.
 	*	Content Types: XML, JSON AND HTML.
+	*	<h5>Usage:</h5>
+	*
+	*		// Controller Class declaration (will inherit methods from AjaxHttp)
+	*		var MyController = Spinal.namespace('com.company.controller.MyController', AjaxHttp.inherit({
+	*
+	*			endpoint: '/path/to/remote/endpoint/',
+	*
+	*			initialize: function() {
+    *				MyController.__super__.initialize.apply(this, arguments);
+	*				return this;
+	*			},
+	*
+	*			method: function(data, opts) {
+	*				this.call({
+	*					action: 'method', // -> "/path/to/remote/endpoint/method",
+	*					method: AjaxHttp.VERBS.POST,
+	*					// optional parameters
+	*					params: data,
+	*					success: this.service.parse, // -> will pass arguments to the parse method on the service object
+	*					skipSuccess: true // -> Skips MyController success event triggering
+	*				}, opts);
+	*			}
+	*
+	*			...
+	*
+	*		}));
+	*
+	*		In another context:
+	*
+	*		var c = new MyController({ service: serviceInstance });
+	*			c.method({someData}, { after: function(req, res, ...) {
+	*				// This callback is executed despite success or fail.
+	*				console.log(arguments);
+	*			} });
 	*
 	*	@namespace com.spinal.util
 	*	@class com.spinal.util.http.AjaxHttp
@@ -16,7 +50,7 @@ define(['core/spinal'], function(Spinal) {
 	*
 	*	@requires com.spinal.core.Spinal
 	**/
-	var AjaxHttp = app.namespace('com.spinal.util.http.AjaxHttp', Spinal.SpinalClass.inherit({
+	var AjaxHttp = Spinal.namespace('com.spinal.util.http.AjaxHttp', Spinal.SpinalClass.inherit({
 
 		/**
 		*	Enpoint path
@@ -40,10 +74,10 @@ define(['core/spinal'], function(Spinal) {
 		*	@method initialize
 		*	@return {com.spinal.util.http.AjaxHttp}
 		**/
-		initialize: function() {
+		initialize: function(opts) {
+			opts || (opts = {});
 			if(!this.endpoint) throw new Error(this.toString() + ' requires an endpoint path');
-			if(!this.service) throw new Error(this.toString() + ' requires a service instance');
-			this.call = _.compose(this.call, this.before);
+			if(opts.service) this.service = opts.service;
 			return this;
 		},
 
@@ -69,8 +103,8 @@ define(['core/spinal'], function(Spinal) {
 		*/
 		_get: function(req) {
 			$.ajax(_.extend({
-				url: (this.endpoint + req.action + Backbone.Util.createQueryString(req.params)),
-				type: Controller.VERBS.GET,
+				url: (this.endpoint + req.action + StringUtil.createQueryString(req.params)),
+				type: AjaxHttp.VERBS.GET,
 				success: _.bind(this._success, this, req),
 				error: _.bind(this._fail, this, req)
 			}, req.opts));
@@ -85,7 +119,7 @@ define(['core/spinal'], function(Spinal) {
 		_post: function(req) {
 			$.ajax(_.extend({
 				url: (this.endpoint + req.action),
-				type: Controller.VERBS.POST,
+				type: AjaxHttp.VERBS.POST,
 				data: req.params,
 				success: _.bind(this._success, this, req),
 				error: _.bind(this._fail, this, req)
@@ -101,7 +135,7 @@ define(['core/spinal'], function(Spinal) {
 		_put: function(req) {
 			$.ajax(_.extend({
 				url: (this.endpoint + req.action),
-				type: Controller.VERBS.PUT,
+				type: AjaxHttp.VERBS.PUT,
 				data: req.params,
 				success: _.bind(this._success, this, req),
 				error: _.bind(this._fail, this, req)
@@ -117,7 +151,7 @@ define(['core/spinal'], function(Spinal) {
 		_delete: function(req) {
 			$.ajax(_.extend({
 				url: (this.endpoint + req.action),
-				type: Controller.VERBS.DELETE,
+				type: AjaxHttp.VERBS.DELETE,
 				data: req.params,
 				success: _.bind(this._success, this, req),
 				error: _.bind(this._fail, this, req)
@@ -135,9 +169,8 @@ define(['core/spinal'], function(Spinal) {
 		*	@return com.spinal.util.http.AjaxHttp
 		**/
 		_success: function(req, res, textStatus, jqXHR) {
-			if(req.success) req.success.call(this.service, arguments);
-			if(!req.skipSuccess) this.trigger(Controller.EVENTS.success, arguments);
-			if(req.fireSuccess && _.isString(req.fireSuccess)) Backbone.trigger(req.fireSuccess, arguments);
+			if(req.success && this.service) req.success.apply(this.service, arguments);
+			if(!req.skipSuccess) this.trigger(AjaxHttp.EVENTS.success, arguments);
 			if(req.__after__) req.__after__(arguments);
 			return this;
 		},
@@ -153,9 +186,8 @@ define(['core/spinal'], function(Spinal) {
 		*	@return com.spinal.util.http.AjaxHttp
 		**/
 		_fail: function(req, res, textStatus, jqXHR) {
-			if(req.fail) req.fail.call(this.service, arguments);
-			if(!req.skipFail) this.trigger(Controller.EVENTS.fail, arguments);
-			if(req.fireFail && _.isString(req.fireFail)) Backbone.trigger(req.fireFail, arguments);
+			if(req.fail && this.service) req.fail.apply(this.service, arguments);
+			if(!req.skipFail) this.trigger(AjaxHttp.EVENTS.fail, arguments);
 			if(req.__after__) req.__after__(arguments);
 			return this;
 		},
@@ -166,16 +198,14 @@ define(['core/spinal'], function(Spinal) {
 		*	@method before
 		*	@param req {Object} request data reference
 		*	@param [opts] {Object} optional data
-		*	@return Object
+		*	@return com.spinal.util.http.AjaxHttp
 		**/
 		before: function(req, opts) {
 			opts || (opts = {});
-			if(!req) return null;
-			if(!req.action) return null;
 			this._handle(req, opts);
 			if(req.progress) req.progress(arguments);
-			if(!req.skipProgress) this.trigger(Controller.EVENTS.progress, req, opts);
-			return req;
+			if(!req.skipProgress) this.trigger(AjaxHttp.EVENTS.progress, req, opts);
+			return this;
 		},
 
 		/**
@@ -188,7 +218,8 @@ define(['core/spinal'], function(Spinal) {
 		call: function(req) {
 			if(req && req.method && req.action) {
 				if(!req.params) req.params = {};
-				if(_.contains(_.values(Controller.VERBS), req.method)) this['_' + req.method](req);
+				if(_.contains(_.values(AjaxHttp.VERBS), req.method))
+					this.before(arguments)['_' + req.method](req);
 			}
 			return this;
 		}

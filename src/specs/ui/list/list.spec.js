@@ -10,23 +10,20 @@ define([], function() {
 
 		list_test_p: {
 			$module: 'ui/basic/paragraph',
-			$params: { id: 'list_test_p', content: 'Paragraph wrapped in a ListItem' }
+			$params: { content: 'Paragraph wrapped in a ListItem' }
 		},
 
 		/** FIXME: Use case to resolve dependencies **/
 
 		list_items: [
-			{ id: 'list_item_c_1', views: '$bone!items_p' },
-			{ id: 'list_item_c_2', views: '$bone!items_p' },
-			{ id: 'list_item_c_3', views: '$bone!items_p' }
+			{ views: '$bone!items_p' },
+			{ views: '$bone!items_p' },
+			{ views: '$bone!items_p' }
 		],
 
 		list_container: {
 			$module: 'ui/list/list',
-			$params: {
-				id: 'list_container',
-				items: '$bone!list_items'
-			}
+			$params: { items: '$bone!list_items' }
 		},
 
 		$ready: [{

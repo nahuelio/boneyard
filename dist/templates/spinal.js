@@ -38,9 +38,7 @@ define(['core/spinal'], function(Spinal) { return Spinal.namespace('templates', 
 		"table": {
 			"caption": "<caption><%= _$.text %></caption>\n",
 			"t": "<t<%= _$.t %> <%= (_$.id) ? \"id=\\\"\" + _$.id + \"\\\"\" : \"\" %>\n\t<%= (_$.cls) ? \"class=\\\"\" + _$.cls + \"\\\"\" : \"\" %>\n\t<%= (_$.attrs) ? _$.attrs  : \"\" %>>\n</t<%= _$.t %>>\n",
-			"tbody": "<tbody <%= (_$.id) ? \"id=\\\"\" + _$.id + \"\\\"\" : \"\" %>\n\t<%= (_$.cls) ? \"class=\\\"\" + _$.cls + \"\\\"\" : \"\" %>\n\t<%= (_$.attrs) ? _$.attrs  : \"\" %>>\n</tbody>\n",
-			"tfoot": "<tfoot <%= (_$.id) ? \"id=\\\"\" + _$.id + \"\\\"\" : \"\" %>\n\t<%= (_$.cls) ? \"class=\\\"\" + _$.cls + \"\\\"\" : \"\" %> \n\t<%= (_$.attrs) ? _$.attrs  : \"\" %>>\n</tfoot>\n",
-			"thead": "<thead <%= (_$.id) ? \"id=\\\"\" + _$.id + \"\\\"\" : \"\" %>\n\t<%= (_$.cls) ? \"class=\\\"\" + _$.cls + \"\\\"\" : \"\" %>\n\t<%= (_$.attrs) ? _$.attrs  : \"\" %>>\n</thead>\n"
+			"ts": "<t<%= _$.type %> <%= (_$.id) ? \"id=\\\"\" + _$.id + \"\\\"\" : \"\" %>\n\t<%= (_$.cls) ? \"class=\\\"\" + _$.cls + \"\\\"\" : \"\" %>\n\t<%= (_$.attrs) ? _$.attrs  : \"\" %>>\n\t<% if(_$.trs) { for(var tr in _$.trs) { var t = (typeof(_$.trs[tr]) !== 'undefined') ? _$.trs[tr] : {}; %>\n\t\t<tr <%= (t.id) ? \"id=\\\"\" + t.id + \"\\\"\" : \"\" %>\n\t\t\t<%= (t.cls) ? \"class=\\\"\" + t.cls + \"\\\"\" : \"\" %>\n\t\t\t<%= (t.attrs) ? t.attrs  : \"\" %>>\n\t\t</tr>\n\t<% } } %>\n</t<%= _$.type %>>\n"
 		}
 	}
 }); });

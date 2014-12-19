@@ -10,9 +10,7 @@ define([], function() {
 
 		textarea: {
 			$module: 'ui/form/controls/textarea',
-			$params: {
-				id: 'textarea', name: 'textarea', placeholder: 'Default Text'
-			}
+			$params: { name: 'textarea', placeholder: 'Default Text' }
 		},
 
 		$ready: [{
