@@ -138,12 +138,13 @@ define(['ui/container',
 		},
 
 		/**
-		*	Insert Table items into the table section specified by parameter
+		*	Insert Table items into the table section
 		*	@private
 		*	@method _content
-		*	@param items {Array} items
+		*	@param items {Array} items collection
 		*	@param parent {Object} parent container reference
 		*	@param type {String} Row's type to be inserted in the column
+		*	@param action {String} iteratee method name
 		*	@reutrn {com.spinal.ui.table.Table}
 		**/
 		_content: function(items, parent, type, action) {
@@ -170,29 +171,32 @@ define(['ui/container',
 		/**
 		*	Creates, attaches and setup a new row into the view list.
 		*	@private
-		*	@method _col
-		*	@param col {Object} column object
-		*	@param type {Object}
+		*	@method _row
+		*	@param type {String} row type
+		*	@param parent {Object} parent container reference
+		*	@param opts {Object} view element options
+		*	@param row {Object} row object
 		*	@return {com.spinal.ui.table.Table}
 		**/
 		_row: function(type, parent, opts, row) {;
 			var tpl = this._create(type);
 			parent.add(_.extend({ el: $(tpl), interface: TableElement }, this.onRow(row)), opts);
-			return tpl;
 		},
 
 		/**
-		*	Default Render Table Column Handler
+		*	Default Table Column Render Handler
 		*	@public
-		*	@method onColumnRender
+		*	@method onColumn
+		*	@param column {Object} column content
 		*	@return Object
 		**/
 		onColumn: function(column) { return column; },
 
 		/**
-		*	Default Render Table Row Handler
+		*	Default Table Row Render Handler
 		*	@public
-		*	@method onColumnRender
+		*	@method onRow
+		*	@param row {Object} row content
 		*	@return Object
 		**/
 		onRow: function(row) { return { template: row }; }

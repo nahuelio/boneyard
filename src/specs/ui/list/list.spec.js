@@ -8,26 +8,25 @@ define([], function() {
 
 		$id: 'ui-list-list',
 
-		list_test_p: {
-			$module: 'ui/basic/paragraph',
-			$params: { content: 'Paragraph wrapped in a ListItem' }
-		},
-
-		/** FIXME: Use case to resolve dependencies **/
+		list_p_s: { $module: 'ui/basic/paragraph', $params: { content: '<code>Simple Styling</code>' } },
 
 		list_items: [
-			{ views: '$bone!items_p' },
-			{ views: '$bone!items_p' },
-			{ views: '$bone!items_p' }
+			{ item: 'Item 1' },
+			{ item: 'Item 2' },
+			{ item: 'Item 3' }
 		],
 
-		list_container: {
+		list_simple: {
 			$module: 'ui/list/list',
 			$params: { items: '$bone!list_items' }
 		},
 
 		$ready: [{
-			'$bone!clist.add': ['$bone!list_container', { renderOnAdd: true }]
+			'$bone!clist.addAll': [[
+				'$bone!list_p_s',
+				'$bone!list_simple'
+			], { renderOnAdd: true }],
+			'$bone!list_simple.addClass': ['table-hover']
 		}]
 
 	};

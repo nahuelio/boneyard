@@ -42,9 +42,31 @@ define(['ui/container',
 		initialize: function(opts) {
 			opts || (opts = {});
 			opts.interface = ListItem;
-			if(opts.items && opts.items.length > 0) { opts.views = opts.items; delete opts.items; }
 			UIList.__super__.initialize.apply(this, arguments);
+			return this._list(opts.items, { silent: true });
+		},
+
+		/**
+		*	Insert List items into the list
+		*	@private
+		*	@chainable
+		*	@method _list
+		*	@return {com.spinal.ui.list.List}
+		**/
+		_list: function(items, opts) {
+			_.each(items, function(item) { this.add(this.onItem(_.omit(item, 'el')), opts); }, this);
 			return this;
+		},
+
+		/**
+		*	Default List Item Render Handler
+		*	@public
+		*	@method onItem
+		*	@param item {Object} item content
+		*	@return Object
+		**/
+		onItem: function(it) {
+			return { template: it.item };
 		}
 
 	}, {
