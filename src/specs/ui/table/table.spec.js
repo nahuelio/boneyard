@@ -10,6 +10,7 @@ define([], function() {
 
 		table_p_s: { $module: 'ui/basic/paragraph', $params: { content: '<code>No Styling</code>' } },
 		table_p_ss: { $module: 'ui/basic/paragraph', $params: { content: '<code>Striped</code>' } },
+		table_p_sh: { $module: 'ui/basic/paragraph', $params: { content: '<code>Striped & Hovered</code>' } },
 
 		table_columns: [
 			{ cls: 'custom-header', rows: ['Column A', 'Column B', 'Column C'] }
@@ -28,18 +29,27 @@ define([], function() {
 		table_simple: {
 			$module: 'ui/table/table',
 			$params: {
-				header: '$bone!table_columns',
-				body: '$bone!table_rows',
-				footer: '$bone!table_footer'
+				thead: '$bone!table_columns',
+				tbody: '$bone!table_rows',
+				tfoot: '$bone!table_footer'
 			}
 		},
 
 		table_simple_striped: {
 			$module: 'ui/table/table',
 			$params: {
-				header: '$bone!table_columns',
-				body: '$bone!table_rows',
-				footer: '$bone!table_footer'
+				thead: '$bone!table_columns',
+				tbody: '$bone!table_rows',
+				tfoot: '$bone!table_footer'
+			}
+		},
+
+		table_simple_hover: {
+			$module: 'ui/table/table',
+			$params: {
+				thead: '$bone!table_columns',
+				tbody: '$bone!table_rows',
+				tfoot: '$bone!table_footer'
 			}
 		},
 
@@ -48,9 +58,12 @@ define([], function() {
 				'$bone!table_p_s',
 				'$bone!table_simple',
 				'$bone!table_p_ss',
-				'$bone!table_simple_striped'
+				'$bone!table_simple_striped',
+				'$bone!table_p_sh',
+				'$bone!table_simple_hover'
 			], { renderOnAdd: true }],
-			'$bone!table_simple_striped.addClass': ['table-striped']
+			'$bone!table_simple_striped.addClass': ['table-striped'],
+			'$bone!table_simple_hover.addClass': ['table-striped table-hover']
 		}]
 
 	};

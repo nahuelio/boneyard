@@ -55,12 +55,12 @@ define(['core/spinal',
 		method: 'append',
 
 		/**
-		*	Successor Reference
+		*	Parent Reference
 		*	@private
-		*	@property _successor
+		*	@property _parent
 		*	@type {com.spinal.ui.View}
 		**/
-		_successor: null,
+		_parent: null,
 
 		/**
 		*	Theme Class name
@@ -69,6 +69,14 @@ define(['core/spinal',
 		*	@type String
 		**/
 		_theme: null,
+
+		/**
+		*	Internal Compiled template
+		*	@private
+		*	@property _tpl
+		*	@type Function
+		**/
+		_tpl: null,
 
 		/**
 		*	Constructor
@@ -97,7 +105,7 @@ define(['core/spinal',
 			if(options.el) this.$el.addClass(this.className);
 			if(options.theme) { this._theme = options.theme; this.$el.addClass(this._theme); }
 			if(options.method) this.method = options.method;
-			this.template = this._compile((options.template) ? options.template : this.template);
+			if(options.template) this._tpl = this._compile(options.template);
 			return this;
 		},
 
@@ -124,9 +132,9 @@ define(['core/spinal',
 		*	@return {com.spinal.ui.View}
 		**/
 		_beforeRender: function(opts) {
-			if(!this._successor) throw new UIException('SuccessorNotSpecified');
-			if(!(this._successor instanceof Spinal.com.spinal.ui.Container)) throw new UIException('InvalidSuccessorType');
-			if(this.id && !this._successor.findById(this.id)) throw new UIException('UIStackViolation', {
+			if(!this._parent) throw new UIException('SuccessorNotSpecified');
+			if(!(this._parent instanceof Spinal.com.spinal.ui.Container)) throw new UIException('InvalidSuccessorType');
+			if(this.id && !this._parent.findById(this.id)) throw new UIException('UIStackViolation', {
 				viewId: 'view-error', succesorId: 'container-declared-inline'
 			});
 			return this;
@@ -140,23 +148,35 @@ define(['core/spinal',
 		*	@return Function
 		**/
 		_compile: function(tpl) {
-			tpl || (tpl = '');
-			if(_.isFunction(tpl)) return tpl;
-			return _.template(tpl);
+			if(!tpl || (!_.isString(tpl) && !_.isFunction(tpl))) return null;
+			return (_.isString(tpl)) ? _.template(tpl) : tpl;
 		},
 
 		/**
-		*	Change Theme set in this view
+		*	Default strategy to setup data for templating
 		*	@public
-		*	@method theme
-		*	@param themeName {String} theme name
-		*	@return {com.spinal.ui.View}
+		*	@method data
+		*	@param [o] {Object} default data to pass to the template
+		*	@return Object
 		**/
-		theme: function(themeName) {
-			if(!themeName || !_.isString(themeName)) return this;
-			this.$el.removeClass(this._theme).addClass(themeName);
-			this._theme = themeName;
-			return this;
+		data: function(o) {
+			o || (o = {});
+			return (this.model) ? this.model.toJSON() :
+				((this._parent && this._parent.model) ? this._parent.model.toJSON() : o);
+		},
+
+		/**
+		*	Default strategy to project model's data onto the template to generates HTML content
+		*	@public
+		*	@method template
+		*	@param [tpl] {String} HTML template
+		*	@param [data] {Object} template data
+		*	@return String
+		**/
+		template: function(tpl, data) {
+			if(_.isObject(tpl)) { data = tpl; tpl = null; }
+			tpl = (tpl) ? this._compile(tpl) : this._tpl;
+			return (tpl) ? this.$el.html(tpl(this.data(data))) : this.$el;
 		},
 
 		/**
@@ -170,12 +190,10 @@ define(['core/spinal',
 		render: function(opts) {
 			opts || (opts = {});
 			this._beforeRender(arguments).detach();
-			var m = (opts.method && (View.RENDER[opts.method])) ? opts.method : this.method,
-				data = (!this.model) ? ((this._successor.model) ? this._successor.model.toJSON() : {}) : this.model.toJSON();
-			this._successor._targetEl()[m]((this.template) ? this.$el.append(this.template(data)) : this.$el);
+			var m = (opts.method && (View.RENDER[opts.method])) ? opts.method : this.method;
+			this._parent._targetEl()[m](this.template(this._tpl));
 			if(!opts.silent) this.trigger(View.EVENTS.rendered, { view: this });
-			this.delegateEvents();
-			return this;
+			return this.delegateEvents();
 		},
 
 		/**
@@ -188,6 +206,20 @@ define(['core/spinal',
 		**/
 		update: function(opts) {
 			if(!opts || !opts.silent) this.trigger(View.EVENTS.updated, { view: this });
+			return this;
+		},
+
+		/**
+		*	Change Theme set in this view
+		*	@public
+		*	@method theme
+		*	@param themeName {String} theme name
+		*	@return {com.spinal.ui.View}
+		**/
+		theme: function(themeName) {
+			if(!themeName || !_.isString(themeName)) return this;
+			this.$el.removeClass(this._theme).addClass(themeName);
+			this._theme = themeName;
 			return this;
 		},
 
@@ -303,7 +335,7 @@ define(['core/spinal',
 		},
 
 		/**
-		*	Try to Retrieve next successor if possible (Chain of Responsability)
+		*	Try to Retrieve next parent if possible (Chain of Responsability)
 		*	@private
 		*	@method _next
 		*	@param id {String} Successor id
@@ -311,7 +343,7 @@ define(['core/spinal',
 		**/
 		_next: function(id) {
 			if(this.id && this.id === id) return this;
-			if(this._successor) return this._successor.lookup(id);
+			if(this._parent) return this._parent.lookup(id);
 			return null;
 		},
 

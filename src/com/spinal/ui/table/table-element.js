@@ -36,7 +36,7 @@ define(['ui/container'], function(Container) {
 		*	@property _t
 		*	@type String
 		**/
-		_t: 'td',
+		_t: '',
 
 		/**
 		*	Constructor
@@ -45,9 +45,11 @@ define(['ui/container'], function(Container) {
 		**/
 		constructor: function(options) {
 			options || (options = {});
-			this._t = (options.t) ? options.t : this._t;
-			this.tagName = this._t;
-			this.className = (this.className + this._t);
+			if(!options.el) {
+				this._t = (options.t) ? options.t : UITableElement.TYPES.row;
+				this.tagName = this._t;
+			}
+			this.className = (!options.el) ? (this.className + this._t) : '';
 			UITableElement.__super__.constructor.apply(this, arguments);
 		},
 
@@ -60,21 +62,7 @@ define(['ui/container'], function(Container) {
 		**/
 		initialize: function(opts) {
 			opts || (opts = {});
-			if(opts.content) this.template = _.template(opts.content);
 			UITableElement.__super__.initialize.apply(this, arguments);
-			return this;
-		},
-
-		/**
-		*	Render TableElement
-		*	@public
-		*	@chainable
-		*	@method render
-		*	@param [opts] {Object} additional options
-		*	@return {com.spinal.ui.table.TableElement}
-		**/
-		render: function() {
-			UITableElement.__super__.render.apply(this, arguments);
 			return this;
 		}
 

@@ -88,10 +88,10 @@ define(['core/spinal',
 		*	@return {com.spinal.ui.View}
 		**/
 		_resolveSuccesor: function() {
-			if(!this._successor) {
+			if(!this._parent) {
 				var parentEl = (this.$el.parent().length > 0) ? this.$el.parent()[0].nodeName.toLowerCase() : 'body';
-				this._successor = new Container({ el: parentEl });
-				this._successor.add(this, { silent: true });
+				this._parent = new Container({ el: parentEl });
+				this._parent.add(this, { silent: true });
 			}
 			return this;
 		},
@@ -162,7 +162,7 @@ define(['core/spinal',
 			var exists = (view.id) ? this.findById(view.id) : this.findByCID(view.cid);
 			if(!exists) {
 				view = this.views.add(view);
-				view._successor = this;
+				view._parent = this;
 				if(opts.renderOnAdd) view.render(opts);
 				if(!opts.silent) this.trigger(Container.EVENTS.added, { added: view, view: this });
 			}
@@ -196,7 +196,7 @@ define(['core/spinal',
 			var pos = this.getPos(view);
 			if(!_.isNull(pos)) {
 				this.views.remove(pos);
-				view._successor = null;
+				view._parent = null;
 				if(opts.detachOnRemove) view.detach();
 				if(!opts.silent) this.trigger(Container.EVENTS.removed, { removed: view, view: this });
 			}
