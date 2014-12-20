@@ -1,0 +1,128 @@
+/**
+*	@module com.spinal.ui.form.controls
+*	@author Patricio Ferreira <3dimentionar@gmail.com>
+**/
+define(['ui/view'], function(View) {
+
+	/**
+	*	Option Class
+	*	@namespace com.spinal.ui.form.controls
+	*	@class com.spinal.ui.form.controls.Option
+	*	@extends com.spinal.ui.View
+	*
+	*	@requires com.spinal.ui.View
+	**/
+	var UIOption = Spinal.namespace('com.spinal.ui.form.controls.Option', View.inherit({
+
+		/**
+		*	Internal CSS className
+		*	@public
+		*	@property className
+		*	@type String
+		**/
+		className: 'ui-option',
+
+		/**
+		*	Tag Name used to build the el
+		*	@public
+		*	@property tagName
+		*	@type String
+		**/
+		tagName: 'option',
+
+		/**
+		*	Option's default value
+		*	@private
+		*	@property _value
+		*	@type String
+		**/
+		_value: '',
+
+		/**
+		*	Option's default text
+		*	@private
+		*	@property _text
+		*	@type String
+		**/
+		_text: null,
+
+		/**
+		*	Initialize
+		*	@public
+		*	@method initialize
+		*	@param options {Object} view options
+		*	@return {com.spinal.ui.form.controls.Option}
+		**/
+		initialize: function(options) {
+			options || (options = {});
+			if(options.value) this._value = options.value;
+			if(options.text) this._text = options.text;
+			UIOption.__super__.initialize.apply(this, arguments);
+			return this;
+		},
+
+		/**
+		*	Render Option
+		*	@public
+		*	@chainable
+		*	@method render
+		*	@param [opts] {Object} additional options
+		*	@return {com.spinal.ui.form.controls.Option}
+		**/
+		render: function(opts) {
+			UIOption.__super__.render.apply(this, arguments);
+			return this.value().text();
+		},
+
+		/**
+		*	Change the Option's text
+		*	@public
+		*	@chainable
+		*	@method text
+		*	@param txt {String} Option's text
+		*	@return {com.spinal.ui.form.controls.Option}
+		**/
+		text: function(txt) {
+			this._text = (txt && txt !== '') ? txt : this._text;
+			this.$el.html(this._text);
+			return this;
+		},
+
+		/**
+		*	Change the Option's value
+		*	@public
+		*	@chainable
+		*	@method value
+		*	@param val {String} Option's value
+		*	@return {com.spinal.ui.form.controls.Option}
+		**/
+		value: function(val) {
+			this._value = (val) ? val : this._value;
+			this.$el.val(this._value);
+			return this;
+		},
+
+		/**
+		*	String representation of an instance of this class
+		*	@public
+		*	@method toString
+		*	@return String
+		**/
+		toString: function() {
+			return '[object Option]';
+		}
+
+	}, {
+
+		/**
+		*	@static
+		*	@property NAME
+		*	@type String
+		**/
+		NAME: 'UIOption'
+
+	}));
+
+	return UIOption;
+
+});

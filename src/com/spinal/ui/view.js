@@ -6,7 +6,7 @@ define(['core/spinal',
 		'util/string',
 		'util/exception/ui',
 		'templates/spinal',
-		'libs/bootstrap'], function(Spinal, StringUtils, UIException) {
+		'libs/bootstrap'], function(Spinal, StringUtil, UIException) {
 
 	/**
 	*	Define a generic view interface that extends classic Backbone.View
@@ -28,7 +28,7 @@ define(['core/spinal',
 		*	@property id
 		*	@type String
 		**/
-		id: StringUtils.uuid(),
+		id: null,
 
 		/**
 		*	Events
@@ -44,7 +44,7 @@ define(['core/spinal',
 		*	@property className
 		*	@type String
 		**/
-		className: 'com-spinal-ui-view',
+		className: 'ui-view',
 
 		/**
 		*	Render Method
@@ -55,12 +55,28 @@ define(['core/spinal',
 		method: 'append',
 
 		/**
-		*	Successor Reference
+		*	Parent Reference
 		*	@private
-		*	@property _successor
+		*	@property _parent
 		*	@type {com.spinal.ui.View}
 		**/
-		_successor: null,
+		_parent: null,
+
+		/**
+		*	Theme Class name
+		*	@private
+		*	@property _theme
+		*	@type String
+		**/
+		_theme: null,
+
+		/**
+		*	Internal Compiled template
+		*	@private
+		*	@property _tpl
+		*	@type Function
+		**/
+		_tpl: null,
 
 		/**
 		*	Constructor
@@ -68,7 +84,11 @@ define(['core/spinal',
 		*	@param [options] {Object} View Options
 		**/
 		constructor: function(options) {
+			options || (options = {});
 			Backbone.View.apply(this, arguments);
+			this.id = (options.id) ? options.id : (this.$el.attr('id')) ? this.$el.attr('id') : null;
+			if(options.autoId) this.id = StringUtil.uuid();
+			this.$el.attr('id', this.id);
 		},
 
 		/**
@@ -82,10 +102,10 @@ define(['core/spinal',
 		initialize: function(options) {
 			options || (options = {});
 			this._valid(options);
-			if(options.id) this.id = options.id;
-			if(options.method) this.method = options.method;
 			if(options.el) this.$el.addClass(this.className);
-			this.template = this._compile((options.template) ? options.template : this.template);
+			if(options.theme) { this._theme = options.theme; this.$el.addClass(this._theme); }
+			if(options.method) this.method = options.method;
+			if(options.template) this._tpl = this._compile(options.template);
 			return this;
 		},
 
@@ -112,9 +132,9 @@ define(['core/spinal',
 		*	@return {com.spinal.ui.View}
 		**/
 		_beforeRender: function(opts) {
-			if(!this._successor) throw new UIException('SuccessorNotSpecified');
-			if(!(this._successor instanceof Spinal.com.spinal.ui.Container)) throw new UIException('InvalidSuccessorType');
-			if(!this._successor.findById(this.id)) throw new UIException('UIStackViolation', {
+			if(!this._parent) throw new UIException('SuccessorNotSpecified');
+			if(!(this._parent instanceof Spinal.com.spinal.ui.Container)) throw new UIException('InvalidSuccessorType');
+			if(this.id && !this._parent.findById(this.id)) throw new UIException('UIStackViolation', {
 				viewId: 'view-error', succesorId: 'container-declared-inline'
 			});
 			return this;
@@ -128,9 +148,35 @@ define(['core/spinal',
 		*	@return Function
 		**/
 		_compile: function(tpl) {
-			tpl || (tpl = '');
-			if(_.isFunction(tpl)) return tpl;
-			return _.template(tpl);
+			if(!tpl || (!_.isString(tpl) && !_.isFunction(tpl))) return null;
+			return (_.isString(tpl)) ? _.template(tpl) : tpl;
+		},
+
+		/**
+		*	Default strategy to setup data for templating
+		*	@public
+		*	@method data
+		*	@param [o] {Object} default data to pass to the template
+		*	@return Object
+		**/
+		data: function(o) {
+			o || (o = {});
+			return (this.model) ? this.model.toJSON() :
+				((this._parent && this._parent.model) ? this._parent.model.toJSON() : o);
+		},
+
+		/**
+		*	Default strategy to project model's data onto the template to generates HTML content
+		*	@public
+		*	@method template
+		*	@param [tpl] {String} HTML template
+		*	@param [data] {Object} template data
+		*	@return String
+		**/
+		template: function(tpl, data) {
+			if(_.isObject(tpl)) { data = tpl; tpl = null; }
+			tpl = (tpl) ? this._compile(tpl) : this._tpl;
+			return (tpl) ? this.$el.html(tpl(this.data(data))) : this.$el;
 		},
 
 		/**
@@ -144,11 +190,10 @@ define(['core/spinal',
 		render: function(opts) {
 			opts || (opts = {});
 			this._beforeRender(arguments).detach();
-			var m = (opts.method && (View.RENDER[opts.method])) ? opts.method : this.method,
-				data = (!this.model) ? ((this._successor.model) ? this._successor.model.toJSON() : {}) : this.model.toJSON();
-			this._successor.$el[m](this.$el.append(this.template(data)));
+			var m = (opts.method && (View.RENDER[opts.method])) ? opts.method : this.method;
+			this._parent._targetEl()[m](this.template(this._tpl));
 			if(!opts.silent) this.trigger(View.EVENTS.rendered, { view: this });
-			return this;
+			return this.delegateEvents();
 		},
 
 		/**
@@ -165,6 +210,20 @@ define(['core/spinal',
 		},
 
 		/**
+		*	Change Theme set in this view
+		*	@public
+		*	@method theme
+		*	@param themeName {String} theme name
+		*	@return {com.spinal.ui.View}
+		**/
+		theme: function(themeName) {
+			if(!themeName || !_.isString(themeName)) return this;
+			this.$el.removeClass(this._theme).addClass(themeName);
+			this._theme = themeName;
+			return this;
+		},
+
+		/**
 		*	Perform a look up of the closest successor in the view hierarchery using the id passed as parameter.
 		*	If the successor is not found, the method will give up returning null.
 		*	@public
@@ -176,6 +235,34 @@ define(['core/spinal',
 		lookup: function(id) {
 			if(!id) return null;
 			return this._next(id);
+		},
+
+		/**
+		*	Add CSS class to the $el element
+		*	@public
+		*	@chainable
+		*	@method addClass
+		*	@param className {String} CSS class name
+		*	@return {com.spinal.ui.View}
+		**/
+		addClass: function(className) {
+			if(!className) return this;
+			this.$el.addClass(className);
+			return this;
+		},
+
+		/**
+		*	Removes CSS class from the $el element
+		*	@public
+		*	@chainable
+		*	@method removeClass
+		*	@param className {String} CSS class name
+		*	@return {com.spinal.ui.View}
+		**/
+		removeClass: function(className) {
+			if(!className) return this;
+			this.$el.removeClass(className);
+			return this;
 		},
 
 		/**
@@ -248,15 +335,15 @@ define(['core/spinal',
 		},
 
 		/**
-		*	Try to Retrieve next successor if possible (Chain of Responsability)
+		*	Try to Retrieve next parent if possible (Chain of Responsability)
 		*	@private
 		*	@method _next
 		*	@param id {String} Successor id
 		*	@return {com.spinal.ui.View}
 		**/
 		_next: function(id) {
-			if(this.id === id) return this;
-			if(this._successor) return this._successor.lookup(id);
+			if(this.id && this.id === id) return this;
+			if(this._parent) return this._parent.lookup(id);
 			return null;
 		},
 

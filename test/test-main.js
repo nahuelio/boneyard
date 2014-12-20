@@ -25,7 +25,6 @@ require.config({
         'libs': 'src/libs',
         'core': 'src/com/spinal/core',
         'ioc': 'src/com/spinal/ioc',
-        'aop': 'src/com/spinal/aop',
         'ui': 'src/com/spinal/ui',
         'util': 'src/com/spinal/util',
 
@@ -42,26 +41,6 @@ require.config({
     shim: {
         'libs/bootstrap': ['jquery', 'libs/modernizr']
     },
-
-    /** Config file to be included once the framework compiles succesufuly**/
-    /**
-    paths: {
-        'libs': 'target/libs',
-        'spinal-core': 'target/spinal-core',
-        'spinal-ioc': 'target/spinal-ioc',
-        'spinal-aop': 'target/spinal-aop',
-        'spinal-ui': 'target/spinal-ui',
-        'spinal-util': 'target/spinal-util',
-    },
-
-    /**bundles: {
-        'libs': ['libs/backbone'],
-        'spinal-core': ['core/spinal'],
-        'spinal-ioc': ['ioc/ioc'],
-        'spinal-aop': ['aop/aop'],
-        'spinal-ui': ['ui/view', 'ui/container'],
-        'spinal-util': ['util/adt/collection', 'util/adt/iterator', 'util/adt/queue']
-    },**/
 
     // we have to kickoff jasmine, as it is asynchronous
     callback: function() {

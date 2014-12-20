@@ -3,4 +3,21 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['ui/view',
-		'ui/container'], function() { });
+		'ui/container',
+		'ui/basic/paragraph',
+		'ui/basic/link',
+		'ui/basic/header',
+		'ui/basic/label',
+		'ui/basic/span',
+		'ui/basic/image',
+		'ui/misc/panel',
+		'ui/list/list',
+		'ui/list/list-item',
+		'ui/table/table',
+		'ui/table/table-element',
+		'ui/form/controls/fieldset',
+		'ui/form/controls/button',
+		'ui/form/controls/input',
+		'ui/form/controls/textarea',
+		'ui/form/controls/select',
+		'ui/form/controls/option'], function() { });

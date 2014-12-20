@@ -30,40 +30,37 @@ define(['core/spinal',
 			it('Should return an instance of View with no arguments', function() {
 				this.testView = new View();
 				expect(this.testView).to.be.ok();
-				expect(this.testView.className).to.be.equal('com-spinal-ui-view');
+				expect(this.testView.className).to.be.equal('ui-view');
 				expect(this.testView.tagName).to.be.equal('div');
-				expect(this.testView.$el.attr('id')).to.be.equal(this.testView.id);
+				expect(this.testView.$el.attr('id')).to.be.equal(undefined);
 			});
 
 			it('Should return an instance of View with el specified as part of the constructor', function() {
 				this.testView = new View({ el: 'body' });
 				expect(this.testView).to.be.ok();
-				expect(this.testView.className).to.be.equal('com-spinal-ui-view');
+				expect(this.testView.className).to.be.equal('ui-view');
 				expect(this.testView.$el[0].nodeName.toLowerCase()).to.be.equal('body');
 				this.testView = new View({ el: 'p.non-existent' });
 				expect(this.testView.el).to.be.equal(undefined);
 			});
 
 			it('Should return instance of View with inline template as String', function() {
-				this.testView = new View({
-					template: '<input class="test" />'
-				});
+				this.testView = new View({ template: '<input class="test" />' });
 				expect(this.testView).to.be.ok();
-				expect(this.testView.template).to.be.a(Function);
+				expect(this.testView._tpl).to.be.a(Function);
 				expect(this.testView.$el[0].nodeName.toLowerCase()).to.be.equal('div');
-				expect($(this.testView.template({}))[0].nodeName.toLowerCase()).to.be.equal('input');
+				this.testView.template();
+				expect(this.testView.$el.children()[0].nodeName.toLowerCase()).to.be.equal('input');
 			});
 
 			it('Should return instance of View with precompiled inline template as Function', function() {
-				this.testView = new View({
-					template: _.template('<input class="<%= className %>" />')
-				});
+				this.testView = new View({ template: _.template('<input class="<%= className %>" />') });
 				expect(this.testView).to.be.ok();
-				expect(this.testView.template).to.be.a(Function);
+				expect(this.testView._tpl).to.be.a(Function);
 				expect(this.testView.$el[0].nodeName.toLowerCase()).to.be.equal('div');
-				var result = this.testView.template({ className: 'test' });
-				expect($(result)[0].nodeName.toLowerCase()).to.be.equal('input');
-				expect($(result).hasClass('test')).to.be.equal(true);
+				var $result = this.testView.template({ className: 'test' });
+				expect($result.children()[0].nodeName.toLowerCase()).to.be.equal('input');
+				expect($($result.children()[0]).hasClass('test')).to.be.equal(true);
 			});
 
 			it('Should return instance of View passing a model)', function() {
@@ -119,7 +116,7 @@ define(['core/spinal',
 				view.off().on(View.EVENTS.rendered, function(ev) {
 					expect(ev).to.be.ok();
 					expect(ev.view).to.be.ok();
-					expect(ev.view.$el.attr('class')).to.be.equal('com-spinal-ui-view');
+					expect(ev.view.$el.attr('class')).to.be.equal('ui-view');
 				});
 				var result = view.render();
 				expect(result).to.be.ok();
@@ -153,8 +150,7 @@ define(['core/spinal',
 				expect(result).to.be.ok();
 				expect(result.template).to.be.a(Function);
 				expect(result.$el.find('input').hasClass('test')).to.be.equal(true);
-				expect(this.cglobal.$el.find('.com-spinal-ui-view').length).to.be.equal(1);
-				expect(this.cglobal.$el.find('#' + view.id).length).to.be.equal(1);
+				expect(this.cglobal.$el.find('.ui-view').length).to.be.equal(1);
 				this.cglobal.removeAll();
 				delete view;
 			});
@@ -205,7 +201,7 @@ define(['core/spinal',
 				expect(_.bind(function() {
 					var test = new View({ id: 'view-error' });
 					// trying to inject a successor reference by settting the prop explicitly
-					test._successor = new Spinal.SpinalClass({ name: 'no-valid' });
+					test._parent = new Spinal.SpinalClass({ name: 'no-valid' });
 					test.render();
 				}, this)).to.throwException(function(e) {
 					expect(e).to.be.ok();
@@ -217,7 +213,7 @@ define(['core/spinal',
 				expect(_.bind(function() {
 					var test = new View({ id: 'view-error' });
 					// trying to inject a successor reference by settting the prop explicitly
-					test._successor = new Container({ id: 'container-declared-inline', el: 'body' });
+					test._parent = new Container({ id: 'container-declared-inline', el: 'body' });
 					test.render();
 				}, this)).to.throwException(function(e) {
 					expect(e).to.be.ok();
@@ -245,6 +241,44 @@ define(['core/spinal',
 
 		});
 
+		describe('#theme()', function() {
+
+			it('Should check if _theme property is properly initialized', function() {
+				this.testView = { id: 'testTheme', el: '<a href="test">Test Theme</a>', theme: 'spinal' };
+				var view = this.cglobal.add(this.testView, { renderOnAdd: true });
+				expect(view._theme).to.be.equal('spinal');
+				expect(this.cglobal.$el.find('a#testTheme').hasClass('spinal')).to.be.equal(true);
+				this.cglobal.removeAll();
+				delete view;
+			});
+
+			it('Should change theme for the current view (With existing theme set)', function() {
+				this.testView = { id: 'existing-theme', theme: 'spinal' };
+				var view = this.cglobal.add(this.testView, { renderOnAdd: true });
+				expect(view._theme).to.be.equal('spinal');
+				view.theme('classic');
+				expect(view._theme).to.be.equal('classic');
+				var $element = this.cglobal.$el.find('div#existing-theme');
+				expect($element.hasClass('classic')).to.be.equal(true);
+				expect($element.hasClass('spinal')).to.be.equal(false);
+				this.cglobal.removeAll();
+				delete view;
+			});
+
+			it('Should change theme for the current view (With NO theme set)', function() {
+				this.testView = { id: 'no-theme' };
+				var view = this.cglobal.add(this.testView, { renderOnAdd: true });
+				expect(view._theme).to.be(null);
+				view.theme('classic');
+				expect(view._theme).to.be.equal('classic');
+				var $element = this.cglobal.$el.find('div#no-theme');
+				expect($element.hasClass('classic')).to.be.equal(true);
+				this.cglobal.removeAll();
+				delete view;
+			});
+
+		});
+
 		describe('#lookup()', function() {
 
 			it('Should return the successor instance', function() {
@@ -253,7 +287,7 @@ define(['core/spinal',
 				var result = view.lookup('child-of-global');
 				expect(result).to.be.ok();
 				expect(result.id).to.be.equal('child-of-global');
-				expect(view._successor).to.be.a(Container);
+				expect(view._parent).to.be.a(Container);
 				this.cglobal.removeAll();
 				delete view;
 			});

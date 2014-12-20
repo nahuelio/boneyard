@@ -2,5 +2,6 @@
 	"name": "SpinalJS",
 	"source": "./src",
 	"target": "./composer-app",
-	"spinalCore": "libs/require.js"
+	"spinalCore": "libs/require.js",
+	"mainSpec": "specs/spinal-spec"
 }

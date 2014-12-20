@@ -50,6 +50,26 @@ define(['core/spinal',
 		},
 
 		/**
+		*	Convert a JSON object into a query string format
+		*	@static
+		*	@method create
+		*	@param o {Object} object to be converted
+		*	@param [ignoreQMark] {Boolean} optional to skip question mark as part of the query string
+		*	@param [separator] {String} separator used to split key-value pairs ('&' by default)
+		**/
+		createQueryString: function(o, noQMark, separator) {
+			var pairs = [], i, len;
+			_.each(o, function(k, v) {
+				if(_.isArray(v)) {
+					for (i = 0, len = v.length; i < len; i++) pairs.push(k + '=' + encodeURIComponent(decodeURIComponent(v[i])));
+				} else {
+					pairs.push(k + '=' + encodeURIComponent(decodeURIComponent(v)));
+				}
+			}, this);
+			return ((noQMark || _.isEmpty(o)) ? '' : '?') + pairs.join((separator) ? separator : '&');
+		},
+
+		/**
 		*	Convert a String in dot notation format into a JSON object
 		*	@static
 		*	@method strToJSON
@@ -64,6 +84,19 @@ define(['core/spinal',
 				if(i === (ps.length-1)) delete p;
 			}
 			return o;
+		},
+
+		/**
+		*	Prefixes props keys in props input object with a '_' to match the private members convention
+		*	and returns the object
+		*	@static
+		*	@method toPrivate
+		*	@param props {Object} Object to convert keys from
+		*	@return Object
+		**/
+		toPrivate: function(props) {
+			_.each(props, function(v, k, o) { o['_' + k] = v; delete o[k]; });
+			return props;
 		},
 
 		/**

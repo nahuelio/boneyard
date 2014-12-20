@@ -110,7 +110,7 @@ define(['ioc/engine',
 		**/
 		_resolveURI: function(config) {
 			if(config.url) return config.url;
-			return (this._config.basePath + config.path);
+			return requirejs.toUrl(this._config.basePath + config.path);
 		},
 
 		/**
@@ -136,7 +136,8 @@ define(['ioc/engine',
 		**/
 		process: function() {
 			var theme = this.theme_current();
-			var rmvEval = 'link[theme!="'+ theme.name +'"][theme!="bootstrap"][theme!="bootstrap-theme"]';
+			if(!theme) return this;
+			var rmvEval = 'link[theme][theme!="bootstrap"][theme!="bootstrap-theme"]';
 			var $existing = this._$header.children(rmvEval);
 			if($existing.length > 0) $existing.remove();
 			this._$header.append(this._link({ theme: theme.name, href: this._resolveURI(theme.config) }));

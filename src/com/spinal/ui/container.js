@@ -26,7 +26,7 @@ define(['core/spinal',
 		*	@property className
 		*	@type String
 		**/
-		className: 'com-spinal-ui-container',
+		className: 'ui-container container',
 
 		/**
 		*	View Collection
@@ -61,6 +61,7 @@ define(['core/spinal',
 			options || (options = {});
 			Container.__super__.initialize.apply(this, arguments);
 			this.views = new Collection([], (options.interface) ? { interface: options.interface } : {});
+			if(options.views) this.addAll(options.views, { silent: true });
 			return this;
 		},
 
@@ -80,6 +81,75 @@ define(['core/spinal',
 		},
 
 		/**
+		*	Resolves Successor if the container is top-level container
+		*	@private
+		*	@chainable
+		*	@method _resolveSuccesor
+		*	@return {com.spinal.ui.View}
+		**/
+		_resolveSuccesor: function() {
+			if(!this._parent) {
+				var parentEl = (this.$el.parent().length > 0) ? this.$el.parent()[0].nodeName.toLowerCase() : 'body';
+				this._parent = new Container({ el: parentEl });
+				this._parent.add(this, { silent: true });
+			}
+			return this;
+		},
+
+		/**
+		*	Target element in which subviews will be rendered into
+		*	@public
+		*	@method _targetEl
+		*	@return Object
+		**/
+		_targetEl: function() {
+			return this.$el;
+		},
+
+		/**
+		*	Change Theme set in this view
+		*	@public
+		*	@chainable
+		*	@method theme
+		*	@param themeName {String} theme name
+		*	@return {com.spinal.ui.Container}
+		**/
+		theme: function(themeName) {
+			if(!this.views.isEmpty()) this.invoke('theme', arguments);
+			Container.__super__.theme.apply(this, arguments);
+			return this;
+		},
+
+		/**
+		*	Render Container
+		*	@public
+		*	@chainable
+		*	@method render
+		*	@return {com.spinal.ui.Container}
+		**/
+		render: function() {
+			this._resolveSuccesor();
+			Container.__super__.render.apply(this, arguments);
+			this.invoke('render', arguments);
+			return this;
+		},
+
+		/**
+		*	Update Container
+		*	@public
+		*	@chainable
+		*	@method update
+		*	@param [opts] {Object} additional options
+		*	@return {com.spinal.ui.Container}
+		**/
+		update: function(opts) {
+			opts || (opts = {});
+			Container.__super__.update.apply(this, arguments);
+			this.invoke('update', arguments);
+			return this;
+		},
+
+		/**
 		*	Add View
 		*	@public
 		*	@method add
@@ -89,13 +159,27 @@ define(['core/spinal',
 		**/
 		add: function(view, opts) {
 			opts || (opts = {});
-			if(!this.findById(view.id)) {
+			var exists = (view.id) ? this.findById(view.id) : this.findByCID(view.cid);
+			if(!exists) {
 				view = this.views.add(view);
-				view._successor = this;
+				view._parent = this;
 				if(opts.renderOnAdd) view.render(opts);
 				if(!opts.silent) this.trigger(Container.EVENTS.added, { added: view, view: this });
 			}
 			return view;
+		},
+
+		/**
+		*	Add a collection of views
+		*	@public
+		*	@method addAll
+		*	@param views {Array} Array of Views
+		*	@param [opts] {Object} additional options
+		*	@return Array
+		**/
+		addAll: function(views, opts) {
+			opts || (opts = {});
+			return _.map(views, function(v) { return this.add(v, opts); }, this);
 		},
 
 		/**
@@ -112,7 +196,7 @@ define(['core/spinal',
 			var pos = this.getPos(view);
 			if(!_.isNull(pos)) {
 				this.views.remove(pos);
-				view._successor = null;
+				view._parent = null;
 				if(opts.detachOnRemove) view.detach();
 				if(!opts.silent) this.trigger(Container.EVENTS.removed, { removed: view, view: this });
 			}
@@ -151,40 +235,19 @@ define(['core/spinal',
 		*	@return Object
 		**/
 		getPos: function(view) {
-			return this.views.findPosBy(function(ele) { return (ele.id && ele.id === view.id); });
+			return this.views.findPosBy(function(ele) { return (ele.cid && ele.cid === view.cid); });
 		},
 
 		/**
-		*	Render Container
+		*	Find View by Backbone cid
 		*	@public
-		*	@chainable
-		*	@method render
-		*	@return {com.spinal.ui.Container}
+		*	@method findByCID
+		*	@param cid {String} View cid
+		*	@return {com.spinal.ui.View}
 		**/
-		render: function() {
-			if(!this._successor) {
-				var parentEl = (this.$el.parent().length > 0) ? this.$el.parent()[0].nodeName.toLowerCase() : 'body';
-				this._successor = new Container({ el: parentEl });
-				this._successor.add(this, { silent: true });
-			}
-			Container.__super__.render.apply(this, arguments);
-			this.invoke('render', arguments);
-			return this;
-		},
-
-		/**
-		*	Update Container
-		*	@public
-		*	@chainable
-		*	@method update
-		*	@param [opts] {Object} additional options
-		*	@return {com.spinal.ui.Container}
-		**/
-		update: function(opts) {
-			opts || (opts = {});
-			Container.__super__.update.apply(this, arguments);
-			this.invoke('update', arguments);
-			return this;
+		findByCID: function(cid) {
+			if(!cid) return null;
+			return this.views.find(function(v) { return (v.cid && v.cid === cid); });
 		},
 
 		/**
@@ -219,6 +282,7 @@ define(['core/spinal',
 		*	@return Array
 		**/
 		invoke: function(methodName) {
+			if(this.views.size() === 0) return [];
 			var args = Array.prototype.slice.call(arguments, 1);
 			return this.views.invoke(methodName, args);
 		},

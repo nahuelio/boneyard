@@ -32,8 +32,9 @@ var Utils = {
 	/**
 	*	Create a file in the filename specified as parameter with a given content (stream).
 	**/
-	createFile: function(filename, stream) {
-		fse.outputFileSync(filename, stream);
+	createFile: function(filename, stream, encoding) {
+		var enc = (encoding) ? encoding : 'utf8';
+		fse.outputFileSync(filename, stream, enc);
 		return filename;
 	},
 
@@ -41,7 +42,7 @@ var Utils = {
 	*	Copy a file specified in sourceFile parameter into the target folder
 	**/
 	copyFile: function(sourceFile, targetFile) {
-		fse.createReadStream(sourceFile).pipe(fse.createWriteStream(targetFile));
+		fse.copySync(sourceFile, targetFile);
 	},
 
 	/**

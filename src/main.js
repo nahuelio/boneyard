@@ -9,7 +9,6 @@ requirejs.config({
 	paths: {
 		'libs': 'libs',
 		'core': 'com/spinal/core',
-		'aop': 'com/spinal/aop',
 		'ioc': 'com/spinal/ioc',
 		'ui': 'com/spinal/ui',
 		'util': 'com/spinal/util'

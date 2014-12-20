@@ -6,19 +6,17 @@
             { "name": "spinal-core", "exclude": ["libs"] },
             { "name": "spinal-util", "exclude": ["libs", "spinal-core"] },
             { "name": "spinal-ioc", "exclude": ["libs", "spinal-core", "spinal-util"] },
-            { "name": "spinal-aop", "exclude": ["libs", "spinal-core", "spinal-util"] },
             { "name": "spinal-ui", "exclude": ["libs", "spinal-core", "spinal-util"] }
         ],
 		"paths": {
 			"libs": "libs",
 			"core": "com/spinal/core",
-			"aop": "com/spinal/aop",
 			"ioc": "com/spinal/ioc",
 			"ui": "com/spinal/ui",
 			"util": "com/spinal/util",
 			"templates": "empty:"
 		},
-        "fileExclusionRegExp": "^\\.|\\.html$|\\.css$|\\.sass$|\\.md$|main.js$",
+        "fileExclusionRegExp": "^\\.|specs|\\.html$|\\.css$|\\.sass$|\\.md$|main.js$",
         "findNestedDependencies": true,
         "removeCombined": true,
         "optimize": "uglify",
