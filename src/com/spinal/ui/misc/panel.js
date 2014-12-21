@@ -57,7 +57,7 @@ define(['ui/container'], function(Container) {
 			options || (options = {});
 			if(options.title) this._title = options.title;
 			this._type = (options.type) ? options.type : UIPanel.TYPES.standard;
-			options.template = Spinal.app.html_tpl('spinal.basic.panel', {});
+			options.template = Spinal.tpl('spinal.basic.panel', {});
 			UIPanel.__super__.initialize.apply(this, arguments);
 			return this;
 		},

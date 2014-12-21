@@ -7,8 +7,9 @@
 *		  loops, look ups, make use of util/adt classes and general statements.
 *		- Verification if a template package was already loaded in the html_load function.
 **/
-define(['ioc/engine',
-		'util/string'], function(Engine, StringUtils) {
+define(['core/spinal',
+		'ioc/engine',
+		'util/string'], function(Spinal, Engine, StringUtils) {
 
 	/**
 	*	HTML IoC Plugin
@@ -85,7 +86,7 @@ define(['ioc/engine',
 		**/
 		_lazy: function() {
 			var tplNames = _.compact(_.map(this._packages, function(p, n) { return (p.lazyLoading) ? n : null; }));
-			return this.html_load(tplNames);
+			return this.loadTemplate(tplNames);
 		},
 
 		/**
@@ -95,7 +96,7 @@ define(['ioc/engine',
 		*	@param templatePackageName {String} template package name
 		*	@return Boolean
 		**/
-		html_loaded: function(templatePackageName) {
+		isTemplateLoaded: function(templatePackageName) {
 			return (_.has(this._packages, templatePackageName) && !_.isUndefined(this._tpls[templatePackageName]));
 		},
 
@@ -109,7 +110,7 @@ define(['ioc/engine',
 		*	@param [callback] {Function} callback function
 		*	@return {com.spinal.ioc.plugins.HTMLPlugin}
 		**/
-		html_load: function(tpl, callback) {
+		loadTemplate: function(tpl, callback) {
 			if(!tpl) return this;
 			if(_.isString(tpl) && tpl !== '') tpl = [tpl];
 			var ename = Engine.EVENTS.plugin;
@@ -133,7 +134,7 @@ define(['ioc/engine',
 		*	@param [params] {Object} parameters to pass to the template
 		*	@return String
 		**/
-		html_tpl: function(route, params) {
+		tpl: function(route, params) {
 			if(!route || route === '') return '';
 			if(!params) params = {};
 			var inCore = (route.indexOf('!') === -1),
@@ -150,7 +151,7 @@ define(['ioc/engine',
 		*	@return {com.spinal.ioc.plugins.HTMLPlugin}
 		**/
 		execute: function() {
-			this._engine.trigger(Engine.EVENTS.proxified, this, 'html_load', 'html_loaded', 'html_tpl');
+			this.proxify(Spinal, 'loadTemplate', 'isTemplateLoaded', 'tpl');
 			return this._lazy();
 		}
 

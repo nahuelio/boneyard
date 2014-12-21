@@ -95,7 +95,7 @@ define(['ui/container',
 		*	@return String
 		**/
 		_create: function(type) {
-			return Spinal.app.html_tpl('spinal.table.t', { _$: { t: type, cls: ('ui-table-' + type) } });
+			return Spinal.tpl('spinal.table.t', { _$: { t: type, cls: ('ui-table-' + type) } });
 		},
 
 		/**

@@ -20,7 +20,7 @@ define(['core/spinal',
 	*	@requires templates.spinal
 	*	@requires libs.bootstrap
 	**/
-	var View = Spinal.namespace('com.spinal.ui.View', Spinal.Backbone.View.inherit({
+	var View = Spinal.namespace('com.spinal.ui.View', Backbone.View.inherit({
 
 		/**
 		*	Identifier

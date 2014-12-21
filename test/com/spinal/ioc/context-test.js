@@ -167,36 +167,37 @@ define(['ioc/context',
 
 				this.appContext.wire(PluginSpec, function(ctx) {
 					expect(ctx).to.be.ok();
-					expect(ctx.engine.root).to.be.ok();
 					// Checks Context wrapped methods from plugins
 					// Theme
-					expect(ctx.theme_change).to.be.ok();
-					expect(ctx.theme_current).to.be.ok();
+					expect(Spinal.changeTheme).to.be.ok();
+					expect(Spinal.currentTheme).to.be.ok();
+					expect(Spinal.resetTheme).to.be.ok();
 					// HTML Plugin
-					expect(ctx.html_loaded).to.be.ok();
-					expect(ctx.html_load).to.be.ok();
-					expect(ctx.html_tpl).to.be.ok();
+					expect(Spinal.isTemplateLoaded).to.be.ok();
+					expect(Spinal.loadTemplate).to.be.ok();
+					expect(Spinal.tpl).to.be.ok();
 				});
 			});
 
 			it('HTMLPlugin: Should Retrieve a template with params', function(done) {
 				var evaluation = _.bind(function() {
-					var output = this.appContext.html_tpl('my!content.menu', { cls: 'menu' });
+					var output = Spinal.tpl('my!content.menu', { cls: 'menu' });
 					expect($(output).attr('class')).to.be.equal('menu');
 					expect($(output).prop('tagName').toLowerCase()).to.be.equal('div');
 					done();
 				}, this);
-				(!this.appContext.html_loaded('my')) ?
+				(!Spinal.isTemplateLoaded('my')) ?
 					this.appContext.off().on(Engine.EVENTS.plugin, _.bind(evaluation, this)) : evaluation();
 			});
 
 			it('HTMLPlugin: Should Load a new Template package at runtime', function(done) {
-				this.appContext.off().html_load('other', _.bind(function() {
-					var output = this.appContext.html_tpl('other!content.other', { cls: 'myclass' });
+				this.appContext.off();
+				Spinal.loadTemplate('other', _.bind(function() {
+					var output = Spinal.tpl('other!content.other', { cls: 'myclass' });
 					expect($(output).hasClass('myclass')).to.be.equal(true);
 					expect($(output).prop('tagName').toLowerCase()).to.be.equal('p');
 					// Without params
-					output = this.appContext.html_tpl('other!content.rule');
+					output = Spinal.tpl('other!content.rule');
 					expect($(output).prop('tagName').toLowerCase()).to.be.equal('hr');
 					done();
 				}, this));
@@ -204,25 +205,25 @@ define(['ioc/context',
 
 			it('HTMLPlugin: Should Retrieve a template using the default provided by spinal', function() {
 				// Spinal.basic.span
-				var output = this.appContext.html_tpl('spinal.basic.span', { _$: { id: 'testId', cls: 'testCls' } });
+				var output = Spinal.tpl('spinal.basic.span', { _$: { id: 'testId', cls: 'testCls' } });
 				expect($(output).prop('tagName').toLowerCase()).to.be.equal('span');
 				expect($(output).attr('id')).to.be.equal('testId');
 				expect($(output).attr('class')).to.be.equal('testCls');
 				// Spinal.basic.a
-				var output = this.appContext.html_tpl('spinal.basic.a', { _$: { href: 'testHref' } });
+				var output = Spinal.tpl('spinal.basic.a', { _$: { href: 'testHref' } });
 				expect($(output).prop('tagName').toLowerCase()).to.be.equal('a');
 				expect($(output).attr('href')).to.be.equal('testHref');
 			});
 
 			it('HTMLPlugin: Errors', function() {
 				// No Route
-				var output = this.appContext.html_tpl();
+				var output = Spinal.tpl();
 				expect(output).to.be.equal('');
 				// Query with no package
-				var output = this.appContext.html_tpl('non.existent');
+				var output = Spinal.tpl('non.existent');
 				expect(output).to.be.equal('');
 				// No Template Package name specified
-				this.appContext.html_load();
+				Spinal.loadTemplate();
 			});
 
 			it('ThemePlugin: Should Change the theme (with Bootstrap active)', function() {
@@ -235,16 +236,16 @@ define(['ioc/context',
 				var $linkYours = $('head > link[theme="yours"]');
 				expect($linkMy.length).to.be.equal(1);
 				expect($linkYours.length).to.be.equal(0);
-				expect(this.appContext.theme_current().name).to.be.equal('my');
+				expect(Spinal.currentTheme().name).to.be.equal('my');
 
-				this.appContext.theme_change('yours');
+				Spinal.changeTheme('yours');
 
 				// "Yours" Theme active
 				var $linkMy = $('head > link[theme="my"]');
 				var $linkYours = $('head > link[theme="yours"]');
 				expect($linkMy.length).to.be.equal(0);
 				expect($linkYours.length).to.be.equal(1);
-				expect(this.appContext.theme_current().name).to.be.equal('yours');
+				expect(Spinal.currentTheme().name).to.be.equal('yours');
 			});
 
 		});
