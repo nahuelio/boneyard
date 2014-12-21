@@ -1,42 +1,43 @@
 ## Spinal IoC implementation
 
-### IoC Core Improvements notes:
+### IoC Core Known issues to be addressed soon:
 
-* Inheritance Major issue Investigation: Calling [Class].__super__.initialize.apply(this, arguments); in some of the initialize methods inside classes is messing things up. like the object instanciated it
-from a class that has this code, it ends up being of a different type. Spinal Core issue (SpinalClass) (Weird).
+* Inheritance Major issue Investigation: Calling [Class].__super__.initialize.apply(this, arguments); when a class inherits from core SpinalClass in the initialize methods are messing things up. Symptom: the object instantiated from that class ends up being of an unrelated type. Spinal Core issue (SpinalClass).
 
 * Write Test cases for Spec semantics errors (type checking and nullability of required data, exceptions and more).
 
-##### List of plugins
+* Clean up: Wipe out 'get' and 'set' methods in Core SpinalClass. Collection and Iterator utility classes are still using this methods (Need to fix them).
+
+### List of plugins
 
 * IoC Plugins basic implementation were completed. This are the following plugins written so far however, changes and additional improvements need to be applied later on.
 
-    * #### HTMLPlugin (Template Packages) injects 3 methods in a context instance:
+    * ##### HTMLPlugin (Template Packages) injects 3 methods in the Spinal namespace:
 
         Verifies if a template package is loaded
         ```
-        this.context.html_loaded([packageName:String]);
+        Spinal.isTemplateLoaded([packageName:String]);
         ```
 
         Loads a new Template package into the list.
         ```
-        this.context.html_load([callback:Function])
+        Spinal.loadTemplate([packageName:String], [callback:Function])
         ```
 
         Pass in a data object that has properties corresponding to the template's free variables
         ```
-        this.context.html_tpl('[expression:String]', [data:Object])
+        Spinal.tpl('[expression:String]', [data:Object])
         ```
-        > Examples of valid expressions: 'spinal!my.awesome.template'([packageName]![dotnotation]).
+        > Examples of valid expressions: 'package!my.awesome.template'
 
-    * #### ThemePlugin injects 2 methods in a context instance:
+    * ##### ThemePlugin injects 2 methods in the Spinal namespace:
 
         Switch theme to the one specified by parameter
         ```
-        this.context.theme_change([ThemeName:String]);
+        Spinal.changeTheme([themeName:String]);
         ```
 
         Returns the current theme used
         ```
-        this.context.theme_current()
+        Spinal.currentTheme()
         ```
