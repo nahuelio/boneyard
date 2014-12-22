@@ -16,6 +16,11 @@ define(['specs/main.spec'], function(MainSpec) {
 		a: ['$bone!n', 2, '$bone!b'],
 		d: new Date(),
 		r: new RegExp('/\./', 'i'),
+		test: 'default',
+		nested: [
+			{ deep: '$bone!o' },
+			{ prop: '$bone!n' }
+		],
 
 		model: {
 			$module: 'util/schema',
@@ -26,7 +31,9 @@ define(['specs/main.spec'], function(MainSpec) {
 				_o: '$bone!o',
 				_a: '$bone!a',
 				_d: '$bone!d',
-				_r: '$bone!r'
+				_r: '$bone!r',
+				_test: '$bone!test',
+				_nested: '$bone!nested'
 			}
 		},
 
@@ -38,7 +45,11 @@ define(['specs/main.spec'], function(MainSpec) {
 		simple: {
 			$module: 'ui/view',
 			$params: { id: 'simple' }
-		}
+		},
+
+		$ready: [
+			{ '$bone!model.set': ['_test', '$bone!simple.toString'] }
+		]
 
 	};
 

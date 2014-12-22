@@ -128,7 +128,7 @@ define(['ioc/context',
 		_resolve: function(expr, parent, key) {
 			if(!expr || !parent) return null;
 			if(!this.validate(expr)) return key;
-			if(!this.isModuleDependency(expr)) return (parent[key] = this.getDependency(expr));
+			if(!this.isModuleDependency(expr)) return (parent[key] = this.getDependency(expr).bone);
 		},
 
 		/**

@@ -76,6 +76,9 @@ define(['ioc/context',
 					expect(model.get('_b')).to.be.an('boolean');
 					expect(model.get('_a')[0]).to.be.equal(model.get('_n'));
 					expect(model.get('_o').prop).to.be.equal(model.get('_s'));
+					expect(model.get('_nested')[0].deep.prop).to.be.equal(model.get('_o').prop);
+					expect(model.get('_nested')[1].prop).to.be.equal(model.get('_n'));
+					expect(model.get('_test')).to.be.equal(ctx.getBone('simple').toString());
 				}));
 			});
 
