@@ -164,7 +164,7 @@ define(['core/spinal',
 				view = this.views.add(view);
 				view._parent = this;
 				if(opts.renderOnAdd) view.render(opts);
-				if(!opts.silent) this.trigger(Container.EVENTS.added, { added: view, view: this });
+				if(!opts.silent) this.trigger(Container.EVENTS.add, { added: view, view: this });
 			}
 			return view;
 		},
@@ -198,7 +198,7 @@ define(['core/spinal',
 				this.views.remove(pos);
 				view._parent = null;
 				if(opts.detachOnRemove) view.detach();
-				if(!opts.silent) this.trigger(Container.EVENTS.removed, { removed: view, view: this });
+				if(!opts.silent) this.trigger(Container.EVENTS.remove, { removed: view, view: this });
 			}
 			return this;
 		},
@@ -210,9 +210,11 @@ define(['core/spinal',
 		*	@method removeAll
 		*	@return {com.spinal.ui.Container}
 		**/
-		removeAll: function() {
+		removeAll: function(opts) {
+			opts || (opts = {});
 			if(!this.views.isEmpty()) this.invoke('detach', arguments);
 			this.views.reset();
+			if(!opts.silent) this.trigger(Container.EVENTS.removeAll, { view: this });
 			return this;
 		},
 
@@ -378,13 +380,17 @@ define(['core/spinal',
 		**/
 		EVENTS: {
 			/**
-			*	@event added
+			*	@event add
 			**/
-			added: 'com:spinal:ui:container:added',
+			add: 'com:spinal:ui:container:add',
 			/**
-			*	@event removed
+			*	@event remove
 			**/
-			removed: 'com:spinal:ui:container:removed'
+			remove: 'com:spinal:ui:container:remove',
+			/**
+			*	@event removeAll
+			**/
+			removeAll: 'com:spinal:ui:container:removeAll'
 		}
 
 	}));

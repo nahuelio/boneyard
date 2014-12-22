@@ -16,20 +16,6 @@ define(['ui/view', 'util/string'], function(View, StringUtil) {
 	var UIInput = Spinal.namespace('com.spinal.ui.form.controls.Input', View.inherit({
 
 		/**
-		*	Events
-		*	@public
-		*	@property events
-		*	@type Object
-		**/
-		events: {
-			'click': '_onClick',
-			'keyup': '_onKeyUp',
-			'keydown': '_onKeyDown',
-			'focusIn': '_onFocus',
-			'focusOut': '_onBlur'
-		},
-
-		/**
 		*	Internal CSS className
 		*	@public
 		*	@property className
@@ -59,7 +45,7 @@ define(['ui/view', 'util/string'], function(View, StringUtil) {
 		*	@property _type
 		*	@type String
 		**/
-		_type: null,
+		_type: 'text',
 
 		/**
 		*	Input's default name
@@ -86,8 +72,8 @@ define(['ui/view', 'util/string'], function(View, StringUtil) {
 		**/
 		initialize: function(options) {
 			options || (options = {});
+			if(this._type) this.$el.attr('type', this._type);
 			_.extend(this, StringUtil.toPrivate(_.pick(options, 'name', 'value', 'placeholder')));
-			this._type = (options.type) ? options.type : UIInput.TYPES.text;
 			UIInput.__super__.initialize.apply(this, arguments);
 			return this;
 		},
@@ -102,7 +88,10 @@ define(['ui/view', 'util/string'], function(View, StringUtil) {
 		**/
 		render: function(opts) {
 			UIInput.__super__.render.apply(this, arguments);
-			return this.type().name().placeholder().value();
+			this.name(this._name);
+			this.placeholder(this._placeholder);
+			this.value(this._value);
+			return this;
 		},
 
 		/**
@@ -114,8 +103,8 @@ define(['ui/view', 'util/string'], function(View, StringUtil) {
 		*	@return {com.spinal.ui.form.controls.Input}
 		**/
 		name: function(n) {
-			this._name = (n && n !== '') ? n : this._name;
-			this.$el.attr('name', this._name);
+			if(!StringUtil.defined(n)) return this._name;
+			this.$el.attr('name', (this._name = n));
 			return this;
 		},
 
@@ -128,8 +117,8 @@ define(['ui/view', 'util/string'], function(View, StringUtil) {
 		*	@return {com.spinal.ui.form.controls.Input}
 		**/
 		value: function(val) {
-			this._value = (val) ? val : this._value;
-			this.$el.val(this._value);
+			if(!StringUtil.defined(val)) return this._value;
+			this.$el.val((this._value = val));
 			return this;
 		},
 
@@ -139,67 +128,13 @@ define(['ui/view', 'util/string'], function(View, StringUtil) {
 		*	@chainable
 		*	@method placeholder
 		*	@param ph {String} Input's placeholder
-		*	@return {com.spinal.ui.form.controls.Input}
+		*	@return String
 		**/
 		placeholder: function(ph) {
-			this._placeholder = (ph) ? ph : this._placeholder;
-			this.$el.attr('placeholder', this._placeholder);
+			if(!StringUtil.defined(ph)) return this._placeholder;
+			this.$el.attr('placeholder', (this._placeholder = ph));
 			return this;
-		},
-
-		/**
-		*	Change Input's type
-		*	@public
-		*	@chainable
-		*	@method type
-		*	@param type {String} Input's type
-		*	@return {com.spinal.ui.form.controls.Input}
-		**/
-		type: function(type) {
-			this._type = (type && type !== '' && type !== this._type) ? type : this._type;
-			this.$el.attr('type', this._type);
-			return this;
-		},
-
-		/**
-		*	Click Handler
-		*	@private
-		*	@method _onClick
-		*	@param e {Object} event reference
-		**/
-		_onClick: function(e) { this.trigger(UIInput.EVENTS.click, this); },
-
-		/**
-		*	KeyUp Handler
-		*	@private
-		*	@method _onKeyUp
-		*	@param e {Object} event reference
-		**/
-		_onKeyUp: function(e) { this.trigger(UIInput.EVENTS.keyup, this); },
-
-		/**
-		*	KeyDown Handler
-		*	@private
-		*	@method _onKeyDown
-		*	@param e {Object} event reference
-		**/
-		_onKeyDown: function(e) { this.trigger(UIInput.EVENTS.keydown, this); },
-
-		/**
-		*	Focus Handler
-		*	@private
-		*	@method _onFocus
-		*	@param e {Object} event reference
-		**/
-		_onFocus: function(e) { this.trigger(UIInput.EVENTS.focus, this); },
-
-		/**
-		*	Blur Handler
-		*	@private
-		*	@method _onBlur
-		*	@param e {Object} event reference
-		**/
-		_onBlur: function(e) { this.trigger(UIInput.EVENTS.blur, this); }
+		}
 
 	}, {
 
@@ -217,25 +152,21 @@ define(['ui/view', 'util/string'], function(View, StringUtil) {
 		**/
 		EVENTS: {
 			/**
-			*	@event click
-			**/
-			click: 'com:spinal:ui:view:form:controls:input:click',
-			/**
 			*	@event keyup
 			**/
-			keyup: 'com:spinal:ui:view:form:controls:input:keyup',
+			keyup: 'com:spinal:ui:view:keyup',
 			/**
 			*	@event keydown
 			**/
-			keydown: 'com:spinal:ui:view:form:controls:input:keydown',
+			keydown: 'com:spinal:ui:view:keydown',
 			/**
 			*	@event focus
 			**/
-			focus: 'com:spinal:ui:view:form:controls:input:focus',
+			focus: 'com:spinal:ui:view:focus',
 			/**
 			*	@event blur
 			**/
-			blur: 'com:spinal:ui:view:form:controls:input:blur'
+			blur: 'com:spinal:ui:view:blur'
 		},
 
 		/**

@@ -34,11 +34,11 @@ define(['ui/form/controls/input'], function(Input) {
 		*	Initialize
 		*	@public
 		*	@method initialize
-		*	@param options {Object} view options
+		*	@param opts {Object} view options
 		*	@return {com.spinal.ui.form.controls.Textarea}
 		**/
-		initialize: function(options) {
-			options || (options = {});
+		initialize: function(opts) {
+			delete this._type;
 			UITextarea.__super__.initialize.apply(this, arguments);
 			return this;
 		},
@@ -53,7 +53,7 @@ define(['ui/form/controls/input'], function(Input) {
 		**/
 		render: function(opts) {
 			UITextarea.__super__.render.apply(this, arguments);
-			return this.name().placeholder().value();
+			return this;
 		}
 
 	}, {

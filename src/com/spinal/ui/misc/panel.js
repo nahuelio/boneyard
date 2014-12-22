@@ -2,7 +2,7 @@
 *	@module com.spinal.ui.misc
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define(['ui/container'], function(Container) {
+define(['ui/container', 'util/string'], function(Container, StringUtil) {
 
 	/**
 	*	Panel Class
@@ -82,7 +82,9 @@ define(['ui/container'], function(Container) {
 		**/
 		render: function(opts) {
 			UIPanel.__super__.render.apply(this, arguments);
-			return this.title().type();
+			this.title(this._title);
+			this.type(this._type);
+			return this;
 		},
 
 		/**
@@ -94,8 +96,8 @@ define(['ui/container'], function(Container) {
 		*	@return {com.spinal.ui.misc.Panel}
 		**/
 		title: function(content) {
-			this._title = (content) ? content : this._title;
-			this.$el.children('.panel-heading').html(this._title);
+			if(!StringUtil.defined(content)) return this._title;
+			this.$el.children('.panel-heading').html((this._title = content));
 			return this;
 		},
 
@@ -108,9 +110,8 @@ define(['ui/container'], function(Container) {
 		*	@return {com.spinal.ui.misc.Panel}
 		**/
 		type: function(name) {
-			this.$el.removeClass(this._type);
-			this._type = (name && name !== this._type) ? name : this._type;
-			this.$el.addClass(this._type);
+			if(!StringUtil.defined(name)) return this._type;
+			this.$el.removeClass(this._type).addClass((this._type = name));
 			return this;
 		}
 

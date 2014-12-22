@@ -2,7 +2,7 @@
 *	@module com.spinal.ui.basic
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define(['ui/view'], function(View) {
+define(['ui/view', 'util/string'], function(View, StringUtil) {
 
 	/**
 	*	Image Class
@@ -71,7 +71,9 @@ define(['ui/view'], function(View) {
 		**/
 		render: function(opts) {
 			UIImage.__super__.render.apply(this, arguments);
-			return this.src().alt();
+			this.src(this._src);
+			this.alt(this._alt);
+			return this;
 		},
 
 		/**
@@ -83,8 +85,8 @@ define(['ui/view'], function(View) {
 		*	@return {com.spinal.ui.basic.Image}
 		**/
 		src: function(src) {
-			this._src = (src) ? src : this._src;
-			this.$el.attr('src', this._src);
+			if(!StringUtil.defined(src)) return this._src;
+			this.$el.attr('src', (this._src = src));
 			return this;
 		},
 
@@ -97,8 +99,8 @@ define(['ui/view'], function(View) {
 		*	@return {com.spinal.ui.basic.Image}
 		**/
 		alt: function(alt) {
-			this._alt = (alt) ? alt : this._alt;
-			this.$el.attr('alt', this._alt);
+			if(!StringUtil.defined(alt)) return this._alt;
+			this.$el.attr('alt', (this._alt = alt));
 			return this;
 		}
 

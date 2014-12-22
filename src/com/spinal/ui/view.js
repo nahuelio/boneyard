@@ -192,7 +192,7 @@ define(['core/spinal',
 			this._beforeRender(arguments).detach();
 			var m = (opts.method && (View.RENDER[opts.method])) ? opts.method : this.method;
 			this._parent._targetEl()[m](this.template(this._tpl));
-			if(!opts.silent) this.trigger(View.EVENTS.rendered, { view: this });
+			if(!opts.silent) this.trigger(View.EVENTS.render, { view: this });
 			return this.delegateEvents();
 		},
 
@@ -205,7 +205,7 @@ define(['core/spinal',
 		*	@return {com.spinal.ui.View}
 		**/
 		update: function(opts) {
-			if(!opts || !opts.silent) this.trigger(View.EVENTS.updated, { view: this });
+			if(!opts || !opts.silent) this.trigger(View.EVENTS.update, { view: this });
 			return this;
 		},
 
@@ -275,7 +275,7 @@ define(['core/spinal',
 		**/
 		show: function(opts) {
 			this.$el.show();
-			if(!opts || !opts.silent) this.trigger(View.EVENTS.shown, { view: this });
+			if(!opts || !opts.silent) this.trigger(View.EVENTS.show, { view: this });
 			return this;
 		},
 
@@ -289,7 +289,7 @@ define(['core/spinal',
 		**/
 		hide: function(opts) {
 			this.$el.hide();
-			if(!opts || !opts.silent) this.trigger(View.EVENTS.hidden, { view: this });
+			if(!opts || !opts.silent) this.trigger(View.EVENTS.hide, { view: this });
 			return this;
 		},
 
@@ -303,7 +303,7 @@ define(['core/spinal',
 		**/
 		enable: function(opts) {
 			this.$el.removeAttr('disabled');
-			if(!opts || !opts.silent) this.trigger(View.EVENTS.enabled, { view: this });
+			if(!opts || !opts.silent) this.trigger(View.EVENTS.enable, { view: this });
 			return this;
 		},
 
@@ -317,7 +317,7 @@ define(['core/spinal',
 		**/
 		disable: function(opts) {
 			this.$el.attr('disabled', 'true');
-			if(!opts || !opts.silent) this.trigger(View.EVENTS.disabled, { view: this });
+			if(!opts || !opts.silent) this.trigger(View.EVENTS.disable, { view: this });
 			return this;
 		},
 
@@ -330,7 +330,7 @@ define(['core/spinal',
 		**/
 		detach: function(opts) {
 			View.__super__.remove.apply(this, arguments);
-			if(!opts || !opts.silent) this.trigger(View.EVENTS.detached, { view: this });
+			if(!opts || !opts.silent) this.trigger(View.EVENTS.detach, { view: this });
 			return this;
 		},
 
@@ -406,33 +406,37 @@ define(['core/spinal',
 		**/
 		EVENTS: {
 			/**
-			*	@event shown
+			*	@event click
 			**/
-			shown: 'com:spinal:ui:view:shown',
+			click: 'com:spinal:ui:view:click',
 			/**
-			*	@event hidden
+			*	@event show
 			**/
-			hidden: 'com:spinal:ui:view:hidden',
+			show: 'com:spinal:ui:view:show',
 			/**
-			*	@event enabled
+			*	@event hide
 			**/
-			enabled: 'com:spinal:ui:view:enabled',
+			hide: 'com:spinal:ui:view:hide',
 			/**
-			*	@event disabled
+			*	@event enable
 			**/
-			disabled: 'com:spinal:ui:view:disabled',
+			enable: 'com:spinal:ui:view:enable',
 			/**
-			*	@event rendered
+			*	@event disable
 			**/
-			rendered: 'com:spinal:ui:view:rendered',
+			disable: 'com:spinal:ui:view:disable',
 			/**
-			*	@event updated
+			*	@event render
 			**/
-			updated: 'com:spinal:ui:view:updated',
+			render: 'com:spinal:ui:view:rendere',
 			/**
-			*	@event detached
+			*	@event update
 			**/
-			detached: 'com:spinal:ui:view:detached'
+			update: 'com:spinal:ui:view:update',
+			/**
+			*	@event detach
+			**/
+			detach: 'com:spinal:ui:view:detach'
 		}
 
 	}));

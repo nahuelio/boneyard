@@ -3,8 +3,8 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['ui/container',
-	'ui/table/table-element',
-	'util/string'], function(Container, TableElement, StringUtil) {
+		'ui/table/table-element',
+		'util/string'], function(Container, TableElement, StringUtil) {
 
 	/**
 	*	Table Class
