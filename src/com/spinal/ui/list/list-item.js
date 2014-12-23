@@ -38,7 +38,6 @@ define(['ui/container'], function(Container) {
 		*	@return {com.spinal.ui.list.ListItem}
 		**/
 		initialize: function(options) {
-			options || (options = {});
 			UIListItem.__super__.initialize.apply(this, arguments);
 			return this;
 		}

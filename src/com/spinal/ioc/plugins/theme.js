@@ -124,7 +124,7 @@ define(['ioc/engine',
 			var config = _.find(this.themes, function(theme, name) {
 				return ((!themeName && theme._default && (themeName = name)) || (themeName === name));
 			});
-			return (config) ? { name: themeName, config: config } : this.theme_current();
+			return (config) ? { name: themeName, config: config } : this.currentTheme();
 		},
 
 		/**
@@ -135,36 +135,50 @@ define(['ioc/engine',
 		*	@return {com.spinal.ioc.plugins.ThemePlugin}
 		**/
 		process: function() {
-			var theme = this.theme_current();
+			var theme = this.currentTheme();
 			if(!theme) return this;
-			var rmvEval = 'link[theme][theme!="bootstrap"][theme!="bootstrap-theme"]';
-			var $existing = this._$header.children(rmvEval);
-			if($existing.length > 0) $existing.remove();
+			this.resetTheme(true);
 			this._$header.append(this._link({ theme: theme.name, href: this._resolveURI(theme.config) }));
 			return this;
 		},
 
 		/**
-		*	Retrieves the current theme
+		*	Delegated Method to Spinal that retrieves the current theme
 		*	@public
 		*	@method current
 		*	@return Object
 		**/
-		theme_current: function() {
+		currentTheme: function() {
 			return this.theme;
 		},
 
 		/**
-		*	Delegated Method to the context via engine to be able to change the current theme
+		*	Delegated Method to Spinal that changes the current theme
 		*	@public
 		*	@chainable
 		*	@method changeTheme
 		*	@param [themeName] {String} theme name
 		*	@return {com.spinal.ioc.plugins.ThemePlugin}
 		**/
-		theme_change: function(themeName) {
+		changeTheme: function(themeName) {
 			this.theme = this.findTheme(themeName);
 			return this.process();
+		},
+
+		/**
+		*	Delegated Method to Spinal that resets the current theme.
+		*	@public
+		*	@chainable
+		*	@method resetTheme
+		*	@param [removeOnly] {Boolean} clean themes only
+		*	@return {com.spinal.ioc.plugins.ThemePlugin}
+		**/
+		resetTheme: function(removeOnly) {
+			var rmvEval = 'link[theme][theme!="bootstrap"][theme!="bootstrap-theme"]';
+			var $existing = this._$header.children(rmvEval);
+			if($existing.length > 0) $existing.remove();
+			if(!removeOnly) this.theme = null;
+			return this;
 		},
 
 		/**
@@ -176,8 +190,8 @@ define(['ioc/engine',
 		**/
 		execute: function() {
 			if(!_.isEmpty(this.themes)) {
-				this.theme_change();
-				this._engine.trigger(Engine.EVENTS.proxified, this, 'theme_change', 'theme_current');
+				this.changeTheme();
+				this.proxify(Spinal, 'changeTheme', 'currentTheme', 'resetTheme');
 			}
 			return this;
 		}

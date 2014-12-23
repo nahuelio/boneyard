@@ -2,7 +2,7 @@
 *	@module com.spinal.ui.basic
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define(['ui/basic/paragraph'], function(Paragraph) {
+define(['ui/basic/paragraph', 'util/string'], function(Paragraph, StringUtil) {
 
 	/**
 	*	Label Class
@@ -62,7 +62,8 @@ define(['ui/basic/paragraph'], function(Paragraph) {
 		**/
 		render: function(opts) {
 			UILabel.__super__.render.apply(this, arguments);
-			return this.afor();
+			this.afor(this._afor);
+			return this;
 		},
 
 		/**
@@ -74,8 +75,8 @@ define(['ui/basic/paragraph'], function(Paragraph) {
 		*	@return {com.spinal.ui.basic.Paragraph}
 		**/
 		afor: function(_for) {
-			this._afor = (_for) ? _for : this._afor;
-			if(this._afor) this.$el.attr('for', this._afor);
+			if(!StringUtil.defined(_for)) return this._afor;
+			this.$el.attr('for', (this._afor = _for));
 			return this;
 		}
 

@@ -2,7 +2,7 @@
 *	@module com.spinal.ui.basic
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define(['ui/view'], function(View) {
+define(['ui/view', 'util/string'], function(View, StringUtil) {
 
 	/**
 	*	Paragraph Class
@@ -62,7 +62,22 @@ define(['ui/view'], function(View) {
 		**/
 		render: function(opts) {
 			UIParagraph.__super__.render.apply(this, arguments);
-			return this.content();
+			this.content(this._content);
+			return this;
+		},
+
+		/**
+		*	Update Paragraph
+		*	@public
+		*	@chainable
+		*	@method update
+		*	@param model {Backbone.Model}
+		*	@param value {Object} value that has changed
+		*	@param [opts] {Object} additional options
+		**/
+		update: function(model, value, opts) {
+			if(_.isString(value)) this.text(value);
+			return UIParagraph.__super__.update.apply(this, arguments);
 		},
 
 		/**
@@ -74,8 +89,8 @@ define(['ui/view'], function(View) {
 		*	@return {com.spinal.ui.basic.Paragraph}
 		**/
 		content: function(c) {
-			this._content = (c) ? c : this._content;
-			this.$el.html(this._content);
+			if(!StringUtil.defined(c)) return this._content;
+			this.$el.html((this._content = c));
 			return this;
 		}
 

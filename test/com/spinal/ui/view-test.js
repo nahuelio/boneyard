@@ -113,7 +113,7 @@ define(['core/spinal',
 			it('Should render a View instance', function() {
 				this.testView = { id: 'render-test' };
 				var view = this.cglobal.add(this.testView);
-				view.off().on(View.EVENTS.rendered, function(ev) {
+				view.off().on(View.EVENTS.render, function(ev) {
 					expect(ev).to.be.ok();
 					expect(ev.view).to.be.ok();
 					expect(ev.view.$el.attr('class')).to.be.equal('ui-view');
@@ -228,7 +228,7 @@ define(['core/spinal',
 			it('Should update the View and return the instance', function() {
 				this.testView = { id: 'test-update'};
 				var view = this.cglobal.add(this.testView);
-				view.off().on(View.EVENTS.updated, function(ev) {
+				view.off().on(View.EVENTS.update, function(ev) {
 					expect(ev).to.be.ok();
 					expect(ev.view).to.be.ok();
 				});
@@ -326,7 +326,7 @@ define(['core/spinal',
 				this.testView = { id: 'hide-test' };
 				var view = this.cglobal.add(this.testView);
 				this.cglobal.render();
-				view.off().on(View.EVENTS.hidden, function(ev) { expect(ev).to.be.ok(); });
+				view.off().on(View.EVENTS.hide, function(ev) { expect(ev).to.be.ok(); });
 				var result = view.hide();
 				result = view.hide({ silent: true });
 				this.cglobal.removeAll();
@@ -339,7 +339,7 @@ define(['core/spinal',
 
 			it('Should enable the view', function() {
 				this.testView = new View();
-				this.testView.off().on(View.EVENTS.enabled, function(ev) { expect(ev).to.be.ok(); });
+				this.testView.off().on(View.EVENTS.enable, function(ev) { expect(ev).to.be.ok(); });
 				var result = this.testView.enable();
 				this.testView.disable();
 				expect(this.testView.$el.attr('disabled')).to.be.equal('disabled');
@@ -353,7 +353,7 @@ define(['core/spinal',
 
 			it('Should disable the view', function() {
 				this.testView = new View();
-				this.testView.off().on(View.EVENTS.disabled, function(ev) { expect(ev).to.be.ok(); });
+				this.testView.off().on(View.EVENTS.disable, function(ev) { expect(ev).to.be.ok(); });
 				var result = this.testView.disable();
 				result = this.testView.disable({ silent: true });
 				expect(this.testView.$el.attr('disabled')).to.be.equal('disabled');
@@ -366,7 +366,7 @@ define(['core/spinal',
 			it('Should detach the dom (el) from the view instance', function() {
 				this.testView = new View({ id: 'to-detach' });
 				this.cglobal.add(this.testView);
-				this.testView.off().on(View.EVENTS.detached, function(ev) { expect(ev).to.be.ok(); });
+				this.testView.off().on(View.EVENTS.detach, function(ev) { expect(ev).to.be.ok(); });
 				var result = this.testView.detach({ silent: true });
 				this.cglobal.removeAll();
 			});

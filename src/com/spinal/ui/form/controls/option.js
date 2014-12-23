@@ -2,7 +2,7 @@
 *	@module com.spinal.ui.form.controls
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define(['ui/view'], function(View) {
+define(['ui/view', 'util/string'], function(View, StringUtil) {
 
 	/**
 	*	Option Class
@@ -71,7 +71,23 @@ define(['ui/view'], function(View) {
 		**/
 		render: function(opts) {
 			UIOption.__super__.render.apply(this, arguments);
-			return this.value().text();
+			this.value(this._value);
+			this.text(this._text);
+			return this;
+		},
+
+		/**
+		*	Update Option
+		*	@public
+		*	@chainable
+		*	@method update
+		*	@param model {Backbone.Model}
+		*	@param value {Object} value that has changed
+		*	@param [opts] {Object} additional options
+		**/
+		update: function(model, value, opts) {
+			if(_.isString(value)) this.text(value);
+			return UIOption.__super__.update.apply(this, arguments);
 		},
 
 		/**
@@ -83,8 +99,8 @@ define(['ui/view'], function(View) {
 		*	@return {com.spinal.ui.form.controls.Option}
 		**/
 		text: function(txt) {
-			this._text = (txt && txt !== '') ? txt : this._text;
-			this.$el.html(this._text);
+			if(!StringUtil.defined(txt)) return this._text;
+			this.$el.html((this._text = txt));
 			return this;
 		},
 
@@ -97,8 +113,8 @@ define(['ui/view'], function(View) {
 		*	@return {com.spinal.ui.form.controls.Option}
 		**/
 		value: function(val) {
-			this._value = (val) ? val : this._value;
-			this.$el.val(this._value);
+			if(!StringUtil.defined(val)) return this._value;
+			this.$el.val((this._value = val));
 			return this;
 		},
 

@@ -3,8 +3,8 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['ui/container',
-	'ui/table/table-element',
-	'util/string'], function(Container, TableElement, StringUtil) {
+		'ui/table/table-element',
+		'util/string'], function(Container, TableElement, StringUtil) {
 
 	/**
 	*	Table Class
@@ -95,7 +95,7 @@ define(['ui/container',
 		*	@return String
 		**/
 		_create: function(type) {
-			return Spinal.app.html_tpl('spinal.table.t', { _$: { t: type, cls: ('ui-table-' + type) } });
+			return Spinal.tpl('spinal.table.t', { _$: { t: type, cls: ('ui-table-' + type) } });
 		},
 
 		/**

@@ -25,9 +25,6 @@ define(['libs/backbone'], function() {
 		**/
 		exports.__VERSION__ = '<%= __VERSION__ %>';
 
-		// Expose Backbone and Underscore hard dependency into Spinal Namespace
-		exports.Backbone = root.Backbone; exports._ = root._;
-
 		/**
 		*	Namespacing Strategy
 		*	@static
@@ -38,16 +35,14 @@ define(['libs/backbone'], function() {
 		**/
 		var namespace = exports.namespace = function(path, constructor) {
 			if(!path || !_.isString(path) || !constructor)
-				throw new Error('Spinal.namespace accepts 2 arguments: path (string) and constructor.');
-			var parts = path.split('.'), parent = exports, pl, i;
-			if (parts[0] == "spinal") parts = parts.slice(1);
-			pl = parts.length;
-			for (var i = 0; i < pl; i++) {
-				if (typeof parent[parts[i]] == 'undefined') parent[parts[i]] = {};
-				if(i == (pl-1)) parent[parts[i]] = constructor;
-				parent = parent[parts[i]];
+				throw new Error('Spinal.namespace requires a namespace (in dot notation) and a function (or object)');
+			var parts = path.split('.'), part = exports;
+			var obj, name, ps = parts.length;
+			for(var i = 0; i < ps; i++) {
+				obj = part; name = parts[i];
+				part = (part[name]) ? part[name] : (part[name] = {});
 			}
-			return parent;
+			return (constructor) ? (obj[name] = constructor) : part;
 		};
 
 		/**
@@ -171,7 +166,7 @@ define(['libs/backbone'], function() {
 		};
 
 		// If Backbone exists, expose new inherit method to Backbone Classes
-		if(exports.Backbone) {
+		if(Backbone) {
 			Backbone.View.inherit = Backbone.Collection.inherit =
 			Backbone.Model.inherit = Backbone.Router.inherit = _inherit;
 		}
@@ -189,7 +184,7 @@ define(['libs/backbone'], function() {
 			this.initialize.apply(this, arguments);
 		});
 
-		extend(SpinalClass.prototype, exports.Backbone.Events, {
+		extend(SpinalClass.prototype, Backbone.Events, {
 			/**
 			*	Default initialize
 			*	@public
@@ -242,22 +237,21 @@ define(['libs/backbone'], function() {
 			},
 
 			/**
-			*	Proxifies the list of methods/properties (instance) specified as extra arguments
-			*	into the instance caller by reference.
+			*	Proxifies the list of instance methods/properties into the target specified in the first parameter.
 			*	<h5>Usages:</h5>
-			*		instanceA.proxify(instanceB, 'method1', 'property1', 'methodN');
-			*		instanceA.method1(); // executes method1 declared in instanceB.
-			*		instanceA.property1; // access to property1 declared in instanceB.
-			*		instanceA.methodN(); // executes methodN declared in instanceB.
+			*		source.proxify(target, 'method1', 'property1', 'methodN');
+			*		target.method1(); // executes method1 declared in source.
+			*		target.property1; // access property1 declared in source.
+			*		target.methodN(); // executes methodN declared in source.
 			*	@public
 			*	@method proxify
-			*	@param o {Object} source instance to 'rent' the methods from
+			*	@param t {Object} target instance to apply
 			*	@return Object
 			**/
-			proxify: function(o) {
-				if(!o) return this;
+			proxify: function(t) {
+				if(!t) return this;
 				var members = Array.prototype.slice.call(arguments, 1);
-				_.each(members, function(m) { this[m] = (_.isFunction(o[m])) ? _.bind(o[m], o) : o[m]; }, this);
+				_.each(members, function(m) { t[m] = (_.isFunction(this[m])) ? _.bind(this[m], this) : this[m]; }, this);
 				return this;
 			},
 

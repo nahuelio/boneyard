@@ -34,7 +34,8 @@ define(['core/spinal',
 		*	@type Object
 		**/
 		annotations: {
-			_r: 'bone!',
+			_b: 'bone!',
+			_r: 'bone-ref!',
 			_d: '!'
 		},
 
@@ -69,13 +70,24 @@ define(['core/spinal',
 		*	@public
 		*	@method validate
 		*	@param expr {String} expression to be evaluated
-		*	@param [annotation] {String} annotation used to be matched with the expression
 		*	@return Boolean
 		**/
-		validate: function(expr, annotation) {
+		validate: function(expr) {
 			if(!expr || !_.isString(expr)) return false;
-			if(!annotation) annotation = this.annotations._r;
-			return ((Engine.PREFIX + expr).indexOf(annotation) !== -1);
+			var ev = (Engine.PREFIX + expr);
+			return ((ev.indexOf(this.annotations._b) !== -1) || (ev.indexOf(this.annotations._r) !== -1));
+		},
+
+		/**
+		*	Check if a complex dependency make reference to a function of the dependency
+		*	@public
+		*	@method isDependencyRef
+		*	@param expr {String} expression to be evaluated
+		*	@return Boolean
+		**/
+		isDependencyRef: function(expr) {
+			if(!expr) return false;
+			return ((Engine.PREFIX + expr).indexOf(this.annotations._r) !== -1);
 		},
 
 		/**
@@ -87,7 +99,7 @@ define(['core/spinal',
 		**/
 		isModuleDependency: function(expr) {
 			if(!expr || !_.isString(expr)) return false;
-			return (this._engine.isModule(this.getDependency(expr)));
+			return (this._engine.isModule(this.getDependency(expr).bone));
 		},
 
 		/**
@@ -113,8 +125,24 @@ define(['core/spinal',
 		*	@return Object
 		**/
 		getDependency: function(expr, delimiter) {
-			var dependencyId = this.getDependencyId.apply(this, arguments);
-			return (dependencyId) ? this._engine.getBone(dependencyId) : null;
+			var dep = this.getComplexDependency(expr, delimiter);
+			return (dep) ? { bone: this._engine.getBone(dep.id), method: dep.method } : null;
+		},
+
+		/**
+		*	Retrieves a complex dependency (if exists) and return the structure suitable for processing
+		*	Example of a complex dependency: '$bone!mybone.mybonemethod'
+		*	Outputs: ['mybone', 'mybonemethod']
+		*	@public
+		*	@method getComplexDependency
+		*	@param expr {String} expression to be evaluated
+		*	@param [delimiter] {String} optional delimiter that identifies a bone reference
+		*	@return Array
+		**/
+		getComplexDependency: function(expr, delimiter) {
+			var depId = this.getDependencyId.apply(this, arguments), complex = null;
+			if(!depId) return null;
+			return ((complex = depId.split('.')).length > 1) ? { id: complex[0], method: complex[1] } : { id: depId };
 		},
 
 		/**

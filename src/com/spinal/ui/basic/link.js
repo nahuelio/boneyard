@@ -2,7 +2,7 @@
 *	@module com.spinal.ui.basic
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define(['ui/basic/paragraph'], function(Paragraph) {
+define(['ui/basic/paragraph', 'util/string'], function(Paragraph, StringUtil) {
 
 	/**
 	*	Link Class
@@ -62,7 +62,8 @@ define(['ui/basic/paragraph'], function(Paragraph) {
 		**/
 		render: function(opts) {
 			UILink.__super__.render.apply(this, arguments);
-			return this.href();
+			this.href(this._href);
+			return this;
 		},
 
 		/**
@@ -74,8 +75,8 @@ define(['ui/basic/paragraph'], function(Paragraph) {
 		*	@return {com.spinal.ui.basic.Link}
 		**/
 		href: function(uri) {
-			this._href = (uri) ? uri : this._href;
-			this.$el.attr('href', this._href);
+			if(!StringUtil.defined(uri)) return this._href;
+			this.$el.attr('href', (this._href = uri));
 			return this;
 		}
 

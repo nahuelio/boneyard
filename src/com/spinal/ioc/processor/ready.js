@@ -40,7 +40,10 @@ define(['ioc/context',
 			if(!_.isArray(exprs) || !_.isObject(exprs)) return exprs;
 			return _.map(exprs, function(expr, k) {
 				if(_.isArray(expr)) return _.flatten(this._inject(expr));
-				return (this.validate(expr) && (bone = this.getDependency(expr))) ? bone : expr;
+				if(this.validate(expr) && (d = this.getDependency(expr))) {
+					return ((d.method) ? (!this.isDependencyRef(expr) ? d.bone[d.method]() : d.bone[d.method]) : d.bone);
+				}
+				return expr;
 			}, this);
 		},
 
@@ -55,12 +58,8 @@ define(['ioc/context',
 		**/
 		_resolve: function(exprs, params) {
 			return _.compact(_.map(exprs, function(expr, ix) {
-				var bone = null, info = null;
-				if(this.validate(expr) && (info = this.getDependencyId(expr).split('.'))) {
-					if(info.length > 1 && (bone = this._engine.getBone(info[0]))) {
-						bone[info[1]].apply(bone, this._inject(params[ix]));
-						return expr;
-					}
+				if(this.validate(expr) && (d = this.getDependency(expr))) {
+					return (d.method) ? d.bone[d.method].apply(d.bone, this._inject(params[ix])) : null;
 				}
 			}, this));
 		},

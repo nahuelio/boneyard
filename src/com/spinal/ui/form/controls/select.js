@@ -3,7 +3,8 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['ui/container',
-		'ui/form/controls/option'], function(Container, Option) {
+		'ui/form/controls/option',
+		'util/string'], function(Container, Option, StringUtil) {
 
 	/**
 	*	Select Class
@@ -15,16 +16,6 @@ define(['ui/container',
 	*	@requires com.spinal.ui.form.controls.Option
 	**/
 	var UISelect = Spinal.namespace('com.spinal.ui.form.controls.Select', Container.inherit({
-
-		/**
-		*	Events
-		*	@public
-		*	@property events
-		*	@type Object
-		**/
-		events: {
-			'change': '_onChange'
-		},
 
 		/**
 		*	Internal CSS className
@@ -75,7 +66,21 @@ define(['ui/container',
 		**/
 		render: function(opts) {
 			UISelect.__super__.render.apply(this, arguments);
-			return this.name();
+			this.name(this._name);
+			return this;
+		},
+
+		/**
+		*	Update Container
+		*	@public
+		*	@chaniable
+		*	@method update
+		*	@param model {Backbone.Model}
+		*	@param value {Object} value that has changed
+		*	@return {com.spinal.ui.Container}
+		**/
+		update: function(model, opts) {
+			return UISelect.__super__.update.apply(this, arguments);
 		},
 
 		/**
@@ -87,19 +92,9 @@ define(['ui/container',
 		*	@return {com.spinal.ui.form.controls.Select}
 		**/
 		name: function(n) {
-			this._name = (n && n !== '') ? n : this._name;
-			this.$el.attr('name', this._name);
+			if(!StringUtil.defined(n)) return this._name;
+			this.$el.attr('name', (this._name = n));
 			return this;
-		},
-
-		/**
-		*	Change Handler
-		*	@private
-		*	@method _onChange
-		*	@param e {Object} event reference
-		**/
-		_onChange: function(e) {
-			this.trigger(UISelect.EVENTS.changed, this);
 		}
 
 	}, {

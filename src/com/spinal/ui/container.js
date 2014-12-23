@@ -75,6 +75,8 @@ define(['core/spinal',
 		_valid: function(attrs) {
 			attrs || (attrs = {});
 			Container.__super__._valid.apply(this, arguments);
+			if(attrs.collection && !(attrs.collection instanceof Backbone.Collection))
+				throw new UIException('InvalidModelType');
 			if(attrs.interface && !(new attrs.interface() instanceof Backbone.View))
 				throw new UIException('InvalidInterfaceType');
 			return true;
@@ -139,14 +141,13 @@ define(['core/spinal',
 		*	@public
 		*	@chainable
 		*	@method update
+		*	@param model {Backbone.Model} model reference
+		*	@param value {Object} either a object or a Backbone.Collection
 		*	@param [opts] {Object} additional options
 		*	@return {com.spinal.ui.Container}
 		**/
-		update: function(opts) {
-			opts || (opts = {});
-			Container.__super__.update.apply(this, arguments);
-			this.invoke('update', arguments);
-			return this;
+		update: function(model, value, opts) {
+			return Container.__super__.update.apply(this, arguments);
 		},
 
 		/**
@@ -164,7 +165,7 @@ define(['core/spinal',
 				view = this.views.add(view);
 				view._parent = this;
 				if(opts.renderOnAdd) view.render(opts);
-				if(!opts.silent) this.trigger(Container.EVENTS.added, { added: view, view: this });
+				if(!opts.silent) this.trigger(Container.EVENTS.add, { added: view, view: this });
 			}
 			return view;
 		},
@@ -198,7 +199,7 @@ define(['core/spinal',
 				this.views.remove(pos);
 				view._parent = null;
 				if(opts.detachOnRemove) view.detach();
-				if(!opts.silent) this.trigger(Container.EVENTS.removed, { removed: view, view: this });
+				if(!opts.silent) this.trigger(Container.EVENTS.remove, { removed: view, view: this });
 			}
 			return this;
 		},
@@ -210,9 +211,11 @@ define(['core/spinal',
 		*	@method removeAll
 		*	@return {com.spinal.ui.Container}
 		**/
-		removeAll: function() {
+		removeAll: function(opts) {
+			opts || (opts = {});
 			if(!this.views.isEmpty()) this.invoke('detach', arguments);
 			this.views.reset();
+			if(!opts.silent) this.trigger(Container.EVENTS.removeAll, { view: this });
 			return this;
 		},
 
@@ -378,13 +381,17 @@ define(['core/spinal',
 		**/
 		EVENTS: {
 			/**
-			*	@event added
+			*	@event add
 			**/
-			added: 'com:spinal:ui:container:added',
+			add: 'com:spinal:ui:container:add',
 			/**
-			*	@event removed
+			*	@event remove
 			**/
-			removed: 'com:spinal:ui:container:removed'
+			remove: 'com:spinal:ui:container:remove',
+			/**
+			*	@event removeAll
+			**/
+			removeAll: 'com:spinal:ui:container:removeAll'
 		}
 
 	}));

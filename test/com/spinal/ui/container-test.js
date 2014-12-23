@@ -79,7 +79,7 @@ define(['core/spinal',
 
 			it('Should add views in the container', function() {
 				this.testContainer = new Container({ id: 'main', interface: View });
-				this.testContainer.off().on(Container.EVENTS.added, function(ev) {
+				this.testContainer.off().on(Container.EVENTS.add, function(ev) {
 					expect(ev).to.be.ok();
 					expect(ev.added).to.be.a(View);
 				});
@@ -104,7 +104,7 @@ define(['core/spinal',
 
 			it('Should add a view in the container (with interface)', function() {
 				this.testContainer = new Container({ id: 'main', interface: View });
-				this.testContainer.off().on(Container.EVENTS.added, function(ev) {
+				this.testContainer.off().on(Container.EVENTS.add, function(ev) {
 					expect(ev).to.be.ok();
 					expect(ev.added.id).to.be.equal('view1');
 				});
@@ -145,7 +145,7 @@ define(['core/spinal',
 				var viewB = this.testContainer.add(this.viewB);
 				var viewC = this.testContainer.add(this.viewC);
 				expect(this.testContainer.views.size()).to.be.equal(3);
-				this.testContainer.off().on(Container.EVENTS.removed, function(ev) {
+				this.testContainer.off().on(Container.EVENTS.remove, function(ev) {
 					expect(ev).to.be.ok();
 					expect(ev.removed).to.be.ok();
 					expect(ev.removed.id).to.be.equal('A');
@@ -179,7 +179,7 @@ define(['core/spinal',
 
 			it('Should render the views inside the container', function() {
 				this.testContainer = new Container({ id: 'render-container', interface: View });
-				this.testContainer.off().on(Container.EVENTS.rendered, _.bind(function(ev) {
+				this.testContainer.off().on(Container.EVENTS.render, _.bind(function(ev) {
 					expect(ev).to.be.ok();
 					expect(ev.view).to.be.ok();
 				}, this));
@@ -223,7 +223,7 @@ define(['core/spinal',
 				this.testContainer = new Container({ id: 'main', interface: View });
 				var viewA = this.testContainer.add(this.viewA),
 					viewB = this.testContainer.add(this.viewB);
-				this.cglobal.on(Container.EVENTS.updated, function(ev) {
+				this.cglobal.on(Container.EVENTS.update, function(ev) {
 					expect(ev).to.be.ok();
 					expect(ev.view).to.be.ok();
 				});
@@ -270,7 +270,7 @@ define(['core/spinal',
 				this.testContainer = new Container({ id: 'main', interface: View });
 				var viewA = this.testContainer.add(this.viewA),
 					viewB = this.testContainer.add(this.viewB);
-				this.testContainer.off().on(Container.EVENTS.shown, function(ev) {
+				this.testContainer.off().on(Container.EVENTS.show, function(ev) {
 					expect(ev).to.be.ok();
 					expect(ev.view).to.be.ok();
 				});
@@ -292,10 +292,10 @@ define(['core/spinal',
 				this.testContainer = new Container({ id: 'main', interface: View });
 				var viewA = this.testContainer.add(this.viewA),
 					viewB = this.testContainer.add(this.viewB);
-				this.testContainer.off().on(Container.EVENTS.disabled, function(ev) {
+				this.testContainer.off().on(Container.EVENTS.disable, function(ev) {
 					expect(ev).to.be.ok();
 					expect(ev.view).to.be.ok();
-				}).on(Container.EVENTS.enabled, function(ev) {
+				}).on(Container.EVENTS.enable, function(ev) {
 					expect(ev).to.be.ok();
 					expect(ev.view).to.be.ok();
 				});

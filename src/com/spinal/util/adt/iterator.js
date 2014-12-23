@@ -10,7 +10,7 @@ define(['core/spinal'], function(Spinal) {
 	*	@class com.spinal.util.adt.Iterator
 	*	@extends com.spinal.core.SpinalClass
 	**/
-	var Iterator = Spinal.namespace('com.spinal.util.adt.Iterator', Spinal.com.spinal.core.SpinalClass.inherit({
+	var Iterator = Spinal.namespace('com.spinal.util.adt.Iterator', Spinal.SpinalClass.inherit({
 
 		/**
 		*	Internal Array

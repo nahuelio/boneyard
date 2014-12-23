@@ -2,7 +2,7 @@
 *	@module com.spinal.ui.form.controls
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define(['ui/view'], function(View) {
+define(['ui/view', 'util/string'], function(View, StringUtil) {
 
 	/**
 	*	Button Class
@@ -81,7 +81,23 @@ define(['ui/view'], function(View) {
 		**/
 		render: function(opts) {
 			UIButton.__super__.render.apply(this, arguments);
-			return this.text().type();
+			this.text(this._text);
+			this.type(this._type);
+			return this;
+		},
+
+		/**
+		*	Update Button
+		*	@public
+		*	@chainable
+		*	@method update
+		*	@param model {Backbone.Model}
+		*	@param value {Object} value that has changed
+		*	@param [opts] {Object} additional options
+		**/
+		update: function(model, value, opts) {
+			if(_.isString(value)) this.text(value);
+			return UIButton.__super__.update.apply(this, arguments);
 		},
 
 		/**
@@ -93,8 +109,8 @@ define(['ui/view'], function(View) {
 		*	@return {com.spinal.ui.form.controls.Button}
 		**/
 		text: function(content) {
-			this._text = (content) ? content : this._text;
-			this.$el.html(this._text);
+			if(!StringUtil.defined(content)) return this._text;
+			this.$el.html((this._text = content));
 			return this;
 		},
 
@@ -107,9 +123,8 @@ define(['ui/view'], function(View) {
 		*	@return {com.spinal.ui.form.controls.Button}
 		**/
 		type: function(name) {
-			this.$el.removeClass(this._type);
-			this._type = (name && name !== this._type) ? name : this._type;
-			this.$el.addClass(this._type);
+			if(!StringUtil.defined(name)) return this._type;
+			this.$el.removeClass(this._type).addClass((this._type = name));
 			return this;
 		},
 

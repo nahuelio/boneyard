@@ -35,9 +35,9 @@ define(['core/spinal',], function(Spinal) {
 		*	Third Party Libraries Verification
 		**/
 		describe('#Availability of Third Party Libs (Underscore, Backbone)', function() {
-			it('Should be available and hooked up into Spinal Core', function() {
-				expect(Spinal._).to.be.ok();
-				expect(Spinal.Backbone).to.be.ok();
+			it('Should be available on the global namespace', function() {
+				expect(_).to.be.ok();
+				expect(Backbone).to.be.ok();
 			});
 		});
 
