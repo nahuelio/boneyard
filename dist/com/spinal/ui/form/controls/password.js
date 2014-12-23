@@ -1,0 +1,1 @@
+define(["ui/form/controls/input"],function(e){var t=Spinal.namespace("com.spinal.ui.form.controls.Password",e.inherit({className:"ui-password form-control",_type:e.TYPES.password,initialize:function(e){return t.__super__.initialize.apply(this,arguments),this}},{NAME:"UIPassword"}));return t});
