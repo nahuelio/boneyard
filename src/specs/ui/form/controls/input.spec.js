@@ -10,6 +10,7 @@ define([], function() {
 
 		input_p_d: { $module: 'ui/basic/paragraph', $params: { content: '<code>InputText</code>' } },
 		input_p_c: { $module: 'ui/basic/paragraph', $params: { content: '<code>Checkbox</code>' } },
+		input_p_r: { $module: 'ui/basic/paragraph', $params: { content: '<code>RadioButton</code>' } },
 
 		default_input: {
 			$module: 'ui/form/controls/input',
@@ -18,7 +19,12 @@ define([], function() {
 
 		checkbox: {
 			$module: 'ui/form/controls/checkbox',
-			$params: { name: 'checkbox', checked: true }
+			$params: { name: 'checkbox' }
+		},
+
+		radio: {
+			$module: 'ui/form/controls/radio',
+			$params: { name: 'radio' }
 		},
 
 		$ready: [{
@@ -26,7 +32,9 @@ define([], function() {
 				'$bone!input_p_d',
 				'$bone!default_input',
 				'$bone!input_p_c',
-				'$bone!checkbox'
+				'$bone!checkbox',
+				'$bone!input_p_r',
+				'$bone!radio'
 			], { renderOnAdd: true }]
 		}]
 
