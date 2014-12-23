@@ -21,6 +21,8 @@ define(['ui/view',
 		'ui/form/controls/input',
 		'ui/form/controls/checkbox',
 		'ui/form/controls/radio',
+		'ui/form/controls/password',
+		'ui/form/controls/hidden',
 		'ui/form/controls/textarea',
 		'ui/form/controls/select',
 		'ui/form/controls/option'], function() { });

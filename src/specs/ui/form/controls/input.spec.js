@@ -38,6 +38,11 @@ define([], function() {
 			$params: { name: 'password' }
 		},
 
+		hidden: {
+			$module: 'ui/form/controls/hidden',
+			$params: { name: 'hidden', value: 'myhiddenvalue' }
+		},
+
 		$ready: [{
 			'$bone!c_default.addAll': [['$bone!input_p_d', '$bone!default_input']],
 			'$bone!c_checkbox.addAll': [['$bone!input_p_c', '$bone!checkbox']],
@@ -47,7 +52,8 @@ define([], function() {
 				'$bone!c_default',
 				'$bone!c_checkbox',
 				'$bone!c_radio',
-				'$bone!c_password'
+				'$bone!c_password',
+				'$bone!hidden'
 			], { renderOnAdd: true }]
 		}]
 
