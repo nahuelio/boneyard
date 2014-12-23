@@ -41,3 +41,8 @@
         ```
         Spinal.currentTheme()
         ```
+
+        Reset Lastest Theme applied
+        ```
+        Spinal.resetTheme()
+        ```
