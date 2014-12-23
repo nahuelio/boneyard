@@ -71,6 +71,19 @@ define(['ui/container',
 		},
 
 		/**
+		*	Update Container
+		*	@public
+		*	@chaniable
+		*	@method update
+		*	@param model {Backbone.Model}
+		*	@param value {Object} value that has changed
+		*	@return {com.spinal.ui.Container}
+		**/
+		update: function(model, opts) {
+			return UISelect.__super__.update.apply(this, arguments);
+		},
+
+		/**
 		*	Change the Select's name
 		*	@public
 		*	@chainable

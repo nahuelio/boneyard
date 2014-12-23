@@ -87,6 +87,20 @@ define(['ui/view', 'util/string'], function(View, StringUtil) {
 		},
 
 		/**
+		*	Update Button
+		*	@public
+		*	@chainable
+		*	@method update
+		*	@param model {Backbone.Model}
+		*	@param value {Object} value that has changed
+		*	@param [opts] {Object} additional options
+		**/
+		update: function(model, value, opts) {
+			if(_.isString(value)) this.text(value);
+			return UIButton.__super__.update.apply(this, arguments);
+		},
+
+		/**
 		*	Change the button's text
 		*	@public
 		*	@chainable

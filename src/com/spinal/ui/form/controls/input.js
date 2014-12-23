@@ -95,6 +95,21 @@ define(['ui/view', 'util/string'], function(View, StringUtil) {
 		},
 
 		/**
+		*	Update Input
+		*	@public
+		*	@chainable
+		*	@method update
+		*	@param model {Backbone.Model}
+		*	@param value {Object} value that has changed
+		*	@param [opts] {Object} additional options
+		*	@return {com.spinal.ui.form.controls.Input}
+		**/
+		update: function(model, value, opts) {
+			if(_.isString(value)) this.value(value);
+			return UIInput.__super__.update.apply(this, arguments);
+		},
+
+		/**
 		*	Change the Input's name
 		*	@public
 		*	@chainable

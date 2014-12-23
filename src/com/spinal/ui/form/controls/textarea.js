@@ -41,19 +41,6 @@ define(['ui/form/controls/input'], function(Input) {
 			delete this._type;
 			UITextarea.__super__.initialize.apply(this, arguments);
 			return this;
-		},
-
-		/**
-		*	Render Textarea
-		*	@public
-		*	@chainable
-		*	@method render
-		*	@param [opts] {Object} additional options
-		*	@return {com.spinal.ui.form.controls.Textarea}
-		**/
-		render: function(opts) {
-			UITextarea.__super__.render.apply(this, arguments);
-			return this;
 		}
 
 	}, {

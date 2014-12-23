@@ -40,8 +40,10 @@ define(['ioc/context',
 			if(!_.isArray(exprs) || !_.isObject(exprs)) return exprs;
 			return _.map(exprs, function(expr, k) {
 				if(_.isArray(expr)) return _.flatten(this._inject(expr));
-				return (this.validate(expr) && (d = this.getDependency(expr))) ?
-					((d.method) ? d.bone[d.method]() : d.bone) : expr;
+				if(this.validate(expr) && (d = this.getDependency(expr))) {
+					return ((d.method) ? (!this.isDependencyRef(expr) ? d.bone[d.method]() : d.bone[d.method]) : d.bone);
+				}
+				return expr;
 			}, this);
 		},
 

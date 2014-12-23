@@ -68,6 +68,20 @@ define(['ui/form/controls/input', 'util/string'], function(Input, StringUtil) {
 		},
 
 		/**
+		*	Update Checkbox
+		*	@public
+		*	@chainable
+		*	@method update
+		*	@param model {Backbone.Model}
+		*	@param value {Object} value that has changed
+		*	@param [opts] {Object} additional options
+		**/
+		update: function(model, value, opts) {
+			if(_.isBoolean(value)) this.value(value);
+			return UICheckbox.__super__.update.apply(this, arguments);
+		},
+
+		/**
 		*	Change the Checkbox's value
 		*	@public
 		*	@chainable

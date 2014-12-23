@@ -35,16 +35,14 @@ define(['libs/backbone'], function() {
 		**/
 		var namespace = exports.namespace = function(path, constructor) {
 			if(!path || !_.isString(path) || !constructor)
-				throw new Error('Spinal.namespace accepts 2 arguments: path (string) and constructor.');
-			var parts = path.split('.'), parent = exports, pl, i;
-			if (parts[0] == "spinal") parts = parts.slice(1);
-			pl = parts.length;
-			for (var i = 0; i < pl; i++) {
-				if (typeof parent[parts[i]] == 'undefined') parent[parts[i]] = {};
-				if(i == (pl-1)) parent[parts[i]] = constructor;
-				parent = parent[parts[i]];
+				throw new Error('Spinal.namespace requires a namespace (in dot notation) and a function (or object)');
+			var parts = path.split('.'), part = exports;
+			var obj, name, ps = parts.length;
+			for(var i = 0; i < ps; i++) {
+				obj = part; name = parts[i];
+				part = (part[name]) ? part[name] : (part[name] = {});
 			}
-			return parent;
+			return (constructor) ? (obj[name] = constructor) : part;
 		};
 
 		/**

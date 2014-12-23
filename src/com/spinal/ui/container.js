@@ -75,6 +75,8 @@ define(['core/spinal',
 		_valid: function(attrs) {
 			attrs || (attrs = {});
 			Container.__super__._valid.apply(this, arguments);
+			if(attrs.collection && !(attrs.collection instanceof Backbone.Collection))
+				throw new UIException('InvalidModelType');
 			if(attrs.interface && !(new attrs.interface() instanceof Backbone.View))
 				throw new UIException('InvalidInterfaceType');
 			return true;
@@ -139,14 +141,13 @@ define(['core/spinal',
 		*	@public
 		*	@chainable
 		*	@method update
+		*	@param model {Backbone.Model} model reference
+		*	@param value {Object} either a object or a Backbone.Collection
 		*	@param [opts] {Object} additional options
 		*	@return {com.spinal.ui.Container}
 		**/
-		update: function(opts) {
-			opts || (opts = {});
-			Container.__super__.update.apply(this, arguments);
-			this.invoke('update', arguments);
-			return this;
+		update: function(model, value, opts) {
+			return Container.__super__.update.apply(this, arguments);
 		},
 
 		/**

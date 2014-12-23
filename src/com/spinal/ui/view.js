@@ -201,10 +201,12 @@ define(['core/spinal',
 		*	@public
 		*	@chainable
 		*	@method update
+		*	@param model {Backbone.Model}
+		*	@param value {Object} value that has changed
 		*	@param [opts] {Object} additional options
 		*	@return {com.spinal.ui.View}
 		**/
-		update: function(opts) {
+		update: function(model, value, opts) {
 			if(!opts || !opts.silent) this.trigger(View.EVENTS.update, { view: this });
 			return this;
 		},
