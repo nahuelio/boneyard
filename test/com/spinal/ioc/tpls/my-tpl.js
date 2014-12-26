@@ -3,9 +3,9 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 *	@version 0.0.1
 **/
-define(['underscore'], function() {
+define(['core/spinal'], function(Spinal) {
 
-	return {
+	return Spinal.namespace('html.my', {
 
 		header: {
 
@@ -13,7 +13,7 @@ define(['underscore'], function() {
 
 		content: {
 
-			menu: _.template('<div class="<%= cls %>"></div>')
+			menu: '<div class="<%= cls %>"></div>'
 
 		},
 
@@ -21,6 +21,6 @@ define(['underscore'], function() {
 
 		}
 
-	};
+	});
 
 });

@@ -29,12 +29,6 @@
         },
         "dir": "dist"
     },
-	"templates": {
-		"spinal": {
-			"src": "src/templates",
-			"target": "dist"
-		}
-	},
 	"themes": {
 		"bootstrap": {
 			"src": "bower_components/bootstrap/dist",
