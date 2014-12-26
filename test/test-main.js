@@ -29,7 +29,6 @@ require.config({
         'util': 'src/com/spinal/util',
 
         /** Configurable Resources by end-developer **/
-        'templates': 'test/templates',
         'specs': 'test/com/spinal/ioc/specs',
         'tpls': 'test/com/spinal/ioc/tpls',
 

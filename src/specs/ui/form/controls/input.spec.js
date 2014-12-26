@@ -8,8 +8,15 @@ define([], function() {
 
 		$id: 'ui-form-controls-input',
 
-		input_p_d: { $module: 'ui/basic/paragraph', $params: { content: '<code>InputText</code>' } },
-		input_p_c: { $module: 'ui/basic/paragraph', $params: { content: '<code>Checkbox</code>' } },
+		input_p_d: { $module: 'ui/basic/paragraph', $params: { content: '<code>Input Text</code>' } },
+		input_p_c: { $module: 'ui/basic/paragraph', $params: { content: '<code>Input Checkbox</code>' } },
+		input_p_r: { $module: 'ui/basic/paragraph', $params: { content: '<code>Input Radio</code>' } },
+		input_p_p: { $module: 'ui/basic/paragraph', $params: { content: '<code>Input Password</code>' } },
+
+		c_default: { $module: 'ui/container', $params: { className: 'form-group' } },
+		c_checkbox: { $module: 'ui/container', $params: { className: 'form-group' } },
+		c_radio: { $module: 'ui/container', $params: { className: 'form-group' } },
+		c_password: { $module: 'ui/container', $params: { className: 'form-group' } },
 
 		default_input: {
 			$module: 'ui/form/controls/input',
@@ -18,15 +25,35 @@ define([], function() {
 
 		checkbox: {
 			$module: 'ui/form/controls/checkbox',
-			$params: { name: 'checkbox', checked: true }
+			$params: { name: 'checkbox' }
+		},
+
+		radio: {
+			$module: 'ui/form/controls/radio',
+			$params: { name: 'radio' }
+		},
+
+		password: {
+			$module: 'ui/form/controls/password',
+			$params: { name: 'password' }
+		},
+
+		hidden: {
+			$module: 'ui/form/controls/hidden',
+			$params: { name: 'hidden', value: 'myhiddenvalue' }
 		},
 
 		$ready: [{
+			'$bone!c_default.addAll': [['$bone!input_p_d', '$bone!default_input']],
+			'$bone!c_checkbox.addAll': [['$bone!input_p_c', '$bone!checkbox']],
+			'$bone!c_radio.addAll': [['$bone!input_p_r', '$bone!radio']],
+			'$bone!c_password.addAll': [['$bone!input_p_p', '$bone!password']],
 			'$bone!cinput.addAll': [[
-				'$bone!input_p_d',
-				'$bone!default_input',
-				'$bone!input_p_c',
-				'$bone!checkbox'
+				'$bone!c_default',
+				'$bone!c_checkbox',
+				'$bone!c_radio',
+				'$bone!c_password',
+				'$bone!hidden'
 			], { renderOnAdd: true }]
 		}]
 

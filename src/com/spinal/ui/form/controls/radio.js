@@ -5,15 +5,15 @@
 define(['ui/form/controls/input', 'util/string'], function(Input, StringUtil) {
 
 	/**
-	*	Checkbox Class
+	*	Radio Class
 	*	@namespace com.spinal.ui.form.controls
-	*	@class com.spinal.ui.form.controls.Checkbox
+	*	@class com.spinal.ui.form.controls.Radio
 	*	@extends com.spinal.ui.form.controls.Input
 	*
 	*	@requires com.spinal.ui.form.controls.Input
 	*	@requires com.spinal.util.StringUtil
 	**/
-	var UICheckbox = Spinal.namespace('com.spinal.ui.form.controls.Checkbox', Input.inherit({
+	var UIRadio = Spinal.namespace('com.spinal.ui.form.controls.Radio', Input.inherit({
 
 		/**
 		*	Events
@@ -31,7 +31,7 @@ define(['ui/form/controls/input', 'util/string'], function(Input, StringUtil) {
 		*	@property className
 		*	@type String
 		**/
-		className: 'ui-checkbox',
+		className: 'ui-radio',
 
 		/**
 		*	Input's type
@@ -39,10 +39,10 @@ define(['ui/form/controls/input', 'util/string'], function(Input, StringUtil) {
 		*	@property _type
 		*	@type String
 		**/
-		_type: Input.TYPES.checkbox,
+		_type: Input.TYPES.radio,
 
 		/**
-		*	Checkbox's default value
+		*	Radio's default value
 		*	@private
 		*	@property _value
 		*	@type String
@@ -54,31 +54,31 @@ define(['ui/form/controls/input', 'util/string'], function(Input, StringUtil) {
 		*	@public
 		*	@method initialize
 		*	@param options {Object} view options
-		*	@return {com.spinal.ui.form.controls.Checkbox}
+		*	@return {com.spinal.ui.form.controls.Radio}
 		**/
 		initialize: function(opts) {
 			opts || (opts = {});
 			delete opts.placeholder;
-			UICheckbox.__super__.initialize.apply(this, arguments);
+			UIRadio.__super__.initialize.apply(this, arguments);
 			return this;
 		},
 
 		/**
-		*	Render Checkbox
+		*	Render Radio
 		*	@public
 		*	@chainable
 		*	@method render
 		*	@param [opts] {Object} additional options
-		*	@return {com.spinal.ui.form.controls.Checkbox}
+		*	@return {com.spinal.ui.form.controls.Radio}
 		**/
 		render: function(opts) {
-			UICheckbox.__super__.render.apply(this, arguments);
+			UIRadio.__super__.render.apply(this, arguments);
 			this.value(this._value);
 			return this;
 		},
 
 		/**
-		*	Update Checkbox
+		*	Update Radio
 		*	@public
 		*	@chainable
 		*	@method update
@@ -88,15 +88,15 @@ define(['ui/form/controls/input', 'util/string'], function(Input, StringUtil) {
 		**/
 		update: function(model, value, opts) {
 			if(_.isBoolean(value)) this.value(value);
-			return UICheckbox.__super__.update.apply(this, arguments);
+			return UIRadio.__super__.update.apply(this, arguments);
 		},
 
 		/**
-		*	Change the Checkbox's value
+		*	Change the Radio's value
 		*	@public
 		*	@chainable
 		*	@method value
-		*	@param [val] {Boolean} Checkbox's value
+		*	@param [val] {Boolean} Radio's value
 		*	@return Boolean
 		**/
 		value: function(val) {
@@ -113,7 +113,7 @@ define(['ui/form/controls/input', 'util/string'], function(Input, StringUtil) {
 		**/
 		_onClick: function(e) {
 			this.value($(e.currentTarget).prop('checked'));
-			this.trigger(UICheckbox.EVENTS.click, { view: this });
+			this.trigger(UIRadio.EVENTS.click, { view: this });
 		}
 
 	}, {
@@ -123,10 +123,10 @@ define(['ui/form/controls/input', 'util/string'], function(Input, StringUtil) {
 		*	@property NAME
 		*	@type String
 		**/
-		NAME: 'UICheckbox'
+		NAME: 'UIRadio'
 
 	}));
 
-	return UICheckbox;
+	return UIRadio;
 
 });

@@ -5,7 +5,6 @@
 define(['core/spinal',
 		'util/string',
 		'util/exception/ui',
-		'templates/spinal',
 		'libs/bootstrap'], function(Spinal, StringUtil, UIException) {
 
 	/**
@@ -107,6 +106,21 @@ define(['core/spinal',
 			if(options.method) this.method = options.method;
 			if(options.template) this._tpl = this._compile(options.template);
 			return this;
+		},
+
+		/**
+		*	ListenTo strategy will override default functionality from backbone
+		*	to automatically assing the current model as a target, only if parameter obj is omitted and model is defined.
+		*	@public
+		*	@method listenTo
+		*	@param [obj] {Object} object to listen
+		*	@param name {String} event name
+		*	@param callback {Function} callback function
+		*	@return {com.spinal.ui.View}
+		**/
+		listenTo: function(obj, name, callback) {
+			if(arguments.length === 2 && this.model) { callback = name; name = obj; obj = this.model; }
+			return View.__super__.listenTo.call(this, obj, name, callback);
 		},
 
 		/**

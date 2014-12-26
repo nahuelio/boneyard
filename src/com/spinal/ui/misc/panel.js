@@ -57,7 +57,10 @@ define(['ui/container', 'util/string'], function(Container, StringUtil) {
 			options || (options = {});
 			if(options.title) this._title = options.title;
 			this._type = (options.type) ? options.type : UIPanel.TYPES.standard;
-			options.template = Spinal.tpl('spinal.basic.panel', {});
+			var _$ = { tagName: 'div' };
+			options.template =
+				Spinal.tpl('tag', { _$: _.extend({ cls: 'panel-heading' }, _$) }) +
+				Spinal.tpl('tag', { _$: _.extend({ cls: 'panel-body' }, _$) });
 			UIPanel.__super__.initialize.apply(this, arguments);
 			return this;
 		},

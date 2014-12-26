@@ -15,7 +15,6 @@ var	requirejs = require('requirejs'),
 // Project specific libs
 var Package = require('../utils/package'),
 	Sass = require('../utils/sass'),
-	HTML = require('../utils/html'),
 	Logger = require('../utils/logger'),
 	Utils = require('../utils/util');
 
@@ -155,7 +154,6 @@ var Build = {
 		Logger.debug('[JS-BUILD] DONE', { nl: true });
 		process.nextTick(_.bind(function() {
 			this.banner();
-			HTML.init(this.config.templates);
 			Sass.init(this.config.themes);
 			Logger.debug('[BUILD] Deployment DONE', { nl: true });
 		}, this));

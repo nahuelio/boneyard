@@ -74,7 +74,7 @@ define(['core/spinal',
 			this.engine = new Engine(this.factory);
 			this.engine.proxify(this, 'getBone', 'getBonesByType', 'getBonesByClass');
 			this.listenTo(this.engine, Engine.EVENTS.proxified, _.bind(this.proxify, this));
-			this.listenTo(this.engine, Engine.EVENTS.plugin, _.bind(this.notify, this));
+			this.listenTo(this.engine, Engine.EVENTS.plugin, _.bind(this.notify, this, Engine.EVENTS.plugin));
 			return this;
 		},
 
@@ -161,10 +161,10 @@ define(['core/spinal',
 		*	@param [callback] {Function} optional callback to be called
 		**/
 		notify: function(eventName, callback) {
-			if(callback && _.isFunction(callback)) callback(this);
+			var args = Array.prototype.slice.call(arguments, 2);
+			if(callback && _.isFunction(callback)) callback.apply(callback, args);
 			if(eventName && _.isString(eventName)) {
-				var args = Array.prototype.slice.call(arguments, 2); args.unshift(eventName);
-				this.trigger.apply(this, args);
+				args.unshift(eventName); this.trigger.apply(this, args);
 			}
 		}
 

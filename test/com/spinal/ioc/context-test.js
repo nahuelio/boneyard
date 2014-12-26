@@ -184,36 +184,37 @@ define(['ioc/context',
 
 			it('HTMLPlugin: Should Retrieve a template with params', function(done) {
 				var evaluation = _.bind(function() {
-					var output = Spinal.tpl('my!content.menu', { cls: 'menu' });
+					var output = Spinal.tpl('my.content.menu', { cls: 'menu' });
 					expect($(output).attr('class')).to.be.equal('menu');
 					expect($(output).prop('tagName').toLowerCase()).to.be.equal('div');
 					done();
 				}, this);
 				(!Spinal.isTemplateLoaded('my')) ?
-					this.appContext.off().on(Engine.EVENTS.plugin, _.bind(evaluation, this)) : evaluation();
+					this.appContext.off().on(Engine.EVENTS.plugin, _.bind(evaluation, this)) :
+					evaluation();
 			});
 
 			it('HTMLPlugin: Should Load a new Template package at runtime', function(done) {
 				this.appContext.off();
 				Spinal.loadTemplate('other', _.bind(function() {
-					var output = Spinal.tpl('other!content.other', { cls: 'myclass' });
+					var output = Spinal.tpl('other.content.other', { cls: 'myclass' });
 					expect($(output).hasClass('myclass')).to.be.equal(true);
 					expect($(output).prop('tagName').toLowerCase()).to.be.equal('p');
 					// Without params
-					output = Spinal.tpl('other!content.rule');
+					output = Spinal.tpl('other.content.rule');
 					expect($(output).prop('tagName').toLowerCase()).to.be.equal('hr');
 					done();
 				}, this));
 			});
 
 			it('HTMLPlugin: Should Retrieve a template using the default provided by spinal', function() {
-				// Spinal.basic.span
-				var output = Spinal.tpl('spinal.basic.span', { _$: { id: 'testId', cls: 'testCls' } });
+				// span
+				var output = Spinal.tpl('tag', { _$: { tagName: 'span', id: 'testId', cls: 'testCls' } });
 				expect($(output).prop('tagName').toLowerCase()).to.be.equal('span');
 				expect($(output).attr('id')).to.be.equal('testId');
 				expect($(output).attr('class')).to.be.equal('testCls');
-				// Spinal.basic.a
-				var output = Spinal.tpl('spinal.basic.a', { _$: { href: 'testHref' } });
+				// link
+				var output = Spinal.tpl('tag', { _$: { tagName: 'a', attrs: { href: 'testHref' } } });
 				expect($(output).prop('tagName').toLowerCase()).to.be.equal('a');
 				expect($(output).attr('href')).to.be.equal('testHref');
 			});
@@ -221,7 +222,7 @@ define(['ioc/context',
 			it('HTMLPlugin: Errors', function() {
 				// No Route
 				var output = Spinal.tpl();
-				expect(output).to.be.equal('');
+				expect(output).to.be.empty();
 				// Query with no package
 				var output = Spinal.tpl('non.existent');
 				expect(output).to.be.equal('');

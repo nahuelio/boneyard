@@ -124,7 +124,7 @@ define(['core/spinal',
 			if(_.isEmpty(obj)) return obj;
 			var q = query.split("."), o = obj;
 		    for (var i = 0; i < q.length; i++) {
-				if(!o[q[i]]) break;
+				if(!o[q[i]]) { o = ''; break; }
 				o = o[q[i]];
 			}
 		    return o;

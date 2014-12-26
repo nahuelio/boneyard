@@ -1,23 +1,15 @@
 // Karma configuration
 // Generated on Mon May 12 2014 16:36:27 GMT-0700 (PDT)
-
 module.exports = function(config) {
 
     var _ = require('underscore'),
         cfg = require('./tools/default-build-config'),
         Sass = require('./tools/utils/sass'),
-        HTML = require('./tools/utils/html'),
         Logger = require('./tools/utils/logger');
 
     Logger.mute = true;
-
-    // External Resources Setup
-    cfg.templates.spinal.target = cfg.themes.bootstrap.target = 'test';
-
     // Compilation for testing
     Sass.init(cfg.themes);
-    HTML.init(cfg.templates);
-
     Logger.mute = false;
 
     config.set({
