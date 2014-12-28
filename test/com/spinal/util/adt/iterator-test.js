@@ -19,15 +19,6 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 				expect(this.testSimple.collection.length).to.be.equal(2);
 			});
 
-			it('Should throw an Error: Not passing an array in the constructor', function() {
-				expect(function() {
-					new Iterator();
-				}).to.throwException(function(e) {
-					expect(e).to.be.a(Error);
-					expect(e.message).to.be.equal('[object ' + Iterator.NAME + '] requires an array in order to be instanciate it.');
-				});
-			});
-
 		});
 
 		describe('#hasNext()', function() {

@@ -173,11 +173,6 @@ define(['libs/backbone'], function() {
 
 		/**
 		*	Provides a generic Class with a generic interface to set and get properties
-		*	FIXME: Separate set/get methods into a different interface.
-		*	Evaluate if set/get interface methods became useless!
-		*	!!!!!NOTE: Have to be careful when removing 'set', package UI and UTIL has an strong dependency on that.
-		*	You can access variable/method members through this['method/variable'].
-		*
 		*	@class com.spinal.core.SpinalClass
 		**/
 		var SpinalClass = exports.SpinalClass = namespace('com.spinal.core.SpinalClass', function() {
@@ -185,41 +180,14 @@ define(['libs/backbone'], function() {
 		});
 
 		extend(SpinalClass.prototype, Backbone.Events, {
+
 			/**
 			*	Default initialize
 			*	@public
 			*	@method initialize
 			*	@return {com.spinal.core.SpinalClass}
 			**/
-			initialize: function() {
-				this.set.apply(this, arguments);
-				return this;
-			},
-
-			/**
-			*	Default Getter
-			*	@public
-			*	@method get
-			*	@param p {String} Key string to retrieve the value from.
-			*	@return Object
-			**/
-			get: function(p) { return this[p]; },
-
-			/**
-			*	Default Setter
-			*	@public
-			*	@method set
-			*	@param p {Object} Key String or Object (hashmap) to be set as properties.
-			*	@param v {Object} Value to be set for the key property specified in p
-			*	@return Object
-			**/
-			set: function(p, v) {
-				if(_.isUndefined(p)) return this;
-				// FIXME: Review the following implementation! there is something wrong here.
-				// In BoneProcessor Class: if super.initialize is being called, we get a blocking inifinite loop crash!!
-				(p === Object(p)) ? extend.apply(this, [this, p]) : this[p] = v;
-				return this;
-			},
+			initialize: function() {},
 
 			/**
 			*	Invoke a method of this class specified by 'methodName' and pass each

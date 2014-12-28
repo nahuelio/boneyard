@@ -18,7 +18,7 @@ define(['core/spinal'], function(Spinal) {
 		*	@property collection
 		*	@type Array
 		**/
-		collection: [],
+		collection: null,
 
 		/**
 		*	Cursor that points to an index inside the collection.
@@ -33,10 +33,13 @@ define(['core/spinal'], function(Spinal) {
 		*	@public
 		*	@chainable
 		*	@method initialize
+		*	@param [initial] {Array} initial elements in the collection.
 		*	@return {com.spinal.util.adt.Iterator}
 		**/
-		initialize: function() {
-			return Iterator.__super__.initialize.apply(this, arguments);
+		initialize: function(initial) {
+			(initial) ? this.set(initial) : (this.collection = []);
+			Iterator.__super__.initialize.apply(this, arguments);
+			return this;
 		},
 
 		/**
@@ -48,7 +51,8 @@ define(['core/spinal'], function(Spinal) {
 		**/
 		set: function(arr) {
 			if(!_.isArray(arr)) throw new Error(this.toString() + ' requires an array in order to be instanciate it.');
-			return Iterator.__super__.set.apply(this, [{ collection: arr }]);
+			this.collection = arr.slice(0);
+			return this.rewind();
 		},
 
 		/**

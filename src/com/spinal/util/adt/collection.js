@@ -39,7 +39,10 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 		*	@return {com.spinal.util.adt.Collection}
 		**/
 		initialize: function(initial, opts) {
+			opts || (opts = {});
 			this.collection = [];
+			if(opts.interface) this._interface = opts.interface;
+			(initial) ? this.set(initial, opts) : (this.collection = []);
 			Collection.__super__.initialize.apply(this, arguments);
 			return this;
 		},
@@ -63,17 +66,15 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 		*	@param arr {Array} new collection to be replaced
 		*	@return Boolean
 		**/
-		set: function(arr, opts) {
-			opts || (opts = {});
+		set: function(arr) {
 			if(!this._valid(arr) || !_.isArray(arr)) return false;
 			this.reset({ silent: true });
-			if(opts.interface) this._interface = opts.interface;
 			if(!_.isNull(this._interface)) {
 				this.collection = _.compact(_.map(arr, function(ele) {
 					if(ele) return new this._interface(ele);
 				}, this));
 			} else {
-				this.collection = arr.slice(0); // build new array from array (clone method).
+				this.collection = arr.slice(0);
 			}
 			return true;
 		},

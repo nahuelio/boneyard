@@ -39,31 +39,6 @@ define(['core/spinal',
 		},
 
 		/**
-		*	Validate the element in the stack.
-		*	@private
-		*	@method _valid
-		*	@param element {Object} element to be evaluated.
-		*	@return Boolean
-		**/
-		_valid: function(element) {
-			return Stack.__super__._valid.apply(this, arguments);
-		},
-
-		/**
-		*	Set the initial state of the stack
-		*	@public
-		*	@method set
-		*	@param arr {Array} initial elements in the collection.
-		*	@param opts {Object} Additional options.
-		*	@return {com.spinal.util.adt.Stack}
-		**/
-		set: function(arr, opts) {
-			opts || (opts = {});
-			Stack.__super__.set.apply(this, arguments);
-			return this;
-		},
-
-		/**
 		*	Inserts the specified element into this stack.
 		*	@public
 		*	@method push
