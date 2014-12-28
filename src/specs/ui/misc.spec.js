@@ -1,13 +1,14 @@
 /**
 *	SpinalJS Misc Spec
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
-*/
-define(['specs/ui/misc/panel.spec'], function(PanelSpec) {
+**/
+define(['specs/ui/misc/panel.spec',
+		'specs/ui/misc/dropdown.spec'], function(PanelSpec, DropdownSpec) {
 
 	return {
 
 		$id: 'ui-misc',
-		$specs: [PanelSpec],
+		$specs: [PanelSpec, DropdownSpec],
 
 		misc_header: {
 			$module: 'ui/basic/header',

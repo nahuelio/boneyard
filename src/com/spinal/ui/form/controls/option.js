@@ -116,16 +116,6 @@ define(['ui/view', 'util/string'], function(View, StringUtil) {
 			if(!StringUtil.defined(val)) return this._value;
 			this.$el.val((this._value = val));
 			return this;
-		},
-
-		/**
-		*	String representation of an instance of this class
-		*	@public
-		*	@method toString
-		*	@return String
-		**/
-		toString: function() {
-			return '[object Option]';
 		}
 
 	}, {
@@ -135,7 +125,7 @@ define(['ui/view', 'util/string'], function(View, StringUtil) {
 		*	@property NAME
 		*	@type String
 		**/
-		NAME: 'UIOption'
+		NAME: 'Option'
 
 	}));
 

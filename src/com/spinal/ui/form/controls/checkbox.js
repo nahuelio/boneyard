@@ -123,7 +123,7 @@ define(['ui/form/controls/input', 'util/string'], function(Input, StringUtil) {
 		*	@property NAME
 		*	@type String
 		**/
-		NAME: 'UICheckbox'
+		NAME: 'Checkbox'
 
 	}));
 

@@ -11,9 +11,9 @@ define([], function() {
 		list_p_s: { $module: 'ui/basic/paragraph', $params: { content: '<code>Simple Styling</code>' } },
 
 		list_items: [
-			{ item: 'Item 1' },
-			{ item: 'Item 2' },
-			{ item: 'Item 3' }
+			{ template: 'Item 1' },
+			{ template: 'Item 2' },
+			{ template: 'Item 3' }
 		],
 
 		list_simple: {

@@ -5,7 +5,7 @@
 	"authors": [
 		"kuakman <3dimentionar@gmail.com>"
 	],
-	"description": "HighLevel UI framework built on top of BackboneJS",
+	"description": "Architectural Toolkit built on top of RequireJS & BackboneJS",
 	"main": "dist/spinal.*",
 	"dependencies": {
 		"require": "git@github.com:jrburke/requirejs-bower.git#2.1.11",
@@ -16,10 +16,13 @@
 		"bootstrap": "3.3.1"
 	},
 	"keywords": [
-		"Spinal",
-		"UI",
-		"Framework",
-		"Backbone"
+		"spinal",
+		"achitecture",
+		"toolkit",
+		"ioc",
+		"ui",
+		"requirejs",
+		"backbone"
 	],
 	"license": "MIT",
 	"private": true,

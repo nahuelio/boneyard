@@ -158,7 +158,7 @@ define(['ui/view', 'util/string'], function(View, StringUtil) {
 		*	@property NAME
 		*	@type String
 		**/
-		NAME: 'UIInput',
+		NAME: 'Input',
 
 		/**
 		*	@static

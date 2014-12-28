@@ -145,7 +145,7 @@ define(['ui/view', 'util/string'], function(View, StringUtil) {
 		*	@property NAME
 		*	@type String
 		**/
-		NAME: 'UIButton',
+		NAME: 'Button',
 
 		/**
 		*	@static

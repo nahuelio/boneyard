@@ -106,7 +106,7 @@ define(['ui/container'], function(Container) {
 		*	@property NAME
 		*	@type String
 		**/
-		NAME: 'UIForm',
+		NAME: 'Form',
 
 		/**
 		*	@static
