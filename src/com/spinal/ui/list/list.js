@@ -54,7 +54,7 @@ define(['ui/container',
 		*	@return {com.spinal.ui.list.List}
 		**/
 		_list: function(items, opts) {
-			_.each(items, function(item) { this.add(this.onItem(_.omit(item, 'el')), opts); }, this);
+			_.each(items, function(item) { this.add(_.omit(this.onItem(item), 'el'), opts); }, this);
 			return this;
 		},
 
@@ -66,7 +66,7 @@ define(['ui/container',
 		*	@return Object
 		**/
 		onItem: function(it) {
-			return { template: it.item };
+			return it;
 		}
 
 	}, {

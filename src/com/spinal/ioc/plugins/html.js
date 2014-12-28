@@ -172,6 +172,7 @@ define(['core/spinal',
 		'<%= (_$.cls) ? " class=\\"" + _$.cls + "\\"" : "" %>' +
 		'<% if(_$.attrs) { for(var p in _$.attrs) { %>' +
 		'<%= (" " + p + "=\\"" + _$.attrs[p] + "\\"") %><% } } %>>' +
+		'<%= (_$.content) ? _$.content : "" %>' +
 		'</<%= _$.tagName %>>'));
 
 	return HTMLPlugin;

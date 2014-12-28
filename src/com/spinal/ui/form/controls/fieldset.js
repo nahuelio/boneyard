@@ -28,20 +28,7 @@ define(['ui/container'], function(Container) {
 		*	@property tagName
 		*	@type String
 		**/
-		tagName: 'fieldset',
-
-		/**
-		*	Initialize
-		*	@public
-		*	@method initialize
-		*	@param options {Object} view options
-		*	@return {com.spinal.ui.form.controls.Fieldset}
-		**/
-		initialize: function(options) {
-			options || (options = {});
-			UIFieldset.__super__.initialize.apply(this, arguments);
-			return this;
-		}
+		tagName: 'fieldset'
 
 	}, {
 

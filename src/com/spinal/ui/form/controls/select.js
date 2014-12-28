@@ -104,7 +104,7 @@ define(['ui/container',
 		*	@property NAME
 		*	@type String
 		**/
-		NAME: 'UISelect',
+		NAME: 'Select',
 
 		/**
 		*	@static

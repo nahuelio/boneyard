@@ -49,7 +49,7 @@ define(['ui/form/controls/input'], function(Input) {
 		*	@property NAME
 		*	@type String
 		**/
-		NAME: 'UIPassword'
+		NAME: 'Password'
 
 	}));
 

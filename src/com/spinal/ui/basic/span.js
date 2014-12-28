@@ -28,20 +28,7 @@ define(['ui/basic/paragraph'], function(Paragraph) {
 		*	@property tagName
 		*	@type String
 		**/
-		tagName: 'span',
-
-		/**
-		*	Initialize
-		*	@public
-		*	@method initialize
-		*	@param options {Object} view options
-		*	@return {com.spinal.ui.basic.Span}
-		**/
-		initialize: function(options) {
-			options || (options = {});
-			UISpan.__super__.initialize.apply(this, arguments);
-			return this;
-		}
+		tagName: 'span'
 
 	}, {
 
