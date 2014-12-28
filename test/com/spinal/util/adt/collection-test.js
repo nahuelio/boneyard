@@ -30,11 +30,6 @@ define(['core/spinal',
                 expect(this.testInterface._interface).to.be.ok();
                 expect(this.testInterface).to.be.ok();
                 expect(this.testInterface.collection).to.be.a('array');
-                this.testGeneric = new Collection([
-                    { name: 'foo' },
-                    { name: 'bar' },
-                    { name: 'zoo' }
-                ], { interface: Spinal.SpinalClass });
             });
 
             it('2 Collection instances should have independent \'interfaces\'', function() {
@@ -282,9 +277,6 @@ define(['core/spinal',
                 expect(result).to.be.equal(true);
                 result = this.testInterface.contains({ model: new Backbone.Model({ nonexistent: '1' }) });
                 expect(result).to.be.equal(false);
-                // Interface with toJSON method
-                result = this.testGeneric.contains({ name: 'bar' });
-                expect(result).to.be.equal(true);
             });
 
     	});

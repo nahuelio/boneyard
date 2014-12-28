@@ -153,16 +153,15 @@ define(['core/spinal',], function(Spinal) {
 
 			it('Should Inherit a Class from Spinal.com.spinal.core.SpinalClass', function() {
 				var instance1 = new BaseClass();
-				expect(instance1.get('_string')).to.be.equal('BaseClass');
+				expect(instance1._string).to.be.equal('BaseClass');
 				expect(instance1.submethod()).to.be.equal('BaseClassBase');
-
-				var instance2 = new BaseClass({ _string: 'BaseClass2', _object: { _boolean: true } });
-				expect(instance2.submethod()).to.be.equal('BaseClass2Base');
-				expect(instance2.get('_string')).not.be.equal(instance1.get('_string'));
-				expect(instance2.get('_object')._boolean).not.be.equal(instance1.get('_object')._boolean);
 			});
 
 			it('Should Inherit SubClass of a BaseClass', function() {
+				var instance1 = new BaseClass();
+				expect(instance1._string).to.be.equal('BaseClass');
+				expect(instance1.submethod()).to.be.equal('BaseClassBase');
+
 				var SubClass = BaseClass.inherit({
 					_string: 'SubClass',
 					_number: 100,
@@ -172,13 +171,19 @@ define(['core/spinal',], function(Spinal) {
 				expect(SubClass.EXTRA.p).to.be.ok();
 				expect(SubClass.EXTRA.p).to.be.equal('Static1');
 
-				var instance1 = new SubClass({ _string: 'SubClass-M' });
-				expect(instance1._object).to.be.ok();
-				expect(instance1._object._date.toISOString()).to.be.equal('2014-02-22T23:43:51.223Z');
-				expect(instance1._number).to.be.equal(100);
-				expect(instance1._string).to.be.equal('SubClass-M');
+				var instance2 = new SubClass();
+				expect(instance2._object).to.be.ok();
+				expect(instance2._object._date.toISOString()).to.be.equal('2014-02-22T23:43:51.223Z');
+				expect(instance2._number).to.be.equal(100);
+				expect(instance2._string).to.be.equal('SubClass');
 				// submethod() should be overriden in the subclass
-				expect(instance1.submethod()).to.be.equal('SubClass-M100');
+				expect(instance2.submethod()).to.be.equal('SubClass100');
+
+				// Integrity check between instances of BaseClass and SubClass
+				expect(instance1._number).not.be.ok();
+				expect(instance2._string).not.to.equal(instance1._string);
+				expect(instance2.submethod()).not.to.equal(instance1.submethod());
+				expect(instance2.toString()).not.to.equal(instance1.toString());
 			});
 
 		});

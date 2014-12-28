@@ -1,6 +1,6 @@
 {
     "name": "SpinalJS",
-    "description": "SpinalJS UI Framework built on top of BackboneJS",
+    "description": "Architectural Toolkit built on top of RequireJs & Backbone",
     "version": "0.0.1",
     "url": "http://3dimention.github.io/spinal",
 	"logo": "http://3dimention.github.io/spinal/images/logo.png",

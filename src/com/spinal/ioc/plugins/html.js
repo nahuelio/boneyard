@@ -47,7 +47,7 @@ define(['core/spinal',
 		initialize: function(config, engine) {
 			this._engine = engine;
 			this._config = (!_.isEmpty(config)) ? config : {};
-			return this;
+			return HTMLPlugin.__super__.initialize.apply(this, arguments);
 		},
 
 		/**

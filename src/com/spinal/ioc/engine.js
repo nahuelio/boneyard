@@ -67,9 +67,9 @@ define(['ioc/context',
 		initialize: function(factory) {
 			if(!factory) throw new ContextException('FactoryNotDeclared', { clazz: Engine.NAME });
 			this.factory = factory;
-			this.specs = new Collection([]);
+			this.specs = new Collection();
 			_.each(this.annotations, function(v, k) { this['__' + v] = (Engine.PREFIX + v); }, this);
-			return this;
+			return Engine.__super__.initialize.apply(this, arguments);;
 		},
 
 		/**

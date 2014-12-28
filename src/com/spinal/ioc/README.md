@@ -1,12 +1,8 @@
 ## Spinal IoC implementation
 
-### IoC Core Known issues to be addressed soon:
-
-* Inheritance Major issue Investigation: Calling [Class].__super__.initialize.apply(this, arguments); when a class inherits from core SpinalClass in the initialize methods are messing things up. Symptom: the object instantiated from that class ends up being of an unrelated type. Spinal Core issue (SpinalClass).
+### IoC Core Test Plan:
 
 * Write Test cases for Spec semantics errors (type checking and nullability of required data, exceptions and more).
-
-* Clean up: Wipe out 'get' and 'set' methods in Core SpinalClass. Collection and Iterator utility classes are still using this methods (Need to fix them).
 
 ### List of plugins
 
