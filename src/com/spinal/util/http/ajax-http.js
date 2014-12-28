@@ -78,7 +78,7 @@ define(['core/spinal', 'util/string'], function(Spinal, StringUtil) {
 			opts || (opts = {});
 			if(!this.endpoint) throw new Error(this.toString() + ' requires an endpoint path');
 			if(opts.service) this.service = opts.service;
-			return this;
+			return AjaxHttp.__super__.initialize.apply(this, arguments);;
 		},
 
 		/**

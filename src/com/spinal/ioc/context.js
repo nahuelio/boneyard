@@ -75,7 +75,7 @@ define(['core/spinal',
 			this.engine.proxify(this, 'getBone', 'getBonesByType', 'getBonesByClass');
 			this.listenTo(this.engine, Engine.EVENTS.proxified, _.bind(this.proxify, this));
 			this.listenTo(this.engine, Engine.EVENTS.plugin, _.bind(this.notify, this, Engine.EVENTS.plugin));
-			return this;
+			return Context.__super__.initialize.apply(this, arguments);
 		},
 
 		/**

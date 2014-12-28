@@ -83,7 +83,8 @@ define(['ioc/engine',
 			this._config = setup.config;
 			this._engine = engine;
 			this._$header = $('head');
-			return this._useDefault();
+			this._useDefault();
+			return ThemePlugin.__super__.initialize.apply(this, arguments);
 		},
 
 		/**

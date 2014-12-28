@@ -187,7 +187,7 @@ define(['libs/backbone'], function() {
 			*	@method initialize
 			*	@return {com.spinal.core.SpinalClass}
 			**/
-			initialize: function() {},
+			initialize: function() { return this; },
 
 			/**
 			*	Invoke a method of this class specified by 'methodName' and pass each

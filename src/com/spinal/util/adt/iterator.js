@@ -38,8 +38,7 @@ define(['core/spinal'], function(Spinal) {
 		**/
 		initialize: function(initial) {
 			(initial) ? this.set(initial) : (this.collection = []);
-			Iterator.__super__.initialize.apply(this, arguments);
-			return this;
+			return Iterator.__super__.initialize.apply(this, arguments);
 		},
 
 		/**

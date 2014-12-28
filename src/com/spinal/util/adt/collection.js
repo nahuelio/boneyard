@@ -43,8 +43,7 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 			this.collection = [];
 			if(opts.interface) this._interface = opts.interface;
 			(initial) ? this.set(initial, opts) : (this.collection = []);
-			Collection.__super__.initialize.apply(this, arguments);
-			return this;
+			return Collection.__super__.initialize.apply(this, arguments);
 		},
 
 		/**

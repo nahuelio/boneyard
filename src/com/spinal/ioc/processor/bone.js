@@ -50,7 +50,7 @@ define(['core/spinal',
 		initialize: function(engine) {
 			if(!engine) throw new ContextException('EngineNotDeclared');
 			this._engine = engine;
-			return this;
+			return BoneProcessor.__super__.initialize.apply(this, arguments);
 		},
 
 		/**
