@@ -105,7 +105,7 @@ define(['core/spinal',
 			if(options.theme) { this._theme = options.theme; this.$el.addClass(this._theme); }
 			if(options.method) this.method = options.method;
 			if(options.template) this._tpl = this._compile(options.template);
-			return this;
+			return (options.attrs) ? this.addAttr(options.attrs) : this;
 		},
 
 		/**

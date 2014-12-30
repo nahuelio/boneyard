@@ -37,6 +37,18 @@ define(['ui/container',
 		_title: 'Default Title',
 
 		/**
+		*	Dialog's default close button template
+		*	@private
+		*	@property _closeTpl
+		*	@type String
+		**/
+		_closeTpl: Spinal.tpl('tag', { _$: {
+			tagName: 'button', cls: 'close',
+			content: Spinal.tpl('tag', { _$: { tagName: 'span', content: '&times;' } }),
+			attrs: { 'data-dismiss': 'modal' }
+		} }),
+
+		/**
 		*	Dialog's default close button
 		*	@private
 		*	@property _close
@@ -63,7 +75,8 @@ define(['ui/container',
 			opts || (opts = {});
 			_.extend(this, StringUtil.toPrivate(_.pick(opts, 'title', 'close', 'actions')));
 			opts.template = this._setup();
-			return UIDialog.__super__.initialize.apply(this, arguments);
+			UIDialog.__super__.initialize.apply(this, arguments);
+			return this.addAttr({ role: 'modal', tabindex: "-1" });
 		},
 
 		/**
@@ -92,7 +105,7 @@ define(['ui/container',
 		*	@return String
 		**/
 		_create: function(tagName, opts) {
-			opts = (opts = {});
+			opts || (opts = {});
 			if(arguments.length === 1) { opts = tagName; tagName = 'div'; }
 			return Spinal.tpl('tag', { _$: _.extend({ tagName: tagName }, opts) });
 		},
@@ -104,7 +117,7 @@ define(['ui/container',
 		*	@return Object
 		**/
 		_targetEl: function() {
-			return this.$el.find('modal-body');
+			return this.$el.find('.modal-body');
 		},
 
 		/**
@@ -118,11 +131,9 @@ define(['ui/container',
 		render: function(opts) {
 			UIDialog.__super__.render.apply(this, arguments);
 			this.title(this._title);
+			//this.actions(this._actions);
 			return this;
 		},
-
-		/** WIP: High Level API to be accessed and to be overriden by developers **/
-		/** TODO: Continue here... **/
 
 		/**
 		*	Change the Dialog button title
@@ -134,15 +145,50 @@ define(['ui/container',
 		**/
 		title: function(title) {
 			if(!StringUtil.defined(title)) return this._title;
-			//this._targetEl().find('.dialog-title').html((this._title = title));
+			this.$el.find('.modal-header').html(((this._close) ? this._closeTpl : '') + (this._title = title));
 			return this;
 		},
 
-		addAction: function() { },
+		/**
+		*
+		**/
+		actions: function(actions) {
+			if(!StringUtil.defined(actions)) return this._actions;
+			// TODO: implement actions render.
+			return this;
+		},
 
-		removeAction: function() { },
+		/** WIP: High Level API to be accessed and to be overriden by developers **/
 
-		/** Specific way to show/hide **/
+		/**
+		*	Adds a new action button
+		*	@public
+		*	@chainable
+		*	@method addAction
+		*	@param action {Object} action button config
+		*	@return {com.spinal.ui.misc.Dialog}
+		**/
+		addAction: function() {
+			// TODO:
+			this.actions(this._actions);
+			return this;
+		},
+
+		/**
+		*	Removes an existing action button
+		*	@public
+		*	@chainable
+		*	@method removeAction
+		*	@param action {Object} action button config
+		*	@return {com.spinal.ui.misc.Dialog}
+		**/
+		removeAction: function() {
+			// TODO:
+			this.actions(this._actions);
+			return this;
+		},
+
+		/** Specific way to show/hide ?? (Investigate data-dismiss behavior) **/
 
 		show: function() { return UIDialog.__super__.show.apply(this, arguments); },
 
@@ -161,7 +207,14 @@ define(['ui/container',
 		*	@property NAME
 		*	@type String
 		**/
-		NAME: 'Dialog'
+		NAME: 'Dialog',
+
+		/**
+		*	@static
+		*	@property EVENTS
+		*	@type Object
+		**/
+		EVENTS: { }
 
 	}));
 
