@@ -282,6 +282,35 @@ define(['core/spinal',
 		},
 
 		/**
+		*	Add new attribute or a group of attributes to the HTML element associated with this View
+		*	This method works as a wrapper to call jquery's 'attr' function on the $el reference.
+		*	@public
+		*	@chainable
+		*	@method addAttr
+		*	@param key {Object} key name string or object (group of attributes)
+		*	@param [value] {Object} value of the attribute of the key passed
+		*	@return {com.spinal.ui.View}
+		**/
+		addAttr: function(key, value) {
+			this.$el.attr.apply(this.$el, arguments);
+			return this;
+		},
+
+		/**
+		*	Removes an existing attribute form the HTML element associated with this View
+		*	This method works as a wrapper to call jquery's 'removeAttr' function on the $el reference.
+		*	@public
+		*	@chainable
+		*	@method removeAttr
+		*	@param key {String} key of the attribute to be removed
+		*	@return {com.spinal.ui.View}
+		**/
+		removeAttr: function(key) {
+			this.$el.removeAttr.apply(this.$el, arguments);
+			return this;
+		},
+
+		/**
 		*	Show View
 		*	@public
 		*	@chainable
