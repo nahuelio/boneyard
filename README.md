@@ -52,15 +52,13 @@ If you want to provide feedback, suggest changes or simply check the source code
 
 # Development Roadmap
 
-* IoC Plugins
-* Spinal Composer Tool development
-* UI Package development with support of Themes and Template (IoC plugins)
-* Benchmark Spinal Core packages
+* Spinal UI package development (Components and MV* utilities)
+* Two-way Binding support (model & views).
 
 ### Stretch Goals
 
-* AoP Implementation
 * IoC Storage (HTML5 LocalStorage API | Persistent Layer that will work as a Plugin) to store specs.
+* IoC API support for destroying Specs or Individual bones. This needs to be integrated with the persistent layer functionality.
 * Poly package development (Will use Modernizr behind the scenes)
 
 ### Documentation Roadmap
