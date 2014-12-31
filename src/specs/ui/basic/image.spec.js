@@ -12,22 +12,22 @@ define([], function() {
 
 		i_simple: {
 			$module: 'ui/basic/image',
-			$params: { src: 'http://backbonejs.org/docs/images/backbone.png', alt: 'Backbone Logo' }
+			$params: { src: 'http://backbonejs.org/docs/images/backbone.png', alt: 'Backbone Logo', attrs: { width: 300, style: 'margin: 0 10px;' } }
 		},
 
 		i_ph_rounded: {
 			$module: 'ui/basic/image',
-			$params: { src: '$bone!svg_image' }
+			$params: { src: '$bone!svg_image', attrs: { style: 'margin: 0 10px;' } }
 		},
 
 		i_ph_circled: {
 			$module: 'ui/basic/image',
-			$params: { src: '$bone!svg_image' }
+			$params: { src: '$bone!svg_image', attrs: { style: 'margin: 0 10px;' } }
 		},
 
 		i_ph_thumbnailed: {
 			$module: 'ui/basic/image',
-			$params: { src: '$bone!svg_image' }
+			$params: { src: '$bone!svg_image', attrs: { style: 'margin: 0 10px;' } }
 		},
 
 		$ready: [{
