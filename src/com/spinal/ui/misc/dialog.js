@@ -158,6 +158,7 @@ define(['ui/container',
 
 		/**
 		*	Change the Dialog button title
+		*	@FIXME: Improvement -> Cache the reference to the Header instance to not run the lookup on every update.
 		*	@public
 		*	@chainable
 		*	@method text
@@ -166,11 +167,9 @@ define(['ui/container',
 		**/
 		title: function(title) {
 			if(!StringUtil.defined(title)) return this._title;
-			// TODO: Continue here...
-			/**if((header = this.lookup(function(v) { return (v.className === 'ui-header'); }, UIDialog.LOOKUP.descendant))) {
-				//console.log(header);
-				//header.content((this._title = title));
-			}**/
+			if((header = this.lookup(function(v) { return (v.className === 'ui-header'); }, UIDialog.LOOKUP.descendant))) {
+				header.content((this._title = title));
+			}
 			return this;
 		},
 

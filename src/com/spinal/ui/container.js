@@ -89,6 +89,8 @@ define(['core/spinal',
 		*	This method is capable to perform 2 types of lookups:
 		*	- Ancestor "bottom-up" (default)
 		*	- Descendant "top-down"
+		*	@FIXME: IMPROVEMENT -> this.invoke doesn't break the loops when it founds the node!!
+		*	Need to improve that logic in favor of performance (Collection.invoke)
 		*	@public
 		*	@chainable
 		*	@method lookup
@@ -97,9 +99,8 @@ define(['core/spinal',
 		*	@return {com.spinal.ui.View}
 		**/
 		_next: function(finder, direction) {
-			// FIXME: this.invoke()... CONTINUE HERE...
 			return (direction && direction !== '' && direction === Container.LOOKUP.descendant) ?
-				(((found = this.invoke('lookup', finder, direction)) && found.length === 1) ? found[0] : null) :
+				(((node = _.compact(this.invoke('lookup', finder, direction))) && node.length === 1) ? node[0] : null) :
 				Container.__super__._next.apply(this, arguments);
 		},
 

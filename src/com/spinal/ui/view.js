@@ -101,7 +101,7 @@ define(['core/spinal',
 		initialize: function(options) {
 			options || (options = {});
 			this._valid(options);
-			if(options.el) this.$el.addClass(this.className);
+			if(options.el) this.addClass(this.className);
 			if(options.theme) { this._theme = options.theme; this.$el.addClass(this._theme); }
 			if(options.method) this.method = options.method;
 			if(options.template) this._tpl = this._compile(options.template);
