@@ -141,7 +141,8 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 		**/
 		invoke: function(methodName) {
 			var args = _.flatten(Array.prototype.slice.call(arguments, 1));
-			return _.invoke(this.collection, methodName, args);
+			args.unshift(this.collection, methodName);
+			return _.invoke.apply(this, args);
 		},
 
 		/**

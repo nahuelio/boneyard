@@ -10,7 +10,7 @@ define([], function() {
 
 		s_glyph: {
 			$module: 'ui/basic/span',
-			$params: { }
+			$params: { attrs: { style: 'margin: 0 10px;' } }
 		},
 
 		s_simple: {

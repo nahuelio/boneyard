@@ -10,27 +10,27 @@ define([], function() {
 
 		btn_simple: {
 			$module: 'ui/form/controls/button',
-			$params: { text: 'Simple' }
+			$params: { text: 'Simple', attrs: { style: 'margin: 0 5px;' } }
 		},
 
 		btn_primary: {
 			$module: 'ui/form/controls/button',
-			$params: { text: 'Primary', type: 'btn-primary' }
+			$params: { text: 'Primary', type: 'btn-primary', attrs: { style: 'margin: 0 5px;' } }
 		},
 
 		btn_info: {
 			$module: 'ui/form/controls/button',
-			$params: { text: 'Info', type: 'btn-info' }
+			$params: { text: 'Info', type: 'btn-info', attrs: { style: 'margin: 0 5px;' } }
 		},
 
 		btn_warning: {
 			$module: 'ui/form/controls/button',
-			$params: { text: 'Warning', type: 'btn-warning' }
+			$params: { text: 'Warning', type: 'btn-warning', attrs: { style: 'margin: 0 5px;' } }
 		},
 
 		btn_danger: {
 			$module: 'ui/form/controls/button',
-			$params: { text: 'Danger', type: 'btn-danger' }
+			$params: { text: 'Danger', type: 'btn-danger', attrs: { style: 'margin: 0 5px;' } }
 		},
 
 		$ready: [{

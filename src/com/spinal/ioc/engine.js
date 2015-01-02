@@ -87,6 +87,7 @@ define(['ioc/context',
 		/**
 		*	Merges a new spec into the root and adds it into the specs collection
 		*	Additionally, if there is any $ready annotation in the new spec, this method will merge it.
+		*	@FIXME: Clean up this method later after implementing bone/spec removal strategy.
 		*	@private
 		*	@method _addSpec
 		*	@param spec {Object} spec reference

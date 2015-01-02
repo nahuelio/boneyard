@@ -284,7 +284,7 @@ define(['core/spinal',
 			it('Should return the successor instance', function() {
 				this.testView = { id: 'child-of-global'};
 				var view = this.cglobal.add(this.testView);
-				var result = view.lookup('child-of-global');
+				var result = view.lookup(function(v) { return (v.id === 'child-of-global'); });
 				expect(result).to.be.ok();
 				expect(result.id).to.be.equal('child-of-global');
 				expect(view._parent).to.be.a(Container);
@@ -295,7 +295,7 @@ define(['core/spinal',
 			it('Should NOT return the successor instance (null)', function() {
 				this.testView = { id: 'child-of-global' };
 				var view = this.cglobal.add(this.testView);
-				var result = view.lookup('non-existent');
+				var result = view.lookup(function(v) { return (v.id === 'non-existent'); });
 				expect(result).to.be.equal(null);
 				result = view.lookup();
 				expect(result).to.be.equal(null);

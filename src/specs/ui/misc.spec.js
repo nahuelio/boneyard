@@ -3,12 +3,13 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['specs/ui/misc/panel.spec',
-		'specs/ui/misc/dropdown.spec'], function(PanelSpec, DropdownSpec) {
+		'specs/ui/misc/dropdown.spec',
+		'specs/ui/misc/dialog.spec'], function(PanelSpec, DropdownSpec, DialogSpec) {
 
 	return {
 
 		$id: 'ui-misc',
-		$specs: [PanelSpec, DropdownSpec],
+		$specs: [PanelSpec, DropdownSpec, DialogSpec],
 
 		misc_header: {
 			$module: 'ui/basic/header',

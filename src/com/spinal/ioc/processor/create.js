@@ -111,7 +111,7 @@ define(['ioc/context',
 		_dependencies: function(params) {
 			return _.compact(_.map(params, function(value, key, obj) {
 				if(_.isArray(value)) return _.flatten(this._dependencies(value));
-				if(!this._resolve(value, obj, key)) return { id: this.getDependencyId(value), property: key };
+				if(!(this._resolve(value, obj, key))) return { id: this.getDependencyId(value), property: key };
 			}, this));
 		},
 
@@ -126,7 +126,7 @@ define(['ioc/context',
 		*	@return Boolean
 		**/
 		_resolve: function(expr, parent, key) {
-			if(!expr || !parent) return null;
+			if(_.isUndefined(expr) || _.isNull(expr) || !parent) return null;
 			if(!this.validate(expr)) return key;
 			if(!this.isModuleDependency(expr)) return (parent[key] = this.getDependency(expr).bone);
 		},

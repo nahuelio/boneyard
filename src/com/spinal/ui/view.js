@@ -101,26 +101,11 @@ define(['core/spinal',
 		initialize: function(options) {
 			options || (options = {});
 			this._valid(options);
-			if(options.el) this.$el.addClass(this.className);
+			if(options.el) this.addClass(this.className);
 			if(options.theme) { this._theme = options.theme; this.$el.addClass(this._theme); }
 			if(options.method) this.method = options.method;
 			if(options.template) this._tpl = this._compile(options.template);
-			return this;
-		},
-
-		/**
-		*	ListenTo strategy will override default functionality from backbone
-		*	to automatically assing the current model as a target, only if parameter obj is omitted and model is defined.
-		*	@public
-		*	@method listenTo
-		*	@param [obj] {Object} object to listen
-		*	@param name {String} event name
-		*	@param callback {Function} callback function
-		*	@return {com.spinal.ui.View}
-		**/
-		listenTo: function(obj, name, callback) {
-			if(arguments.length === 2 && this.model) { callback = name; name = obj; obj = this.model; }
-			return View.__super__.listenTo.call(this, obj, name, callback);
+			return (options.attrs) ? this.addAttr(options.attrs) : this;
 		},
 
 		/**
@@ -136,6 +121,18 @@ define(['core/spinal',
 			if(attrs.model && !(attrs.model instanceof Backbone.Model)) throw new UIException('InvalidModelType');
 			if(attrs.method && !(View.RENDER[attrs.method])) throw new UIException('UnsupportedRenderMethod', { method: 'non-existent-method' });
 			return true;
+		},
+
+		/**
+		*	Default Chain of responsability strategy that performs a look up from this view
+		*	The default direction is "bottom-up"
+		*	@private
+		*	@method _next
+		*	@param finder {Function} predicate function
+		*	@return {com.spinal.ui.View}
+		**/
+		_next: function(finder) {
+			return (this._parent) ? this._parent.lookup(finder) : null;
 		},
 
 		/**
@@ -164,6 +161,21 @@ define(['core/spinal',
 		_compile: function(tpl) {
 			if(!tpl || (!_.isString(tpl) && !_.isFunction(tpl))) return null;
 			return (_.isString(tpl)) ? _.template(tpl) : tpl;
+		},
+
+		/**
+		*	ListenTo strategy will override default functionality from backbone
+		*	to automatically assing the current model as a target, only if parameter obj is omitted and model is defined.
+		*	@public
+		*	@method listenTo
+		*	@param [obj] {Object} object to listen
+		*	@param name {String} event name
+		*	@param callback {Function} callback function
+		*	@return {com.spinal.ui.View}
+		**/
+		listenTo: function(obj, name, callback) {
+			if(arguments.length === 2 && this.model) { callback = name; name = obj; obj = this.model; }
+			return View.__super__.listenTo.call(this, obj, name, callback);
 		},
 
 		/**
@@ -205,7 +217,7 @@ define(['core/spinal',
 			opts || (opts = {});
 			this._beforeRender(arguments).detach();
 			var m = (opts.method && (View.RENDER[opts.method])) ? opts.method : this.method;
-			this._parent._targetEl()[m](this.template(this._tpl));
+			this._parent._targetEl(this)[m](this.template(this._tpl));
 			if(!opts.silent) this.trigger(View.EVENTS.render, { view: this });
 			return this.delegateEvents();
 		},
@@ -240,17 +252,19 @@ define(['core/spinal',
 		},
 
 		/**
-		*	Perform a look up of the closest successor in the view hierarchery using the id passed as parameter.
-		*	If the successor is not found, the method will give up returning null.
+		*	Perform a look up of a ancestor parent view inside the hierarchery by a predicate function passed as parameter.
+		*	If the view is not found, the method will give up returning null (Chain of Responsability).
+		*	Default strategy is 'bottom-up'.
 		*	@public
 		*	@chainable
 		*	@method lookup
-		*	@param id {String} Successor id
+		*	@param finder {Function} predicate function
 		*	@return {com.spinal.ui.View}
 		**/
-		lookup: function(id) {
-			if(!id) return null;
-			return this._next(id);
+		lookup: function(finder) {
+			if(!finder || !_.isFunction(finder)) return null;
+			if(finder(this)) return this;
+			return this._next.apply(this, arguments);
 		},
 
 		/**
@@ -278,6 +292,35 @@ define(['core/spinal',
 		removeClass: function(className) {
 			if(!className) return this;
 			this.$el.removeClass(className);
+			return this;
+		},
+
+		/**
+		*	Add new attribute or a group of attributes to the HTML element associated with this View
+		*	This method works as a wrapper to call jquery's 'attr' function on the $el reference.
+		*	@public
+		*	@chainable
+		*	@method addAttr
+		*	@param key {Object} key name string or object (group of attributes)
+		*	@param [value] {Object} value of the attribute of the key passed
+		*	@return {com.spinal.ui.View}
+		**/
+		addAttr: function(key, value) {
+			this.$el.attr.apply(this.$el, arguments);
+			return this;
+		},
+
+		/**
+		*	Removes an existing attribute form the HTML element associated with this View
+		*	This method works as a wrapper to call jquery's 'removeAttr' function on the $el reference.
+		*	@public
+		*	@chainable
+		*	@method removeAttr
+		*	@param key {String} key of the attribute to be removed
+		*	@return {com.spinal.ui.View}
+		**/
+		removeAttr: function(key) {
+			this.$el.removeAttr.apply(this.$el, arguments);
 			return this;
 		},
 
@@ -348,19 +391,6 @@ define(['core/spinal',
 			View.__super__.remove.apply(this, arguments);
 			if(!opts || !opts.silent) this.trigger(View.EVENTS.detach, { view: this });
 			return this;
-		},
-
-		/**
-		*	Try to Retrieve next parent if possible (Chain of Responsability)
-		*	@private
-		*	@method _next
-		*	@param id {String} Successor id
-		*	@return {com.spinal.ui.View}
-		**/
-		_next: function(id) {
-			if(this.id && this.id === id) return this;
-			if(this._parent) return this._parent.lookup(id);
-			return null;
 		},
 
 		/**

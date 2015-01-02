@@ -42,9 +42,9 @@ define(['core/spinal',
 			});
 
 			it('Should return a new instance of com.spinal.ui.Container (with Custom Interface)', function() {
-				this.testContainer = new Container({ id: 'main', interface: Backbone.View });
+				this.testContainer = new Container({ id: 'main', interface: View });
 				expect(this.testContainer).to.be.ok();
-				expect(this.testContainer.views._interface).to.be.equal(Backbone.View);
+				expect(this.testContainer.views._interface).to.be.equal(View);
 				delete this.testContainer.removeAll();
 			});
 

@@ -62,7 +62,7 @@ define(['ui/container', 'ui/list/list', 'util/string'], function(Container, List
 		},
 
 		/**
-		*	Component Template Setup
+		*	Dropdown Template Setup
 		*	@private
 		*	@method _setup
 		*	@return String
