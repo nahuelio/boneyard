@@ -77,9 +77,30 @@ define(['core/spinal',
 			Container.__super__._valid.apply(this, arguments);
 			if(attrs.collection && !(attrs.collection instanceof Backbone.Collection))
 				throw new UIException('InvalidModelType');
-			if(attrs.interface && !(new attrs.interface() instanceof Backbone.View))
+			if(attrs.interface && (!(attrs.interface.prototype instanceof View) &&
+				!(attrs.interface.NAME && attrs.interface.NAME === View.NAME)))
 				throw new UIException('InvalidInterfaceType');
 			return true;
+		},
+
+		/**
+		*	Chain of responsability strategy that performs a look up from this view
+		*	Direction can be change by passing a direction parameter.
+		*	This method is capable to perform 2 types of lookups:
+		*	- Ancestor "bottom-up" (default)
+		*	- Descendant "top-down"
+		*	@public
+		*	@chainable
+		*	@method lookup
+		*	@param finder {Function}
+		*	@param [direction] {String} direction constant
+		*	@return {com.spinal.ui.View}
+		**/
+		_next: function(finder, direction) {
+			// FIXME: this.invoke()... CONTINUE HERE...
+			return (direction && direction !== '' && direction === Container.LOOKUP.descendant) ?
+				(((found = this.invoke('lookup', finder, direction)) && found.length === 1) ? found[0] : null) :
+				Container.__super__._next.apply(this, arguments);
 		},
 
 		/**
@@ -102,9 +123,10 @@ define(['core/spinal',
 		*	Target element in which subviews will be rendered into
 		*	@public
 		*	@method _targetEl
+		*	@param view {com.spinal.ui.View} current view reference
 		*	@return Object
 		**/
-		_targetEl: function() {
+		_targetEl: function(view) {
 			return this.$el;
 		},
 
@@ -117,7 +139,7 @@ define(['core/spinal',
 		*	@return {com.spinal.ui.Container}
 		**/
 		theme: function(themeName) {
-			if(!this.views.isEmpty()) this.invoke('theme', arguments);
+			if(this.views && !this.views.isEmpty()) this.invoke('theme', arguments);
 			Container.__super__.theme.apply(this, arguments);
 			return this;
 		},
@@ -373,6 +395,17 @@ define(['core/spinal',
 		*	@type String
 		**/
 		NAME: 'Container',
+
+		/**
+		*	Lookup strategy directions
+		*	@static
+		*	@property LOOKUP
+		*	@type Object
+		**/
+		LOOKUP: {
+			ancestor: 'ancestor',
+			descendant: 'descendant'
+		},
 
 		/**
 		*	@static

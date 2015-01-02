@@ -1,6 +1,7 @@
 /**
 *	@module com.spinal.ui.misc
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
+*	@version 0.0.1
 **/
 define(['ui/container',
 		'ui/basic/header',
@@ -37,32 +38,28 @@ define(['ui/container',
 		_title: 'Default Title',
 
 		/**
-		*	Dialog's default close button template
+		*	Dialog's default keyboard (Hides on ESC key press)
 		*	@private
-		*	@property _closeTpl
-		*	@type String
-		**/
-		_closeTpl: Spinal.tpl('tag', { _$: {
-			tagName: 'button', cls: 'close',
-			content: Spinal.tpl('tag', { _$: { tagName: 'span', content: '&times;' } }),
-			attrs: { 'data-dismiss': 'modal' }
-		} }),
-
-		/**
-		*	Dialog's default close button
-		*	@private
-		*	@property _close
+		*	@property _keyboard
 		*	@type Boolean
 		**/
-		_close: true,
+		_keyboard: true,
 
 		/**
-		*	Dialog's actions
+		*	Dialog's default backdrop (Overlay behind dialog)
 		*	@private
-		*	@property _actions
-		*	@type Array
+		*	@property _backdrop
+		*	@type Boolean
 		**/
-		_actions: null,
+		_backdrop: true,
+
+		/**
+		*	Dialog's default close icon
+		*	@private
+		*	@property _closeIcon
+		*	@type Boolean
+		**/
+		_closeIcon: true,
 
 		/**
 		*	Initialize
@@ -73,10 +70,22 @@ define(['ui/container',
 		**/
 		initialize: function(opts) {
 			opts || (opts = {});
-			_.extend(this, StringUtil.toPrivate(_.pick(opts, 'title', 'close', 'actions')));
 			opts.template = this._setup();
+			_.extend(this, StringUtil.toPrivate(_.pick(opts, 'title', 'keyboard', 'backdrop', 'closeIcon')));
 			UIDialog.__super__.initialize.apply(this, arguments);
-			return this.addAttr({ role: 'modal', tabindex: "-1" });
+			return this._header(opts.header)._footer(opts.footer).addAttr({ role: 'modal', tabindex: "-1" });
+		},
+
+		/**
+		*	Target element in which subviews will be rendered into
+		*	@public
+		*	@method _targetEl
+		*	@param view {com.spinal.ui.View} current view reference
+		*	@return Object
+		**/
+		_targetEl: function(view) {
+			var q = _.contains(['modal-header', 'modal-footer'], view.className) ? '.modal-content' : '.modal-body';
+			return this.$el.find(q);
 		},
 
 		/**
@@ -87,12 +96,8 @@ define(['ui/container',
 		**/
 		_setup: function() {
 			return this._create({ cls: 'modal-dialog',
-				content: this._create({ cls: 'modal-content',
-					content: this._create({ cls: 'modal-header' }) +
-						this._create({ cls: 'modal-body' }) +
-						this._create({ cls: 'modal-footer' })
-					})
-				});
+				content: this._create({ cls: 'modal-content', content: this._create({ cls: 'modal-body' }) })
+			});
 		},
 
 		/**
@@ -111,13 +116,30 @@ define(['ui/container',
 		},
 
 		/**
-		*	Target element in which subviews will be rendered into
-		*	@public
-		*	@method _targetEl
-		*	@return Object
+		*	Dialog's default header processing
+		*	@private
+		*	@method _header
+		*	@param header {Object} header content
+		*	@return {com.spinal.ui.misc.Dialog}
 		**/
-		_targetEl: function() {
-			return this.$el.find('.modal-body');
+		_header: function(header) {
+			this.add(new Container(_.extend(this.onHeader(header), {
+				className: 'modal-header', method: Container.RENDER.prepend,
+				template: (this._closeIcon) ? UIDialog.CLOSE : ''
+			})), { silent: true });
+			return this;
+		},
+
+		/**
+		*	Dialog's default footer processing
+		*	@private
+		*	@method _footer
+		*	@param footer {Object} footer content
+		*	@return {com.spinal.ui.misc.Dialog}
+		**/
+		_footer: function(footer) {
+			this.add(new Container(_.extend(this.onFooter(footer), { className: 'modal-footer' })), { silent: true });
+			return this;
 		},
 
 		/**
@@ -131,7 +153,6 @@ define(['ui/container',
 		render: function(opts) {
 			UIDialog.__super__.render.apply(this, arguments);
 			this.title(this._title);
-			//this.actions(this._actions);
 			return this;
 		},
 
@@ -145,60 +166,67 @@ define(['ui/container',
 		**/
 		title: function(title) {
 			if(!StringUtil.defined(title)) return this._title;
-			this.$el.find('.modal-header').html(((this._close) ? this._closeTpl : '') + (this._title = title));
+			// TODO: Continue here...
+			/**if((header = this.lookup(function(v) { return (v.className === 'ui-header'); }, UIDialog.LOOKUP.descendant))) {
+				//console.log(header);
+				//header.content((this._title = title));
+			}**/
 			return this;
 		},
 
 		/**
-		*
-		**/
-		actions: function(actions) {
-			if(!StringUtil.defined(actions)) return this._actions;
-			// TODO: implement actions render.
-			return this;
-		},
-
-		/** WIP: High Level API to be accessed and to be overriden by developers **/
-
-		/**
-		*	Adds a new action button
+		*	Dialog's default Header Handler
 		*	@public
-		*	@chainable
-		*	@method addAction
-		*	@param action {Object} action button config
+		*	@method onHeader
+		*	@param [header] {Object} header views
+		*	@return Object
+		**/
+		onHeader: function(header) {
+			var defaults = { interface: Header };
+			defaults.views = (!header) ? [{ heading: 4, content: this._title }] : [header];
+			return defaults;
+		},
+
+		/**
+		*	Dialog's default Footer Handler
+		*	@public
+		*	@method onFooter
+		*	@param [footer] {Object} footer views
 		*	@return {com.spinal.ui.misc.Dialog}
 		**/
-		addAction: function() {
-			// TODO:
-			this.actions(this._actions);
+		onFooter: function(footer) {
+			var defaults = { interface: Button };
+			defaults.views = (footer) ? footer : [{ text: 'Accept', attrs: { 'data-dismiss': 'modal' } }];
+			return defaults;
+		},
+
+		/**
+		*	Show Dialog
+		*	@public
+		*	@chainable
+		*	@method show
+		*	@param [opts] {Object} additional options
+		*	@return {com.spinal.ui.misc.Dialog}
+		**/
+		show: function() {
+			this.$el.modal('show');
+			if(!opts || !opts.silent) this.trigger(UIDialog.EVENTS.show, { view: this });
 			return this;
 		},
 
 		/**
-		*	Removes an existing action button
+		*	Hide Dialog
 		*	@public
 		*	@chainable
-		*	@method removeAction
-		*	@param action {Object} action button config
+		*	@method hide
+		*	@param [opts] {Object} additional options
 		*	@return {com.spinal.ui.misc.Dialog}
 		**/
-		removeAction: function() {
-			// TODO:
-			this.actions(this._actions);
+		hide: function(opts) {
+			this.$el.modal('hide');
+			if(!opts || !opts.silent) this.trigger(UIDialog.EVENTS.hide, { view: this });
 			return this;
-		},
-
-		/** Specific way to show/hide ?? (Investigate data-dismiss behavior) **/
-
-		show: function() { return UIDialog.__super__.show.apply(this, arguments); },
-
-		hide: function() { return UIDialog.__super__.hide.apply(this, arguments); },
-
-		/** Not able to disable/enable ?? Try to figure out how this should work if we override them ?? **/
-
-		enable: function() { return UIDialog.__super__.enable.apply(this, arguments); },
-
-		disable: function() { return UIDialog.__super__.disable.apply(this, arguments); }
+		}
 
 	}, {
 
@@ -210,11 +238,16 @@ define(['ui/container',
 		NAME: 'Dialog',
 
 		/**
+		*	Dialog's Close Button Template
 		*	@static
-		*	@property EVENTS
-		*	@type Object
+		*	@property CLOSE
+		*	@type String
 		**/
-		EVENTS: { }
+		CLOSE: Spinal.tpl('tag', { _$: {
+			tagName: 'button', cls: 'close',
+			content: Spinal.tpl('tag', { _$: { tagName: 'span', content: '&times;' } }),
+			attrs: { 'data-dismiss': 'modal' }
+		}})
 
 	}));
 
