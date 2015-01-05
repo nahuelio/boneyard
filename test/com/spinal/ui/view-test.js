@@ -281,7 +281,7 @@ define(['core/spinal',
 
 		describe('#lookup()', function() {
 
-			it('Should return the successor instance', function() {
+			it('Should return the parent instance', function() {
 				this.testView = { id: 'child-of-global'};
 				var view = this.cglobal.add(this.testView);
 				var result = view.lookup(function(v) { return (v.id === 'child-of-global'); });
@@ -292,7 +292,7 @@ define(['core/spinal',
 				delete view;
 			});
 
-			it('Should NOT return the successor instance (null)', function() {
+			it('Should NOT return the parent instance (null)', function() {
 				this.testView = { id: 'child-of-global' };
 				var view = this.cglobal.add(this.testView);
 				var result = view.lookup(function(v) { return (v.id === 'non-existent'); });
