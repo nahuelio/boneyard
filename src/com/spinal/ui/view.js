@@ -124,6 +124,22 @@ define(['core/spinal',
 		},
 
 		/**
+		*	Perform a look up of a ancestor parent view inside the hierarchery by a predicate function passed as parameter.
+		*	If the view is not found, the method will give up returning null (Chain of Responsability).
+		*	Default strategy is 'bottom-up'.
+		*	@public
+		*	@chainable
+		*	@method lookup
+		*	@param finder {Function} predicate function
+		*	@return {com.spinal.ui.View}
+		**/
+		lookup: function(finder, direction) {
+			if(!finder || !_.isFunction(finder)) return null;
+			if(finder(this)) return this;
+			return this._next.apply(this, arguments);
+		},
+
+		/**
 		*	Default Chain of responsability strategy that performs a look up from this view
 		*	The default direction is "bottom-up"
 		*	@private
@@ -249,22 +265,6 @@ define(['core/spinal',
 			this.$el.removeClass(this._theme).addClass(themeName);
 			this._theme = themeName;
 			return this;
-		},
-
-		/**
-		*	Perform a look up of a ancestor parent view inside the hierarchery by a predicate function passed as parameter.
-		*	If the view is not found, the method will give up returning null (Chain of Responsability).
-		*	Default strategy is 'bottom-up'.
-		*	@public
-		*	@chainable
-		*	@method lookup
-		*	@param finder {Function} predicate function
-		*	@return {com.spinal.ui.View}
-		**/
-		lookup: function(finder) {
-			if(!finder || !_.isFunction(finder)) return null;
-			if(finder(this)) return this;
-			return this._next.apply(this, arguments);
 		},
 
 		/**

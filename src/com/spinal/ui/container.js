@@ -89,8 +89,6 @@ define(['core/spinal',
 		*	This method is capable to perform 2 types of lookups:
 		*	- Ancestor "bottom-up" (default)
 		*	- Descendant "top-down"
-		*	@FIXME: IMPROVEMENT -> this.invoke doesn't break the loops when it founds the node!!
-		*	Need to improve that logic in favor of performance (Collection.invoke)
 		*	@public
 		*	@chainable
 		*	@method lookup
@@ -99,9 +97,8 @@ define(['core/spinal',
 		*	@return {com.spinal.ui.View}
 		**/
 		_next: function(finder, direction) {
-			return (direction && direction !== '' && direction === Container.LOOKUP.descendant) ?
-				(((node = _.compact(this.invoke('lookup', finder, direction))) && node.length === 1) ? node[0] : null) :
-				Container.__super__._next.apply(this, arguments);
+			return (!_.isUndefined(direction) || direction === Container.LOOKUP.descendant) ?
+				this.find(finder) : Container.__super__._next.apply(this, arguments);
 		},
 
 		/**
@@ -262,6 +259,26 @@ define(['core/spinal',
 		**/
 		getPos: function(view) {
 			return this.views.findPosBy(function(ele) { return (ele.cid && ele.cid === view.cid); });
+		},
+
+		/**
+		*	Perform a deep lookup recursively over all container views by predicate passed by parameter.
+		*	@IMPROVEMENT: Possible refactor into the Collection class (this.views);
+		*	@public
+		*	@method find
+		*	@param finder {Function} predicate function
+		*	@param [found] {Object} found reference
+		*	@return {com.spinal.ui.View}
+		**/
+		find: function(finder, found) {
+			if(!finder || !_.isFunction(finder) || !_.isUndefined(found)) return;
+			for(var i = 0; i < this.views.size(); i++) {
+				if(!_.isUndefined(found)) break;
+				var subview = this.views.get(i);
+				if(finder(subview)) { found = subview; break; }
+				if(subview.views && !subview.views.isEmpty()) found = subview.find(finder, found);
+			}
+			return found;
 		},
 
 		/**

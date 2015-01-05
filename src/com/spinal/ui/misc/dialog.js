@@ -158,7 +158,6 @@ define(['ui/container',
 
 		/**
 		*	Change the Dialog button title
-		*	@FIXME: Improvement -> Cache the reference to the Header instance to not run the lookup on every update.
 		*	@public
 		*	@chainable
 		*	@method text
@@ -167,9 +166,7 @@ define(['ui/container',
 		**/
 		title: function(title) {
 			if(!StringUtil.defined(title)) return this._title;
-			if((header = this.lookup(function(v) { return (v.className === 'ui-header'); }, UIDialog.LOOKUP.descendant))) {
-				header.content((this._title = title));
-			}
+			if((header = this.getHeader())) header.content((this._title = title));
 			return this;
 		},
 
@@ -197,6 +194,16 @@ define(['ui/container',
 			var defaults = { interface: Button };
 			defaults.views = (footer) ? footer : [{ text: 'Accept', attrs: { 'data-dismiss': 'modal' } }];
 			return defaults;
+		},
+
+		/**
+		*	Retrieves Dialog's Header
+		*	@public
+		*	@method getHeader
+		*	@return {com.spinal.ui.basic.Header}
+		**/
+		getHeader: function() {
+			return this.lookup(function(v) { return (v.className === 'ui-header'); }, UIDialog.LOOKUP.descendant);
 		},
 
 		/**

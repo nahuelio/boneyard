@@ -22,6 +22,7 @@ define(['core/spinal',
 			this.viewA = { id: 'A' };
 			this.viewB = { id: 'B' };
 			this.viewC = { id: 'C' };
+			this.viewD = { id: 'D' };
 		});
 
 		afterEach(function() {
@@ -70,6 +71,33 @@ define(['core/spinal',
 			it('Should Validate the attributes', function() {
 				this.testContainer = new Container({ id: 'main', interface: View });
 				var result = this.testContainer._valid();
+				delete this.testContainer.removeAll();
+			});
+
+		});
+
+		describe('#lookup', function() {
+
+			it('Should perform a lookup using top-down direction', function() {
+				this.testContainer = new Container({ id: 'main' });
+				this.A = new Container({ id: 'cA', interface: View });
+				this.B = new Container({ id: 'cB' });
+				this.C = new Container({ id: 'cC', interface: View });
+				// Build Parent-Child relationship
+				this.A.addAll([this.viewA, this.viewD]);
+				this.B.add(this.C);
+				this.C.addAll([this.viewB, this.viewC]);
+				this.testContainer.addAll([this.A, this.B], { renderOnAdd: true });
+				var found = this.testContainer.lookup(function(v) { return (v.id === 'B'); }, Container.LOOKUP.descendant);
+				expect(found).to.be.ok();
+				expect(found.id).to.be.equal('B');
+				// Lookup on Container B (subview of testContainer)
+				found = this.B.lookup(function(v) { return (v.id === 'cC'); }, Container.LOOKUP.descendant);
+				expect(found).to.be.ok();
+				expect(found.id).to.be.equal('cC');
+				// Not found
+				found = this.testContainer.lookup(function(v) { return (v.id === 'non-existent'); }, Container.LOOKUP.descendant);
+				expect(found).not.be.ok();
 				delete this.testContainer.removeAll();
 			});
 
