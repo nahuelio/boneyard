@@ -144,7 +144,7 @@ define(['ioc/context',
 			if(this._engine.isModule(bone)) {
 				var deps = this._dependencies(bone.$params);
 				return this._enqueue(id, _.bind(_.partial(this._create, deps, bone), this), deps);
-			} else if(_.isObject(bone) || _.isArray(bone)) {
+			} else if((_.isObject(bone) || _.isArray(bone)) && !this.isBackboneClass(bone)) {
 				return CreateProcessor.__super__.execute.call(this, this.process, bone, id);
 			}
 			return (!_.isNull(parent)) ? this._resolve(bone, parent, id) : bone;

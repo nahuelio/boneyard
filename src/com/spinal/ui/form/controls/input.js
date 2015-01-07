@@ -118,7 +118,7 @@ define(['ui/view', 'util/string'], function(View, StringUtil) {
 		*	@return {com.spinal.ui.form.controls.Input}
 		**/
 		name: function(n) {
-			if(!StringUtil.defined(n)) return this._name;
+			if(!_.defined(n)) return this._name;
 			this.$el.attr('name', (this._name = n));
 			return this;
 		},
@@ -132,7 +132,7 @@ define(['ui/view', 'util/string'], function(View, StringUtil) {
 		*	@return {com.spinal.ui.form.controls.Input}
 		**/
 		value: function(val) {
-			if(!StringUtil.defined(val)) return this._value;
+			if(!_.defined(val)) return this._value;
 			this.$el.val((this._value = val));
 			return this;
 		},
@@ -146,7 +146,7 @@ define(['ui/view', 'util/string'], function(View, StringUtil) {
 		*	@return String
 		**/
 		placeholder: function(ph) {
-			if(!StringUtil.defined(ph)) return this._placeholder;
+			if(!_.defined(ph)) return this._placeholder;
 			this.$el.attr('placeholder', (this._placeholder = ph));
 			return this;
 		}

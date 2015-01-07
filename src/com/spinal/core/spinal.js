@@ -258,6 +258,15 @@ define(['libs/backbone'], function() {
 		**/
 		SpinalClass.NAME = 'SpinalClass';
 
+		/** Underscore Mixin Utilities **/
+
+		_.mixin({
+			/**
+			*	Check if defined given a value passed by parameter
+			**/
+			defined: function(value) { return !(_.isNull(value) || _.isUndefined(value)); }
+		});
+
 		return exports;
 
 	}(window));

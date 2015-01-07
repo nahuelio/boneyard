@@ -99,7 +99,7 @@ define(['ui/view', 'util/string'], function(View, StringUtil) {
 		*	@return {com.spinal.ui.basic.Image}
 		**/
 		src: function(src) {
-			if(!StringUtil.defined(src)) return this._src;
+			if(!_.defined(src)) return this._src;
 			this.$el.attr('src', (this._src = src));
 			return this;
 		},
@@ -113,7 +113,7 @@ define(['ui/view', 'util/string'], function(View, StringUtil) {
 		*	@return {com.spinal.ui.basic.Image}
 		**/
 		alt: function(alt) {
-			if(!StringUtil.defined(alt)) return this._alt;
+			if(!_.defined(alt)) return this._alt;
 			this.$el.attr('alt', (this._alt = alt));
 			return this;
 		}

@@ -32,6 +32,11 @@ define([], function() {
 			$params: { content: '<code>This is my simple dialog content.</code>' }
 		},
 
+		dialog_list_simple: {
+			$module: 'ui/list/list',
+			$params: { cls: 'list-group', items: '$bone!list_items' }
+		},
+
 		dialog_simple: {
 			$module: 'ui/misc/dialog',
 			$params: { id: 'dialog-simple', title: 'Simple Dialog', footer: '$bone!dialog_default_buttons' }
@@ -46,7 +51,7 @@ define([], function() {
 			{ '$bone!dialog_c_s.addAll': [['$bone!dialog_p_s', '$bone!dialog_b_s', '$bone!dialog_simple']] },
 			{ '$bone!dialog_c_a.addAll': [['$bone!dialog_p_a', '$bone!dialog_b_a', '$bone!dialog_advanced']] },
 			{ '$bone!dialog_simple.add': ['$bone!dialog_content_s'] },
-			{ '$bone!dialog_advanced.add': ['$bone!list_simple'] },
+			{ '$bone!dialog_advanced.add': ['$bone!dialog_list_simple'] },
 			{ '$bone!cdialog.addAll': [['$bone!dialog_c_s', '$bone!dialog_c_a'], { renderOnAdd: true }] }
 		]
 

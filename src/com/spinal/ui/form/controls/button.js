@@ -109,7 +109,7 @@ define(['ui/view', 'util/string'], function(View, StringUtil) {
 		*	@return {com.spinal.ui.form.controls.Button}
 		**/
 		text: function(content) {
-			if(!StringUtil.defined(content)) return this._text;
+			if(!_.defined(content)) return this._text;
 			this.$el.html((this._text = content));
 			return this;
 		},
@@ -123,7 +123,7 @@ define(['ui/view', 'util/string'], function(View, StringUtil) {
 		*	@return {com.spinal.ui.form.controls.Button}
 		**/
 		type: function(name) {
-			if(!StringUtil.defined(name)) return this._type;
+			if(!_.defined(name)) return this._type;
 			this.$el.removeClass(this._type).addClass((this._type = name));
 			return this;
 		},

@@ -100,7 +100,7 @@ define(['ui/form/controls/input', 'util/string'], function(Input, StringUtil) {
 		*	@return Boolean
 		**/
 		value: function(val) {
-			if(!StringUtil.defined(val)) return this._value;
+			if(!_.defined(val)) return this._value;
 			this.$el.prop('checked', (this._value = val));
 			return this;
 		},

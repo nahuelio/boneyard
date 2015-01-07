@@ -75,7 +75,7 @@ define(['ui/basic/paragraph', 'util/string'], function(Paragraph, StringUtil) {
 		*	@return {com.spinal.ui.basic.Paragraph}
 		**/
 		afor: function(_for) {
-			if(!StringUtil.defined(_for)) return this._afor;
+			if(!_.defined(_for)) return this._afor;
 			this.$el.attr('for', (this._afor = _for));
 			return this;
 		}

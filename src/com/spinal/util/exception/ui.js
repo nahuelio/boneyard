@@ -54,7 +54,7 @@ define(['core/spinal',
 			UIStackViolation: _.template('UI Stack Violation found: view \'<%= viewId %>\' can not be found inside the successor specified \'<%= succesorId %>\'.'),
 			InvalidModelType: _.template('\'model\' must be an instance of Backbone.Model.'),
 			UnsupportedRenderMethod: _.template('unsupported render method -> \'<%= method %>\'.'),
-			InvalidInterfaceType: _.template('unsupported Interface Type')
+			InvalidInterfaceType: _.template('Unsupported Interface Type Or Interface could not be resolved.')
 		}
 
 	}));

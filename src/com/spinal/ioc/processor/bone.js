@@ -79,6 +79,21 @@ define(['core/spinal',
 		},
 
 		/**
+		*	Check if the bone is an instance of a Backbone class
+		*	@public
+		*	@method isBackboneClass
+		*	@param bone {Object} bone reference
+		*	@return Boolean
+		**/
+		isBackboneClass: function(bone) {
+			if(_.isUndefined(bone)) return false;
+			return (bone instanceof Backbone.Model ||
+				bone instanceof Backbone.Collection ||
+				bone instanceof Backbone.View ||
+				bone instanceof Backbone.Router);
+		},
+
+		/**
 		*	Check if a complex dependency make reference to a function of the dependency
 		*	@public
 		*	@method isDependencyRef

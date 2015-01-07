@@ -89,7 +89,7 @@ define(['ui/view', 'util/string'], function(View, StringUtil) {
 		*	@return {com.spinal.ui.basic.Paragraph}
 		**/
 		content: function(c) {
-			if(!StringUtil.defined(c)) return this._content;
+			if(!_.defined(c)) return this._content;
 			this.$el.html((this._content = c));
 			return this;
 		}

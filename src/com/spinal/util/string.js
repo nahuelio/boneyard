@@ -100,17 +100,6 @@ define(['core/spinal',
 		},
 
 		/**
-		*	Returns true either if the value passed as parameter is null or undefined
-		*	@static
-		*	@method defined
-		*	@param value {Object} value to be evaluated
-		*	@return Boolean
-		**/
-		defined: function(value) {
-			return !(_.isNull(value) || _.isUndefined(value));
-		},
-
-		/**
 		*	Perform a query using a string (dot notation) on the obj passed as parameter.
 		*	If the input doesn't match, it returns null.
 		*	@static

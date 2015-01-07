@@ -97,7 +97,7 @@ define(['ui/container', 'ui/list/list', 'util/string'], function(Container, List
 		*	@return {com.spinal.ui.misc.Dropdown}
 		**/
 		text: function(txt) {
-			if(!StringUtil.defined(txt)) return this._text;
+			if(!_.defined(txt)) return this._text;
 			this.$el.children('button.dropdown-toggle').html((this._text = txt) + this._caret);
 			return this;
 		}

@@ -165,7 +165,7 @@ define(['ui/container',
 		*	@return {com.spinal.ui.misc.Dialog}
 		**/
 		title: function(title) {
-			if(!StringUtil.defined(title)) return this._title;
+			if(!_.defined(title)) return this._title;
 			if((header = this.getHeader())) header.content((this._title = title));
 			return this;
 		},

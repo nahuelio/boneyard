@@ -99,7 +99,7 @@ define(['ui/container', 'util/string'], function(Container, StringUtil) {
 		*	@return {com.spinal.ui.misc.Panel}
 		**/
 		title: function(content) {
-			if(!StringUtil.defined(content)) return this._title;
+			if(!_.defined(content)) return this._title;
 			this.$el.children('.panel-heading').html((this._title = content));
 			return this;
 		},
@@ -113,7 +113,7 @@ define(['ui/container', 'util/string'], function(Container, StringUtil) {
 		*	@return {com.spinal.ui.misc.Panel}
 		**/
 		type: function(name) {
-			if(!StringUtil.defined(name)) return this._type;
+			if(!_.defined(name)) return this._type;
 			this.$el.removeClass(this._type).addClass((this._type = name));
 			return this;
 		}

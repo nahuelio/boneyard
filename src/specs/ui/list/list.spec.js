@@ -11,14 +11,14 @@ define([], function() {
 		list_p_s: { $module: 'ui/basic/paragraph', $params: { content: '<code>Simple Styling</code>' } },
 
 		list_items: [
-			{ template: 'Item 1' },
-			{ template: 'Item 2' },
-			{ template: 'Item 3' }
+			{ cls: 'list-group-item', template: 'Item 1' },
+			{ cls: 'list-group-item', template: 'Item 2' },
+			{ cls: 'list-group-item', template: 'Item 3' }
 		],
 
 		list_simple: {
 			$module: 'ui/list/list',
-			$params: { items: '$bone!list_items' }
+			$params: { cls: 'list-group', items: '$bone!list_items' }
 		},
 
 		$ready: [{

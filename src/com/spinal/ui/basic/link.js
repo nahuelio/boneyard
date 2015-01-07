@@ -75,7 +75,7 @@ define(['ui/basic/paragraph', 'util/string'], function(Paragraph, StringUtil) {
 		*	@return {com.spinal.ui.basic.Link}
 		**/
 		href: function(uri) {
-			if(!StringUtil.defined(uri)) return this._href;
+			if(!_.defined(uri)) return this._href;
 			this.$el.attr('href', (this._href = uri));
 			return this;
 		}

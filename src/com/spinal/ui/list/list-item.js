@@ -20,7 +20,7 @@ define(['ui/container'], function(Container) {
 		*	@property className
 		*	@type String
 		**/
-		className: 'ui-list-item list-group-item',
+		className: 'ui-list-item',
 
 		/**
 		*	Tag Name used to build the el
@@ -28,19 +28,7 @@ define(['ui/container'], function(Container) {
 		*	@property tagName
 		*	@type String
 		**/
-		tagName: 'li',
-
-		/**
-		*	Initialize
-		*	@public
-		*	@method initialize
-		*	@param options {Object} view options
-		*	@return {com.spinal.ui.list.ListItem}
-		**/
-		initialize: function(options) {
-			UIListItem.__super__.initialize.apply(this, arguments);
-			return this;
-		}
+		tagName: 'li'
 
 	}, {
 

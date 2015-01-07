@@ -92,7 +92,7 @@ define(['ui/container',
 		*	@return {com.spinal.ui.form.controls.Select}
 		**/
 		name: function(n) {
-			if(!StringUtil.defined(n)) return this._name;
+			if(!_.defined(n)) return this._name;
 			this.$el.attr('name', (this._name = n));
 			return this;
 		}
