@@ -15,9 +15,9 @@
 			ul.spinaljs-bar li.bar-e { background-color: #3B8183; }
 			div.footer { height: 30px; margin-top: 50px; border-top: 1px solid #d1d1d1; }
 		</style>
-		<script type='text/javascript' src='http://localhost:9494/socket.io/socket.io.js'></script>
+		<script type='text/javascript' src='http://<%= host %>:9494/socket.io/socket.io.js'></script>
 		<script type='text/javascript'>
-			var socket = io.connect('http://localhost:9494/', { 'sync disconnect on unload': true });
+			var socket = io.connect('http://<%= host %>:9494/', { 'sync disconnect on unload': true });
 			socket.on('reload', function() { document.location.reload(); });
 		</script>
 		<script type='text/javascript' src='<%= spinalCore %>' data-spec='<%= mainSpec %>'></script>

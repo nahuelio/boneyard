@@ -125,22 +125,6 @@ define(['core/spinal',
 		},
 
 		/**
-		*	Perform a look up of a ancestor parent view inside the hierarchery by a predicate function passed as parameter.
-		*	If the view is not found, the method will give up returning null (Chain of Responsability).
-		*	Default strategy is 'bottom-up'.
-		*	@public
-		*	@chainable
-		*	@method lookup
-		*	@param finder {Function} predicate function
-		*	@return {com.spinal.ui.View}
-		**/
-		lookup: function(finder, direction) {
-			if(!finder || !_.isFunction(finder)) return null;
-			if(finder(this)) return this;
-			return this._next.apply(this, arguments);
-		},
-
-		/**
 		*	Default Chain of responsability strategy that performs a look up from this view
 		*	The default direction is "bottom-up"
 		*	@private
@@ -182,7 +166,7 @@ define(['core/spinal',
 
 		/**
 		*	ListenTo strategy will override default functionality from backbone
-		*	to automatically assing the current model as a target, only if parameter obj is omitted and model is defined.
+		*	to automatically assign the current model as a target, only if parameter obj is omitted and model is defined.
 		*	@public
 		*	@method listenTo
 		*	@param [obj] {Object} object to listen
@@ -252,6 +236,22 @@ define(['core/spinal',
 		update: function(model, value, opts) {
 			if(!opts || !opts.silent) this.trigger(View.EVENTS.update, { view: this });
 			return this;
+		},
+
+		/**
+		*	Perform a look up of a ancestor parent view inside the hierarchery by a predicate function passed as parameter.
+		*	If the view is not found, the method will give up returning null (Chain of Responsability).
+		*	Default strategy is 'bottom-up'.
+		*	@public
+		*	@chainable
+		*	@method lookup
+		*	@param finder {Function} predicate function
+		*	@return {com.spinal.ui.View}
+		**/
+		lookup: function(finder, direction) {
+			if(!finder || !_.isFunction(finder)) return null;
+			if(finder(this)) return this;
+			return this._next.apply(this, arguments);
 		},
 
 		/**

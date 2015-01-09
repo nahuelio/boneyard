@@ -100,6 +100,18 @@ define(['core/spinal',
 		},
 
 		/**
+		*	Escapes Regular expression from value passed by parameter
+		*	@static
+		*	@method escapeRegex
+		*	@param value {String} string to evaluate
+		*	@return String;
+		**/
+		escapeRegex: function(value) {
+			if(!_.isString(value)) return '';
+			return value.replace( /[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&" );
+		},
+
+		/**
 		*	Perform a query using a string (dot notation) on the obj passed as parameter.
 		*	If the input doesn't match, it returns null.
 		*	@static

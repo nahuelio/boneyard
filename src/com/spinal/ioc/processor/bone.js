@@ -113,7 +113,7 @@ define(['core/spinal',
 		*	@return Boolean
 		**/
 		isModuleDependency: function(expr) {
-			if(_.isUndefined(expr) || _.isNull(expr) || !_.isString(expr)) return null;
+			if(!_.defined(expr) || !_.isString(expr)) return null;
 			return (this._engine.isModule(this.getDependency(expr).bone));
 		},
 
@@ -126,7 +126,7 @@ define(['core/spinal',
 		*	@return String
 		**/
 		getDependencyId: function(expr, delimiter) {
-			if(_.isUndefined(expr) || _.isNull(expr) || !_.isString(expr)) return null;
+			if(!_.defined(expr) || !_.isString(expr)) return null;
 			var pos = expr.indexOf((delimiter && delimiter !== '') ? delimiter : this.annotations._d);
 			return (pos > 0) ? expr.substring((pos+1), expr.length) : null;
 		},

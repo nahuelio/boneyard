@@ -2,8 +2,7 @@
 *	SpinalJS Autocomplete Component Spec
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define(['ui/basic/link',
-	'ui/basic/image'], function(Link, Image) {
+define(['ui/basic/image'], function(Image) {
 
 	return {
 
@@ -18,35 +17,40 @@ define(['ui/basic/link',
 		simple_source: new Backbone.Collection([
 			{ id: '1', value: 'A term' },
 			{ id: '2', value: 'C term' },
-			{ id: '3', value: 'F term' }
+			{ id: '3', value: 'B term' },
+			{ id: '4', value: 'D term' },
+			{ id: '5', value: 'E term' }
 		]),
 
 		advanced_source: new Backbone.Collection([{
-			id: 'backbone',
-			value: {
+			id: '1',
+			value: 'Backbone',
+			content: {
 				src: 'http://backbonejs.org/docs/images/backbone.png',
 				alt: 'Backbone Logo',
-				attrs: { width: 100 }
+				attrs: { width: 100, style: 'padding: 6px' }
 			}
 		}, {
-			id: 'emberjs',
-			value: {
+			id: '2',
+			value: 'EmberJS',
+			content: {
 				src: 'http://www.gravatar.com/avatar/0cf15665a9146ba852bf042b0652780a?s=100',
 				alt: 'EmberJS Logo',
-				attrs: { width: 100 }
+				attrs: { width: 100, style: 'padding: 6px' }
 			}
 		}, {
-			id: 'angularjs',
-			value: {
+			id: '3',
+			value: 'AngularJS',
+			content: {
 				src: 'https://angularjs.org/img/AngularJS-large.png',
 				alt: 'AngularJS Logo',
-				attrs: { width: 100 }
+				attrs: { width: 100, style: 'padding: 6px' }
 			}
 		}]),
 
 		autocomplete_simple: {
 			$module: 'ui/misc/autocomplete',
-			$params: { collection: '$bone!simple_source' }
+			$params: { collection: '$bone!simple_source', delay: 2, maxResults: 3 }
 		},
 
 		autocomplete_advanced: {

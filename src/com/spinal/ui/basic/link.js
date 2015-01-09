@@ -36,7 +36,7 @@ define(['ui/basic/paragraph', 'util/string'], function(Paragraph, StringUtil) {
 		*	@property _href
 		*	@type String
 		**/
-		_href: '',
+		_href: '#',
 
 		/**
 		*	Initialize

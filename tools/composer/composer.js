@@ -157,7 +157,7 @@ var Composer = {
 		Logger.debug('\tSource Path: ' + this.source +
 			'\n\tConfig File: ' + ((!cfg.config) ? 'Using Default (Custom not specified)' : cfg.config) +
 			'\n\tClear on Exit: ' + ((this.defaults.clear) ? 'Activated' : 'Deactivated') +
-			'\n\tListening on: http://localhost:' + this.defaults.port + '/');
+			'\n\tListening on: http://' + this.host + ':' + this.defaults.port + '/');
 	},
 
 	/**
@@ -172,6 +172,7 @@ var Composer = {
 		_.extend(this, _.omit(this.defaults.config, 'require'), (this.config) ? _.omit(this.config, 'mainSpec', 'require') : {});
 		if(!_.isUndefined(cfg.clear)) this.defaults.clear = cfg.clear;
 		if(!_.isUndefined(cfg.port)) this.defaults.port = cfg.port;
+		if(!_.isUndefined(cfg.host)) this.host = cfg.host;
 		this.source = resolve((this.uPath) ? this.uPath : this.bPath, this.source);
 		this.target = resolve((this.uPath) ? this.uPath : this.bPath, this.target);
 		this.defaults.template = resolve(this.bPath, this.defaults.template);
@@ -211,7 +212,7 @@ var Composer = {
 	export: function() {
 		var tpl = fs.readFileSync(this.defaults.template, "utf8"),
 			output = _.template(tpl, {
-				name: this.name, version: pkg.version,
+				name: this.name, version: pkg.version, host: this.host,
 				requireMain: Utils.getFilename(this.main, true),
 				mainSpec: (this.uPath) ? this.config.mainSpec : this.defaults.config.mainSpec,
 				spinalCore: this.spinalCore
