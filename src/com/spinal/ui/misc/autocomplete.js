@@ -7,7 +7,8 @@ define(['ui/container',
 	'ui/form/controls/input',
 	'ui/list/list',
 	'ui/basic/link',
-	'util/string'], function(Container, Input, List, Link, StringUtil) {
+	'ui/basic/span',
+	'util/string'], function(Container, Input, List, Link, Span, StringUtil) {
 
 		/**
 		*	Autocomplete Class
@@ -18,6 +19,8 @@ define(['ui/container',
 		*	@requires com.spinal.ui.Container
 		*	@requires com.spinal.ui.form.controls.Input
 		*	@requires com.spinal.ui.list.List
+		*	@requires com.spinal.ui.basic.Link
+		*	@requires com.spinal.ui.basic.Span
 		*	@requires com.spinal.util.StringUtil
 		**/
 		var UIAutocomplete = Spinal.namespace('com.spinal.ui.misc.Autocomplete', Container.inherit({
@@ -37,14 +40,6 @@ define(['ui/container',
 			*	@type Function
 			**/
 			_resultType: Link,
-
-			/**
-			*	Default Autocomplete's delay to show results list
-			*	@private
-			*	@property _delay
-			*	@type Number
-			**/
-			_delay: 0.5,
 
 			/**
 			*	Default Autocomplete's maximum results shown at a time
@@ -69,6 +64,14 @@ define(['ui/container',
 			*	@type Array
 			**/
 			_results: null,
+
+			/**
+			*	Autocomplete's selection (while navigating)
+			*	@public
+			*	@property selection
+			*	@type Number
+			**/
+			selection: 0,
 
 			/**
 			*	Autocomplete's input text instance reference
@@ -96,7 +99,7 @@ define(['ui/container',
 			initialize: function(opts) {
 				opts || (opts = {});
 				this._results = [];
-				_.extend(this, StringUtil.toPrivate(_.pick(opts, 'resultType', 'delay', 'maxResults', 'minChars')));
+				_.extend(this, StringUtil.toPrivate(_.pick(opts, 'resultType', 'maxResults', 'minChars')));
 				UIAutocomplete.__super__.initialize.apply(this, arguments);
 				return this._input()._list();
 			},
@@ -118,12 +121,12 @@ define(['ui/container',
 			*	@private
 			*	@method _list
 			*	@return {com.spinal.ui.misc.Autocomplete}
+			*	@FIXME: style: 'padding: 10px' should be removed and replace it with a different strategy.
 			**/
 			_list: function() {
-				this.list = this.add(new List({
-					cls: 'dropdown-menu', attrs: { role: 'menu' },
-					items: _.compact(this.collection.map(this._item, this))
-				}));
+				var span = { views: [this.onEmpty(new Span({ cls: 'text-muted', attrs: { style: 'padding: 10px;' } }))] },
+					items = _.compact(this.collection.map(this._item, this)); items.push(span);
+				this.list = this.add(new List({ cls: 'dropdown-menu', attrs: { role: 'menu' }, items: items }));
 				return this;
 			},
 
@@ -136,7 +139,7 @@ define(['ui/container',
 			_item: function(model) {
 				var d = model.toJSON();
 				if(!_.defined(d.id)) return null;
-				return _.extend({ id: d.id, interface: this._resultType }, { views: [this.onItem(this._resolve(d))] });
+				return _.extend({ id: d.id }, { views: [this.onItem(this._resolve(d))] });
 			},
 
 			/**
@@ -148,7 +151,22 @@ define(['ui/container',
 			**/
 			_resolve: function(d) {
 				if(!_.defined(d.value)) return {};
-				return (_.defined(d.content)) ? d.content : { content: d.value };
+				return new this._resultType(_.defined(d.content) ? d.content : { content: d.value });
+			},
+
+			/**
+			*	Handlers Keyboard navigation over the list of results
+			*	@private
+			*	@method _navigate
+			*	@param keycode {Number} keycode integer
+			**/
+			_navigate: function(keycode) {
+				// FIXME: Not working yet.
+				//this.list.get(this.selection).removeClass('bg-info');
+				if(keycode === 38 && this.selection > 0) this.selection--; // up key
+				if(keycode === 40 && this.selection < this.results().length) this.selection++; // down key
+				//this.list.get(this.selection).addClass('bg-info');
+				return this;
 			},
 
 			/**
@@ -160,7 +178,8 @@ define(['ui/container',
 			**/
 			_onOpen: function(e, view) {
 				if(e.type === 'blur' || (view.value().length < this._minChars)) return this.removeClass('open');
-				return this.addClass('open')._search(view.value());
+				this.selection = 0;
+				return this.addClass('open')._search(view.value())._navigate(e.which);
 			},
 
 			/**
@@ -171,13 +190,12 @@ define(['ui/container',
 			*	@return {com.spinal.ui.View}
 			**/
 			_search: function(value) {
-				var re = new RegExp(StringUtil.escapeRegex(value), "i");
+				var re = new RegExp(StringUtil.escapeRegex(value), "i"), len = this.collection.size();
 				this._results = this.collection.filter(function(m, ix) {
 					var res = this.onSearch(re, m); v = this.list.get(ix)[(res) ? 'show' : 'hide']();
-					this.onHighlight(v, res);
-					return res;
+					this.onHighlight(v, res); return res;
 				}, this);
-				(this._results.length === 0) ? this.onEmpty(this.list) : null;
+				this.list.get(len)[(this.results().length === 0) ? 'show' : 'hide']();
 				return this;
 			},
 
@@ -205,16 +223,20 @@ define(['ui/container',
 			},
 
 			/**
-			*	Default Autcomplete highlight strategy handler
+			*	Default Autocomplete highlight strategy handler
+			*	This method will be executed on all items inside the collection despite they were matched as a result
+			*	or not. The ones they were matched, the flag will be set to true, otherwise false.
+			*	(helpful to reset items styled/manipulated previously on those who were not matched).
+			*	Default: Not styling is applied.
 			*	@public
 			*	@overridable
 			*	@method onHighlight
 			*	@param item {com.spinal.ui.list.ListItem} list item reference
-			*	@param matched {Boolean} Flag item matched or filtered out
+			*	@param matched {Boolean} item reference who was matched by the expression
+			*	@return {com.spinal.ui.list.ListItem}
 			**/
 			onHighlight: function(item, matched) {
-				// TODO: Change this...
-				return item[(matched) ? 'addClass' : 'removeClass']('selected');
+				return item;
 			},
 
 			/**
@@ -222,10 +244,10 @@ define(['ui/container',
 			*	@public
 			*	@overridable
 			*	@method onEmpty
-			*	@param list {com.spinal.ui.list.List} List reference
+			*	@param item {com.spinal.ui.basic.Span} No results item reference.
 			**/
-			onEmpty: function(list) {
-				// TODO: Continue here...
+			onEmpty: function(item) {
+				return item.content('<em>No Results</em>');
 			},
 
 			/**
@@ -233,11 +255,11 @@ define(['ui/container',
 			*	@public
 			*	@overridable
 			*	@method onItem
-			*	@param item {Object} item content
+			*	@param item {com.spinal.ui.View} item view reference
 			*	@return Object
 			**/
-			onItem: function(it) {
-				return it;
+			onItem: function(item) {
+				return item;
 			}
 
 		}, {
@@ -256,22 +278,10 @@ define(['ui/container',
 			**/
 			EVENTS: {
 				/**
-				*	@event show_bs_dropdown
+				*	@event selected
 				**/
-				show_bs_dropdown: 'show.bs.dropdown',
-				/**
-				*	@event shown_bs_dropdown
-				**/
-				shown_bs_dropdown: 'shown.bs.dropdown',
-				/**
-				*	@event hide_bs_dropdown
-				**/
-				hide_bs_dropdown: 'hide.bs.dropdown',
-				/**
-				*	@event hidden_bs_dropdown
-				**/
-				hidden_bs_dropdown: 'hidden.bs.dropdown'
-			},
+				selected: 'com:spinal:ui:misc:autcomplete:selected'
+			}
 
 		}));
 

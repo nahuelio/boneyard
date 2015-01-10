@@ -15,11 +15,11 @@ define(['ui/basic/image'], function(Image) {
 		auto_p_a: { $module: 'ui/basic/paragraph', $params: { content: '<code>Advanced Autocomplete</code>' } },
 
 		simple_source: new Backbone.Collection([
-			{ id: '1', value: 'A term' },
-			{ id: '2', value: 'C term' },
-			{ id: '3', value: 'B term' },
-			{ id: '4', value: 'D term' },
-			{ id: '5', value: 'E term' }
+			{ id: '1', value: 'Backbone' },
+			{ id: '2', value: 'EmberJS' },
+			{ id: '3', value: 'AngularJS' },
+			{ id: '4', value: 'Prototype' },
+			{ id: '5', value: 'PureMVC' }
 		]),
 
 		advanced_source: new Backbone.Collection([{
@@ -50,7 +50,7 @@ define(['ui/basic/image'], function(Image) {
 
 		autocomplete_simple: {
 			$module: 'ui/misc/autocomplete',
-			$params: { collection: '$bone!simple_source', delay: 2, maxResults: 3 }
+			$params: { collection: '$bone!simple_source', maxResults: 3 }
 		},
 
 		autocomplete_advanced: {

@@ -171,7 +171,7 @@ define(['ui/view', 'util/string'], function(View, StringUtil) {
 		*	@param e {Object} event reference
 		**/
 		_onKeyup: function(e) {
-			this.value(e.currentTarget.value);
+			this._value = e.currentTarget.value;
 			this.trigger(UIInput.EVENTS.keyup, e, this);
 		},
 
