@@ -2,6 +2,9 @@
 *	@module com.spinal.ui.misc
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 *	@version 0.0.1
+*	@Notes: Still need to implement:
+*		- Improve selection and keyboard navigation in the result list.
+*		- Set the value selected from the list to the input (by clicking or pressing 'enter').
 **/
 define(['ui/container',
 	'ui/form/controls/input',
@@ -155,17 +158,32 @@ define(['ui/container',
 			},
 
 			/**
+			*	Find a list item by position (0-index based)
+			*	@private
+			*	@method _findItemByPos
+			*	@param ix {Number} index
+			*	@return {com.spinal.ui.View}
+			**/
+			_findItemByPos: function(ix) {
+				return this.list.findById(this._results[ix].id);
+			},
+
+			/**
 			*	Handlers Keyboard navigation over the list of results
 			*	@private
 			*	@method _navigate
 			*	@param keycode {Number} keycode integer
 			**/
 			_navigate: function(keycode) {
-				// FIXME: Not working yet.
-				//this.list.get(this.selection).removeClass('bg-info');
-				if(keycode === 38 && this.selection > 0) this.selection--; // up key
-				if(keycode === 40 && this.selection < this.results().length) this.selection++; // down key
-				//this.list.get(this.selection).addClass('bg-info');
+				var previous = this.selection;
+				if(keycode === 38 && this.selection >= 1) this.selection--;
+				if(keycode === 40 && this.selection < (this._results.length-1)) this.selection++;
+				if(this.selection !== previous) {
+					this._findItemByPos((previous !== -1) ? previous : 0).removeClass('bg-info');
+					this._findItemByPos(this.selection).addClass('bg-info');
+				} else if(this._results.length === 1) {
+					this._findItemByPos(this.selection).addClass('bg-info');
+				}
 				return this;
 			},
 
@@ -178,8 +196,10 @@ define(['ui/container',
 			**/
 			_onOpen: function(e, view) {
 				if(e.type === 'blur' || (view.value().length < this._minChars)) return this.removeClass('open');
-				this.selection = 0;
-				return this.addClass('open')._search(view.value())._navigate(e.which);
+				if(this._results.length === 0) this.selection = -1;
+				this.addClass('open')._search(view.value());
+				return (e.which === 38 || e.which === 40 && this._results.length > 0) ?
+					this._navigate(e.which) : this.list.invoke('removeClass', 'bg-info');
 			},
 
 			/**
