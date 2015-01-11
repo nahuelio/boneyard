@@ -74,7 +74,7 @@ define(['ui/container',
 			*	@property selection
 			*	@type Number
 			**/
-			selection: 0,
+			selection: -1,
 
 			/**
 			*	Autocomplete's input text instance reference
@@ -165,6 +165,7 @@ define(['ui/container',
 			*	@return {com.spinal.ui.View}
 			**/
 			_findItemByPos: function(ix) {
+				if(!_.defined(this._results[ix])) return null;
 				return this.list.findById(this._results[ix].id);
 			},
 
@@ -175,15 +176,12 @@ define(['ui/container',
 			*	@param keycode {Number} keycode integer
 			**/
 			_navigate: function(keycode) {
-				var previous = this.selection;
+				var previous = this.selection; prev = this._findItemByPos(previous);
 				if(keycode === 38 && this.selection >= 1) this.selection--;
 				if(keycode === 40 && this.selection < (this._results.length-1)) this.selection++;
-				if(this.selection !== previous) {
-					this._findItemByPos((previous !== -1) ? previous : 0).removeClass('bg-info');
-					this._findItemByPos(this.selection).addClass('bg-info');
-				} else if(this._results.length === 1) {
-					this._findItemByPos(this.selection).addClass('bg-info');
-				}
+				var current = this._findItemByPos(this.selection);
+				if(prev) prev.removeClass('bg-info');
+				if(current) current.addClass('bg-info');
 				return this;
 			},
 
@@ -196,7 +194,6 @@ define(['ui/container',
 			**/
 			_onOpen: function(e, view) {
 				if(e.type === 'blur' || (view.value().length < this._minChars)) return this.removeClass('open');
-				if(this._results.length === 0) this.selection = -1;
 				this.addClass('open')._search(view.value());
 				return (e.which === 38 || e.which === 40 && this._results.length > 0) ?
 					this._navigate(e.which) : this.list.invoke('removeClass', 'bg-info');
@@ -210,12 +207,15 @@ define(['ui/container',
 			*	@return {com.spinal.ui.View}
 			**/
 			_search: function(value) {
-				var re = new RegExp(StringUtil.escapeRegex(value), "i"), len = this.collection.size();
+				var re = new RegExp(StringUtil.escapeRegex(value), "i"),
+					len = this.collection.size(),
+					prevlen = this._results.length;
 				this._results = this.collection.filter(function(m, ix) {
 					var res = this.onSearch(re, m); v = this.list.get(ix)[(res) ? 'show' : 'hide']();
 					this.onHighlight(v, res); return res;
 				}, this);
 				this.list.get(len)[(this.results().length === 0) ? 'show' : 'hide']();
+				if(prevlen !== this._results.length) this.selection = -1;
 				return this;
 			},
 
