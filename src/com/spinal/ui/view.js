@@ -102,6 +102,7 @@ define(['core/spinal',
 			options || (options = {});
 			this._valid(options);
 			if(options.el) this.addClass(this.className);
+			if(options.cls) this.addClass(options.cls);
 			if(options.theme) { this._theme = options.theme; this.$el.addClass(this._theme); }
 			if(options.method) this.method = options.method;
 			if(options.template) this._tpl = this._compile(options.template);
@@ -121,22 +122,6 @@ define(['core/spinal',
 			if(attrs.model && !(attrs.model instanceof Backbone.Model)) throw new UIException('InvalidModelType');
 			if(attrs.method && !(View.RENDER[attrs.method])) throw new UIException('UnsupportedRenderMethod', { method: 'non-existent-method' });
 			return true;
-		},
-
-		/**
-		*	Perform a look up of a ancestor parent view inside the hierarchery by a predicate function passed as parameter.
-		*	If the view is not found, the method will give up returning null (Chain of Responsability).
-		*	Default strategy is 'bottom-up'.
-		*	@public
-		*	@chainable
-		*	@method lookup
-		*	@param finder {Function} predicate function
-		*	@return {com.spinal.ui.View}
-		**/
-		lookup: function(finder, direction) {
-			if(!finder || !_.isFunction(finder)) return null;
-			if(finder(this)) return this;
-			return this._next.apply(this, arguments);
 		},
 
 		/**
@@ -181,7 +166,7 @@ define(['core/spinal',
 
 		/**
 		*	ListenTo strategy will override default functionality from backbone
-		*	to automatically assing the current model as a target, only if parameter obj is omitted and model is defined.
+		*	to automatically assign the current model as a target, only if parameter obj is omitted and model is defined.
 		*	@public
 		*	@method listenTo
 		*	@param [obj] {Object} object to listen
@@ -251,6 +236,22 @@ define(['core/spinal',
 		update: function(model, value, opts) {
 			if(!opts || !opts.silent) this.trigger(View.EVENTS.update, { view: this });
 			return this;
+		},
+
+		/**
+		*	Perform a look up of a ancestor parent view inside the hierarchery by a predicate function passed as parameter.
+		*	If the view is not found, the method will give up returning null (Chain of Responsability).
+		*	Default strategy is 'bottom-up'.
+		*	@public
+		*	@chainable
+		*	@method lookup
+		*	@param finder {Function} predicate function
+		*	@return {com.spinal.ui.View}
+		**/
+		lookup: function(finder, direction) {
+			if(!finder || !_.isFunction(finder)) return null;
+			if(finder(this)) return this;
+			return this._next.apply(this, arguments);
 		},
 
 		/**
@@ -455,6 +456,18 @@ define(['core/spinal',
 			*	@event click
 			**/
 			click: 'com:spinal:ui:view:click',
+			/**
+			*	@event dbclick
+			**/
+			dbclick: 'com:spinal:ui:view:dbclick',
+			/**
+			*	@event mousedown
+			**/
+			mousedown: 'com:spinal:ui:view:mousedown',
+			/**
+			*	@event mouseup
+			**/
+			mouseup: 'com:spinal:ui:view:mouseup',
 			/**
 			*	@event show
 			**/

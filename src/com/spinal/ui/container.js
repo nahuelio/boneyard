@@ -98,7 +98,7 @@ define(['core/spinal',
 		**/
 		_next: function(finder, direction) {
 			return (!_.isUndefined(direction) || direction === Container.LOOKUP.descendant) ?
-				this.find(finder) : Container.__super__._next.apply(this, arguments);
+				this.findDeep(finder) : Container.__super__._next.apply(this, arguments);
 		},
 
 		/**
@@ -262,21 +262,36 @@ define(['core/spinal',
 		},
 
 		/**
+		*	Performs a lookup by the collection of subview by predicate passed by parameter
+		*	@public
+		*	@method find
+		*	@param finder {Function} predicate function
+		*	@return {com.spinal.ui.View}
+		**/
+		find: function(finder) {
+			if(!finder || !_.isFunction(finder)) return;
+			var found = null;
+			for(var i = 0; i < this.views.size(); i++)
+				if((found = finder(this.views.get(i), i))) break;
+			return found;
+		},
+
+		/**
 		*	Perform a deep lookup recursively over all container views by predicate passed by parameter.
 		*	@IMPROVEMENT: Possible refactor into the Collection class (this.views);
 		*	@public
-		*	@method find
+		*	@method findDeep
 		*	@param finder {Function} predicate function
 		*	@param [found] {Object} found reference
 		*	@return {com.spinal.ui.View}
 		**/
-		find: function(finder, found) {
+		findDeep: function(finder, found) {
 			if(!finder || !_.isFunction(finder) || !_.isUndefined(found)) return;
 			for(var i = 0; i < this.views.size(); i++) {
 				if(!_.isUndefined(found)) break;
 				var subview = this.views.get(i);
 				if(finder(subview)) { found = subview; break; }
-				if(subview.views && !subview.views.isEmpty()) found = subview.find(finder, found);
+				if(subview.views && !subview.views.isEmpty()) found = subview.findDeep(finder, found);
 			}
 			return found;
 		},

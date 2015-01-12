@@ -16,6 +16,19 @@ define(['ui/view', 'util/string'], function(View, StringUtil) {
 	var UIInput = Spinal.namespace('com.spinal.ui.form.controls.Input', View.inherit({
 
 		/**
+		*	Events
+		*	@public
+		*	@property events
+		*	@type Object
+		**/
+		events: {
+			'keyup': '_onKeyup',
+			'keydown': '_onKeydown',
+			'focus': '_onFocus',
+			'blur': '_onBlur'
+		},
+
+		/**
 		*	Internal CSS className
 		*	@public
 		*	@property className
@@ -118,7 +131,7 @@ define(['ui/view', 'util/string'], function(View, StringUtil) {
 		*	@return {com.spinal.ui.form.controls.Input}
 		**/
 		name: function(n) {
-			if(!StringUtil.defined(n)) return this._name;
+			if(!_.defined(n)) return this._name;
 			this.$el.attr('name', (this._name = n));
 			return this;
 		},
@@ -132,7 +145,7 @@ define(['ui/view', 'util/string'], function(View, StringUtil) {
 		*	@return {com.spinal.ui.form.controls.Input}
 		**/
 		value: function(val) {
-			if(!StringUtil.defined(val)) return this._value;
+			if(!_.defined(val)) return this._value;
 			this.$el.val((this._value = val));
 			return this;
 		},
@@ -146,9 +159,50 @@ define(['ui/view', 'util/string'], function(View, StringUtil) {
 		*	@return String
 		**/
 		placeholder: function(ph) {
-			if(!StringUtil.defined(ph)) return this._placeholder;
+			if(!_.defined(ph)) return this._placeholder;
 			this.$el.attr('placeholder', (this._placeholder = ph));
 			return this;
+		},
+
+		/**
+		*	Input's Key up handler
+		*	@private
+		*	@method _onKeyup
+		*	@param e {Object} event reference
+		**/
+		_onKeyup: function(e) {
+			this._value = e.currentTarget.value;
+			this.trigger(UIInput.EVENTS.keyup, e, this);
+		},
+
+		/**
+		*	Input's Key down handler
+		*	@private
+		*	@method _onKeydown
+		*	@param e {Object} event reference
+		**/
+		_onKeydown: function(e) {
+			this.trigger(UIInput.EVENTS.keydown, e, this);
+		},
+
+		/**
+		*	Input's Focus handler
+		*	@private
+		*	@method _onFocus
+		*	@param e {Object} event reference
+		**/
+		_onFocus: function(e) {
+			this.trigger(UIInput.EVENTS.focus, e, this);
+		},
+
+		/**
+		*	Input's Foucs out handler
+		*	@private
+		*	@method _onBlur
+		*	@param e {Object} event reference
+		**/
+		_onBlur: function(e) {
+			this.trigger(UIInput.EVENTS.blur, e, this);
 		}
 
 	}, {

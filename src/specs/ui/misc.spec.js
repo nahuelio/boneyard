@@ -4,12 +4,13 @@
 **/
 define(['specs/ui/misc/panel.spec',
 		'specs/ui/misc/dropdown.spec',
-		'specs/ui/misc/dialog.spec'], function(PanelSpec, DropdownSpec, DialogSpec) {
+		'specs/ui/misc/dialog.spec',
+		'specs/ui/misc/autocomplete.spec'], function(PanelSpec, DropdownSpec, DialogSpec, AutocompleteSpec) {
 
 	return {
 
 		$id: 'ui-misc',
-		$specs: [PanelSpec, DropdownSpec, DialogSpec],
+		$specs: [PanelSpec, DropdownSpec, DialogSpec, AutocompleteSpec],
 
 		misc_header: {
 			$module: 'ui/basic/header',

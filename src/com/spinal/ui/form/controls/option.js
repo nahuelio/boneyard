@@ -99,7 +99,7 @@ define(['ui/view', 'util/string'], function(View, StringUtil) {
 		*	@return {com.spinal.ui.form.controls.Option}
 		**/
 		text: function(txt) {
-			if(!StringUtil.defined(txt)) return this._text;
+			if(!_.defined(txt)) return this._text;
 			this.$el.html((this._text = txt));
 			return this;
 		},
@@ -113,7 +113,7 @@ define(['ui/view', 'util/string'], function(View, StringUtil) {
 		*	@return {com.spinal.ui.form.controls.Option}
 		**/
 		value: function(val) {
-			if(!StringUtil.defined(val)) return this._value;
+			if(!_.defined(val)) return this._value;
 			this.$el.val((this._value = val));
 			return this;
 		}

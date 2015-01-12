@@ -15,14 +15,14 @@ define(['ui/container',
 	*	@requires com.spinal.ui.list.ListItem
 	**/
 	var UIList = Spinal.namespace('com.spinal.ui.list.List', Container.inherit({
-
+		
 		/**
 		*	Internal CSS className
 		*	@public
 		*	@property className
 		*	@type String
 		**/
-		className: 'ui-list list-group',
+		className: 'ui-list',
 
 		/**
 		*	Tag Name used to build the el
@@ -54,20 +54,18 @@ define(['ui/container',
 		*	@return {com.spinal.ui.list.List}
 		**/
 		_list: function(items, opts) {
-			_.each(items, function(item) { this.add(_.omit(this.onItem(item), 'el'), opts); }, this);
+			_.each(items, function(item) { this.add(_.omit(this.onListItem(item), 'el'), opts); }, this);
 			return this;
 		},
 
 		/**
 		*	Default List Item Render Handler
 		*	@public
-		*	@method onItem
+		*	@method onListItem
 		*	@param item {Object} item content
 		*	@return Object
 		**/
-		onItem: function(it) {
-			return it;
-		}
+		onListItem: function(it) { return it; }
 
 	}, {
 

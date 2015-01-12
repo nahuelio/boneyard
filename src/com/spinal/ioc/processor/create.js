@@ -102,7 +102,9 @@ define(['ioc/context',
 		},
 
 		/**
-		*	Handles bone's metadata declarations to determine dependencies and act accordingly.
+		*	Parses bone's dependencies declarations on the constructor $params and builds a "table mapper" from it.
+		*	This "table mapper" is a temporal object that maps dependencies to the keys declared in the
+		*	dependant bone so later on, they know which dependencies should be injected into the property names.
 		*	@private
 		*	@method _dependencies
 		*	@param params {Object} object to be evaluated
@@ -116,7 +118,7 @@ define(['ioc/context',
 		},
 
 		/**
-		*	Resolve Bone Expression
+		*	Resolves a Bone reference expression ("$bone!" or "$bone-ref!")
 		*	@private
 		*	@method _resolve
 		*	@param expr {String} expression to be evaluated
@@ -144,7 +146,7 @@ define(['ioc/context',
 			if(this._engine.isModule(bone)) {
 				var deps = this._dependencies(bone.$params);
 				return this._enqueue(id, _.bind(_.partial(this._create, deps, bone), this), deps);
-			} else if(_.isObject(bone) || _.isArray(bone)) {
+			} else if((_.isObject(bone) || _.isArray(bone)) && !this.isBackboneClass(bone)) {
 				return CreateProcessor.__super__.execute.call(this, this.process, bone, id);
 			}
 			return (!_.isNull(parent)) ? this._resolve(bone, parent, id) : bone;

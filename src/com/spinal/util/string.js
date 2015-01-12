@@ -100,14 +100,15 @@ define(['core/spinal',
 		},
 
 		/**
-		*	Returns true either if the value passed as parameter is null or undefined
+		*	Escapes Regular expression from value passed by parameter
 		*	@static
-		*	@method defined
-		*	@param value {Object} value to be evaluated
-		*	@return Boolean
+		*	@method escapeRegex
+		*	@param value {String} string to evaluate
+		*	@return String;
 		**/
-		defined: function(value) {
-			return !(_.isNull(value) || _.isUndefined(value));
+		escapeRegex: function(value) {
+			if(!_.isString(value)) return '';
+			return value.replace( /[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&" );
 		},
 
 		/**
