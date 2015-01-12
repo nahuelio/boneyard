@@ -25,32 +25,32 @@ define(['specs/ui/basic/paragraph.spec',
 
 		cparagraph: {
 			$module: 'ui/misc/panel',
-			$params: { title: 'Paragraph' }
+			$params: { id: 'paragraph', title: 'Paragraph' }
 		},
 
 		clink: {
 			$module: 'ui/misc/panel',
-			$params: { title: 'Link' }
+			$params: { id: 'link', title: 'Link' }
 		},
 
 		cheader: {
 			$module: 'ui/misc/panel',
-			$params: { title: 'Headers' }
+			$params: { id: 'header', title: 'Headers' }
 		},
 
 		clabel: {
 			$module: 'ui/misc/panel',
-			$params: { title: 'Label' }
+			$params: { id: 'label', title: 'Label' }
 		},
 
 		cspan: {
 			$module: 'ui/misc/panel',
-			$params: { title: 'Spans' }
+			$params: { id: 'span', title: 'Spans' }
 		},
 
 		cimage: {
 			$module: 'ui/misc/panel',
-			$params: { title: 'Images' }
+			$params: { id: 'image', title: 'Images' }
 		},
 
 		$ready: [{

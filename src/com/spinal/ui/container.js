@@ -26,7 +26,7 @@ define(['core/spinal',
 		*	@property className
 		*	@type String
 		**/
-		className: 'ui-container container',
+		className: 'ui-container',
 
 		/**
 		*	View Collection

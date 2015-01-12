@@ -5,12 +5,13 @@
 define(['specs/ui/misc/panel.spec',
 		'specs/ui/misc/dropdown.spec',
 		'specs/ui/misc/dialog.spec',
-		'specs/ui/misc/autocomplete.spec'], function(PanelSpec, DropdownSpec, DialogSpec, AutocompleteSpec) {
+		'specs/ui/misc/autocomplete.spec',
+		'specs/ui/misc/affix.spec'], function(PanelSpec, DropdownSpec, DialogSpec, AutocompleteSpec, AffixSpec) {
 
 	return {
 
 		$id: 'ui-misc',
-		$specs: [PanelSpec, DropdownSpec, DialogSpec, AutocompleteSpec],
+		$specs: [PanelSpec, DropdownSpec, DialogSpec, AutocompleteSpec, AffixSpec],
 
 		misc_header: {
 			$module: 'ui/basic/header',
@@ -40,31 +41,13 @@ define(['specs/ui/misc/panel.spec',
 			$params: { title: 'Autocomplete' }
 		},
 
-		caffix: {
-			$module: 'ui/misc/panel',
-			$params: { title: 'Affix' }
-		},
-
-		ccarousel: {
-			$module: 'ui/misc/panel',
-			$params: { title: 'Carousel' }
-		},
-
-		cpaginator: {
-			$module: 'ui/misc/panel',
-			$params: { title: 'Paginator' }
-		},
-
 		$ready: [{
 			'$bone!global.addAll': [[
 				'$bone!misc_header',
 				'$bone!cpanel',
 				'$bone!cdropdown',
 				'$bone!cdialog',
-				'$bone!cautocomplete',
-				'$bone!caffix',
-				'$bone!ccarousel',
-				'$bone!cpaginator'
+				'$bone!cautocomplete'
 			], { renderOnAdd: true }]
 		}]
 

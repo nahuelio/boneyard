@@ -27,7 +27,7 @@ define(['specs/ui/form/form.controls.spec'], function(FormControlsSpec) {
 		$ready: [{
 			'$bone!global.addAll': [[
 				'$bone!form_header',
-				'$bone!cform',
+				'$bone!cform'
 			], { renderOnAdd: true }]
 		}]
 

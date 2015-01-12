@@ -14,6 +14,14 @@
 			ul.spinaljs-bar li.bar-d { background-color: #ED303C; }
 			ul.spinaljs-bar li.bar-e { background-color: #3B8183; }
 			div.footer { height: 30px; margin-top: 50px; border-top: 1px solid #d1d1d1; }
+			/** Affix Navigation **/
+			nav.ui-affix { background-color: #f1f1f1; }
+			nav.ui-affix ul > li a { color: black; }
+			nav.ui-affix ul > li a:hover,
+			nav.ui-affix ul > li a:active { background-color: #FAD089; }
+			nav.affix { top: 20px; }
+			nav.affix-top { }
+			nav.affix-bottom { }
 		</style>
 		<script type='text/javascript' src='http://<%= host %>:9494/socket.io/socket.io.js'></script>
 		<script type='text/javascript'>
@@ -29,7 +37,7 @@
 			<h1>Project <%= name %> | <small>SpinalJS v<%= version %></small></h1>
 			<p>Welcome to SpinalJS Composer Tool! Make use of this page to preview your components, business logic, UI and more...</p>
 		</div>
-		<div id="global"></div>
+		<div id="composer-main"></div>
 		<div class="footer"><p class="text-center">SpinalJS Composer Tool &copy; 2015. <a class="btn btn-link" href="http://www.3dimention.com/">3dimention</a></p></div>
 		<script type='text/javascript'>require(['<%= requireMain %>'], function() { require(['ioc/context']); });</script>
 	</body>

@@ -17,10 +17,27 @@ define(['specs/ui/basic.spec',
 
 		$specs: [BasicSpec, FormSpec, ListSpec, TableSpec, MiscSpec],
 
+		main: {
+			$module: 'ui/container',
+			$params: { el: 'div#composer-main', cls: 'container' }
+		},
+
 		global: {
 			$module: 'ui/container',
-			$params: { el: 'div#global' }
+			$params: { id: 'global', cls: 'container col-md-10' }
 		},
+
+		menu: {
+			$module: 'ui/container',
+			$params: { id: 'menu', cls: 'container col-md-2' }
+		},
+
+		$ready: [{
+			'$bone!main.addAll': [[
+				'$bone!global',
+				'$bone!menu'
+			], { renderOnAdd: true }]
+		}],
 
 		$plugins: {
 			html: {},
