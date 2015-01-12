@@ -15,7 +15,7 @@ define(['ui/container',
 	*	@requires com.spinal.ui.list.ListItem
 	**/
 	var UIList = Spinal.namespace('com.spinal.ui.list.List', Container.inherit({
-
+		
 		/**
 		*	Internal CSS className
 		*	@public

@@ -457,6 +457,18 @@ define(['core/spinal',
 			**/
 			click: 'com:spinal:ui:view:click',
 			/**
+			*	@event dbclick
+			**/
+			dbclick: 'com:spinal:ui:view:dbclick',
+			/**
+			*	@event mousedown
+			**/
+			mousedown: 'com:spinal:ui:view:mousedown',
+			/**
+			*	@event mouseup
+			**/
+			mouseup: 'com:spinal:ui:view:mouseup',
+			/**
 			*	@event show
 			**/
 			show: 'com:spinal:ui:view:show',

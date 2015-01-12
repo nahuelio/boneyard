@@ -9,9 +9,10 @@
 define(['ui/container',
 	'ui/form/controls/input',
 	'ui/list/list',
+	'ui/list/list-item',
 	'ui/basic/link',
 	'ui/basic/span',
-	'util/string'], function(Container, Input, List, Link, Span, StringUtil) {
+	'util/string'], function(Container, Input, List, ListItem, Link, Span, StringUtil) {
 
 		/**
 		*	Autocomplete Class
@@ -22,6 +23,7 @@ define(['ui/container',
 		*	@requires com.spinal.ui.Container
 		*	@requires com.spinal.ui.form.controls.Input
 		*	@requires com.spinal.ui.list.List
+		*	@requires com.spinal.ui.list.ListItem
 		*	@requires com.spinal.ui.basic.Link
 		*	@requires com.spinal.ui.basic.Span
 		*	@requires com.spinal.util.StringUtil
@@ -45,14 +47,6 @@ define(['ui/container',
 			_resultType: Link,
 
 			/**
-			*	Default Autocomplete's maximum results shown at a time
-			*	@private
-			*	@property _maxResults
-			*	@type Number
-			**/
-			_maxResults: 5,
-
-			/**
 			*	Default Autocomplete's minimum term length to fire the matching
 			*	@private
 			*	@property _minChars
@@ -66,7 +60,7 @@ define(['ui/container',
 			*	@property _results
 			*	@type Array
 			**/
-			_results: null,
+			_results: [],
 
 			/**
 			*	Autocomplete's selection (while navigating)
@@ -101,8 +95,7 @@ define(['ui/container',
 			**/
 			initialize: function(opts) {
 				opts || (opts = {});
-				this._results = [];
-				_.extend(this, StringUtil.toPrivate(_.pick(opts, 'resultType', 'maxResults', 'minChars')));
+				_.extend(this, StringUtil.toPrivate(_.pick(opts, 'resultType', 'minChars')));
 				UIAutocomplete.__super__.initialize.apply(this, arguments);
 				return this._input()._list();
 			},
@@ -114,8 +107,7 @@ define(['ui/container',
 			*	@return {com.spinal.ui.misc.Autocomplete}
 			**/
 			_input: function() {
-				this.input = this.add(new Input({ placeholder: 'Search' }));
-				this.input.on([Input.EVENTS.keyup, Input.EVENTS.focus, Input.EVENTS.blur].join(' '), this._onOpen, this);
+				this.input = this.add(new Input({ placeholder: 'Search' }), { silent: true });
 				return this;
 			},
 
@@ -124,12 +116,24 @@ define(['ui/container',
 			*	@private
 			*	@method _list
 			*	@return {com.spinal.ui.misc.Autocomplete}
-			*	@FIXME: style: 'padding: 10px' should be removed and replace it with a different strategy.
 			**/
 			_list: function() {
 				var span = { views: [this.onEmpty(new Span({ cls: 'text-muted', attrs: { style: 'padding: 10px;' } }))] },
 					items = _.compact(this.collection.map(this._item, this)); items.push(span);
-				this.list = this.add(new List({ cls: 'dropdown-menu', attrs: { role: 'menu' }, items: items }));
+				this.list = this.add(new List({ cls: 'dropdown-menu', items: items }), { silent: true });
+				return this;
+			},
+
+			/**
+			*	Attach events to all the items inside the collection
+			*	@public
+			*	@method _itemEvents
+			*	@return {com.spinal.ui.misc.Autocomplete}
+			**/
+			_itemEvents: function() {
+				this.list.views.each(function(v) {
+					v.listenTo(v, ListItem.EVENTS.mousedown, _.bind(this.onSelect, this));
+				}, this);
 				return this;
 			},
 
@@ -142,7 +146,8 @@ define(['ui/container',
 			_item: function(model) {
 				var d = model.toJSON();
 				if(!_.defined(d.id)) return null;
-				return _.extend({ id: d.id }, { views: [this.onItem(this._resolve(d))] });
+				return _.extend({ id: d.id, attrs: { style: 'cursor: pointer;' } },
+					{ views: [this.onItem(this._resolve(d))] });
 			},
 
 			/**
@@ -158,7 +163,7 @@ define(['ui/container',
 			},
 
 			/**
-			*	Find a list item by position (0-index based)
+			*	Find a list item by position (0-index based). If not found, returns null.
 			*	@private
 			*	@method _findItemByPos
 			*	@param ix {Number} index
@@ -173,15 +178,17 @@ define(['ui/container',
 			*	Handlers Keyboard navigation over the list of results
 			*	@private
 			*	@method _navigate
-			*	@param keycode {Number} keycode integer
+			*	@param e {Number} event reference
+			*	@return {com.spinal.ui.misc.Autocomplete}
 			**/
-			_navigate: function(keycode) {
+			_navigate: function(e) {
 				var previous = this.selection; prev = this._findItemByPos(previous);
-				if(keycode === 38 && this.selection >= 1) this.selection--;
-				if(keycode === 40 && this.selection < (this._results.length-1)) this.selection++;
+				if(e.which === 38 && this.selection >= 1) this.selection--;
+				if(e.which === 40 && this.selection < (this._results.length-1)) this.selection++;
 				var current = this._findItemByPos(this.selection);
 				if(prev) prev.removeClass('bg-info');
 				if(current) current.addClass('bg-info');
+				if(e.which === 13) this.onSelect(null, current);
 				return this;
 			},
 
@@ -193,10 +200,21 @@ define(['ui/container',
 			*	@param view {com.spinal.ui.View} view reference
 			**/
 			_onOpen: function(e, view) {
-				if(e.type === 'blur' || (view.value().length < this._minChars)) return this.removeClass('open');
+				if(view.value().length < this._minChars) return this._onClose();
 				this.addClass('open')._search(view.value());
-				return (e.which === 38 || e.which === 40 && this._results.length > 0) ?
-					this._navigate(e.which) : this.list.invoke('removeClass', 'bg-info');
+				return ((e.which === 38 || e.which === 40 || e.which === 13) && this._results.length > 0) ?
+					this._navigate(e) : this.list.invoke('removeClass', 'bg-info');
+			},
+
+			/**
+			*	Autocomplete's close handler
+			*	@private
+			*	@method _onClose
+			*	@param e {Object} event reference
+			*	@param view {com.spinal.ui.View} view reference
+			**/
+			_onClose: function(e, view) {
+				return this.removeClass('open');
 			},
 
 			/**
@@ -207,16 +225,31 @@ define(['ui/container',
 			*	@return {com.spinal.ui.View}
 			**/
 			_search: function(value) {
-				var re = new RegExp(StringUtil.escapeRegex(value), "i"),
-					len = this.collection.size(),
+				var re = new RegExp(StringUtil.escapeRegex(value), "i"), len = this.collection.size(),
 					prevlen = this._results.length;
 				this._results = this.collection.filter(function(m, ix) {
 					var res = this.onSearch(re, m); v = this.list.get(ix)[(res) ? 'show' : 'hide']();
 					this.onHighlight(v, res); return res;
 				}, this);
-				this.list.get(len)[(this.results().length === 0) ? 'show' : 'hide']();
+				this.list.get(len)[(this._results.length === 0) ? 'show' : 'hide']();
 				if(prevlen !== this._results.length) this.selection = -1;
 				return this;
+			},
+
+			/**
+			*	Render View
+			*	@public
+			*	@chainable
+			*	@method render
+			*	@param [opts] {Object} additional options
+			*	@return {com.spinal.ui.misc.Autcomplete}
+			**/
+			render: function() {
+				UIAutocomplete.__super__.render.apply(this, arguments);
+				var evs = [Input.EVENTS.keyup, Input.EVENTS.focus].join(' ');
+				this.input.listenTo(this.input, evs, _.bind(this._onOpen, this))
+					.listenTo(this.input, Input.EVENTS.blur, _.bind(this._onClose, this));
+				return this._itemEvents();
 			},
 
 			/**
@@ -268,6 +301,19 @@ define(['ui/container',
 			**/
 			onEmpty: function(item) {
 				return item.content('<em>No Results</em>');
+			},
+
+			/**
+			*	Default Autocomplete Select Handler
+			*	@public
+			*	@method onSelect
+			*	@param e {Object} event reference
+			*	@param item {com.spinal.ui.list.ListItem} item reference
+			**/
+			onSelect: function(e, item) {
+				if((m = this.collection.findWhere({ id: item.id })))
+					this._onClose(null, this.input.value(m.get('value')));
+				this.trigger(UIAutocomplete.EVENTS.selected, e, m);
 			},
 
 			/**
