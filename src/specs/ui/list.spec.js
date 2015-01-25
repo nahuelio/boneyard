@@ -19,7 +19,7 @@ define(['specs/ui/list/list.spec'], function(ListSpec) {
 
 		clist: {
 			$module: 'ui/misc/panel',
-			$params: { title: 'List' }
+			$params: { id: 'list', title: 'List' }
 		},
 
 		$ready: [{

@@ -23,22 +23,22 @@ define(['specs/ui/misc/panel.spec',
 
 		cpanel: {
 			$module: 'ui/misc/panel',
-			$params: { title: 'Panels' }
+			$params: { id: 'panel', title: 'Panels' }
 		},
 
 		cdropdown: {
 			$module: 'ui/misc/panel',
-			$params: { title: 'Dropdown' }
+			$params: { id: 'dropdown', title: 'Dropdown' }
 		},
 
 		cdialog: {
 			$module: 'ui/misc/panel',
-			$params: { title: 'Dialog' }
+			$params: { id: 'dialog', title: 'Dialog' }
 		},
 
 		cautocomplete: {
 			$module: 'ui/misc/panel',
-			$params: { title: 'Autocomplete' }
+			$params: { id: 'autocomplete', title: 'Autocomplete' }
 		},
 
 		$ready: [{

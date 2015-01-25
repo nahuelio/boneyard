@@ -19,7 +19,7 @@ define(['specs/ui/basic.spec',
 
 		main: {
 			$module: 'ui/container',
-			$params: { el: 'div#composer-main', cls: 'container' }
+			$params: { el: 'div#composer-main', cls: 'container-fluid' }
 		},
 
 		global: {
@@ -29,7 +29,7 @@ define(['specs/ui/basic.spec',
 
 		menu: {
 			$module: 'ui/container',
-			$params: { id: 'menu', cls: 'container col-md-2' }
+			$params: { id: 'menu', cls: 'container col-md-2 visible-md visible-lg' }
 		},
 
 		$ready: [{

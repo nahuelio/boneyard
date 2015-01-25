@@ -24,27 +24,27 @@ define(['specs/ui/form/controls/button.spec',
 
 		cfieldset: {
 			$module: 'ui/misc/panel',
-			$params: { title: 'HTML Fieldset' }
+			$params: { id: 'fieldset', title: 'HTML Fieldset' }
 		},
 
 		cbutton: {
 			$module: 'ui/misc/panel',
-			$params: { title: 'HTML Buttons' }
+			$params: { id: 'buttons', title: 'HTML Buttons' }
 		},
 
 		cinput: {
 			$module: 'ui/misc/panel',
-			$params: { title: 'HTML Inputs' }
+			$params: { id: 'inputs', title: 'HTML Inputs' }
 		},
 
 		ctextarea: {
 			$module: 'ui/misc/panel',
-			$params: { title: 'HTML Textarea' }
+			$params: { id: 'textarea', title: 'HTML Textarea' }
 		},
 
 		cselect: {
 			$module: 'ui/misc/panel',
-			$params: { title: 'HTML Select' }
+			$params: { id: 'select', title: 'HTML Select' }
 		},
 
 		$ready: [{

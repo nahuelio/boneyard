@@ -19,7 +19,7 @@ define(['specs/ui/table/table.spec'], function(TableSpec) {
 
 		ctable: {
 			$module: 'ui/misc/panel',
-			$params: { title: 'Table' }
+			$params: { id: 'table', title: 'Table' }
 		},
 
 		$ready: [{
