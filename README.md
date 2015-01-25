@@ -1,6 +1,5 @@
  [![SpinalJS UI framework](http://3dimention.github.io/spinal/images/logo.png)](http://3dimention.github.io/spinal)
 
-# SpinalJS
 ### Overall Project Status: In Progress
 
 **Note: This toolkit was not published into the public NPM registry and bower repo yet. It's still under development, trying to hit the first release coming soon.**
