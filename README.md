@@ -51,6 +51,14 @@ If you've decided to give **Spinal Composer** a shot, this tool may help you wit
 Also, the server will be listening for code changes (whenever the source code changes, the browser will reload automatically). This should be very useful, especially while building spec configurations file from the Spinal IoC package.
 It can be a tool to consider inside the development process to integrate it with Unit Test frameworks, Test runners, less or sass compilation and so on.
 
+### Spinal Composer screenshots
+
+![](http://3dimention.github.io/spinal/images/composer-ss-1.jpg)
+
+<br/>
+
+![](http://3dimention.github.io/spinal/images/composer-ss-2.jpg)
+
 Please, visit the documentation related to the usage of this tool.
 
 # Developers or Contributors
