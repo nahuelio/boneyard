@@ -13,7 +13,17 @@
 			ul.spinaljs-bar li.bar-c { background-color: #F5634A; }
 			ul.spinaljs-bar li.bar-d { background-color: #ED303C; }
 			ul.spinaljs-bar li.bar-e { background-color: #3B8183; }
+			div.welcome { margin-bottom: 0px; }
 			div.footer { height: 30px; margin-top: 50px; border-top: 1px solid #d1d1d1; }
+			/** Affix Navigation **/
+			nav.ui-affix { float: left; }
+			nav.ui-affix ul > li h4 { margin: 0; padding: 5px 15px; font-weight: bold; }
+			nav.ui-affix ul > li a { padding: 5px 15px; color: black; }
+			nav.ui-affix ul > li a:hover,
+			nav.ui-affix ul > li a:active { background-color: #337ab7; color: white; }
+			nav.affix { top: 20px; }
+			nav.affix-top { margin-top: 30px; }
+			nav.affix-bottom { }
 		</style>
 		<script type='text/javascript' src='http://<%= host %>:9494/socket.io/socket.io.js'></script>
 		<script type='text/javascript'>
@@ -25,11 +35,11 @@
 
 	<body class="spinaljs-main">
 		<ul class="spinaljs-bar"><li class="bar-a"></li><li class="bar-b"></li><li class="bar-c"></li><li class="bar-d"></li><li class="bar-e"></li></ul>
-		<div class="jumbotron text-center">
+		<div class="jumbotron text-center container welcome">
 			<h1>Project <%= name %> | <small>SpinalJS v<%= version %></small></h1>
-			<p>Welcome to SpinalJS Composer Tool! Make use of this page to preview your components, business logic, UI and more...</p>
+			<p>Welcome to SpinalJS Composer Tool!<br />Make use of this page to preview your components, your custom implementation, Model, Controllers, services and more...</p>
 		</div>
-		<div id="global"></div>
+		<div id="composer-main"></div>
 		<div class="footer"><p class="text-center">SpinalJS Composer Tool &copy; 2015. <a class="btn btn-link" href="http://www.3dimention.com/">3dimention</a></p></div>
 		<script type='text/javascript'>require(['<%= requireMain %>'], function() { require(['ioc/context']); });</script>
 	</body>
