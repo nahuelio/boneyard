@@ -129,20 +129,6 @@ define(['core/spinal',
 		},
 
 		/**
-		*	Change Theme set in this view
-		*	@public
-		*	@chainable
-		*	@method theme
-		*	@param themeName {String} theme name
-		*	@return {com.spinal.ui.Container}
-		**/
-		theme: function(themeName) {
-			if(this.views && !this.views.isEmpty()) this.invoke('theme', arguments);
-			Container.__super__.theme.apply(this, arguments);
-			return this;
-		},
-
-		/**
 		*	Render Container
 		*	@public
 		*	@chainable

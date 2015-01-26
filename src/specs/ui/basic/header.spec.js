@@ -10,27 +10,27 @@ define([], function() {
 
 		h_1: {
 			$module: 'ui/basic/header',
-			$params: { content: 'This Header h1', heading: '1' }
+			$params: { content: 'Header h1', heading: '1' }
 		},
 
 		h_2: {
 			$module: 'ui/basic/header',
-			$params: { content: 'This Header h2', heading: '2' }
+			$params: { content: 'Header h2', heading: '2' }
 		},
 
 		h_3: {
 			$module: 'ui/basic/header',
-			$params: { content: 'This Header h3', heading: '3' }
+			$params: { content: 'Header h3', heading: '3' }
 		},
 
 		h_4: {
 			$module: 'ui/basic/header',
-			$params: { content: 'This Header h4', heading: '4' }
+			$params: { content: 'Header h4', heading: '4' }
 		},
 
 		h_5: {
 			$module: 'ui/basic/header',
-			$params: { content: 'This Header h5', heading: '5' }
+			$params: { content: 'Header h5', heading: '5' }
 		},
 
 		$ready: [{

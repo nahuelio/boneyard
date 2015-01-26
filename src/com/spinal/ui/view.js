@@ -62,14 +62,6 @@ define(['core/spinal',
 		_parent: null,
 
 		/**
-		*	Theme Class name
-		*	@private
-		*	@property _theme
-		*	@type String
-		**/
-		_theme: null,
-
-		/**
 		*	Internal Compiled template
 		*	@private
 		*	@property _tpl
@@ -103,7 +95,6 @@ define(['core/spinal',
 			this._valid(options);
 			if(options.el) this.addClass(this.className);
 			if(options.cls) this.addClass(options.cls);
-			if(options.theme) { this._theme = options.theme; this.$el.addClass(this._theme); }
 			if(options.method) this.method = options.method;
 			if(options.template) this._tpl = this._compile(options.template);
 			return (options.attrs) ? this.addAttr(options.attrs) : this;
@@ -137,19 +128,30 @@ define(['core/spinal',
 		},
 
 		/**
-		*	Default before render hook
+		*	Ensure Default Handler
 		*	@private
-		*	@method _beforeRender
+		*	@method _ensure
 		*	@param [opts] {Object} additional options
 		*	@return {com.spinal.ui.View}
 		**/
-		_beforeRender: function(opts) {
+		_ensure: function(opts) {
 			if(!this._parent) throw new UIException('SuccessorNotSpecified');
 			if(!(this._parent instanceof Spinal.com.spinal.ui.Container)) throw new UIException('InvalidSuccessorType');
 			if(this.id && !this._parent.findById(this.id)) throw new UIException('UIStackViolation', {
 				viewId: 'view-error', succesorId: 'container-declared-inline'
 			});
 			return this;
+		},
+
+		/**
+		*	Resolves render method
+		*	@private
+		*	@method _method
+		*	@param [opts] {Object} additional options
+		*	@return String
+		**/
+		_method: function(opts) {
+			return (opts && opts.method && (View.RENDER[opts.method])) ? opts.method : this.method;
 		},
 
 		/**
@@ -181,7 +183,11 @@ define(['core/spinal',
 
 		/**
 		*	Default strategy to setup data for templating
+		*	@TODO: Keep an eye on this one, to see if it's feasible to let the view automatically traverse the
+		*	the parent model when the current view model is not defined. Make it transparent to the end user when
+		*	dealing with large hierarcheries. If it's not, just use the current model if available and follow backbone.
 		*	@public
+		*	@overridable
 		*	@method data
 		*	@param [o] {Object} default data to pass to the template
 		*	@return Object
@@ -194,7 +200,9 @@ define(['core/spinal',
 
 		/**
 		*	Default strategy to project model's data onto the template to generates HTML content
+		*	@FIXME: This method in combination with data() need to be reviewed.
 		*	@public
+		*	@overridable
 		*	@method template
 		*	@param [tpl] {String} HTML template
 		*	@param [data] {Object} template data
@@ -210,15 +218,42 @@ define(['core/spinal',
 		*	Render View
 		*	@public
 		*	@chainable
+		*	@overridable
 		*	@method render
 		*	@param [opts] {Object} additional options
 		*	@return {com.spinal.ui.View}
 		**/
 		render: function(opts) {
 			opts || (opts = {});
-			this._beforeRender(arguments).detach();
-			var m = (opts.method && (View.RENDER[opts.method])) ? opts.method : this.method;
-			this._parent._targetEl(this)[m](this.template(this._tpl));
+			this.beforeRender(opts);
+			this._parent._targetEl(this)[this._method(arguments)](this.template(this._tpl));
+			this.afterRender(opts);
+			return this;
+		},
+
+		/**
+		*	Before Render Default Handler
+		*	This method will execute before the model is projected into the template.
+		*	@public
+		*	@overridable
+		*	@method beforeRender
+		*	@param [opts] {Object} additional options
+		*	@return {com.spinal.ui.View}
+		**/
+		beforeRender: function(opts) {
+			return this._ensure(arguments).detach();
+		},
+
+		/**
+		*	After Render Default Handler
+		*	This method will execute after the model has been projected into the template and added into the $el.
+		*	@public
+		*	@overridable
+		*	@method afterRender
+		*	@param [opts] {Object} additional options
+		*	@return {com.spinal.ui.View}
+		**/
+		afterRender: function(opts) {
 			if(!opts.silent) this.trigger(View.EVENTS.render, { view: this });
 			return this.delegateEvents();
 		},
@@ -252,20 +287,6 @@ define(['core/spinal',
 			if(!finder || !_.isFunction(finder)) return null;
 			if(finder(this)) return this;
 			return this._next.apply(this, arguments);
-		},
-
-		/**
-		*	Change Theme set in this view
-		*	@public
-		*	@method theme
-		*	@param themeName {String} theme name
-		*	@return {com.spinal.ui.View}
-		**/
-		theme: function(themeName) {
-			if(!themeName || !_.isString(themeName)) return this;
-			this.$el.removeClass(this._theme).addClass(themeName);
-			this._theme = themeName;
-			return this;
 		},
 
 		/**
