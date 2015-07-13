@@ -167,13 +167,13 @@ define(['core/spinal',
 	}));
 
 	// Generic HTML Template
-	Spinal.namespace('html.tag', ('<<%= _$.tagName %>' +
-		'<%= (_$.id) ? " id=\\"" + _$.id + "\\"" : "" %>' +
-		'<%= (_$.cls) ? " class=\\"" + _$.cls + "\\"" : "" %>' +
-		'<% if(_$.attrs) { for(var p in _$.attrs) { %>' +
-		'<%= (" " + p + "=\\"" + _$.attrs[p] + "\\"") %><% } } %>>' +
-		'<%= (_$.content) ? _$.content : "" %>' +
-		'</<%= _$.tagName %>>'));
+	Spinal.namespace('html.tag', ('<<%= obj.tagName %>' +
+		'<%= (obj.id) ? " id=\\"" + obj.id + "\\"" : "" %>' +
+		'<%= (obj.cls) ? " class=\\"" + obj.cls + "\\"" : "" %>' +
+		'<% if(obj.attrs) { for(var p in obj.attrs) { %>' +
+		'<%= (" " + p + "=\\"" + obj.attrs[p] + "\\"") %><% } } %>>' +
+		'<%= (obj.content) ? obj.content : "" %>' +
+		'</<%= obj.tagName %>>'));
 
 	return HTMLPlugin;
 

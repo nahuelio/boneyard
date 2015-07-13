@@ -31,28 +31,28 @@ define(['ui/basic/image'], function(Image) {
 			content: {
 				src: 'http://backbonejs.org/docs/images/backbone.png',
 				alt: 'Backbone Logo',
-				attrs: { height: 60, style: 'padding: 3px' }
+				attrs: { width: 150, style: 'padding: 3px' }
 			}
 		}, {
 			cls: 'list-group-item emberjs',
 			content: {
 				src: 'http://www.gravatar.com/avatar/0cf15665a9146ba852bf042b0652780a?s=100',
 				alt: 'EmberJS Logo',
-				attrs: { height: 60, style: 'padding: 3px' }
+				attrs: { width: 100, style: 'padding: 3px' }
 			}
 		}, {
 			cls: 'list-group-item react',
 			content: {
 				src: 'http://facebook.github.io/react/img/logo.svg',
 				alt: 'React Logo',
-				attrs: { height: 60, style: 'padding: 3px;' }
+				attrs: { width: 100, style: 'padding: 3px;' }
 			}
 		}, {
 			cls: 'list-group-item puremvc',
 			content: {
 				src: 'http://puremvc.org/templates/js_element_blue/images/logo.png',
 				alt: 'PureMVC Logo',
-				attrs: { height: 60, style: 'padding: 3px;' }
+				attrs: { width: 150, style: 'padding: 3px;' }
 			}
 		}]),
 

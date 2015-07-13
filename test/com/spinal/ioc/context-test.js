@@ -203,18 +203,21 @@ define(['ioc/context',
 					// Without params
 					output = Spinal.tpl('other.content.rule');
 					expect($(output).prop('tagName').toLowerCase()).to.be.equal('hr');
+					// Javascript Logic though the usage of _$ symbol (simple 'cls' class check with default 'default')
+					output = Spinal.tpl('other.content.other', {});
+					expect($(output).hasClass('default')).to.be.equal(true);
 					done();
 				}, this));
 			});
 
 			it('HTMLPlugin: Should Retrieve a template using the default provided by spinal', function() {
 				// span
-				var output = Spinal.tpl('tag', { _$: { tagName: 'span', id: 'testId', cls: 'testCls' } });
+				var output = Spinal.tpl('tag', { tagName: 'span', id: 'testId', cls: 'testCls' });
 				expect($(output).prop('tagName').toLowerCase()).to.be.equal('span');
 				expect($(output).attr('id')).to.be.equal('testId');
 				expect($(output).attr('class')).to.be.equal('testCls');
 				// link
-				var output = Spinal.tpl('tag', { _$: { tagName: 'a', attrs: { href: 'testHref' } } });
+				var output = Spinal.tpl('tag', { tagName: 'a', attrs: { href: 'testHref' } });
 				expect($(output).prop('tagName').toLowerCase()).to.be.equal('a');
 				expect($(output).attr('href')).to.be.equal('testHref');
 			});

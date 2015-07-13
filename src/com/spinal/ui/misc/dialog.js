@@ -112,7 +112,7 @@ define(['ui/container',
 		_create: function(tagName, opts) {
 			opts || (opts = {});
 			if(arguments.length === 1) { opts = tagName; tagName = 'div'; }
-			return Spinal.tpl('tag', { _$: _.extend({ tagName: tagName }, opts) });
+			return Spinal.tpl('tag', _.extend({ tagName: tagName }, opts));
 		},
 
 		/**
@@ -249,11 +249,11 @@ define(['ui/container',
 		*	@property CLOSE
 		*	@type String
 		**/
-		CLOSE: Spinal.tpl('tag', { _$: {
+		CLOSE: Spinal.tpl('tag', {
 			tagName: 'button', cls: 'close',
-			content: Spinal.tpl('tag', { _$: { tagName: 'span', content: '&times;' } }),
+			content: Spinal.tpl('tag', { tagName: 'span', content: '&times;' }),
 			attrs: { 'data-dismiss': 'modal' }
-		}})
+		})
 
 	}));
 
