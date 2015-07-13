@@ -241,44 +241,6 @@ define(['core/spinal',
 
 		});
 
-		describe('#theme()', function() {
-
-			it('Should check if _theme property is properly initialized', function() {
-				this.testView = { id: 'testTheme', el: '<a href="test">Test Theme</a>', theme: 'spinal' };
-				var view = this.cglobal.add(this.testView, { renderOnAdd: true });
-				expect(view._theme).to.be.equal('spinal');
-				expect(this.cglobal.$el.find('a#testTheme').hasClass('spinal')).to.be.equal(true);
-				this.cglobal.removeAll();
-				delete view;
-			});
-
-			it('Should change theme for the current view (With existing theme set)', function() {
-				this.testView = { id: 'existing-theme', theme: 'spinal' };
-				var view = this.cglobal.add(this.testView, { renderOnAdd: true });
-				expect(view._theme).to.be.equal('spinal');
-				view.theme('classic');
-				expect(view._theme).to.be.equal('classic');
-				var $element = this.cglobal.$el.find('div#existing-theme');
-				expect($element.hasClass('classic')).to.be.equal(true);
-				expect($element.hasClass('spinal')).to.be.equal(false);
-				this.cglobal.removeAll();
-				delete view;
-			});
-
-			it('Should change theme for the current view (With NO theme set)', function() {
-				this.testView = { id: 'no-theme' };
-				var view = this.cglobal.add(this.testView, { renderOnAdd: true });
-				expect(view._theme).to.be(null);
-				view.theme('classic');
-				expect(view._theme).to.be.equal('classic');
-				var $element = this.cglobal.$el.find('div#no-theme');
-				expect($element.hasClass('classic')).to.be.equal(true);
-				this.cglobal.removeAll();
-				delete view;
-			});
-
-		});
-
 		describe('#lookup()', function() {
 
 			it('Should return the parent instance', function() {

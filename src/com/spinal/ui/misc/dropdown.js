@@ -2,7 +2,7 @@
 *	@module com.spinal.ui.misc
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define(['ui/container', 'ui/list/list', 'util/string'], function(Container, List, StringUtil) {
+define(['ui/container', 'ui/list/list', 'ui/basic/link', 'util/string'], function(Container, List, Link, StringUtil) {
 
 	/**
 	*	Dropdown Class
@@ -11,6 +11,9 @@ define(['ui/container', 'ui/list/list', 'util/string'], function(Container, List
 	*	@extends com.spinal.ui.Container
 	*
 	*	@requires com.spinal.ui.Container
+	*	@requires com.spinal.ui.list.List
+	*	@requires com.spinal.ui.basic.Link
+	*	@requires com.spinal.util.StringUtil
 	**/
 	var UIDropdown = Spinal.namespace('com.spinal.ui.misc.Dropdown', Container.inherit({
 
@@ -39,6 +42,14 @@ define(['ui/container', 'ui/list/list', 'util/string'], function(Container, List
 		_text: 'Default',
 
 		/**
+		*	Default Autocomplete's Result Type interface
+		*	@private
+		*	@property _type
+		*	@type Function
+		**/
+		_type: Link,
+
+		/**
 		*	Dropdown caret template
 		*	@private
 		*	@property _caret
@@ -57,8 +68,27 @@ define(['ui/container', 'ui/list/list', 'util/string'], function(Container, List
 			opts || (opts = {});
 			opts.interface = List;
 			opts.template = this._setup();
+			_.extend(this, StringUtil.toPrivate(_.pick(opts, 'text', 'type')));
 			UIDropdown.__super__.initialize.apply(this, arguments);
-			return this.add({ className: 'dropdown-menu', items: opts.items }, { silent: true });
+			return this._list({ silent: true });
+		},
+
+		/**
+		*	Insert List items into the Dropdown
+		*	@private
+		*	@chainable
+		*	@method _list
+		*	@param [opts] {Object} extra options
+		*	@return {com.spinal.ui.misc.Dropdown}
+		**/
+		_list: function(opts) {
+			this.add({
+				className: 'dropdown-menu',
+				type: this._type,
+				transform: this.onItem,
+				collection: this.collection
+			}, opts);
+			return this;
 		},
 
 		/**
@@ -98,8 +128,20 @@ define(['ui/container', 'ui/list/list', 'util/string'], function(Container, List
 		**/
 		text: function(txt) {
 			if(!_.defined(txt)) return this._text;
-			this.$el.children('button.dropdown-toggle').html((this._text = txt) + this._caret);
+			this.$el.children('button.dropdown-toggle').html((this._text = txt) + '&nbsp;&nbsp;' + this._caret);
 			return this;
+		},
+
+		/**
+		*	Default Dropdown Item Render Handler
+		*	@public
+		*	@overridable
+		*	@method onItem
+		*	@param item {Object} item view reference
+		*	@return Object
+		**/
+		onItem: function(item) {
+			return _.extend(item);
 		}
 
 	}, {

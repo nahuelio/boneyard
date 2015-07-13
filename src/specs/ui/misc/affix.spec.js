@@ -8,31 +8,32 @@ define([], function() {
 
 		$id: 'ui-misc-affix',
 
+		components_items: new Backbone.Collection([
+			{ content: { href: '#paragraph', content: 'Paragraph' } },
+			{ content: { href: '#link', content: 'Link' } },
+			{ content: { href: '#header', content: 'Header' } },
+			{ content: { href: '#label', content: 'Label' } },
+			{ content: { href: '#span', content: 'Span' } },
+			{ content: { href: '#image', content: 'Image' } },
+			{ content: { href: '#form', content: 'Form' } },
+			{ content: { href: '#fieldset', content: 'Fieldset' } },
+			{ content: { href: '#button', content: 'Button' } },
+			{ content: { href: '#input', content: 'Input' } },
+			{ content: { href: '#textarea', content: 'Textarea' } },
+			{ content: { href: '#select', content: 'Select' } },
+			{ content: { href: '#list', content: 'List' } },
+			{ content: { href: '#table', content: 'Table' } },
+			{ content: { href: '#panel', content: 'Panel' } },
+			{ content: { href: '#dropdown', content: 'Dropdown' } },
+			{ content: { href: '#dialog', content: 'Dialog' } },
+			{ content: { href: '#autocomplete', content: 'Autocomplete' } }
+		]),
+
 		components: {
 			$module: 'ui/list/list',
 			$params: {
 				cls: 'nav',
-				items: [
-					{ cls: 'bg-primary', template: '<h4>Components</h4>' },
-					{ template: '<a href="#paragraph">Paragraph</a>' },
-					{ template: '<a href="#link">Link</a>' },
-					{ template: '<a href="#header">Header</a>' },
-					{ template: '<a href="#label">Label</a>' },
-					{ template: '<a href="#span">Span</a>' },
-					{ template: '<a href="#image">Images</a>' },
-					{ template: '<a href="#form">Form</a>' },
-					{ template: '<a href="#fieldset">Fieldset</a>' },
-					{ template: '<a href="#buttons">Buttons</a>' },
-					{ template: '<a href="#inputs">Inputs</a>' },
-					{ template: '<a href="#textarea">Textarea</a>' },
-					{ template: '<a href="#select">Select</a>' },
-					{ template: '<a href="#list">List</a>' },
-					{ template: '<a href="#table">Table</a>' },
-					{ template: '<a href="#panel">Panel</a>' },
-					{ template: '<a href="#dropdown">Dropdown</a>' },
-					{ template: '<a href="#dialog">Dialog</a>' },
-					{ template: '<a href="#autocomplete">Autocomplete</a>' },
-				]
+				collection: '$bone!components_items'
 			}
 		},
 
@@ -40,6 +41,7 @@ define([], function() {
 			$module: 'ui/misc/affix',
 			$params: {
 				id: 'navigation',
+				title: 'Components',
 				list: '$bone!components',
 				cls: 'affix-top',
 				attrs: { 'data-spy': 'affix' },

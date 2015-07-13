@@ -29,12 +29,12 @@ define(['specs/ui/form/controls/button.spec',
 
 		cbutton: {
 			$module: 'ui/misc/panel',
-			$params: { id: 'buttons', title: 'HTML Buttons' }
+			$params: { id: 'button', title: 'HTML Buttons' }
 		},
 
 		cinput: {
 			$module: 'ui/misc/panel',
-			$params: { id: 'inputs', title: 'HTML Inputs' }
+			$params: { id: 'input', title: 'HTML Inputs' }
 		},
 
 		ctextarea: {

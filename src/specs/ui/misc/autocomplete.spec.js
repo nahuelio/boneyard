@@ -15,16 +15,15 @@ define(['ui/basic/image'], function(Image) {
 		auto_p_a: { $module: 'ui/basic/paragraph', $params: { content: '<code>Advanced Autocomplete</code>' } },
 
 		simple_source: new Backbone.Collection([
-			{ id: '1', value: 'Backbone' },
-			{ id: '2', value: 'EmberJS' },
-			{ id: '3', value: 'AngularJS' },
-			{ id: '4', value: 'React' },
-			{ id: '5', value: 'PureMVC' }
+			{ id: '1', content: 'Backbone', value: 'BackboneJS' },
+			{ id: '2', content: 'EmberJS', value: 'EmberJS' },
+			{ id: '3', content: 'React', value: 'React' },
+			{ id: '4', content: 'PureMVC', value: 'PureMVC' }
 		]),
 
 		advanced_source: new Backbone.Collection([{
 			id: '1',
-			value: 'Backbone',
+			value: 'BackboneJS',
 			content: {
 				src: 'http://backbonejs.org/docs/images/backbone.png',
 				alt: 'Backbone Logo',
@@ -40,14 +39,6 @@ define(['ui/basic/image'], function(Image) {
 			}
 		}, {
 			id: '3',
-			value: 'AngularJS',
-			content: {
-				src: 'https://angularjs.org/img/AngularJS-large.png',
-				alt: 'AngularJS Logo',
-				attrs: { width: 100, style: 'padding: 6px' }
-			}
-		}, {
-			id: '4',
 			value: 'React',
 			content: {
 				src: 'http://facebook.github.io/react/img/logo.svg',
@@ -55,7 +46,7 @@ define(['ui/basic/image'], function(Image) {
 				attrs: { width: 100, style: 'padding: 6px;' }
 			}
 		}, {
-			id: '5',
+			id: '4',
 			value: 'PureMVC',
 			content: {
 				src: 'http://puremvc.org/templates/js_element_blue/images/logo.png',
@@ -71,7 +62,7 @@ define(['ui/basic/image'], function(Image) {
 
 		autocomplete_advanced: {
 			$module: 'ui/misc/autocomplete',
-			$params: { collection: '$bone!advanced_source', resultType: Image }
+			$params: { collection: '$bone!advanced_source', type: Image }
 		},
 
 		$ready: [{

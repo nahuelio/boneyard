@@ -19,7 +19,7 @@ define(['specs/ui/form/form.controls.spec'], function(FormControlsSpec) {
 
 		cform: {
 			$module: 'ui/misc/panel',
-			$params: { title: 'Form' }
+			$params: { id: 'form', title: 'Form' }
 		},
 
 		/** Define Form Component **/

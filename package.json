@@ -1,6 +1,6 @@
 {
 	"name": "spinaljs",
-	"version": "0.0.1",
+	"version": "0.1.0",
 	"description": "Architectural Toolkit built on top of RequireJS & BackboneJS",
 	"main": "run.js",
 	"homepage": "http://3dimention.github.io/spinal",
