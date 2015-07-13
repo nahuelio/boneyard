@@ -94,7 +94,7 @@ define(['ui/container',
 		onListItem: function(it) {
 			it || (it = {});
 			if(_.defined(this._transform)) { it = this._transform(it); }
-			return new this._type(_.isObject(it.content) ? it.content : { content: it.content });
+			return new this._type(_.isObject(it.content) ? it.content : it);
 		}
 
 	}, {

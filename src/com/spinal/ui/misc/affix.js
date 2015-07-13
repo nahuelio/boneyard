@@ -82,7 +82,7 @@ define(['ui/container',
 		*	@return {com.spinal.ui.misc.Affix}
 		**/
 		title: function() {
-			if(_.defined(this._title)) this.add(new Header({ content: this._title, cls: 'bg-primary', heading: '4' }));
+			if(_.defined(this._title)) this.add(new Header({ content: this._title, heading: '4' }));
 			return this;
 		}
 
