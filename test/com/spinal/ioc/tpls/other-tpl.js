@@ -13,7 +13,7 @@ define(['core/spinal'], function(Spinal) {
 
 		content: {
 
-			other: '<p class="<%= cls %>"></p>',
+			other: '<p class="<%= (obj.cls) ? obj.cls : "default" %>"></p>',
 			rule: '<hr />'
 
 		},

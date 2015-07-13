@@ -13,7 +13,7 @@ define(['core/spinal'], function(Spinal) {
 
 		content: {
 
-			menu: '<div class="<%= cls %>"></div>'
+			menu: '<div class="<%= (obj.cls) ? obj.cls : "default" %>"></div>'
 
 		},
 
