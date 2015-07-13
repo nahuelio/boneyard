@@ -1,6 +1,6 @@
 {
 	"name": "SpinalJS",
-	"host": "10.0.10.6",
+	"host": "localhost",
 	"source": "./src",
 	"target": "./composer-app",
 	"spinalCore": "libs/require.js",
