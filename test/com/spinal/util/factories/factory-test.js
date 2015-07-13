@@ -86,6 +86,20 @@ define(['util/factories/factory',
 		});
 
 		/**
+		*	Factory#isRegistred() test
+		**/
+		describe('#isRegistered()', function() {
+
+			it('Should return true for registered factory', function() {
+				var registered = this.factory.isRegistered('Schema');
+				expect(registered).to.be.equal(true);
+				var notRegistered = this.factory.isRegistered('Non-Existent');
+				expect(notRegistered).to.be.equal(false);
+			});
+
+		});
+
+		/**
 		*	Factory#create() test
 		**/
 		describe('#create()', function() {

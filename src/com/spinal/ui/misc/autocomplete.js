@@ -39,12 +39,12 @@ define(['ui/container',
 			className: 'ui-autocomplete btn-group',
 
 			/**
-			*	Default Autocomplete's Result Type interface
+			*	Default Autocomplete's Type interface
 			*	@private
-			*	@property _resultType
+			*	@property _type
 			*	@type Function
 			**/
-			_resultType: Link,
+			_type: Link,
 
 			/**
 			*	Default Autocomplete's minimum term length to fire the matching
@@ -95,19 +95,21 @@ define(['ui/container',
 			**/
 			initialize: function(opts) {
 				opts || (opts = {});
-				_.extend(this, StringUtil.toPrivate(_.pick(opts, 'resultType', 'minChars')));
+				_.extend(this, StringUtil.toPrivate(_.pick(opts, 'type', 'minChars')));
 				UIAutocomplete.__super__.initialize.apply(this, arguments);
-				return this._input()._list();
+				var options = { silent: true };
+				return this._input(options)._list(options);
 			},
 
 			/**
 			*	Autocomplete's Input Component setup
 			*	@private
 			*	@method _input
+			*	@param [opts] {Object} extra options
 			*	@return {com.spinal.ui.misc.Autocomplete}
 			**/
-			_input: function() {
-				this.input = this.add(new Input({ placeholder: 'Search' }), { silent: true });
+			_input: function(opts) {
+				this.input = this.add(new Input({ placeholder: 'Search' }), opts);
 				return this;
 			},
 
@@ -115,12 +117,29 @@ define(['ui/container',
 			*	Autocomplete's List Component setup
 			*	@private
 			*	@method _list
+			*	@param [opts] {Object} extra options
 			*	@return {com.spinal.ui.misc.Autocomplete}
 			**/
-			_list: function() {
-				var span = { views: [this.onEmpty(new Span({ cls: 'text-muted', attrs: { style: 'padding: 10px;' } }))] },
-					items = _.compact(this.collection.map(this._item, this)); items.push(span);
-				this.list = this.add(new List({ cls: 'dropdown-menu', items: items }), { silent: true });
+			_list: function(opts) {
+				this.list = this._spanNoResults(opts)
+					.add(new List({
+						cls: 'dropdown-menu',
+						type: this._type,
+						transform: this.onItem,
+						collection: this.collection
+				}), opts);
+				return this;
+			},
+
+			/**
+			*	Autocomplete's No Results Span View extra element.
+			*	@private
+			*	@method _spanNoResults
+			*	@return {com.spinal.ui.misc.Autocomplete}
+			**/
+			_spanNoResults: function(opts) {
+				var span = { views: [this.onEmpty(new Span({ cls: 'text-muted', attrs: { style: 'padding: 10px;' } }))] };
+				this.collection.add(span, opts);
 				return this;
 			},
 
@@ -135,31 +154,6 @@ define(['ui/container',
 					v.listenTo(v, ListItem.EVENTS.mousedown, _.bind(this.onSelect, this));
 				}, this);
 				return this;
-			},
-
-			/**
-			*	Setup List Item Render strategy
-			*	@private
-			*	@method _item
-			*	@return Onject
-			**/
-			_item: function(model) {
-				var d = model.toJSON();
-				if(!_.defined(d.id)) return null;
-				return _.extend({ id: d.id, attrs: { style: 'cursor: pointer;' } },
-					{ views: [this.onItem(this._resolve(d))] });
-			},
-
-			/**
-			*	Resolve List Item data structure format
-			*	@private
-			*	@method _resolve
-			*	@param d {Object} list item data structure
-			*	@return Object
-			**/
-			_resolve: function(d) {
-				if(!_.defined(d.value)) return {};
-				return new this._resultType(_.defined(d.content) ? d.content : { content: d.value });
 			},
 
 			/**
@@ -225,7 +219,7 @@ define(['ui/container',
 			*	@return {com.spinal.ui.View}
 			**/
 			_search: function(value) {
-				var re = new RegExp(StringUtil.escapeRegex(value), "i"), len = this.collection.size(),
+				var re = new RegExp(StringUtil.escapeRegex(value), "i"), len = (this.collection.size()-1),
 					prevlen = this._results.length;
 				this._results = this.collection.filter(function(m, ix) {
 					var res = this.onSearch(re, m); v = this.list.get(ix)[(res) ? 'show' : 'hide']();
@@ -297,7 +291,7 @@ define(['ui/container',
 			*	@public
 			*	@overridable
 			*	@method onEmpty
-			*	@param item {com.spinal.ui.basic.Span} No results item reference.
+			*	@param item {Object} No results item reference.
 			**/
 			onEmpty: function(item) {
 				return item.content('<em>No Results</em>');
@@ -321,11 +315,11 @@ define(['ui/container',
 			*	@public
 			*	@overridable
 			*	@method onItem
-			*	@param item {com.spinal.ui.View} item view reference
+			*	@param item {Object} item view reference
 			*	@return Object
 			**/
 			onItem: function(item) {
-				return item;
+				return _.extend({ attrs: { style: 'cursor: pointer;' } }, item);
 			}
 
 		}, {

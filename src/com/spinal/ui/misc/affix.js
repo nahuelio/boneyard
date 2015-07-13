@@ -2,7 +2,10 @@
 *	@module com.spinal.ui.misc
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define(['ui/container', 'ui/list/list', 'util/string'], function(Container, List, StringUtil) {
+define(['ui/container',
+	'ui/basic/header',
+	'ui/list/list',
+	'util/string'], function(Container, Header, List, StringUtil) {
 
 	/**
 	*	Affix Class
@@ -49,6 +52,14 @@ define(['ui/container', 'ui/list/list', 'util/string'], function(Container, List
 		_list: null,
 
 		/**
+		*	Affix Title
+		*	@private
+		*	@property _title
+		*	@type String
+		**/
+		_title: null,
+
+		/**
 		*	Initialize
 		*	@public
 		*	@method initialize
@@ -57,10 +68,21 @@ define(['ui/container', 'ui/list/list', 'util/string'], function(Container, List
 		**/
 		initialize: function(options) {
 			options || (options = {});
-			_.extend(this, StringUtil.toPrivate(_.pick(options, 'list', 'config')));
+			_.extend(this, StringUtil.toPrivate(_.pick(options, 'list', 'config', 'title')));
 			UIAffix.__super__.initialize.apply(this, arguments);
-			this.add(this._list);
+			this.title().add(this._list);
 			this.$el.affix(this._config);
+			return this;
+		},
+
+		/**
+		*	Default Title Handler
+		*	@public
+		*	@method title
+		*	@return {com.spinal.ui.misc.Affix}
+		**/
+		title: function() {
+			if(_.defined(this._title)) this.add(new Header({ content: this._title, cls: 'bg-primary', heading: '4' }));
 			return this;
 		}
 

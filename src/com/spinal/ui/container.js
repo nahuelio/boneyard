@@ -168,10 +168,11 @@ define(['core/spinal',
 			opts || (opts = {});
 			var exists = (view.id) ? this.findById(view.id) : this.findByCID(view.cid);
 			if(!exists) {
-				view = this.views.add(view);
-				view._parent = this;
-				if(opts.renderOnAdd) view.render(opts);
-				if(!opts.silent) this.trigger(Container.EVENTS.add, { added: view, view: this });
+				var newView = this.views.add(view);
+				newView._parent = this;
+				if(opts.renderOnAdd) newView.render(opts);
+				if(!opts.silent) this.trigger(Container.EVENTS.add, { added: newView, view: this });
+				return newView;
 			}
 			return view;
 		},

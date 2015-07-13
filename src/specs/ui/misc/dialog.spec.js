@@ -34,7 +34,7 @@ define([], function() {
 
 		dialog_list_simple: {
 			$module: 'ui/list/list',
-			$params: { cls: 'list-group', items: '$bone!list_items' }
+			$params: { cls: 'list-group', collection: '$bone!list_items_simple' }
 		},
 
 		dialog_simple: {

@@ -8,15 +8,15 @@ define([], function() {
 
 		$id: 'ui-misc-dropdown',
 
-		dropdown_items: [
-			{ className: '', template: '<a href="#">Action 1</a>' },
-			{ className: '', template: '<a href="#">Action 2</a>' },
-			{ className: '', template: '<a href="#">Action 3</a>' }
-		],
+		dropdown_items: new Backbone.Collection([
+			{ template: '<a href="#">Action 1</a>' },
+			{ template: '<a href="#">Action 2</a>' },
+			{ template: '<a href="#">Action 3</a>' }
+		]),
 
 		dropdown: {
 			$module: 'ui/misc/dropdown',
-			$params: { text: 'Dropdown', items: '$bone!dropdown_items' }
+			$params: { text: 'Dropdown', collection: '$bone!dropdown_items' }
 		},
 
 		$ready: [

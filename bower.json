@@ -1,6 +1,6 @@
 {
 	"name": "spinaljs",
-	"version": "0.0.1",
+	"version": "0.1.0",
 	"homepage": "https://github.com/3dimention/spinal",
 	"authors": [
 		"kuakman <3dimentionar@gmail.com>"
@@ -12,7 +12,6 @@
 		"backbone": "1.1.2",
 		"underscore": "1.7.0",
 		"jquery": "2.1.1",
-		"modernizr": "2.8.1",
 		"bootstrap": "3.3.1"
 	},
 	"keywords": [

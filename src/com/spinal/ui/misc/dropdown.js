@@ -58,7 +58,7 @@ define(['ui/container', 'ui/list/list', 'util/string'], function(Container, List
 			opts.interface = List;
 			opts.template = this._setup();
 			UIDropdown.__super__.initialize.apply(this, arguments);
-			return this.add({ className: 'dropdown-menu', items: opts.items }, { silent: true });
+			return this.add({ className: 'dropdown-menu', collection: this.collection }, { silent: true });
 		},
 
 		/**

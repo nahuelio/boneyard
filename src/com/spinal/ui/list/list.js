@@ -39,10 +39,18 @@ define(['ui/container',
 		/**
 		*	Default Autocomplete's Result Type interface
 		*	@private
-		*	@property _resultType
+		*	@property _type
 		*	@type Function
 		**/
 		_type: Link,
+
+		/**
+		*	Default Custom Item Transformation Predicate
+		*	@private
+		*	@property _transform
+		*	@type Function
+		**/
+		_transform: null,
 
 		/**
 		*	Initialize
@@ -54,9 +62,9 @@ define(['ui/container',
 		initialize: function(opts) {
 			opts || (opts = {});
 			opts.interface = ListItem;
-			_.extend(this, StringUtil.toPrivate(_.pick(opts, 'type')));
+			_.extend(this, StringUtil.toPrivate(_.pick(opts, 'type', 'transform')));
 			UIList.__super__.initialize.apply(this, arguments);
-			return this._list(opts.items, { silent: true });
+			return this._list({ silent: true });
 		},
 
 		/**
@@ -64,11 +72,14 @@ define(['ui/container',
 		*	@private
 		*	@chainable
 		*	@method _list
+		*	@param [opts] {Object} extra options
 		*	@return {com.spinal.ui.list.List}
 		**/
-		_list: function(items, opts) {
-			_.each(items, function(item) {
-				this.add(_.omit(this.onListItem(item), 'el'), opts);
+		_list: function(opts) {
+			this.collection.each(function(item) {
+				var it = item.toJSON(), listItem = _.omit(it, 'content', 'views', 'el', 'interface');
+				var views = _.defined(it.views) ? it.views : [this.onListItem(_.pick(it, 'id', 'content'))];
+				this.add(_.extend(listItem, { views: views }, opts));
 			}, this);
 			return this;
 		},
@@ -77,10 +88,14 @@ define(['ui/container',
 		*	Default List Item Render Handler
 		*	@public
 		*	@method onListItem
-		*	@param item {Object} item content
+		*	@param it {Object} item content
 		*	@return Object
 		**/
-		onListItem: function(it) { return it; }
+		onListItem: function(it) {
+			it || (it = {});
+			if(_.defined(this._transform)) { it = this._transform(it); }
+			return new this._type(_.isObject(it.content) ? it.content : { content: it.content });
+		}
 
 	}, {
 

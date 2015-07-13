@@ -12,49 +12,58 @@ define(['ui/basic/image'], function(Image) {
 		list_p_a: { $module: 'ui/basic/paragraph', $params: { content: '<code>Advance Styling</code>' } },
 
 		list_items_simple: new Backbone.Collection([
-			{ content: 'Item 1' },
-			{ content: 'Item 2' },
-			{ content: 'Item 3' }
+			{
+				cls: 'list-group-item',
+				content: 'Item 1'
+			},
+			{
+				cls: 'list-group-item',
+				content: 'Item 2'
+			},
+			{
+				cls: 'list-group-item',
+				content: 'Item 3'
+			}
 		]),
 
 		list_items_advanced: new Backbone.Collection([{
-			cls: 'backbone',
+			cls: 'list-group-item backbone',
 			content: {
 				src: 'http://backbonejs.org/docs/images/backbone.png',
 				alt: 'Backbone Logo',
-				attrs: { width: 100, style: 'padding: 6px' }
+				attrs: { height: 60, style: 'padding: 3px' }
 			}
 		}, {
-			cls: 'emberjs',
+			cls: 'list-group-item emberjs',
 			content: {
 				src: 'http://www.gravatar.com/avatar/0cf15665a9146ba852bf042b0652780a?s=100',
 				alt: 'EmberJS Logo',
-				attrs: { width: 100, style: 'padding: 6px' }
+				attrs: { height: 60, style: 'padding: 3px' }
 			}
 		}, {
-			cls: 'react',
+			cls: 'list-group-item react',
 			content: {
 				src: 'http://facebook.github.io/react/img/logo.svg',
 				alt: 'React Logo',
-				attrs: { width: 100, style: 'padding: 6px;' }
+				attrs: { height: 60, style: 'padding: 3px;' }
 			}
 		}, {
-			cls: 'puremvc',
+			cls: 'list-group-item puremvc',
 			content: {
 				src: 'http://puremvc.org/templates/js_element_blue/images/logo.png',
 				alt: 'PureMVC Logo',
-				attrs: { width: 100, style: 'padding: 6px;' }
+				attrs: { height: 60, style: 'padding: 3px;' }
 			}
 		}]),
 
 		list_simple: {
 			$module: 'ui/list/list',
-			$params: { cls: 'list-group', items: '$bone!list_items_advanced' }
+			$params: { cls: 'list-group', collection: '$bone!list_items_simple' }
 		},
 
 		list_advanced: {
 			$module: 'ui/list/list',
-			$params: { cls: 'list-group', items: '$bone!list_advanced', type: Image }
+			$params: { cls: 'list-group', collection: '$bone!list_items_advanced', type: Image }
 		},
 
 		$ready: [{

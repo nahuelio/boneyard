@@ -66,6 +66,17 @@ define(['core/spinal',
 		},
 
 		/**
+		*	Returns true if the factory is already registered, otherwise returns false.
+		*	@public
+		*	@method isRegistered
+		*	@param id {String} Factory Id
+		*	@return Boolean
+		**/
+		isRegistered: function(id) {
+			return _.defined(this.getFactory(id));
+		},
+
+		/**
 		*	Register a new generic factoryObj as Factory
 		*	@public
 		*	@method Register

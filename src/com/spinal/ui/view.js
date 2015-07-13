@@ -128,13 +128,12 @@ define(['core/spinal',
 		},
 
 		/**
-		*	Ensure Default Handler
+		*	Ensure View hierarchery integrity before render
 		*	@private
 		*	@method _ensure
-		*	@param [opts] {Object} additional options
 		*	@return {com.spinal.ui.View}
 		**/
-		_ensure: function(opts) {
+		_ensure: function() {
 			if(!this._parent) throw new UIException('SuccessorNotSpecified');
 			if(!(this._parent instanceof Spinal.com.spinal.ui.Container)) throw new UIException('InvalidSuccessorType');
 			if(this.id && !this._parent.findById(this.id)) throw new UIException('UIStackViolation', {
@@ -226,7 +225,7 @@ define(['core/spinal',
 		render: function(opts) {
 			opts || (opts = {});
 			this.beforeRender(opts);
-			this._parent._targetEl(this)[this._method(arguments)](this.template(this._tpl));
+			this._parent._targetEl(this)[this._method.apply(this, arguments)](this.template(this._tpl));
 			this.afterRender(opts);
 			return this;
 		},
@@ -241,7 +240,7 @@ define(['core/spinal',
 		*	@return {com.spinal.ui.View}
 		**/
 		beforeRender: function(opts) {
-			return this._ensure(arguments).detach();
+			return this._ensure().detach(arguments);
 		},
 
 		/**
