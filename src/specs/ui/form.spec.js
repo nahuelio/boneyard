@@ -2,12 +2,14 @@
 *	SpinalJS Form Spec
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 */
-define(['specs/ui/form/form.controls.spec'], function(FormControlsSpec) {
+define(['specs/ui/form/form.simple.spec',
+	'specs/ui/form/form.advanced.spec',
+	'specs/ui/form/form.controls.spec'], function(FormSimpleSpec, FormAdvancedSpec, FormControlsSpec) {
 
 	return {
 
 		$id: 'ui-form',
-		$specs: [FormControlsSpec],
+		$specs: [FormSimpleSpec, FormAdvancedSpec, FormControlsSpec],
 
 		form_header: {
 			$module: 'ui/basic/header',
@@ -21,8 +23,6 @@ define(['specs/ui/form/form.controls.spec'], function(FormControlsSpec) {
 			$module: 'ui/misc/panel',
 			$params: { id: 'form', title: 'Form' }
 		},
-
-		/** Define Form Component **/
 
 		$ready: [{
 			'$bone!global.addAll': [[

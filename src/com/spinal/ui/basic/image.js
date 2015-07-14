@@ -84,6 +84,7 @@ define(['ui/view', 'util/string'], function(View, StringUtil) {
 		*	@param model {Backbone.Model}
 		*	@param value {Object} value that has changed
 		*	@param [opts] {Object} additional options
+		*	@return {com.spinal.ui.basic.Image}
 		**/
 		update: function(model, value, opts) {
 			if(_.isString(value)) this.src(value);
