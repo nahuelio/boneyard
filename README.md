@@ -115,3 +115,9 @@ As time passes, we've been realizing that the concept of a web app has started t
 Its best to put abstraction, good practices and design patterns in place right from the beginning when defining your project's specific scope, instead of starting from something that was meant to be too verbose and plus, relying on a third-party organization to define a standard to follow.
 
 I strongly believe that the web development experience could be a more enjoyable place.
+
+# License
+
+Copyright (c) 2015 Patricio Ferreira
+
+Licensed under the MIT License
