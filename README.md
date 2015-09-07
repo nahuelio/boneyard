@@ -116,7 +116,7 @@ Its best to put abstraction, good practices and design patterns in place right f
 
 I strongly believe that the web development experience could be a more enjoyable place.
 
-### License
+# License
 
 Copyright (c) 2015 Patricio Ferreira
 
