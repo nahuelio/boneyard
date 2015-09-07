@@ -148,7 +148,7 @@ define(['ui/container',
 		mapper: function() {
 			if(!this._mapper || !(this._mapper instanceof FactoryMapper)) return this;
 			this.render = _.wrap(this.render, _.bind(function(render) {
-				this._mapper.source(this.create, this._resolveModel()).load(render, { silent: true });
+				this._mapper.source(this.create, this._resolveModel()).load(render);
 			}, this));
 			return this;
 		},

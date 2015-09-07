@@ -9,6 +9,9 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 		describe('#new()', function() {
 
 			it('Should return a com.spinal.util.adt.Iterator Instance (Empty)', function() {
+				this.testSimple = new Iterator();
+				expect(this.testSimple).to.be.ok();
+
 				this.testSimple = new Iterator([]);
 				expect(this.testSimple).to.be.ok();
 			});
@@ -17,6 +20,19 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 				this.testSimple = new Iterator([{ name: 'foo' }, { name: 'bar' }]);
 				expect(this.testSimple).to.be.ok();
 				expect(this.testSimple.collection.length).to.be.equal(2);
+			});
+
+		});
+
+		describe('#set()', function() {
+
+			it('Should throw an error: param to set is not an array', function() {
+				expect(_.bind(function() {
+					this.testSimple.set({ key: 'not allowed' });
+				}, this)).to.throwException(_.bind(function(e) {
+					expect(e).to.be.ok();
+					expect(e.message).to.be(this.testSimple.toString() + ' requires an array in order to be instanciate it.');
+				}, this));
 			});
 
 		});
