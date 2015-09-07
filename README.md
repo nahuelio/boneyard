@@ -71,6 +71,11 @@ If you want to provide feedback, suggest changes or simply check the source code
 * Run ```npm install```
 * Run ```make build```
 
+### Running Composer Tool on Spinal Core Project
+
+* Once spinal has been installed via ```npm install``` (step 3)
+* By running ```make composer``` you will have access to hit ```localhost:9393/index.html```
+
 ### API Documentation
 
 * YUIDoc Available after running ```make build``` on ```/apidocs```
@@ -81,27 +86,20 @@ If you want to provide feedback, suggest changes or simply check the source code
 
 # Development Roadmap
 
-* Spinal UI package development (Components and MV* utilities)
-* Generic Interface for Lists, Tables and Dropdowns components needs a little bit of refactoring to match similar strategy used with the Autocomplete -> 'resultType' in autocomplete.spec.js (to wire generic types into list items, table rows and dropdown elements).
-* Two-way Binding implementation discarded from spinal ui.
-From a basic stand point, it doesn't seem that provides a lot of value to try to automate two way binding between models and views (just only in a couple of cases), but still IMHO is very 'project specific'. Also, this can end up consuming a lot of CPU overhead unnecessarily. I've decided to stick to the Backbone "nature" and leave it up to the implementer.
+* Spinal UI package development: Finalizing ```Form Class``` as the last component implementation requirement to upload this toolkit to the public npm.org repository.
 
-### Stretch Goals
+* Spinal IoC Engine: A new project started a few weeks ago in a different repo at [3dimention/spinal-ioc-annotation](https://github.com/3dimention/spinal-ioc-annotation) and the goal is to automate specs generation via annotations. At his core, it will instrument component source code by scanning annotations located inside block comments and convert them into specs automatically without the necessity for the developer to create those manually. Development and the final manifesto are still in progress.
 
-* IoC Storage (HTML5 LocalStorage API | Persistent Layer that will work as a Plugin) to store specs.
+### Development Stretch Goals
+
 * IoC API support for destroying Specs or Individual bones. This may need to be integrated with the persistent layer functionality.
-* Introduce and research about Virtual DOM implementations to be included into Spinal UI package.
-* Poly package development (Will use Modernizr behind the scenes)
+* There are plans of doing a complete rewrite of this library to use ES6 standard (ES2015) instead. By using babeljs for transpiling code to ES5, will help us to clean up spinal core and his dependencies to reduce complexity.
+Current API will be reviewed, but not major changes are predicted so far on the way the classes or components are used. More information about this topic will be available.
 
 ### Documentation Roadmap
 
 * High Level documentation
-* Usage Examples, simple applications (Classic TODO application, IoC important use cases)
-
-### Design Roadmap
-
-* Official Website [3dimention/spinal](http://3dimention.github.io/spinal) | _In Progress_
-* Logo needs more work :)
+* Examples usage, simple applications (Classic TODO application, IoC important use cases).
 
 # About the author
 
