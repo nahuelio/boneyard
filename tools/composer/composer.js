@@ -176,7 +176,7 @@ var Composer = {
 		this.source = resolve((this.uPath) ? this.uPath : this.bPath, this.source);
 		this.target = resolve((this.uPath) ? this.uPath : this.bPath, this.target);
 		this.defaults.template = resolve(this.bPath, this.defaults.template);
-		return this.createTarget().copyMain();
+		return this.createTarget().copyAssets();
 	},
 
 	/**
@@ -191,12 +191,12 @@ var Composer = {
 	},
 
 	/**
-	*	Copy Main file used relative to the source path to be deployed in the target
+	*	Copy Assets and Main file used relative to the source path to be deployed in the target
 	*	@public
-	*	@method copyMain
+	*	@method copyAssets
 	*	@return Composer
 	**/
-	copyMain: function() {
+	copyAssets: function() {
 		this.main = (this.config && this.config.requireMain) ? this.config.requireMain : this.defaults.requireMain;
 		Utils.copyFile(resolve(this.source, this.main), resolve(this.target, this.main));
 		return this;
@@ -228,7 +228,11 @@ var Composer = {
 	*	@method spinUpAutowatch
 	**/
 	spinUpServer: function() {
-		var server = connect().use(compression({ threshold: 0 })).use(connect.static(this.target)).use(connect.static(this.source));
+		var server = connect()
+			.use(connect.favicon(resolve(__dirname, './favicon.ico'), { maxAge: 1 }))
+			.use(compression({ threshold: 0 }))
+			.use(connect.static(this.target))
+			.use(connect.static(this.source));
 		if(!this.config) server.use(connect.static(resolve(this.bPath, './dist')));
 		server.listen(this.defaults.port);
 		this.spinUpAutoWatch();

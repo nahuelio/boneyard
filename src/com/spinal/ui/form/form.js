@@ -3,8 +3,8 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['ui/container',
-	'util/factories/async-factory',
-	'util/string'], function(Container, AsyncFactory, StringUtil) {
+	'util/factories/factory-mapper',
+	'util/string'], function(Container, FactoryMapper, StringUtil) {
 
 	/**
 	*	Form Class
@@ -13,7 +13,7 @@ define(['ui/container',
 	*	@extends com.spinal.ui.Container
 	*
 	*	@requires com.spinal.ui.Container
-	*	@requires com.spinal.util.factories.AsyncFactory
+	*	@requires com.spinal.util.factories.FactoryMapper
 	*	@requires com.spinal.util.StringUtil
 	**/
 	var UIForm = Spinal.namespace('com.spinal.ui.form.Form', Container.inherit({
@@ -107,14 +107,6 @@ define(['ui/container',
 		_name: null,
 
 		/**
-		*	Form's Async Factory
-		*	@private
-		*	@property _factory
-		*	@type {com.spinal.util.factories.AsyncFactory}
-		**/
-		_factory: null,
-
-		/**
 		*	Form's validator
 		*	@private
 		*	@property _validator
@@ -131,23 +123,49 @@ define(['ui/container',
 		**/
 		initialize: function(opts) {
 			opts || (opts = {});
-			_.extend(this, StringUtil.toPrivate(_.pick(opts, 'action', 'name', 'factory', 'options', 'validator')));
-			if(!this._factory) this._factory = new AsyncFactory();
+			_.extend(this, StringUtil.toPrivate(_.pick(opts, 'action', 'name', 'mapper', 'options', 'validator')));
 			UIForm.__super__.initialize.apply(this, arguments);
+			return this.mapper();
+		},
+
+		/**
+		*	Retrieves data model set up for this form if available
+		*	@private
+		*	@method getModel
+		*	@return Array
+		**/
+		_resolveModel: function() {
+			return this.model ? [this.model.toJSON()] : this.collection ? this.collection.toJSON() : null;
+		},
+
+		/**
+		*	Default Form's factory mapper that pulls dependencies and instanciate controls on demand before render
+		*	@public
+		*	@chainable
+		*	@method create
+		*	@return com.spinal.ui.form.Form
+		**/
+		mapper: function() {
+			if(!this._mapper || !(this._mapper instanceof FactoryMapper)) return this;
+			this.render = _.wrap(this.render, _.bind(function(render) {
+				this._mapper.source(this.create, this._resolveModel()).load(render, { silent: true });
+			}, this));
 			return this;
 		},
 
 		/**
-		*	Default Form's create strategy
+		*	Default create handler that adds controls to this form
 		*	@public
-		*	@chainable
 		*	@method create
-		*	@return {com.spinal.ui.form.Form}
+		*	@param parameters {Object} additional parameters
+		*	@param id {String} factory id of the control
+		*	@param controls {Array} collection of factory ids
+		*	@return com.spinal.ui.form.Form
 		**/
-		create: function() {
-			if(!_.defined(this.collection)) return this;
-			// this.collection.each(function(model))
-			return this;
+		create: function(parameters, id, factory) {
+			this.add(this._mapper.create(id, parameters));
+			// FIXME: How do I know it's the last one to call render only once?? Continue here...
+			return render();
 		},
 
 		/**
@@ -161,21 +179,9 @@ define(['ui/container',
 		},
 
 		/**
-		*	Before Render Handler
-		*	@public
-		*	@chainable
-		*	@method beforeRender
-		*	@param [opts] {Object} additional options
-		*	@return {com.spinal.ui.View}
-		**/
-		beforeRender: function() {
-			UIForm.__super__.beforeRender.apply(this, arguments);
-			return this.create();
-		},
-
-		/**
 		*	Render Form
 		*	@public
+		*	@override
 		*	@chainable
 		*	@method render
 		*	@param [opts] {Object} additional options
@@ -187,19 +193,6 @@ define(['ui/container',
 			this.action(this._action);
 			this.validator(this._validator);
 			return this;
-		},
-
-		/**
-		*	After Render Handler
-		*	This method will execute after the model has been projected into the template and added into the $el.
-		*	@public
-		*	@method afterRender
-		*	@param [opts] {Object} additional options
-		*	@return {com.spinal.ui.View}
-		**/
-		afterRender: function(opts) {
-			if(_.defined(this.collection)) { this.listenTo(this.collection, 'reset', this.render); }
-			return UIForm.__super__.afterRender.apply(this, arguments);
 		},
 
 		/**

@@ -72,13 +72,14 @@ define(['core/spinal', 'util/string'], function(Spinal, StringUtil) {
 		*	Initialize
 		*	@public
 		*	@method initialize
+		*	@param [opts] {Object} options
 		*	@return {com.spinal.util.http.AjaxHttp}
 		**/
 		initialize: function(opts) {
 			opts || (opts = {});
 			if(!this.endpoint) throw new Error(this.toString() + ' requires an endpoint path');
 			if(opts.service) this.service = opts.service;
-			return AjaxHttp.__super__.initialize.apply(this, arguments);;
+			return AjaxHttp.__super__.initialize.apply(this, arguments);
 		},
 
 		/**
