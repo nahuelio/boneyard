@@ -22,6 +22,18 @@ define(['util/factories/async-factory',
 
 		});
 
+		describe('#set()', function() {
+
+			it('Should return false if parameter is not defined or is not an array', function() {
+				var result = this.asyncFactory.set();
+				expect(result).to.be(false);
+
+				result = this.asyncFactory.set({});
+				expect(result).to.be(false);
+			});
+
+		});
+
 		/**
 		*	AsyncFactory#push() test
 		**/
@@ -63,8 +75,8 @@ define(['util/factories/async-factory',
 			it('Should feed the factory stack with a list of resources', function() {
 				// Be aware!! when adding multiple resources with this method 'set':
 				// 'simple' is at the 'head' of the stack (not 'advanced') as it should.
- 				// So in the future change the impl in the Stack.set method
- 				// to follow the order and keep consistency with the ADT structure declaration (LI-FO).
+				// So in the future change the impl in the Stack.set method
+				// to follow the order and keep consistency with the ADT structure declaration (LI-FO).
 				// Also, Verify that Queue.set works as expected (FI-FO).
 				this.asyncFactory.set([
 					{ id: 'simple', path: 'specs/simple.spec' }, // should be at the tail

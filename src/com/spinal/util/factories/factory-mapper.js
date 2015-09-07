@@ -20,7 +20,7 @@ define(['util/factories/async-factory'], function(AsyncFactory) {
 		*	@return {com.spinal.util.factories.FactoryMapper}
 		**/
 		initialize: function(opts) {
-			return Mapper.__super__.initialize.apply(this, arguments);
+			return FactoryMapper.__super__.initialize.apply(this, arguments);
 		},
 
 		/**
@@ -47,7 +47,7 @@ define(['util/factories/async-factory'], function(AsyncFactory) {
 		**/
 		source: function(callback, collection) {
 			for(var key in collection) {
-				var value = collection[o];
+				var value = collection[key];
 				if(!this._validate(key, value, callback)) continue;
 				if(this.byKey(key, value, callback)) continue;
 				this.byType(key, value, callback);
@@ -79,7 +79,8 @@ define(['util/factories/async-factory'], function(AsyncFactory) {
 		**/
 		byType: function(key, value, callback) {
 			var type = typeof(value);
-			return (this[type] && _.isFunction(this[type])) ? this[type].apply(this, arguments) : null;
+			if(_.isObject(value) || _.isArray(value)) type = 'compound';
+			return this[type].apply(this, arguments);
 		},
 
 		/**
@@ -93,9 +94,9 @@ define(['util/factories/async-factory'], function(AsyncFactory) {
 		**/
 		string: function(key, value, callback) {
 			return this.push({
-				id: 'Paragraph',
+				id: 'Input',
 				path: 'ui/form/controls/input',
-				callback: _.partial(callback, { value: value })
+				callback: _.partial(callback, { autoId: true, name: key, value: value })
 			});
 		},
 
@@ -108,11 +109,11 @@ define(['util/factories/async-factory'], function(AsyncFactory) {
 		*	@param callback {Function} function to be called on every dependency instance resolution
 		*	@return Object
 		**/
-		number: function(key, value) {
+		number: function(key, value, callback) {
 			return this.push({
-				id: 'Input',
+				id: 'InputNumber',
 				path: 'ui/form/controls/input',
-				callback: _.partial(callback, { type: 'number', value: value })
+				callback: _.partial(callback, { type: 'number', name: key, autoId: true, value: value })
 			});
 		},
 
@@ -125,39 +126,25 @@ define(['util/factories/async-factory'], function(AsyncFactory) {
 		*	@param callback {Function} function to be called on every dependency instance resolution
 		*	@return Object
 		**/
-		boolean: function(key, value) {
+		boolean: function(key, value, callback) {
 			return this.push({
-				id: 'Input',
+				id: 'Checkbox',
 				path: 'ui/form/controls/checkbox',
-				callback: _.partial(callback, { value: value })
+				callback: _.partial(callback, { autoId: true, name: key, value: value })
 			});
 		},
 
 		/**
-		*	Default Array type handler
+		*	Default Compound type handler (Array or Object)
 		*	@public
-		*	@method array
+		*	@method compound
 		*	@param key {String} model's key reference
 		*	@param value {Object} model's value reference
 		*	@param callback {Function} function to be called on every dependency instance resolution
-		*	@return Object
+		*	@return com.spinal.util.factories.FactoryMapper
 		**/
-		array: function(key, value, callback) {
+		compound: function(key, value, callback) {
 			return this.source(callback, value);
-		},
-
-		/**
-		*	Default Object type handler
-		*	@public
-		*	@method object
-		*	@param key {String} model's key reference
-		*	@param value {Object} model's value reference
-		*	@param callback {Function} function to be called on every dependency instance resolution
-		*	@return Object
-		**/
-		object: function(key, value, callback) {
-			var out = {}; out[key] = value;
-			return this.source(callback, [out]);
 		}
 
 	}, {
