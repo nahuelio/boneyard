@@ -2,7 +2,7 @@
 *	@module com.spinal.ioc.engine.helpers
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define(['util/exception/ioc/engine'], function(EngineException) {
+define(['core/spinal'], function(Spinal) {
 
 	/**
 	*	Class Query
@@ -10,21 +10,17 @@ define(['util/exception/ioc/engine'], function(EngineException) {
 	*	@class com.spinal.ioc.engine.helpers.Query
 	*	@extends com.spinal.core.SpinalClass
 	*
-	*	@requires com.spinal.util.exception.ioc.EngineException
+	*	@requires com.spinal.core.SpinalClass
 	**/
 	var Query = Spinal.namespace('com.spinal.ioc.engine.helpers.Query', Spinal.SpinalClass.inherit({
 
 		/**
 		*	Initialize
 		*	@public
-		*	@throws EngineException
 		*	@method initialize
-		*	@param engine {com.spinal.ioc.engine.Engine} engine reference
 		*	@return com.spinal.ioc.engine.helpers.Query
 		**/
-		initialize: function(engine) {
-			if(!engine.specs) throw new EngineException('SpecCollectionNotDefined');
-			this.engine = engine;
+		initialize: function() {
 			return Query.__super__.initialize.apply(this, arguments);
 		},
 
@@ -36,7 +32,7 @@ define(['util/exception/ioc/engine'], function(EngineException) {
 		*	@return Object
 		**/
 		getSpec: function(id) {
-			return this.engine.specs.find(function(spec) { return (spec.$id === id); });
+			return this.find(function(spec) { return (spec.$id === id); });
 		},
 
 		/**
@@ -47,17 +43,20 @@ define(['util/exception/ioc/engine'], function(EngineException) {
 		*	@return Array
 		**/
 		getSpecsBy: function(finder) {
-			return this.engine.specs.findBy(finder);
+			return this.findBy(finder);
 		},
 
 		/**
 		*	Retrieves all specs
 		*	@public
 		*	@method getAllSpecs
+		*	@param onlyBones {Boolean} skipping annotations
 		*	@return Array
 		**/
-		getAllSpecs: function() {
-			return this.engine.specs.collection;
+		getAllSpecs: function(onlyBones) {
+			return (onlyBones) ?
+				_.flatten(_.map(this.collection, function(spec) { return _.omit(spec, '$id', '$specs', '$plugins') })) :
+				this.collection;
 		},
 
 		/**
@@ -67,7 +66,7 @@ define(['util/exception/ioc/engine'], function(EngineException) {
 		*	@return Array
 		**/
 		getAllBones: function() {
-			var allSpecs = this.getAllSpecs();
+			var allSpecs = this.getAllSpecs(true);
 			return _.reduce(allSpecs, function(prev, curr) { return _.extend(prev, curr); }, allSpecs[0]);
 		},
 
@@ -195,11 +194,10 @@ define(['util/exception/ioc/engine'], function(EngineException) {
 		*	Static constructor
 		*	@static
 		*	@method new
-		*	@param engine {com.spinal.ioc.engine.Engine}
 		*	@return com.spinal.ioc.engine.helpers.Query
 		**/
-		new: function(engine) {
-			return new Query(engine);
+		new: function() {
+			return new Query();
 		}
 
 	}));

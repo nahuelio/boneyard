@@ -2,10 +2,9 @@
 *	@module com.spinal.ioc.engine
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define(['ioc/engine/helpers/spec-collection',
-		'ioc/engine/helpers/query',
-		'util/adt/collection',
-		'util/factories/async-factory'], function(SpecCollection, Query, Collection, AsyncFactory) {
+define(['ioc/engine/helpers/specs',
+		'util/factories/async-factory',
+		'util/adt/iterator'], function(Specs, AsyncFactory, Iterator) {
 
 	/**
 	*	Class Engine
@@ -13,10 +12,9 @@ define(['ioc/engine/helpers/spec-collection',
 	*	@class com.spinal.ioc.engine.Engine
 	*	@extends com.spinal.core.SpinalClass
 	*
-	*	@requires com.spinal.ioc.engine.Spec
-	*	@requires com.spinal.ioc.engine.helpers.Query
-	*	@requires com.spinal.util.adt.Collection
+	*	@requires com.spinal.ioc.engine.helpers.Specs
 	*	@requires com.spinal.util.factories.AsyncFactory
+	*	@requires com.spinal.util.adt.Iterator
 	**/
 	var Engine = Spinal.namespace('com.spinal.ioc.engine.Engine', Spinal.SpinalClass.inherit({
 
@@ -24,9 +22,9 @@ define(['ioc/engine/helpers/spec-collection',
 		*	Spec Collection
 		*	@public
 		*	@property specs
-		*	@type com.spinal.ioc.engine.helpers.SpecCollection
+		*	@type com.spinal.ioc.engine.helpers.Specs
 		**/
-		specs: new SpecCollection(),
+		specs: new Specs(),
 
 		/**
 		*	Asynchronous Processor Factory
@@ -52,7 +50,6 @@ define(['ioc/engine/helpers/spec-collection',
 		*	@return com.spinal.ioc.engine.Engine
 		**/
 		initialize: function() {
-			this.query = Query.new(this);
 			this.wire = _.wrap(this.wire, this.setup);
 			this.unwire = _.wrap(this.unwire, this.setup);
 			return Engine.__super__.initialize.apply(this, arguments);;
@@ -74,6 +71,7 @@ define(['ioc/engine/helpers/spec-collection',
 		*	@chainable
 		*	@method processor
 		*	@param method {Function} wire or unwire method reference
+		*	@param spec {Object} spec reference
 		*	@param [callback] {Function} callback reference
 		*	@return com.spinal.ioc.engine.Engine
 		**/
@@ -157,7 +155,7 @@ define(['ioc/engine/helpers/spec-collection',
 		**/
 		create: function(injector) {
 			var bone = _.pick(injector.bone, 'id', '$module', '$params');
-			return (this.query.getBone(bone.id)._$created = this.factory.create(bone.$module, bone.$params));
+			return (this.specs.getBone(bone.id)._$created = this.factory.create(bone.$module, bone.$params));
 		}
 
 	}, {

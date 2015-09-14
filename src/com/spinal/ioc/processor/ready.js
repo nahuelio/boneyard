@@ -23,7 +23,7 @@ define(['ioc/context',
 		*	@public
 		*	@chainable
 		*	@method initialize
-		*	@return {com.spinal.ioc.processor.ReadyProcessor}
+		*	@return com.spinal.ioc.processor.ReadyProcessor
 		**/
 		initialize: function() {
 			return ReadyProcessor.__super__.initialize.apply(this, arguments);
@@ -86,7 +86,8 @@ define(['ioc/context',
 		*	@return {com.spinal.ioc.processor.ReadyProcessor}
 		**/
 		execute: function() {
-			var actions = (!this._engine.ready()) ? this.process(this._engine.root.$ready) : [];
+			// FIXME: Here Merge All Readies of all bones to pull them as actions
+			var actions = (!this.getEngine().ready()) ? this.process(this._engine.root.$ready) : [];
 			this.complete(ReadyProcessor.NAME, actions);
 			return this;
 		}

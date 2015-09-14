@@ -19,17 +19,28 @@ define(['ioc/engine/engine'], function(Engine) {
 		*	@public
 		*	@chainable
 		*	@method initialize
-		*	@return {com.spinal.ioc.Context}
+		*	@return com.spinal.ioc.Context
 		**/
 		initialize: function() {
-			this.proxify(this.getEngine().query,
-				'wire', 'unwire',
+			this.proxy()
+				.listenTo(this.getEngine(), Engine.EVENTS.ready, this.onStart);
+				.listenTo(this.getEngine(), Engine.EVENTS.wire, this.onWire);
+				.listenTo(this.getEngine(), Engine.EVENTS.unwire, this.onUnwire);
+			return Context.__super__.initialize.apply(this, arguments);
+		},
+
+		/**
+		*	Proxifies Engine and Query methods into this Context
+		*	@public
+		*	@method proxy
+		*	@return com.spinal.ioc.Context
+		**/
+		proxy: function() {
+			this.proxify(this.getEngine(), 'wire', 'unwire');
+			this.proxify(this.getEngine().specs,
 				'getSpec', 'getAllSpecs', 'getAllBones',
 				'getBone', 'getBonesByType', 'getBonesByClass');
-			this.listenTo(this.getEngine(), Engine.EVENTS.ready, this.onStart);
-			this.listenTo(this.getEngine(), Engine.EVENTS.wire, this.onWire);
-			this.listenTo(this.getEngine(), Engine.EVENTS.unwire, this.onUnwire);
-			return Context.__super__.initialize.apply(this, arguments);
+			return this;
 		},
 
 		/**

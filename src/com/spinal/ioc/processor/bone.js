@@ -3,8 +3,7 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['ioc/engine',
-		'ioc/engine/annotation/annotation',
-		'util/exception/ioc/processor'], function(Engine, Annotation, ProcessorException) {
+	'util/exception/ioc/processor'], function(Engine, ProcessorException) {
 
 	/**
 	*	BaseClass Bone Processor
@@ -13,7 +12,6 @@ define(['ioc/engine',
 	*	@extends com.spinal.core.SpinalClass
 	*
 	*	@requires com.spinal.ioc.engine.Engine
-	*	@requires com.spinal.ioc.engine.annotation.Annotation
 	*	@requires com.spinal.util.exception.ProcessorException
 	**/
 	var BoneProcessor = Spinal.namespace('com.spinal.ioc.processor.BoneProcessor', Spinal.SpinalClass.inherit({
@@ -28,8 +26,6 @@ define(['ioc/engine',
 		**/
 		initialize: function(engine) {
 			this.engine = engine;
-			this.proxify(this.getEngine().query, 'isNative');
-			this.proxify(Annotation, 'validate');
 			return BoneProcessor.__super__.initialize.apply(this, arguments);
 		},
 
@@ -64,6 +60,20 @@ define(['ioc/engine',
 		},
 
 		/**
+		*	Check if expr matches the annotation passed as parameter
+		*	If the annotation is omitted, the annotation declared in this processor will be used.
+		*	@public
+		*	@method validate
+		*	@param expr {String} expression to be evaluated
+		*	@return Boolean
+		**/
+		validate: function(expr) {
+			if(!expr || !_.isString(expr)) return false;
+			var ev = (BoneProcessor.PREFIX + expr);
+			return ((ev.indexOf(BoneProcessor.TYPE.bone) !== -1) || (ev.indexOf(BoneProcessor.TYPE.boneRef) !== -1));
+		},
+
+		/**
 		*	Check if a complex dependency make reference to a function of the dependency
 		*	@public
 		*	@method isDependencyRef
@@ -72,7 +82,7 @@ define(['ioc/engine',
 		**/
 		isDependencyRef: function(expr) {
 			if(!expr) return false;
-			return ((Engine.PREFIX + expr).indexOf(this.annotations._r) !== -1);
+			return ((BoneProcessor.PREFIX + expr).indexOf(BoneProcessor.TYPE.boneRef) !== -1);
 		},
 
 		/**
@@ -87,22 +97,6 @@ define(['ioc/engine',
 		},
 
 		/**
-		*	Standard Injection resolution
-		*	@public
-		*	@method resolve
-		*	@param expr {String} expression used for resolve direct references
-		*	@param key {String} property key of parent one used to extract dependency.
-		*	@param parent {Object} parent bone reference
-		*	@return Object
-		**/
-		resolve: function(expr, key, parent) {
-			if(!_.defined(expr) || !parent) return null;
-			if(!this.validate(expr)) return expr; // Not a bone expression, the expression value is simply a constant.
-			if(!this.isModuleDependency(expr)) return (parent[key] = this.getDependency(expr).bone);
-			return false;
-		},
-
-		/**
 		*	Extracts and returns the dependent bone id from the expression passed by parameter
 		*	@public
 		*	@method getDependencyId
@@ -111,7 +105,7 @@ define(['ioc/engine',
 		**/
 		getDependencyId: function(expr) {
 			if(!_.defined(expr) || !_.isString(expr)) return null;
-			var pos = expr.indexOf(this.annotations._d);
+			var pos = expr.indexOf(BoneProcessor.TYPE.delimiter);
 			return (pos > 0) ? expr.substring((pos+1), expr.length) : null;
 		},
 
@@ -143,6 +137,22 @@ define(['ioc/engine',
 		},
 
 		/**
+		*	Standard Injection resolution
+		*	@public
+		*	@method resolve
+		*	@param expr {String} expression used for resolve direct references
+		*	@param key {String} property key of parent one used to extract dependency.
+		*	@param parent {Object} parent bone reference
+		*	@return Object
+		**/
+		resolve: function(expr, key, parent) {
+			if(!_.defined(expr) || !parent) return null;
+			if(!this.validate(expr)) return expr; // Not a bone expression, the expression value is simply a constant.
+			if(!this.isModuleDependency(expr)) return (parent[key] = this.getDependency(expr).bone);
+			return null;
+		},
+
+		/**
 		*	Filters out and call the predicate function over the notations supported by the processor.
 		*	Predicate function must return the reference to the bone processed, otherwise the rest of the evaluations
 		*	will be skipped.
@@ -153,11 +163,10 @@ define(['ioc/engine',
 		*	@return Array
 		**/
 		execute: function(predicate, bone) {
-			if(!predicate || !_.isFunction(predicate)) return false;
-			var bones = [], context = (bone) ? bone : this.root();
+			var bones = [], context = (bone) ? bone : this.getSpecs().getAllBones(), parent = (bone) ? context : null;
 			for(var id in context) {
-				var r = predicate.call(this, context[id], id, (bone) ? context : null);
-				if(r) { bones.push(r) } else { break; }
+				if(r = predicate.call(this, context[id], id, parent)) { bones.push(r); continue; }
+				break;
 			}
 			return _.compact(_.flatten(bones));
 		},
@@ -170,8 +179,7 @@ define(['ioc/engine',
 		*	@return com.spinal.ioc.processor.BoneProcessor
 		**/
 		done: function(type, bones) {
-			this.trigger(BoneProcessor.EVENTS.done, { type: type, bones: bones });
-			return this;
+			return this.trigger(BoneProcessor.EVENTS.done, type, bones);
 		}
 
 	}, {
@@ -183,6 +191,24 @@ define(['ioc/engine',
 		*	@type String
 		**/
 		NAME: 'BoneProcessor',
+
+		/**
+		*	@static
+		*	@property PREFIX
+		*	@type String
+		**/
+		PREFIX: '$',
+
+		/**
+		*	@static
+		*	@property TYPE
+		*	@type Object
+		**/
+		TYPE: {
+			bone: 'bone!',
+			boneRef: 'bone-ref!',
+			delimiter: '!'
+		},
 
 		/**
 		*	BoneProcessor Events
