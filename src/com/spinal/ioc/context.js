@@ -2,13 +2,7 @@
 *	@module com.spinal.ioc
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define(['core/spinal',
-		'util/string',
-		'util/adt/iterator',
-		'util/factories/async-factory',
-		'util/exception/context',
-		'ioc/processor/bone',
-		'ioc/engine'], function(Spinal, StringUtil, Iterator, AsyncFactory, ContextException, BoneProcessor, Engine) {
+define(['ioc/engine/engine'], function(Engine) {
 
 	/**
 	*	IOC Context Class
@@ -16,51 +10,9 @@ define(['core/spinal',
 	*	@class com.spinal.ioc.Context
 	*	@extends com.spinal.core.SpinalClass
 	*
-	*	@requires com.spinal.core.Spinal
-	*	@requires com.spinal.util.StringUtil
-	*	@requires com.spinal.util.adt.Iterator
-	*	@requires com.spinal.util.AsyncFactory
-	*	@requires com.spinal.util.exception.ContextException
-	*	@requires com.spinal.ioc.processor.BoneProcessor
-	*	@requires com.spinal.ioc.Engine
+	*	@requires com.spinal.ioc.engine.Engine
 	**/
 	var Context = Spinal.namespace('com.spinal.ioc.Context', Spinal.SpinalClass.inherit({
-
-		/**
-		*	Identifier
-		*	@public
-		*	@property id
-		*	@type String
-		**/
-		id: StringUtil.uuid(),
-
-		/**
-		*	Engine Class
-		*	@public
-		*	@property query
-		*	@type com.spinal.ioc.Engine
-		**/
-		engine: null,
-
-		/**
-		*	Async Module Factory
-		*	@public
-		*	@property factory
-		*	@type {com.spinal.util.AsyncFactory}
-		**/
-		factory: null,
-
-		/**
-		*	Processors List used by the context
-		*	@public
-		*	@property processors
-		*	@type {com.spinal.util.adt.Iterator}
-		**/
-		processors: new Iterator([
-			{ id: 'PluginProcessor', path: 'ioc/processor/plugin' },
-			{ id: 'CreateProcessor', path: 'ioc/processor/create' },
-			{ id: 'ReadyProcessor', path: 'ioc/processor/ready' }
-		]),
 
 		/**
 		*	Initialize
@@ -70,102 +22,57 @@ define(['core/spinal',
 		*	@return {com.spinal.ioc.Context}
 		**/
 		initialize: function() {
-			this.factory = new AsyncFactory();
-			this.engine = new Engine(this.factory);
-			this.engine.proxify(this, 'getBone', 'getBonesByType', 'getBonesByClass');
-			this.listenTo(this.engine, Engine.EVENTS.proxified, _.bind(this.proxify, this));
-			this.listenTo(this.engine, Engine.EVENTS.plugin, _.bind(this.notify, this, Engine.EVENTS.plugin));
+			this.proxify(this.getEngine().query,
+				'wire', 'unwire',
+				'getSpec', 'getAllSpecs', 'getAllBones',
+				'getBone', 'getBonesByType', 'getBonesByClass');
+			this.listenTo(this.getEngine(), Engine.EVENTS.ready, this.onStart);
+			this.listenTo(this.getEngine(), Engine.EVENTS.wire, this.onWire);
+			this.listenTo(this.getEngine(), Engine.EVENTS.unwire, this.onUnwire);
 			return Context.__super__.initialize.apply(this, arguments);
 		},
 
 		/**
-		*	Load Processors if they were not loaded previously.
-		*	@private
-		*	@method _loadProcessors
-		*	@param [callback] {Function} callback reference
-		*	@return {com.spinal.ioc.Context}
+		*	Retrieves unique instance of engine associated with this context
+		*	@public
+		*	@method getEngine
+		*	@return com.spinal.ioc.engine.Engine
 		**/
-		_loadProcessors: function(callback) {
-			this.processors.rewind();
-			(!this.factory.getFactory('CreateProcesor')) ?
-				this.factory.set(this.processors.collection).load(_.bind(this._onProcessorsLoaded, this, callback)) :
-				this._onProcessorsLoaded(callback);
-			return this;
+		getEngine: function() {
+			return Context.engine;
 		},
 
 		/**
-		*	Processors Load Handler
-		*	@private
-		*	@method _onProcessorsLoaded
-		*	@param [callback] {Function} callback reference
-		**/
-		_onProcessorsLoaded: function(callback) {
-			while(this.processors.hasNext()) {
-				var p = this.processors.next();
-				p.module = this.bonefactory('create', p.id, this.engine);
-				p.module.once(BoneProcessor.EVENTS.processed, _.bind(this._next, this, p.module, callback));
-			}
-			return (this.processors.rewind() && this._next());
-		},
-
-		/**
-		*	Next Processor Execution Complete Handler
-		*	@private
-		*	@method _next
-		*	@param processor {Object} processor reference
-		*	@param [callback] {Function} callback reference
+		*	Default start operation handler
+		*	@public
+		*	@method onStart
+		*	@param engine {com.spinal.ioc.engine.Engine} engine reference
 		*	@return com.spinal.ioc.Context
 		**/
-		_next: function(processor, callback) {
-			if(processor) this.notify(Context.EVENTS.processorCompleted, null, processor);
-			return (this.processors.hasNext()) ?
-				this.processors.next().module.execute() :
-				this.notify(Context.EVENTS.initialized, callback, this);
+		onStart: function(engine) {
+			return this.trigger(Context.EVENTS.start, this);
 		},
 
 		/**
-		*	Bone Factory method wrapper
+		*	Default wire handler
 		*	@public
-		*	@method bonefactory
-		*	@param methodName {String} factory method name
-		*	@return Object
+		*	@method onWire
+		*	@param spec {Object} spec wired reference
+		*	@return com.spinal.ioc.Context
 		**/
-		bonefactory: function(methodName) {
-			if(!methodName) return null;
-			var args = Array.prototype.slice.call(arguments, 1);
-			return (this.factory[methodName]) ? this.factory[methodName].apply(this.factory, args) : null;
+		onWire: function(spec) {
+			return this.trigger(Context.EVENTS.complete, this, Engine.EVENTS.wire, spec);
 		},
 
 		/**
-		*	Context Wiring
+		*	Default unwire handler
 		*	@public
-		*	@chainable
-		*	@method wire
-		*	@throws {com.spinal.util.exception.ContextException}
-		*	@param spec {Object} context specification to be wired
-		*	@param callback {Function} callback function to be called after autowiring.
-		*	@return {com.spinal.ioc.Context}
+		*	@method onUnwire
+		*	@param spec {Object} spec unwired reference
+		*	@return com.spinal.ioc.Context
 		**/
-		wire: function(spec, callback) {
-			if(!spec) { callback(this); return this; }
-			if(!_.isObject(spec)) throw new ContextException('InvalidSpecFormat');
-			this.engine.build(spec);
-			return this._loadProcessors(callback);
-		},
-
-		/**
-		*	Trigger Context notifications
-		*	@public
-		*	@method notify
-		*	@param eventName {String} event name to be trigger
-		*	@param [callback] {Function} optional callback to be called
-		**/
-		notify: function(eventName, callback) {
-			var args = Array.prototype.slice.call(arguments, 2);
-			if(callback && _.isFunction(callback)) callback.apply(callback, args);
-			if(eventName && _.isString(eventName)) {
-				args.unshift(eventName); this.trigger.apply(this, args);
-			}
+		onUnwire: function(spec) {
+			return this.trigger(Context.EVENTS.complete, this, Engine.EVENTS.unwire, spec);
 		}
 
 	}, {
@@ -184,13 +91,14 @@ define(['core/spinal',
 		**/
 		EVENTS: {
 			/**
-			*	@event initialized
+			*	@event start
 			**/
-			initialized: 'com:spinal:ioc:context:initialized',
+			start: 'com:spinal:ioc:context:start',
+
 			/**
-			*	@event processorCompleted
+			*	@event complete
 			**/
-			processorCompleted: 'com:spinal:ioc:context:processor:completed'
+			complete: 'com:spinal:ioc:context:complete'
 		},
 
 		/**
@@ -220,6 +128,9 @@ define(['core/spinal',
 		}
 
 	}));
+
+	// Unique Engine Instance for all context
+	Context.engine = new Engine();
 
 	// Automatic Initializer
 	var mainSpec = $('script[data-spec]').data('spec');

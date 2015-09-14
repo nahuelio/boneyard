@@ -129,6 +129,18 @@ define(['core/spinal',
 				o = o[q[i]];
 			}
 		    return o;
+		},
+
+		/**
+		*	Capitalize first letter given an string
+		*	@public
+		*	@method capitalize
+		*	@param str {String} string to capitalize
+		*	@return String
+		**/
+		capitalize: function(str) {
+			if(!str) return null;
+    		return str.charAt(0).toUpperCase() + str.slice(1);
 		}
 
 	}));

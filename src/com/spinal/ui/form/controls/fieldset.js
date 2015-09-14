@@ -12,7 +12,7 @@ define(['ui/container'], function(Container) {
 	*
 	*	@requires com.spinal.ui.Container
 	**/
-	var UIFieldset = Spinal.namespace('com.spinal.ui.form.controls.Fieldset', Container.inherit({
+	var Fieldset = Spinal.namespace('com.spinal.ui.form.controls.Fieldset', Container.inherit({
 
 		/**
 		*	Internal CSS className
@@ -37,10 +37,10 @@ define(['ui/container'], function(Container) {
 		*	@property NAME
 		*	@type String
 		**/
-		NAME: 'UIFieldset'
+		NAME: 'Fieldset'
 
 	}));
 
-	return UIFieldset;
+	return Fieldset;
 
 });

@@ -33,7 +33,7 @@ define(['specs/main.spec'], function(MainSpec) {
 
 		content: {
 			$module: 'ui/container',
-			$params: { id: 'content', dependencyA: '$bone!viewC' }
+			$params: { id: 'content', views: ['$bone!viewC'] }
 		},
 
 		view1: {
@@ -46,37 +46,38 @@ define(['specs/main.spec'], function(MainSpec) {
 			$params: { id: 'viewD' }
 		},
 
+		viewC: {
+			$module: 'ui/container',
+			$params: { id: 'viewC', cls: '$bone!theme', views: ['$bone!viewD', '$bone!view2'] }
+		},
+
 		view2: {
 			$module: 'ui/view',
 			$params: { id: 'view2' }
 		},
 
-		viewC: {
-			$module: 'ui/container',
-			$params: { id: 'viewC', css: '$bone!theme', dependencyA: '$bone!viewD' }
+		viewE: {
+			$module: 'ui/view',
+			$params: { id: 'viewE' }
 		},
 
 		subcontent: {
 			$module: 'ui/container',
-			$params: {
-				id: 'subcontent',
-				model: '$bone!model',
-				dependency1: '$bone!view1',
-				dependency2: '$bone!view2'
-			}
+			$params: { id: 'subcontent', model: '$bone!model', views: ['$bone!view1'] }
 		},
 
 		integrity: {
 			$module: 'util/schema',
-			// Offer support with this: $params: '$bone!schema'
-			$params: {
-				schema: '$bone!schema',
-				simple: '$bone!simple'
-			}
+			$params: { schema: '$bone!schema', anotherView: '$bone!anotherView' }
+		},
+
+		anotherView: {
+			$module: 'ui/view',
+			$params: { id: 'anotherView' }
 		},
 
 		$ready: [
-			{ '$bone!content.add': ['$bone!view1'] }
+			{ '$bone!content.add': ['$bone!viewE'] }
 		]
 
 	};

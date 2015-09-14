@@ -2,10 +2,9 @@
 *	@module com.spinal.ioc.processor
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define(['core/spinal',
-		'ioc/engine',
-		'util/exception/context',
-		'util/exception/processor'], function(Spinal, Engine, ContextException, ProcessorException) {
+define(['ioc/engine',
+		'ioc/engine/annotation/annotation',
+		'util/exception/ioc/processor'], function(Engine, Annotation, ProcessorException) {
 
 	/**
 	*	BaseClass Bone Processor
@@ -13,31 +12,11 @@ define(['core/spinal',
 	*	@class com.spinal.ioc.processor.BoneProcessor
 	*	@extends com.spinal.core.SpinalClass
 	*
-	*	@requires com.spinal.ioc.Context
-	*	@requires com.spinal.util.exception.ContextException
+	*	@requires com.spinal.ioc.engine.Engine
+	*	@requires com.spinal.ioc.engine.annotation.Annotation
 	*	@requires com.spinal.util.exception.ProcessorException
 	**/
 	var BoneProcessor = Spinal.namespace('com.spinal.ioc.processor.BoneProcessor', Spinal.SpinalClass.inherit({
-
-		/**
-		*	Engine
-		*	@private
-		*	@property _engine
-		*	@type {com.spinal.ioc.Engine}
-		**/
-		_engine: null,
-
-		/**
-		*	Supported annotations
-		*	@public
-		*	@property annotations,
-		*	@type Object
-		**/
-		annotations: {
-			_b: 'bone!',
-			_r: 'bone-ref!',
-			_d: '!'
-		},
 
 		/**
 		*	Initialize
@@ -48,49 +27,40 @@ define(['core/spinal',
 		*	@return {com.spinal.ioc.processor.BoneProcessor}
 		**/
 		initialize: function(engine) {
-			if(!engine) throw new ContextException('EngineNotDeclared');
-			this._engine = engine;
+			this.engine = engine;
+			this.proxify(this.getEngine().query, 'isNative');
+			this.proxify(Annotation, 'validate');
 			return BoneProcessor.__super__.initialize.apply(this, arguments);
 		},
 
 		/**
-		*	Default Spec root filtering method useful to dicard bones from the main spec
-		*	suitable for matching specific processor behaviors.
-		*	@private
-		*	@method _root
-		*	@return Object
+		*	Retrieves unique instance of engine associated with this processor
+		*	@public
+		*	@method getEngine
+		*	@return com.spinal.ioc.engine.Engine
 		**/
-		_root: function() {
-			return this._engine.root;
+		getEngine: function() {
+			return this.engine;
 		},
 
 		/**
-		*	Check if expr matches the annotation passed as parameter
-		*	If the annotation is omitted, the annotation declared in this processor will be used.
+		*	Retrieves Engine's async factory
 		*	@public
-		*	@method validate
-		*	@param expr {String} expression to be evaluated
-		*	@return Boolean
+		*	@method getFactory
+		*	@return com.spinal.util.factories.AsyncFactory
 		**/
-		validate: function(expr) {
-			if(!expr || !_.isString(expr)) return false;
-			var ev = (Engine.PREFIX + expr);
-			return ((ev.indexOf(this.annotations._b) !== -1) || (ev.indexOf(this.annotations._r) !== -1));
+		getFactory: function() {
+			return this.getEngine().getFactory();
 		},
 
 		/**
-		*	Check if the bone is an instance of a Backbone class
+		*	Retrieves Engine's spec collection
 		*	@public
-		*	@method isBackboneClass
-		*	@param bone {Object} bone reference
-		*	@return Boolean
+		*	@method getSpecs
+		*	@return com.spinal.ioc.engine.helpers.SpecCollection
 		**/
-		isBackboneClass: function(bone) {
-			if(_.isUndefined(bone)) return false;
-			return (bone instanceof Backbone.Model ||
-				bone instanceof Backbone.Collection ||
-				bone instanceof Backbone.View ||
-				bone instanceof Backbone.Router);
+		getSpecs: function() {
+			return this.getEngine().specs;
 		},
 
 		/**
@@ -113,8 +83,23 @@ define(['core/spinal',
 		*	@return Boolean
 		**/
 		isModuleDependency: function(expr) {
-			if(!_.defined(expr) || !_.isString(expr)) return null;
-			return (this._engine.isModule(this.getDependency(expr).bone));
+			return _.isString(expr) ? this._engine.isModule(this.getDependency(expr).bone) : false;
+		},
+
+		/**
+		*	Standard Injection resolution
+		*	@public
+		*	@method resolve
+		*	@param expr {String} expression used for resolve direct references
+		*	@param key {String} property key of parent one used to extract dependency.
+		*	@param parent {Object} parent bone reference
+		*	@return Object
+		**/
+		resolve: function(expr, key, parent) {
+			if(!_.defined(expr) || !parent) return null;
+			if(!this.validate(expr)) return expr; // Not a bone expression, the expression value is simply a constant.
+			if(!this.isModuleDependency(expr)) return (parent[key] = this.getDependency(expr).bone);
+			return false;
 		},
 
 		/**
@@ -122,12 +107,11 @@ define(['core/spinal',
 		*	@public
 		*	@method getDependencyId
 		*	@param expr {String} dependency expression to be evaluated
-		*	@param [delimiter] {String} optional delimiter that identifies a bone reference
 		*	@return String
 		**/
-		getDependencyId: function(expr, delimiter) {
+		getDependencyId: function(expr) {
 			if(!_.defined(expr) || !_.isString(expr)) return null;
-			var pos = expr.indexOf((delimiter && delimiter !== '') ? delimiter : this.annotations._d);
+			var pos = expr.indexOf(this.annotations._d);
 			return (pos > 0) ? expr.substring((pos+1), expr.length) : null;
 		},
 
@@ -136,11 +120,10 @@ define(['core/spinal',
 		*	@public
 		*	@method getDependency
 		*	@param expr {String} expression to be evaluated
-		*	@param [delimiter] {String} optional delimiter that identifies a bone reference
 		*	@return Object
 		**/
-		getDependency: function(expr, delimiter) {
-			var dep = this.getComplexDependency(expr, delimiter);
+		getDependency: function(expr) {
+			var dep = this.getComplexDependency(expr);
 			return (dep) ? { bone: this._engine.getBone(dep.id), method: dep.method } : null;
 		},
 
@@ -151,11 +134,10 @@ define(['core/spinal',
 		*	@public
 		*	@method getComplexDependency
 		*	@param expr {String} expression to be evaluated
-		*	@param [delimiter] {String} optional delimiter that identifies a bone reference
 		*	@return Array
 		**/
-		getComplexDependency: function(expr, delimiter) {
-			var depId = this.getDependencyId.apply(this, arguments), complex = null;
+		getComplexDependency: function(expr) {
+			var depId = this.getDependencyId(expr), complex = null;
 			if(!depId) return null;
 			return ((complex = depId.split('.')).length > 1) ? { id: complex[0], method: complex[1] } : { id: depId };
 		},
@@ -172,12 +154,24 @@ define(['core/spinal',
 		**/
 		execute: function(predicate, bone) {
 			if(!predicate || !_.isFunction(predicate)) return false;
-			var bones = [], context = (bone) ? bone : this._root();
+			var bones = [], context = (bone) ? bone : this.root();
 			for(var id in context) {
 				var r = predicate.call(this, context[id], id, (bone) ? context : null);
 				if(r) { bones.push(r) } else { break; }
 			}
 			return _.compact(_.flatten(bones));
+		},
+
+		/**
+		*	Default processor done handler
+		*	@public
+		*	@method done
+		*	@param bones {Array} collection of bones processed by the current processor
+		*	@return com.spinal.ioc.processor.BoneProcessor
+		**/
+		done: function(type, bones) {
+			this.trigger(BoneProcessor.EVENTS.done, { type: type, bones: bones });
+			return this;
 		}
 
 	}, {
@@ -198,9 +192,9 @@ define(['core/spinal',
 		**/
 		EVENTS: {
 			/**
-			*	@event processed
+			*	@event done
 			**/
-			processed: 'com:spinal:ioc:processor:processed'
+			done: 'com:spinal:ioc:processor:done'
 		}
 
 	}));

@@ -9,7 +9,7 @@ define(['ui/basic/image'], function(Image) {
 		$id: 'ui-misc-dropdown',
 
 		dropdown_p_s: { $module: 'ui/basic/paragraph', $params: { content: '<code>Simple Styling</code>' } },
-		dropdown_p_a: { $module: 'ui/basic/paragraph', $params: { content: '<code>Advance Styling</code>' } },
+		dropdown_p_a: { $module: 'ui/basic/paragraph', $params: { content: '<code>Advanced Styling</code>' } },
 
 		dropdown_items_simple: new Backbone.Collection([
 			{ href: '#action1', content: 'Action 1' },

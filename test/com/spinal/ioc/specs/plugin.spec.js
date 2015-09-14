@@ -8,6 +8,12 @@ define([], function() {
 
 		$id: 'plugin',
 
+		templates_my: { path: 'tpls/my-tpl', lazyLoading: true },
+		templates_other: { path: 'tpls/other-tpl' },
+
+		theme_my: { url: 'skins/my.css', _default: true },
+		theme_other: { url: 'skins/other.css' },
+
 		container: {
 			$module: 'ui/container',
 			$params: { el: 'div.global' }
@@ -23,14 +29,11 @@ define([], function() {
 		],
 
 		$plugins: {
-			html: {
-				my: { path: 'tpls/my-tpl', lazyLoading: true },
-				other: { path: 'tpls/other-tpl' }
-			},
+			html: { my: '$bone!templates_my', other: '$bone!templates_other' },
 			theme: {
 				config: { basePath: '/base/test/themes/', bootstrap: true },
-				my: { url: '/base/test/com/spinal/ioc/skins/my.css', _default: true },
-				yours: { url: '/base/test/com/spinal/ioc/skins/yours.css' }
+				my: '$bone!theme_my',
+				other: '$bone!theme_other'
 			}
 		}
 

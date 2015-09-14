@@ -143,6 +143,8 @@ define(['core/spinal',
 				delete view2;
 			});
 
+			// FIXME: Missing Method Types Support (append and prepend work, but prependTo, appendTo and HTML won't)!
+
 			it('Should render a View instance with template', function() {
 				this.testView = { template: '<input class="test" />' };
 				var view = this.cglobal.add(this.testView);

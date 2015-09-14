@@ -42,12 +42,12 @@ define(['util/factories/async-factory'], function(AsyncFactory) {
 		*	@chainable
 		*	@method source
 		*	@param callback {Function} function to be called on every dependency instance resolution
-		*	@param collection {Array} collection of data reference
+		*	@param model {Object} data model reference
 		*	@return com.spinal.util.factories.FactoryMapper
 		**/
-		source: function(callback, collection) {
-			for(var key in collection) {
-				var value = collection[key];
+		source: function(callback, model) {
+			for(var key in model) {
+				var value = model[key];
 				if(!this._validate(key, value, callback)) continue;
 				if(this.byKey(key, value, callback)) continue;
 				this.byType(key, value, callback);
@@ -79,8 +79,36 @@ define(['util/factories/async-factory'], function(AsyncFactory) {
 		**/
 		byType: function(key, value, callback) {
 			var type = typeof(value);
-			if(_.isObject(value) || _.isArray(value)) type = 'compound';
+			if(_.isObject(value)) type = 'object';
+			if(_.isArray(value)) type = 'array';
 			return this[type].apply(this, arguments);
+		},
+
+		/**
+		*	Inserts a resource into the factory stack
+		*	@public
+		*	@override
+		*	@chainable
+		*	@method push
+		*	@param resource {Object} resource
+		*	@return {com.spinal.util.factories.AsyncFactory}
+		**/
+		push: function(resource, callback) {
+			resource.callback = _.partial(callback, _.clone(resource.params));
+			delete resource.params;
+			return FactoryMapper.__super__.push.call(this, resource);
+		},
+
+		/**
+		*	Default Components
+		*	@public
+		*	@chainable
+		*	@method defaults
+		*	@param [callback] {Function} optional callback for defaults
+		*	@return com.spinal.ui.form.mapper.FactoryMapper
+		**/
+		defaults: function(callback) {
+			return this;
 		},
 
 		/**
@@ -93,11 +121,7 @@ define(['util/factories/async-factory'], function(AsyncFactory) {
 		*	@return Object
 		**/
 		string: function(key, value, callback) {
-			return this.push({
-				id: 'Input',
-				path: 'ui/form/controls/input',
-				callback: _.partial(callback, { autoId: true, name: key, value: value })
-			});
+			return this;
 		},
 
 		/**
@@ -110,11 +134,7 @@ define(['util/factories/async-factory'], function(AsyncFactory) {
 		*	@return Object
 		**/
 		number: function(key, value, callback) {
-			return this.push({
-				id: 'InputNumber',
-				path: 'ui/form/controls/input',
-				callback: _.partial(callback, { type: 'number', name: key, autoId: true, value: value })
-			});
+			return this;
 		},
 
 		/**
@@ -127,23 +147,32 @@ define(['util/factories/async-factory'], function(AsyncFactory) {
 		*	@return Object
 		**/
 		boolean: function(key, value, callback) {
-			return this.push({
-				id: 'Checkbox',
-				path: 'ui/form/controls/checkbox',
-				callback: _.partial(callback, { autoId: true, name: key, value: value })
-			});
+			return this;
 		},
 
 		/**
-		*	Default Compound type handler (Array or Object)
+		*	Default Object type handler
 		*	@public
-		*	@method compound
+		*	@method object
 		*	@param key {String} model's key reference
 		*	@param value {Object} model's value reference
 		*	@param callback {Function} function to be called on every dependency instance resolution
 		*	@return com.spinal.util.factories.FactoryMapper
 		**/
-		compound: function(key, value, callback) {
+		object: function(key, value, callback) {
+			return this.source(callback, value);
+		},
+
+		/**
+		*	Default Array type handler
+		*	@public
+		*	@method array
+		*	@param key {String} model's key reference
+		*	@param value {Object} model's value reference
+		*	@param callback {Function} function to be called on every dependency instance resolution
+		*	@return com.spinal.util.factories.FactoryMapper
+		**/
+		array: function(key, value, callback) {
 			return this.source(callback, value);
 		}
 

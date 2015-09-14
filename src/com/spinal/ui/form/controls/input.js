@@ -249,8 +249,9 @@ define(['ui/view', 'util/string'], function(View, StringUtil) {
 			checkbox: 'checkbox',
 			password: 'password',
 			hidden: 'hidden',
-			number: 'number',
-			date: 'date'
+			number: 'number', // Not Supported yet
+			email: 'email', // Not Supported yet
+			date: 'date' // Not Supported yet
 		}
 
 	}));

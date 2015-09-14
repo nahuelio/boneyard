@@ -1,23 +1,23 @@
 /**
-*	@module com.spinal.util.exception
+*	@module com.spinal.util.exception.ioc
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['core/spinal',
 		'util/exception/exception'], function(Spinal, Exception) {
 
 	/**
-	*	IoC Processor Exception Type
-	*	@namespace com.spinal.util.exception
-	*	@class com.spinal.util.exception.ProcessorException
+	*	Class ProcessorException
+	*	@namespace com.spinal.util.exception.ioc
+	*	@class com.spinal.util.exception.ioc.ProcessorException
 	*	@extends com.spinal.util.exception.Exception
 	**/
-	var ProcessorException = Spinal.namespace('com.spinal.util.exception.ProcessorException', Exception.inherit({
+	var ProcessorException = Spinal.namespace('com.spinal.util.exception.ioc.ProcessorException', Exception.inherit({
 
 		/**
 		*	Initialize
 		*	@public
 		*	@method initialize
-		*	@return {com.spinal.util.exception.ProcessorException}
+		*	@return com.spinal.util.exception.ioc.ProcessorException
 		**/
 		initialize: function() {
 			return ProcessorException.__super__.initialize.apply(this, arguments);

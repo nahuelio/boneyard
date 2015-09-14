@@ -4,7 +4,8 @@
 **/
 define(['ioc/context',
 		'ioc/processor/bone',
-		'util/exception/processor'], function(Context, BoneProcessor, ProcessorException) {
+		'ioc/helpers/injector',
+		'util/exception/processor'], function(Context, BoneProcessor, Injector, ProcessorException) {
 
 	/**
 	*	Defines a processor that acts as a wrapper to trigger plugins functionality
@@ -40,28 +41,30 @@ define(['ioc/context',
 		*	Adds a new plugin module into the async factory stack
 		*	@private
 		*	@chainable
-		*	@method _enqueue
-		*	@param id {String} module id
-		*	@param success {Function} callback function to be executed once the module is loaded
+		*	@method enqueue
+		*	@param plugin {Object} plugin metadata information
 		*	@return Object
 		**/
-		_enqueue: function(id, success) {
-			this._engine.factory.push({ id: id, path: (this.defaultPath + id), callback: success });
-			return this;
+		enqueue: function(plugin) {
+			console.log(plugin);
+			var injector = new Injector(this, plugin), callback = _.bind(this.create, this, injector);
+			this.factory().push({ path: plugin.path, id: plugin.id, callback: callback });
+			return plugin;
 		},
 
 		/**
 		*	Function as partial that creates an instance of the module plugin by passing the parameters to
 		*	the constructor function (including params)
-		*	@private
-		*	@method _create
+		*	@public
+		*	@method create
 		*	@throws {com.spinal.util.error.types.ProcessorException}
 		*	@param params {Object} plugin params
 		*	@param pluginName {String} plugin name to pass to the factory to create an instance
 		*	@return Object
 		**/
-		_create: function(params, pluginName) {
-			return this._engine.factory.create(pluginName, ((params) ? params : {}), this._engine).execute();
+		create: function(injector, path) {
+			if(!injector || !path) throw new ProcessorException('CreateModuleException');
+			return this._engine.create(injector.inject());
 		},
 
 		/**
@@ -72,10 +75,9 @@ define(['ioc/context',
 		*	@return Array
 		**/
 		process: function(plugins) {
-			return _.map(plugins, function(params, id) {
-				this._enqueue(id, _.bind(_.partial(this._create, params), this));
-				return id;
-			}, this);
+			return _.flatten(_.map(plugins, function(params, id) {
+				return this.enqueue(_.extend({ id : id }, params));
+			}, this));
 		},
 
 		/**
@@ -86,9 +88,9 @@ define(['ioc/context',
 		**/
 		execute: function() {
 			var plugins = (this._engine.plugin()) ? this.process(this._engine.root[this._engine.__plugins]) : [];
-			this._engine.factory.load(_.bind(function() {
+			this.factory().load(_.bind(function() {
 				delete this._engine.root[this._engine.__plugins];
-				this.trigger(PluginProcessor.EVENTS.processed, {  type: PluginProcessor.NAME, plugins: plugins });
+				this.complete(PluginProcessor.NAME, plugins);
 			}, this));
 			return this;
 		}

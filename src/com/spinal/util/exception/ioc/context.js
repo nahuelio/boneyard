@@ -1,23 +1,23 @@
 /**
-*	@module com.spinal.util.exception
+*	@module com.spinal.util.exception.ioc
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['core/spinal',
 		'util/exception/exception'], function(Spinal, Exception) {
 
 	/**
-	*	IoC Context Exception Type
-	*	@namespace com.spinal.util.exception
-	*	@class com.spinal.util.exception.ContextException
+	*	Class ContextException
+	*	@namespace com.spinal.util.exception.ioc
+	*	@class com.spinal.util.exception.ioc.ContextException
 	*	@extends com.spinal.util.exception.Exception
 	**/
-	var ContextException = Spinal.namespace('com.spinal.util.exception.ContextException', Exception.inherit({
+	var ContextException = Spinal.namespace('com.spinal.util.exception.ioc.ContextException', Exception.inherit({
 
 		/**
 		*	Initialize
 		*	@public
 		*	@method initialize
-		*	@return {com.spinal.util.exception.ContextException}
+		*	@return com.spinal.util.exception.ioc.ContextException
 		**/
 		initialize: function() {
 			return ContextException.__super__.initialize.apply(this, arguments);
@@ -37,8 +37,6 @@ define(['core/spinal',
 		*
 		*		Generic (inherited from com.spinal.util.exception.Exception)
 		*		UndefinedContext
-		*		InvalidSpecFormat
-		*		SpecIdRequired
 		*		FactoryNotDeclared
 		*		EngineNotDeclared
 		*	@static
@@ -47,8 +45,6 @@ define(['core/spinal',
 		**/
 		TYPES: {
 			UndefinedContext: _.template('Context Not Defined'),
-			InvalidSpecFormat: _.template('Invalid Spec Format'),
-			SpecIdRequired: _.template('Spec ID was not defined'),
 			FactoryNotDeclared: _.template('Factory is required to be able to instanciate <%= clazz %>'),
 			EngineNotDeclared: _.template('Engine not declared')
 		}

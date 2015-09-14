@@ -15,7 +15,7 @@ define(['specs/header.spec',
 
 		global: {
 			$module: 'ui/container',
-			$params: { el: 'div.global', css: '$bone!theme' }
+			$params: { el: 'div.global', cls: '$bone!theme' }
 		},
 
 		viewA: {

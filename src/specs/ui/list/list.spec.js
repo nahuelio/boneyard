@@ -9,7 +9,7 @@ define(['ui/basic/image'], function(Image) {
 		$id: 'ui-list-list',
 
 		list_p_s: { $module: 'ui/basic/paragraph', $params: { content: '<code>Simple Styling</code>' } },
-		list_p_a: { $module: 'ui/basic/paragraph', $params: { content: '<code>Advance Styling</code>' } },
+		list_p_a: { $module: 'ui/basic/paragraph', $params: { content: '<code>Advanced Styling</code>' } },
 
 		list_items_simple: new Backbone.Collection([
 			{

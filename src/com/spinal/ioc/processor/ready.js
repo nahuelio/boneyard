@@ -87,7 +87,7 @@ define(['ioc/context',
 		**/
 		execute: function() {
 			var actions = (!this._engine.ready()) ? this.process(this._engine.root.$ready) : [];
-			this.trigger(ReadyProcessor.EVENTS.processed, { type: ReadyProcessor.NAME, actions: actions });
+			this.complete(ReadyProcessor.NAME, actions);
 			return this;
 		}
 

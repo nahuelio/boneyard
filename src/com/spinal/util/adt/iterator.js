@@ -13,14 +13,6 @@ define(['core/spinal'], function(Spinal) {
 	var Iterator = Spinal.namespace('com.spinal.util.adt.Iterator', Spinal.SpinalClass.inherit({
 
 		/**
-		*	Internal Array
-		*	@public
-		*	@property collection
-		*	@type Array
-		**/
-		collection: null,
-
-		/**
 		*	Cursor that points to an index inside the collection.
 		*	@public
 		*	@property _cur

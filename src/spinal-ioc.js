@@ -3,7 +3,11 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['ioc/context',
-		'ioc/engine',
+		'ioc/engine/engine',
+		'ioc/engine/helpers/injector',
+		'ioc/engine/helpers/query',
+		'ioc/engine/helpers/spec-collection',
+		'ioc/engine/annotation/annotation',
 		'ioc/processor/bone',
 		'ioc/processor/plugin',
 		'ioc/processor/create',

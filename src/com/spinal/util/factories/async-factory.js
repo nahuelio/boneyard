@@ -3,200 +3,179 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['core/spinal',
+		'util/factories/factory',
 		'util/adt/stack',
-		'util/factories/factory'], function(Spinal, Stack, Factory) {
+		'util/string'], function(Spinal, Factory, Stack, StringUtil) {
 
 	/**
 	*	AsyncFactory Class
-	*	This class uses a Stack ADT internally to enqueue resources and trigger the loading phase asynchronously.
 	*	After all the resources are loaded, it register them in the factory.
 	*	<h5>Usages:</h5>
 	*
 	*		var myAsyncFactory = new AsyncFactory();
 	*			myAsyncFactory.set([{
-	*				id: 'resourceA', path: 'path/to/resourceA',
-	*				id: 'resourceB', path: 'path/to/resourceB'
+	*				path: 'path/to/resourceA',
+	*				path: 'path/to/resourceB', callback: function() { }
 	*			}]);
 	*			myAsyncFactory.on(AsyncFactory.EVENTS.loaded, myLoadedCallback);
 	*			// On each resource loaded and successfuly registered, the callback will be called.
-	*			myAsyncFactory.load(_.bind(function(id, resource) {
-	*				// make use of resource or the id of the resource ('resourceA' or 'resourceB');
+	*			myAsyncFactory.load(_.bind(function(path, resource) {
+	*				// make use of resource or the path of the resource ('resourceA' or 'resourceB');
 	*			}, this));
-	*
-	*	Needless to say that the main purpose of having a Stack class supporting the asynchronous factory implementation
-	*	is essentially, to provide a common interface to manage the resources list by easily 'convention' rather than
-	*	supporting the intrinsect mechanisms to load the resources "one by one", since the resource queue is being managed
-	*	internally by requirejs itself.
-	*	With that being said, this class is suceptible to be changed to "inject" different async strategies as
-	*	"Adapter" classes instead. (The developer should NOT notice any difference on the High-level API).
 	*
 	*	@namespace com.spinal.util.factories
 	*	@class com.spinal.util.factories.AsyncFactory
 	*	@extends com.spinal.util.factories.Factory
 	*
 	*	@requires com.spinal.core.Spinal
-	*	@requires com.spinal.util.adt.Stack
 	*	@requires com.spinal.util.factories.Factory
+	*	@requires com.spinal.util.adt.Collection
+	*	@requires com.spinal.util.StringUtil
 	**/
 	var AsyncFactory = Spinal.namespace('com.spinal.util.factories.AsyncFactory', Factory.inherit({
 
 		/**
-		*	Stack of factory constructors to load
+		*	Factory Stack
 		*	@public
-		*	@property stack
-		*	@type {com.spinal.util.adt.Stack}
+		*	@property resources
+		*	@type com.spinal.adt.Stack
 		**/
-		stack: null,
+		resources: null,
 
 		/**
 		*	Initialize
 		*	@public
 		*	@method initialize
 		*	@param [opts] {Object} options
-		*	@return {com.spinal.util.factories.AsyncFactory}
+		*	@return com.spinal.util.factories.AsyncFactory
 		**/
 		initialize: function(opts) {
 			opts || (opts = {});
-			this.stack = new Stack([], opts);
+			this.resources = new Stack([], opts);
 			return AsyncFactory.__super__.initialize.apply(this, arguments);
 		},
 
 		/**
-		*	Resets the factory stack
+		*	Reset factory stack
 		*	@public
-		*	@chainable
 		*	@method reset
 		*	@param [opts] {Object} options
-		*	@return {com.spinal.util.factories.AsyncFactory}
+		*	@return com.spinal.util.factories.AsyncFactory
 		**/
 		reset: function(opts) {
-			this.stack.reset(opts);
+			opts || (opts = {});
+			this.resources.reset(opts);
 			return this;
 		},
 
 		/**
 		*	Set a new collection of elements to be inserted in the factory stack
-		*	@FIXME: Must validate same rules as 'push' but atomically.
+		*	Resource collection gets reset with new data if this method is called.
 		*	@public
 		*	@chainable
 		*	@method set
 		*	@param arr {Array} new collection to be replaced
-		*	@return {com.spinal.util.factories.AsyncFactory}
+		*	@return com.spinal.util.factories.AsyncFactory
 		**/
 		set: function(arr) {
 			if(!arr || !_.isArray(arr)) return false;
-			this.stack.reset({ silent: true });
-			this.stack.set(arr);
+			this.resources.set(arr);
 			return this;
 		},
 
 		/**
-		*	Find a resource inside the factory stack by id
+		*	Find a resource inside the factory stack by path
 		*	@public
-		*	@method findById
-		*	@param id {String} resource id
+		*	@method findByPath
+		*	@param path {String} resource path
 		*	@return Object
 		**/
-		findById: function(id) {
-			return this.stack.find(_.bind(function(r) { return (r.id && id && r.id === id); }, this));
+		findByPath: function(path) {
+			return this.stack.find(_.bind(function(r) { return (path && r.path === path); }, this));
 		},
 
 		/**
-		*	Find a resource position (0-based) in the factory stack by passing the resource reference
+		*	Find a resource inside the resource collection by predicate
 		*	@public
-		*	@method findPos
-		*	@param resource {Function} resource reference
-		*	@return Number
+		*	@method findPosBy
+		*	@param predicate {Function} predicate function used for evaluation
+		*	@return Object
 		**/
-		findPos: function(resource) {
-			return this.stack.search(resource);
+		findPosBy: function(predicate) {
+			return this.resources.findPosBy(predicate);
 		},
 
 		/**
-		*	Find a resource position in the factory stack by resource id
-		*	@public
-		*	@method findPosById
-		*	@param id {String} resource id
-		*	@return Number
-		**/
-		findPosById: function(id) {
-			if(!id) return -1;
-			return this.stack.findPosBy(function(resource) { return (resource.id === id); });
-		},
-
-		/**
-		*	Inserts a resource into the factory stack
+		*	Inserts a resource into the factory resource collection if the resource doesn't exists
 		*	@public
 		*	@chainable
 		*	@method push
 		*	@param resource {Object} resource
-		*	@return {com.spinal.util.factories.AsyncFactory}
+		*	@return com.spinal.util.factories.AsyncFactory
 		**/
 		push: function(resource) {
-			if(!resource || !resource.id || !resource.path) return this;
-			this.stack.push(resource);
+			if(!resource || !resource.path) return this;
+			this.resources.push(resource);
 			return this;
 		},
 
 		/**
-		*	Removes a resource from the factory stack
+		*	Removes using (0-based) position of an existing resource from the factory stack
 		*	@public
 		*	@chainable
 		*	@method remove
-		*	@param resource {Object} resource reference
-		*	@return {com.spinal.util.factories.AsyncFactory}
+		*	@param ix {Object} (0-based) index position of the resource
+		*	@param [opts] {Object} additional options
+		*	@return Object
 		**/
-		remove: function(resource, opts) {
-			opts || (opts = {});
-			if(!resource) return this;
-			this.stack.remove(this.stack.search(resource), opts);
-			return this;
+		remove: function(ix, opts) {
+			return this.resources.remove(ix, opts);
 		},
 
 		/**
-		*	Checks if the resource already exists in the factory stack by id passed as parameter
+		*	Checks if the resource already exists in the factory resource collection by path passed as parameter
 		*	@public
 		*	@method exists
-		*	@param id {String} resource id
+		*	@param path {String} resource path
 		*	@return Boolean
 		**/
-		exists: function(id) {
-			return !_.isUndefined(this.findById(id));
+		exists: function(path) {
+			return _.defined(this.findByPath(path));
 		},
 
 		/**
-		*	Swaps positions of 2 resources inside the factory stack.
+		*	Swaps positions of 2 resources inside the factory resource collection.
 		*	@public
 		*	@method swap
 		*	@param comparator {Function} predicate that evaluates when the swap should take place
-		*	@return {com.spinal.util.factories.AsyncFactory}
+		*	@return com.spinal.util.factories.AsyncFactory
 		**/
 		swap: function(comparator) {
-			this.stack.swap(comparator);
+			this.resources.swap(comparator);
 			return this;
 		},
 
 		/**
-		*	Load all resources in the factory stack if the stack is not empty
+		*	Load all resources in the factory resource collection if it's not empty
 		*	@public
 		*	@chainable
 		*	@method load
 		*	@param callback {Function} callback to execute on every resource loaded
 		*	@param [opts] {Object} options
-		*	@return {com.spinal.util.factories.AsyncFactory}
+		*	@return com.spinal.util.factories.AsyncFactory
 		**/
 		load: function(callback, opts) {
 			opts || (opts = {});
-			if(this.stack.size() <= 0) {
+			if(this.resources.size() <= 0) {
 				if(callback && _.isFunction(callback)) callback([]);
 				return this;
 			}
-			if(!opts.silent) this.trigger(AsyncFactory.EVENTS.prepared, this.stack.collection);
+			if(!opts.silent) this.trigger(AsyncFactory.EVENTS.prepared, this.resources.collection);
 			return this._execute(callback, opts);
 		},
 
 		/**
-		*	Handle Resources loaded by the current factory stack
+		*	Handle Resources loaded by the current factory resource collection
 		*	@private
 		*	@method _handle
 		*	@param resources {Array} resource reference
@@ -205,27 +184,27 @@ define(['core/spinal',
 		**/
 		_handle: function(resources, opts) {
 			return _.map(resources, function(resource) {
-				var res = this.stack.pop();
-				var registered = AsyncFactory.__super__.register.call(this, res.id, resource);
-				if(!opts.silent && res.callback && _.isFunction(res.callback)) res.callback(res.id, resource);
+				var res = this.resources.pop();
+				var registered = AsyncFactory.__super__.register.call(this, res.path, resource, res.options);
+				if(!opts.silent && res.callback && _.isFunction(res.callback)) res.callback(res.path, resource);
 				return registered;
 			}, this);
 		},
 
 		/**
-		*	Triggers loading phase of the current resources in the factory stack
+		*	Triggers loading phase of the current resources in the factory resource collection
 		*	@private
 		*	@method _execute
 		*	@param callback {Function} callback to be executed after all resources are loaded
 		*	@param [opts] {Object} options
-		*	@return {com.spinal.util.factories.AsyncFactory}
+		*	@return com.spinal.util.factories.AsyncFactory
 		**/
 		_execute: function(callback, opts) {
-			var paths = this.stack.map(function(resource) { return resource.path; });
+			var paths = _.pluck(this.resources.collection, 'path');
 			require(paths, _.bind(function() {
-				var resources = this._handle(Array.prototype.slice.call(arguments), opts);
-				if(callback && _.isFunction(callback)) callback(resources);
-				if(!opts.silent) this.trigger(AsyncFactory.EVENTS.loaded, resources);
+				var rs = this._handle(Array.prototype.slice.apply(arguments), opts);
+				if(callback && _.isFunction(callback)) callback(rs);
+				if(!opts.silent) this.trigger(AsyncFactory.EVENTS.loaded, rs);
 			}, this), _.bind(function(err) { this.trigger(AsyncFactory.EVENTS.failed, err); }, this));
 			return this;
 		}

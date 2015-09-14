@@ -5,7 +5,9 @@
 define(['ioc/context',
 	'ioc/engine',
 	'ioc/processor/bone',
-	'util/exception/processor'], function(Context, Engine, BoneProcessor, ProcessorException) {
+	'ioc/helpers/injector',
+	'util/exception/processor',
+	'util/string'], function(Context, Engine, BoneProcessor, Injector, ProcessorException, StringUtil) {
 
 	/**
 	*	Create Processor
@@ -15,6 +17,7 @@ define(['ioc/context',
 	*
 	*	@requires com.spinal.ioc.Context
 	*	@requires com.spinal.ioc.processor.BoneProcessor
+	*	@requires com.spinal.ioc.helpers.Injector
 	*	@requires com.spinal.util.exception.ProcessorException
 	**/
 	var CreateProcessor = Spinal.namespace('com.spinal.ioc.processor.CreateProcessor', BoneProcessor.inherit({
@@ -33,104 +36,39 @@ define(['ioc/context',
 		/**
 		*	Filters out bones without any type of prefixes suitable for this processor
 		*	@private
-		*	@method _root
+		*	@method root
 		*	@return Object
 		**/
-		_root: function() {
+		root: function() {
 			return _.omit(this._engine.root, function(v, k) { return (k.indexOf(Engine.PREFIX) === 0); });
 		},
 
 		/**
-		*	Add the module into the async factory stack
-		*	@private
-		*	@method _enqueue
-		*	@param id {String} module id
-		*	@param success {Function} callback function to be executed once the module is loaded
-		*	@param dependencies {Array} dependencies for the current module being enqueued
+		*	Add the module into the async factory resource collection
+		*	@public
+		*	@method enqueue
+		*	@param bone {Object} bone data structure
 		*	@return Object
 		**/
-		_enqueue: function(id, success, dependencies) {
-			if(!(module = this._engine.getBone(id))) throw new ProcessorException('BoneNotFound');
-			this._engine.factory.push({ id: id, path: module.$module, callback: success });
-			return this._sorting(id, module, dependencies);
+		enqueue: function(bone) {
+			var injector = new Injector(this, bone), callback = _.bind(this.create, this, injector);
+			this.factory().push({ path: bone.$module, id: bone.id, callback: callback }).swap(injector.sort());
+			return bone;
 		},
 
 		/**
-		*	Resolves module's ordering based on module's dependencies inside the current factory stack
-		*	@private
-		*	@method _sorting
-		*	@param id {String} module id
-		*	@param module {Object} module reference
-		*	@param dependencies {Array} dependencies for the current module id
-		*	@return Object
-		**/
-		_sorting: function(id, module, dependencies) {
-			if(dependencies.length === 0) return module;
-			var dpos = _.map(dependencies, function(d) { return this._engine.factory.findPosById(d.id); }, this);
-			this._engine.factory.swap(_.bind(function(maxp, minp, m, ix) {
-				return (id === m.id && ix <= maxp) ? maxp : ix;
-			}, this, _.max(dpos), _.min(dpos)));
-			return module;
-		},
-
-		/**
-		*	Function as partial that creates an instance of the module by passing the parameters to
-		*	the constructor function (including dependencies if they exists)
-		*	@private
-		*	@method _create
+		*	Default bone load handler that creates an instance of the module by passing the parameters to
+		*	the constructor function (including dependencies if they exists).
+		*	@public
+		*	@method create
 		*	@throws {com.spinal.util.error.types.ProcessorException}
-		*	@param dependecies {Array} array of dependencies (module ids)
-		*	@param bone {Object} bone reference
-		*	@param moduleName {String} module name to pass to factory to create an instance
+		*	@param injector {com.spinal.ioc.helpers.Injector} injector reference
+		*	@param path {String} bone's resource path to pass to factory to create an instance
 		*	@return Object
 		**/
-		_create: function(dependencies, bone, moduleName) {
-			if(!bone || !moduleName) throw new ProcessorException('CreateModuleException');
-			if(dependencies && dependencies.length > 0) this._inject(bone.$params, dependencies);
-			return (bone._$created = this._engine.factory.create(moduleName, bone.$params));
-		},
-
-		/**
-		*	Inject dependency via constructor params into the current module
-		*	@private
-		*	@method _inject
-		*	@param obj {Object} object in which the dependency will be injected
-		*	@param deps {Array} list of dependencies (modules ids)
-		**/
-		_inject: function(obj, deps) {
-			_.each(deps, function(dep) { obj[dep.property] = this._engine.getBone(dep.id); }, this);
-		},
-
-		/**
-		*	Parses bone's dependencies declarations on the constructor $params and builds a "table mapper" from it.
-		*	This "table mapper" is a temporal object that maps dependencies to the keys declared in the
-		*	dependant bone so later on, they know which dependencies should be injected into the property names.
-		*	@private
-		*	@method _dependencies
-		*	@param params {Object} object to be evaluated
-		*	@return Object
-		**/
-		_dependencies: function(params) {
-			return _.compact(_.map(params, function(value, key, obj) {
-				if(_.isArray(value)) return _.flatten(this._dependencies(value));
-				if(!(this._resolve(value, obj, key))) return { id: this.getDependencyId(value), property: key };
-			}, this));
-		},
-
-		/**
-		*	Resolves a Bone reference expression ("$bone!" or "$bone-ref!")
-		*	@private
-		*	@method _resolve
-		*	@param expr {String} expression to be evaluated
-		*	@param parent {Object} parent bone reference
-		*	@param key {Object} property key of the parent bone in which the dependency extracted from expr will be
-		*	injected
-		*	@return Boolean
-		**/
-		_resolve: function(expr, parent, key) {
-			if(_.isUndefined(expr) || _.isNull(expr) || !parent) return null;
-			if(!this.validate(expr)) return key;
-			if(!this.isModuleDependency(expr)) return (parent[key] = this.getDependency(expr).bone);
+		create: function(injector, path) {
+			if(!injector || !path) throw new ProcessorException('CreateModuleException');
+			return this._engine.create(injector.inject());
 		},
 
 		/**
@@ -144,12 +82,11 @@ define(['ioc/context',
 		**/
 		process: function(bone, id, parent) {
 			if(this._engine.isModule(bone)) {
-				var deps = this._dependencies(bone.$params);
-				return this._enqueue(id, _.bind(_.partial(this._create, deps, bone), this), deps);
+				return this.enqueue(_.extend({ id: id }, bone));
 			} else if((_.isObject(bone) || _.isArray(bone)) && !this.isBackboneClass(bone)) {
 				return CreateProcessor.__super__.execute.call(this, this.process, bone, id);
 			}
-			return (!_.isNull(parent)) ? this._resolve(bone, parent, id) : bone;
+			return _.defined(parent) ? this.resolve(bone, id, parent) : bone;
 		},
 
 		/**
@@ -159,10 +96,8 @@ define(['ioc/context',
 		*	@return {com.spinal.ioc.processor.CreateProcessor}
 		**/
 		execute: function() {
-			var bs = CreateProcessor.__super__.execute.call(this, this.process);
-			this._engine.factory.load(_.bind(function() {
-				this.trigger(CreateProcessor.EVENTS.processed, { type: CreateProcessor.NAME, bones: bs });
-			}, this));
+			var bones = CreateProcessor.__super__.execute.call(this, this.process);
+			this.factory().load(_.bind(this.complete, this, CreateProcessor.NAME, bones));
 			return this;
 		}
 
