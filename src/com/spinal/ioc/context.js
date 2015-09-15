@@ -36,10 +36,8 @@ define(['ioc/engine/engine'], function(Engine) {
 		*	@return com.spinal.ioc.Context
 		**/
 		proxy: function() {
-			this.proxify(this.getEngine(), 'wire', 'unwire');
-			this.proxify(this.getEngine().specs,
-				'getSpec', 'getAllSpecs', 'getAllBones',
-				'getBone', 'getBonesByType', 'getBonesByClass');
+			this.proxify(this.getEngine(), 'wire', 'unwire', 'getSpec', 'getAllSpecs');
+			//this.proxify('getBone', 'getBonesByType', 'getBonesByClass');
 			return this;
 		},
 

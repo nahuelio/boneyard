@@ -2,9 +2,11 @@
 *	@module com.spinal.ioc.engine
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define(['ioc/engine/helpers/specs',
+define(['ioc/engine/annotation/spec',
+		'ioc/engine/annotation/plugins',
+		'util/adt/collection',
 		'util/factories/async-factory',
-		'util/adt/iterator'], function(Specs, AsyncFactory, Iterator) {
+		'util/adt/iterator'], function(Spec, Plugins, Collection, AsyncFactory, Iterator) {
 
 	/**
 	*	Class Engine
@@ -12,19 +14,29 @@ define(['ioc/engine/helpers/specs',
 	*	@class com.spinal.ioc.engine.Engine
 	*	@extends com.spinal.core.SpinalClass
 	*
-	*	@requires com.spinal.ioc.engine.helpers.Specs
+	*	@requires com.spinal.ioc.engine.annotation.Spec
+	*	@requires com.spinal.ioc.engine.annotation.Plugins
+	*	@requires com.spinal.util.adt.Collection
 	*	@requires com.spinal.util.factories.AsyncFactory
 	*	@requires com.spinal.util.adt.Iterator
 	**/
 	var Engine = Spinal.namespace('com.spinal.ioc.engine.Engine', Spinal.SpinalClass.inherit({
 
 		/**
-		*	Spec Collection
+		*	Specs collection
 		*	@public
 		*	@property specs
-		*	@type com.spinal.ioc.engine.helpers.Specs
+		*	@type com.spinal.util.adt.Collection
 		**/
-		specs: new Specs(),
+		specs: new Collection([], { interface: Spec }),
+
+		/**
+		*	Plugins
+		*	@public
+		*	@property plugins
+		*	@type com.spinal.ioc.engine.annotation.Plugins
+		**/
+		plugins: new Plugins(),
 
 		/**
 		*	Asynchronous Processor Factory
@@ -50,7 +62,7 @@ define(['ioc/engine/helpers/specs',
 		*	@return com.spinal.ioc.engine.Engine
 		**/
 		initialize: function() {
-			this.wire = _.wrap(this.wire, this.setup);
+			this.wire = _.wrap(this.extractPlugins, this.wire, this.setup);
 			this.unwire = _.wrap(this.unwire, this.setup);
 			return Engine.__super__.initialize.apply(this, arguments);;
 		},
@@ -84,6 +96,7 @@ define(['ioc/engine/helpers/specs',
 		/**
 		*	Default Setup Engine Handler
 		*	@public
+		*	@chainable
 		*	@method ready
 		*	@param method {Function} wire or unwire method reference
 		*	@param spec {Object} spec reference
@@ -93,7 +106,7 @@ define(['ioc/engine/helpers/specs',
 		ready: function(method, spec, callback) {
 			this.processors.set(Engine.PROCESSORS);
 			this.trigger(Engine.EVENTS.ready, this);
-			(spec) ? method(spec, callback) : callback(this);
+			(spec) ? method(method, spec, callback) : callback(this);
 			return this;
 		},
 
@@ -103,7 +116,7 @@ define(['ioc/engine/helpers/specs',
 		*	@chainable
 		*	@method execute
 		*	@param [callback] {Function} callback reference
-		*	@return com.spinal.ioc.processor.BoneProcessor
+		*	@return com.spinal.ioc.engine.Engine
 		**/
 		execute: function(callback) {
 			if(!this.processors.hasNext()) {
@@ -122,13 +135,13 @@ define(['ioc/engine/helpers/specs',
 		*	@public
 		*	@chainable
 		*	@method wire
-		*	@param spec {Object} spec
+		*	@param method {Function} wire or unwire method reference
+		*	@param spec {Object} spec reference
 		*	@param [callback] {Function} callback reference
-		*	@return com.spinal.ioc.Engine
+		*	@return com.spinal.ioc.engine.Engine
 		**/
-		wire: function(spec, callback) {
-			this.specs.add(spec);
-			return this.execute(callback).trigger(Engine.EVENTS.wire, spec);
+		wire: function(method, spec, callback) {
+			return method(this.specs.add(spec), callback);
 		},
 
 		/**
@@ -142,20 +155,65 @@ define(['ioc/engine/helpers/specs',
 		*	@return com.spinal.ioc.engine.Engine
 		**/
 		unwire: function(spec, callback) {
-			this.specs.remove(spec);
-			return this.trigger(Engine.EVENTS.unwire, spec);
+			return this.trigger(Engine.EVENTS.unwire, this.specs.remove(spec));
 		},
 
 		/**
-		*	Instanciate a bone in the root of the Context
+		*	Extracts Plugins if they are found
 		*	@public
-		*	@method create
-		*	@param injector {com.spinal.ioc.helpers.Injector} injector reference
-		*	@return Object
+		*	@chainable
+		*	@method extractPlugins
+		*	@param spec {com.spinal.ioc.engine.annotation.Spec} spec annotation
+		*	@param [callback] {Function} callback reference
+		*	@return com.spinal.ioc.engine.Engine
 		**/
-		create: function(injector) {
-			var bone = _.pick(injector.bone, 'id', '$module', '$params');
-			return (this.specs.getBone(bone.id)._$created = this.factory.create(bone.$module, bone.$params));
+		extractPlugins: function(spec, callback) {
+			var detected = this.plugins.extract(spec);
+			if(detected.length > 0) this.trigger(Engine.EVENTS.plugins, detected);
+			return this.execute(callback).trigger(Engine.EVENTS.wire, spec);
+		},
+
+		/**
+		*	Perform a spec look up by a given id
+		*	@public
+		*	@method getSpec
+		*	@param id {String} spec id
+		*	@return com.spinal.ioc.engine.annotation.Spec
+		**/
+		getSpec: function(id) {
+			return this.specs.find(function(spec) { return spec.getId() === id; });
+		},
+
+		/**
+		*	Filters out specs by predicate
+		*	@public
+		*	@method getSpecsBy
+		*	@param finder {Function} predicate evaluation
+		*	@return Array
+		**/
+		getSpecsBy: function(finder) {
+			return this.specs.findBy(finder);
+		},
+
+		/**
+		*	Retrieves all specs in JSON format
+		*	@public
+		*	@method getAllSpecs
+		*	@return Array
+		**/
+		getAllSpecs: function() {
+			return this.specs.collection;
+		},
+
+		/**
+		*	Retrieves all bones of all specs
+		*	@public
+		*	@method getAllBones
+		*	@return Array
+		**/
+		getAllBones: function() {
+			var all = _.pluck(this.getAllSpecs(), 'bones');
+			return _.reduce(all, function(prev, curr) { return _.extend(prev.toJSON(), curr.toJSON()); } all[0]);
 		}
 
 	}, {
@@ -182,6 +240,11 @@ define(['ioc/engine/helpers/specs',
 			*	@event unwire
 			**/
 			unwire: 'com:spinal:ioc:engine:spec:unwire',
+
+			/**
+			*	@event plugin
+			**/
+			plugin: 'com:spinal:ioc:engine:plugin',
 
 			/**
 			*	@event ready
