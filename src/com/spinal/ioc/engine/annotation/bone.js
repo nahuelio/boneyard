@@ -10,7 +10,7 @@ define(['ioc/engine/annotation/annotation'], function(Annotation) {
 	*	@class com.spinal.ioc.engine.annotation.Bone
 	*	@extends com.spinal.ioc.engine.annotation.Annotation
 	*
-	*	@requires com.spinal.util.StringUtil
+	*	@requires com.spinal.ioc.engine.annotation.Annotation
 	**/
 	var	Bone = Spinal.namespace('com.spinal.ioc.engine.annotation.Bone', Annotation.inherit({
 
@@ -62,7 +62,7 @@ define(['ioc/engine/annotation/annotation'], function(Annotation) {
 		*	@return String
 		**/
 		getParams: function() {
-			return (this.getValue().$params) ? this.getValue().$params : this.getValue();
+			return this.getValue().$params;
 		},
 
 		/**
@@ -76,6 +76,19 @@ define(['ioc/engine/annotation/annotation'], function(Annotation) {
 		},
 
 		/**
+		*	Dependency gathering on this annotation
+		*	This method uses recursion.
+		*	@public
+		*	@override
+		*	@method retrieve
+		*	@param [context] {Object} context found on nested structure
+		*	@return Array
+		**/
+		retrieve: function(context) {
+			return Bone.__super__.retrieve.call(this, (context) ? context: this.getParams());
+		},
+
+		/**
 		*	Checks if this annotation is a module
 		*	@static
 		*	@method isModule
@@ -83,7 +96,7 @@ define(['ioc/engine/annotation/annotation'], function(Annotation) {
 		*	@return Boolean
 		**/
 		isModule: function() {
-			return _.defined(this.getModule());
+			return !this.isNative() && _.defined(this.getModule());
 		},
 
 		/**
@@ -97,13 +110,14 @@ define(['ioc/engine/annotation/annotation'], function(Annotation) {
 		},
 
 		/**
-		*	Returns true if this bone is a object or array and not a module, otherwise returns false
+		*	Returns true if the value is an object or array and not a module, otherwise returns false
 		*	@public
 		*	@method isNativeObject
+		*	@param value {Object} value to be evaluated
 		*	@return Boolean
 		**/
-		isNativeObject: function() {
-			return ((_.isObject(this.getValue()) || _.isArray(this.getValue())) && !this.isModule());
+		isNativeObject: function(value) {
+			return (_.defined(value) &&  (_.isObject(value) || _.isArray(value)) && !value.$module);
 		},
 
 		/**
@@ -122,14 +136,12 @@ define(['ioc/engine/annotation/annotation'], function(Annotation) {
 		/**
 		*	Returns true if expression matches a bone nomenclature
 		*	@public
-		*	@override
-		*	@method isAnnotation
+		*	@method isBone
 		*	@param expr {String} expression to be evaluated
 		*	@return Boolean
 		**/
-		isAnnotation: function(expr) {
-			return (Bone.__super__.isAnnotation.apply(this, arguments) &&
-				(expr.indexOf(Bone.TYPE.bone) !== -1) || (expr.indexOf(Bone.TYPE.ref) !== -1)));
+		isBone: function(expr) {
+			return this.isAnnotation(expr) && (expr.indexOf(Bone.TYPE.bone) !== -1);
 		}
 
 	}, {
@@ -143,13 +155,17 @@ define(['ioc/engine/annotation/annotation'], function(Annotation) {
 
 		/**
 		*	@static
-		*	@property TYPE
-		*	@type Object
+		*	@property DELIMITER
+		*	@type String
 		**/
-		TYPE: {
-			bone: 'bone!',
-			ref: 'bone-ref!'
-		}
+		DELIMITER: '!',
+
+		/**
+		*	@static
+		*	@property TYPE
+		*	@type String
+		**/
+		TYPE: 'bone!'
 
 	}));
 

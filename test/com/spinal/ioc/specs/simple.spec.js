@@ -21,6 +21,7 @@ define(['specs/main.spec'], function(MainSpec) {
 			{ deep: '$bone!o' },
 			{ prop: '$bone!n' }
 		],
+		holder: { myview: '$bone!mycomponent' },
 
 		model: {
 			$module: 'util/schema',
@@ -45,6 +46,11 @@ define(['specs/main.spec'], function(MainSpec) {
 		simple: {
 			$module: 'ui/view',
 			$params: { id: 'simple' }
+		},
+
+		mycomponent: {
+			$module: 'ui/view',
+			$params: { id: 'mycomponent', views: ['$bone!simple'] }
 		},
 
 		$ready: [

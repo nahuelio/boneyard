@@ -60,18 +60,6 @@ define(['ioc/engine',
 		},
 
 		/**
-		*	Check if a complex dependency make reference to a function of the dependency
-		*	@public
-		*	@method isDependencyRef
-		*	@param expr {String} expression to be evaluated
-		*	@return Boolean
-		**/
-		isDependencyRef: function(expr) {
-			if(!expr) return false;
-			return ((BoneProcessor.PREFIX + expr).indexOf(BoneProcessor.TYPE.boneRef) !== -1);
-		},
-
-		/**
 		*	Checks if the expression is a module bone dependency
 		*	@public
 		*	@method isModuleDependency
@@ -83,58 +71,15 @@ define(['ioc/engine',
 		},
 
 		/**
-		*	Extracts and returns the dependent bone id from the expression passed by parameter
-		*	@public
-		*	@method getDependencyId
-		*	@param expr {String} dependency expression to be evaluated
-		*	@return String
-		**/
-		getDependencyId: function(expr) {
-			if(!_.defined(expr) || !_.isString(expr)) return null;
-			var pos = expr.indexOf(BoneProcessor.TYPE.delimiter);
-			return (pos > 0) ? expr.substring((pos+1), expr.length) : null;
-		},
-
-		/**
-		*	Retrieves dependent bone from the spec by the expression passed as parameter
-		*	@public
-		*	@method getDependency
-		*	@param expr {String} expression to be evaluated
-		*	@return Object
-		**/
-		getDependency: function(expr) {
-			var dep = this.getComplexDependency(expr);
-			return (dep) ? { bone: this._engine.getBone(dep.id), method: dep.method } : null;
-		},
-
-		/**
-		*	Retrieves a complex dependency (if exists) and return the structure suitable for processing
-		*	Example of a complex dependency: '$bone!mybone.mybonemethod'
-		*	Outputs: ['mybone', 'mybonemethod']
-		*	@public
-		*	@method getComplexDependency
-		*	@param expr {String} expression to be evaluated
-		*	@return Array
-		**/
-		getComplexDependency: function(expr) {
-			var depId = this.getDependencyId(expr), complex = null;
-			if(!depId) return null;
-			return ((complex = depId.split('.')).length > 1) ? { id: complex[0], method: complex[1] } : { id: depId };
-		},
-
-		/**
 		*	Filters out and call the predicate function over the bone annotations supported by the processor.
 		*	@public
 		*	@method execute
 		*	@param predicate {Function} predicate function that filters out bones that are suitable to be processed
-		*	@param context {Object} current context in which his data structure will be evaluated by the predicate.
-		*	@return com.spinal.ioc.processor.BoneProcessor
+		*	@param bones {Array} current bone
+		*	@return Array
 		**/
-		execute: function(predicate, context) {
-			for(var id in context) {
-				if(!(r = predicate.call(this, context))) break;
-			}
-			return this;
+		execute: function(predicate, bones) {
+			return _.map(bones, function(bone) { return predicate.call(this, bone); }, this);
 		},
 
 		/**
@@ -164,17 +109,6 @@ define(['ioc/engine',
 		*	@type String
 		**/
 		PREFIX: '$',
-
-		/**
-		*	@static
-		*	@property TYPE
-		*	@type Object
-		**/
-		TYPE: {
-			bone: 'bone!',
-			boneRef: 'bone-ref!',
-			delimiter: '!'
-		},
 
 		/**
 		*	BoneProcessor Events

@@ -64,7 +64,7 @@ define(['ioc/engine/annotation/spec',
 		initialize: function() {
 			this.wire = _.wrap(this.wire, this.setup);
 			this.unwire = _.wrap(this.unwire, this.setup);
-			return Engine.__super__.initialize.apply(this, arguments);;
+			return Engine.__super__.initialize.apply(this, arguments);
 		},
 
 		/**

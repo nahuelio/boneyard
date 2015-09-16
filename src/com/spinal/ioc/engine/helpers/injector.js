@@ -2,7 +2,7 @@
 *	@module com.spinal.ioc.engine.helpers
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define(['ioc/engine/helpers/dependency'], function(Dependency) {
+define(['ioc/context'], function(Context) {
 
 	/**
 	*	Class Injector
@@ -10,54 +10,76 @@ define(['ioc/engine/helpers/dependency'], function(Dependency) {
 	*	@class com.spinal.ioc.engine.helpers.Injector
 	*	@extends com.spinal.core.SpinalClass
 	*
-	*	@requires com.spinal.ioc.engine.helpers.Dependency
+	*	@requires com.spinal.ioc.Context
 	**/
 	var Injector = Spinal.namespace('com.spinal.ioc.engine.helpers.Injector', Spinal.SpinalClass.inherit({
 
 		/**
 		*	Initialize
 		*	@public
-		*	@chainable
+		*	@throws Error
 		*	@method initialize
-		*	@param engine {com.spinal.ioc.engine.Engine} engine reference
 		*	@param annotation {com.spinal.ioc.engine.annotation.Annotation} annotation reference
 		*	@return com.spinal.ioc.helpers.Injector
 		**/
-		initialize: function(engine, annotation) {
-			this.engine = engine;
+		initialize: function(annotation) {
 			this.annotation = annotation;
 			return Injector.__super__.initialize.apply(this, arguments);
 		},
 
 		/**
-		*	Retrieves Engine's Factory
+		*	Retrieves Engine from Context
 		*	@public
-		*	@method getFactory
-		*	@return com.spinal.util.factories.AsyncFactory
+		*	@method getEngine
+		*	@return com.spinal.ioc.engine.Engine
 		**/
-		getFactory: function() {
-			return this.engine.getFactory();
+		getEngine: function() {
+			return Context.engine;
 		},
 
 		/**
-		*	Resolves dependency injection and resolves dependency injection on the current bone
+		*	Retrieves injector's annotation
 		*	@public
-		*	@method resolve
-		*	@return com.spinal.ioc.helpers.Injector
+		*	@method getAnnotation
+		*	@return com.spinal.ioc.engine.annotation.Annotation
 		**/
-		resolve: function() {
-			return this.annotation.getDependencies().invoke('inject', this.engine);
+		getAnnotation: function() {
+			return this.annotation;
 		},
 
 		/**
-		*	Assigns bone module instance into the bone managed by this injector
+		*	Retrieves dependency
 		*	@public
-		*	@method assign
-		*	@param instance {Object} instance gathered from factory
+		*	@method get
+		*	@param dependency {com.spinal.ioc.engine.helpers.Dependency} dependency reference
+		*	@return Object
+		**/
+		get: function(dependency) {
+			if(!(m = dependency.getCompound())) return null;
+			return _.isObject(m) ? this.getEngine().bone(m.id)[m.method] : this.getEngine().bone(m);
+		},
+
+		/**
+		*	Resolves and inject a dependency in the current bone annotation
+		*	@public
+		*	@method inject
+		*	@param dependency {com.spinal.ioc.engine.helpers.Dependency} dependency reference
 		*	@return com.spinal.ioc.helpers.Injector
 		**/
-		assign: function(instance) {
-			this.annotation._$created = instance;
+		inject: function(dependency) {
+			return (dependency.getTarget()[dependency.getProperty()] = this.get(dependency));
+		},
+
+		/**
+		*	FIXME: Analyze edge case when simple bone depends on a module bone (Resolve on HOLD)
+		*	Sets this dependency as on hold by assigning resolution strategy as a function
+		*	@public
+		*	@method hold
+		*	@param dependency {com.spinal.ioc.engine.helpers.Dependency} dependency reference
+		*	@return com.spinal.ioc.engine.helpers.Dependency
+		**/
+		hold: function(dependency) {
+			this.getAnnotation()._$hold = _.bind(this.inject, this, dependency);
 			return this;
 		}
 

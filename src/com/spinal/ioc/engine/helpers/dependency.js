@@ -2,8 +2,8 @@
 *	@module com.spinal.ioc.engine.helpers
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define(['util/string',
-	'util/exception/ioc/dependency'], function(StringUtil, DependencyException) {
+define(['ioc/engine/annotation/bone',
+	'util/exception/ioc/dependency'], function(Bone, DependencyException) {
 
 	/**
 	*	Class Dependency
@@ -11,7 +11,7 @@ define(['util/string',
 	*	@class com.spinal.ioc.engine.helpers.Dependency
 	*	@extends com.spinal.core.SpinalClass
 	*
-	*	@requires com.spinal.util.StringUtil
+	*	@requires com.spinal.ioc.engine.annotation.Bone
 	*	@requires com.spinal.util.exception.ioc.DependencyException
 	**/
 	var Dependency = Spinal.namespace('com.spinal.ioc.engine.helpers.Dependency', Spinal.SpinalClass.inheirt({
@@ -41,6 +41,7 @@ define(['util/string',
 		valid: function(attrs) {
 			if(!attrs.target || !_.isObject(attrs.target)) throw new DependencyException('TargetRequired');
 			if(!attrs.property || !_.isString(attrs.property)) throw new DependencyException('PropertyRequired');
+			if(!attrs.injector) throw new DependencyException('InjectorRequired');
 			if(!attrs.target[attrs.property]) throw new DependencyException('UndefinedTargetProperty');
 		},
 
@@ -49,20 +50,42 @@ define(['util/string',
 		*	@public
 		*	@method inject
 		*	@param engine
-		*	@return Object
 		**/
-		inject: function(engine) {
-			return (this.getTarget()[this.getProperty()] = engine.bone(this.getDependencyId()));
+		resolve: function() {
+			return this.injector.inject(this);
 		},
 
 		/**
-		*	Retrieves dependency id
+		*	Extracts dependency id from dependency expression
 		*	@public
-		*	@method getDependencyId
-		*	@return com.spinal.ioc.engine.helpers.Bone
+		*	@method getId
+		*	@return String
 		**/
-		getDependencyId: function() {
-			return this.dependencyId;
+		getId: function() {
+			var expr = this.getExpression(), pos = expr.indexOf(Bone.DELIMITER + Bone.TYPE);
+			return (pos !== -1) ? expr.substring((pos + 1), expr.length) : null;
+		},
+
+		/**
+		*	Extracts Compound Dependency from dependency expression if exist
+		*	@public
+		*	@method getCompound
+		*	@return Object
+		**/
+		getCompound: function() {
+			if(!(id = this.getId())) return null;
+			var compound = id.split('.');
+			return (compound.length > 1) ? { id: compound[0], method: [0] } : id;
+		},
+
+		/**
+		*	Retrieves dependency expression
+		*	@public
+		*	@method getExpression
+		*	@return String
+		**/
+		getExpression: function() {
+			return this.expression;
 		},
 
 		/**

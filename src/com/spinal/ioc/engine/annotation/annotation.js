@@ -2,9 +2,9 @@
 *	@module com.spinal.ioc.engine.annotation
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define(['ioc/engine/helpers/injector',
+define(['ioc/engine/helpers/injector'
 	'ioc/engine/helpers/dependency',
-	'util/adt/collection'], function(Injector, Dependency, Collection) {
+	'util/adt/collection'], function(Dependency, Collection) {
 
 	/**
 	*	Class Annotation
@@ -33,6 +33,16 @@ define(['ioc/engine/helpers/injector',
 		},
 
 		/**
+		*	Retrieves dependencies
+		*	@public
+		*	@method getDependencies
+		*	@return com.spinal.util.adt.Collection
+		**/
+		getDependencies: function() {
+			return this.dependencies;
+		},
+
+		/**
 		*	Validates annotation
 		*	@public
 		*	@method valid
@@ -45,20 +55,17 @@ define(['ioc/engine/helpers/injector',
 		},
 
 		/**
-		*	Standard Injection resolution
+		*	Create Dependency
 		*	@public
-		*	@method resolve
-		*	@param expr {String} expression used for resolve direct references
-		*	@param key {String} property key of parent one used to extract dependency.
-		*	@param context {Object} parent bone reference
+		*	@method create
+		*	@param expr {String} expression to be evaluated
+		*	@param key {String} context property key used to determine where to inject expression
+		*	@param context {Object} bone reference
 		*	@return Object
 		**/
-		resolve: function(expr, key, context) {
-			if(!_.defined(expr) || !parent) return null;
-			if(!this.isAnnotation(expr)) return expr;
-			// FIXME: Review this one, move isModuleDependency and getDependency to injector???
-			if(!this.isModuleDependency(expr)) return (parent[key] = this.getDependency(expr).bone);
-			return null;
+		create: function(expr, key, context) {
+			if(!this.isAnnotation(expr) || !context) return null;
+			return { expression: expr, target: context, property: key, injector: new Injector(this) };
 		},
 
 		/**
@@ -70,22 +77,11 @@ define(['ioc/engine/helpers/injector',
 		*	@return Array
 		**/
 		retrieve: function(context) {
-			if(!(context = this.getParams(context)) return [];
+			if(!context) return [];
 			return _.compact(_.flatten(_.map(context, function(value, key, target) {
-				if(_.isArray(value) || _.isObject(value)) return this.retrieve(target);
-				// FIXME: bone.getDependencyId(value)
-				return { dependencyId: , target: target, property: key };
+				if(this.isNativeObject(value)) return this.retrieve(target);
+				return this.create.apply(this, arguments);
 			}, this)));
-		},
-
-		/**
-		*	Retrieves dependencies
-		*	@public
-		*	@method getDependencies
-		*	@return Array
-		**/
-		getDependencies: function() {
-			return this.dependencies;
 		},
 
 		/**
@@ -113,21 +109,7 @@ define(['ioc/engine/helpers/injector',
 		*	@property PREFIX
 		*	@type String
 		**/
-		PREFIX: '$',
-
-		/**
-		*	Create a new Injector instance by optionally passing arguments to the constructor
-		*	@static
-		*	@throws Error
-		*	@method newInjector
-		*	@param annotation {com.spinal.ioc.engine.annotation.Annotation} annotation reference
-		*	@return com.spinal.ioc.engine.helpers.Injector
-		**/
-		newInjector: function(annotation) {
-			if(!annotation || !(annotation instanceof Annotation))
-				throw new Error('Parameter being pass to the Injector was null or not an instance of Annotation');
-			return Injector.new.apply(Array.prototype.slice.call(this, arguments));
-		}
+		PREFIX: '$'
 
 	}));
 
