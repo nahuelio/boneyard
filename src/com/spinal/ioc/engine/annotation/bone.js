@@ -12,7 +12,7 @@ define(['ioc/engine/annotation/annotation'], function(Annotation) {
 	*
 	*	@requires com.spinal.ioc.engine.annotation.Annotation
 	**/
-	var	Bone = Spinal.namespace('com.spinal.ioc.engine.annotation.Bone', Annotation.inherit({
+	var Bone = Spinal.namespace('com.spinal.ioc.engine.annotation.Bone', Annotation.inherit({
 
 		/**
 		*	Initialize

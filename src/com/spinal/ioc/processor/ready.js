@@ -1,11 +1,9 @@
 /**
+*	FIXME: Start refactoring this code!!!
 *	@module com.spinal.ioc.processor
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define(['ioc/context',
-		'ioc/processor/bone',
-		'ioc/engine',
-		'util/string'], function(Context, BoneProcessor, Engine, StringUtils) {
+define(['ioc/processor/bone'], function(BoneProcessor) {
 
 	/**
 	*	Ready Processor
@@ -13,7 +11,6 @@ define(['ioc/context',
 	*	@class com.spinal.ioc.processor.ReadyProcessor
 	*	@extends com.spinal.ioc.processor.BoneProcessor
 	*
-	*	@requires com.spinal.ioc.Context
 	*	@requires com.spinal.ioc.processor.BoneProcessor
 	**/
 	var ReadyProcessor = Spinal.namespace('com.spinal.ioc.processor.ReadyProcessor', BoneProcessor.inherit({

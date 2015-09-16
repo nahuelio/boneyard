@@ -2,17 +2,15 @@
 *	@module com.spinal.ioc.processor
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define(['ioc/engine',
-	'util/exception/ioc/processor'], function(Engine, ProcessorException) {
+define(['core/spinal'], function(Spinal) {
 
 	/**
-	*	BaseClass Bone Processor
+	*	Class BoneProcessor
 	*	@namespace com.spinal.ioc.processor
 	*	@class com.spinal.ioc.processor.BoneProcessor
 	*	@extends com.spinal.core.SpinalClass
 	*
-	*	@requires com.spinal.ioc.engine.Engine
-	*	@requires com.spinal.util.exception.ProcessorException
+	*	@requires com.spinal.core.SpinalClass
 	**/
 	var BoneProcessor = Spinal.namespace('com.spinal.ioc.processor.BoneProcessor', Spinal.SpinalClass.inherit({
 
@@ -60,22 +58,11 @@ define(['ioc/engine',
 		},
 
 		/**
-		*	Checks if the expression is a module bone dependency
-		*	@public
-		*	@method isModuleDependency
-		*	@param expr {String} expression to be evaluated
-		*	@return Boolean
-		**/
-		isModuleDependency: function(expr) {
-			return _.isString(expr) ? this._engine.isModule(this.getDependency(expr).bone) : false;
-		},
-
-		/**
-		*	Filters out and call the predicate function over the bone annotations supported by the processor.
+		*	Iterates over list of bone annotations and excecutes the predicate function on each one
 		*	@public
 		*	@method execute
-		*	@param predicate {Function} predicate function that filters out bones that are suitable to be processed
-		*	@param bones {Array} current bone
+		*	@param predicate {Function} predicate function that process each bone annotation
+		*	@param bones {Array} list of bone annotatioms
 		*	@return Array
 		**/
 		execute: function(predicate, bones) {
@@ -102,13 +89,6 @@ define(['ioc/engine',
 		*	@type String
 		**/
 		NAME: 'BoneProcessor',
-
-		/**
-		*	@static
-		*	@property PREFIX
-		*	@type String
-		**/
-		PREFIX: '$',
 
 		/**
 		*	BoneProcessor Events

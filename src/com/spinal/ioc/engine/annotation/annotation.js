@@ -16,7 +16,7 @@ define(['ioc/engine/helpers/injector'
 	*	@requires com.spinal.ioc.engine.helpers.Dependency
 	*	@requires com.spinal.util.adt.Collection
 	**/
-	var	Annotation = Spinal.namespace('com.spinal.ioc.engine.annotation.Annotation', Spinal.SpinalClass.inherit({
+	var Annotation = Spinal.namespace('com.spinal.ioc.engine.annotation.Annotation', Spinal.SpinalClass.inherit({
 
 		/**
 		*	Initialize

@@ -3,8 +3,7 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['ioc/processor/bone',
-	'ioc/engine/annotation/annotation',
-	'util/exception/processor'], function(BoneProcessor, Annotation, ProcessorException) {
+	'util/exception/processor'], function(BoneProcessor, ProcessorException) {
 
 	/**
 	*	Create Processor
@@ -13,7 +12,6 @@ define(['ioc/processor/bone',
 	*	@extends com.spinal.ioc.processor.BoneProcessor
 	*
 	*	@requires com.spinal.ioc.processor.BoneProcessor
-	*	@requires com.spinal.ioc.engine.annotation.Annotation
 	*	@requires com.spinal.util.exception.ProcessorException
 	**/
 	var CreateProcessor = Spinal.namespace('com.spinal.ioc.processor.CreateProcessor', BoneProcessor.inherit({
