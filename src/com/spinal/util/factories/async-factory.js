@@ -95,7 +95,7 @@ define(['core/spinal',
 		},
 
 		/**
-		*	Find a resource inside the resource collection by predicate
+		*	Find a resource position (0-index based) inside the resource stack by predicate
 		*	@public
 		*	@method findPosBy
 		*	@param predicate {Function} predicate function used for evaluation
@@ -103,6 +103,19 @@ define(['core/spinal',
 		**/
 		findPosBy: function(predicate) {
 			return this.resources.findPosBy(predicate);
+		},
+
+		/**
+		*	Filter outs a list of resources position (0-index based) from the factory stack by predicate
+		*	@public
+		*	@method findPositionsBy
+		*	@param predicate {Function} predicate function used for evaluation
+		*	@return Array
+		**/
+		findPositionsBy: function(predicate) {
+			return _.compact(this.resources.findBy(function(resource, ix) {
+				return predicate(resource, ix) ? ix : null;
+			}));
 		},
 
 		/**

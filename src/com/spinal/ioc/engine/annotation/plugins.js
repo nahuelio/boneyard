@@ -34,7 +34,7 @@ define(['ioc/engine/annotation/annotation'], function(Annotation) {
 		*	@public
 		*	@method extract
 		*	@param spec {com.spinal.ioc.engine.annotation.Spec} spec annotation
-		*	@return com.spinal.ioc.engine.annotation.Plugins
+		*	@return Array
 		**/
 		extract: function(spec) {
 			return _.compact(_.map(spec.getPlugins(), function(plugin, name) {

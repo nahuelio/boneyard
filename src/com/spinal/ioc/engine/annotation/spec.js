@@ -44,8 +44,8 @@ define(['ioc/engine/annotation/annotation',
 		initialize: function(attrs) {
 			attrs || (attrs = {});
 			Spec.__super__.initialize.apply(this, arguments);
-			_.extend(this, StringUtil.toPrivate(_.pick(attrs, '$id', '$specs', '$plugins')));
-			return this.parse();
+			_.extend(this, StringUtil.toPrivate(_.pick.call(this, attrs, Spec.PROPERTIES)));
+			return this.parse(attrs);
 		},
 
 		/**
@@ -90,41 +90,16 @@ define(['ioc/engine/annotation/annotation',
 		**/
 		getPlugins: function() {
 			return this._$plugins;
-		}
+		},
 
 		/**
-		*	Default Bone's Annotation parsing strategy
+		*	Default Bone annotations parsing strategy
 		*	@public
 		*	@method parse
 		*	@return com.spinal.ioc.engine.annotation.Spec
 		**/
-		parse: function() {
-
-		},
-
-		/**
-		*	Adds a new bone annotation inside bones collection
-		*	@public
-		*	@chainable
-		*	@method addBone
-		*	@param bone {Object} bone reference
-		*	@return com.spinal.ioc.engine.annotation.Spec
-		**/
-		addBone: function(bone) {
-			this.bones.add(bone);
-			return this;
-		},
-
-		/**
-		*	Removes an existing bone annotation from bones collection
-		*	@public
-		*	@chainable
-		*	@method removeBone
-		*	@param bone {Object} bone reference
-		*	@return com.spinal.ioc.engine.annotation.Spec
-		**/
-		removeBone: function(bone) {
-			this.bones.remove(bone);
+		parse: function(spec) {
+			this.bones.set(_.objToArr(_.omit.call(this, spec, Spec.PROPERTIES)));
 			return this;
 		},
 
@@ -136,7 +111,8 @@ define(['ioc/engine/annotation/annotation',
 		*	@return Object
 		**/
 		getBone: function(id) {
-			return this.bones.find(function(bone) { return (bone.get().getId() === id); });
+			var bone = this.bones.find(function(bone) { return (bone.getId() === id); });
+			return (bone) ? bone.get() : null;
 		},
 
 		/**
@@ -170,6 +146,16 @@ define(['ioc/engine/annotation/annotation',
 		**/
 		getBonesByType: function(type) {
 			return this.getBonesBy(function(bone) { return (typeof(bone.get()) === type); });
+		},
+
+		/**
+		*	Returns true if this specs has dependencies on other specs, otherwise returns false
+		*	@public
+		*	@method hasDependencies
+		*	@return Boolean
+		**/
+		hasDependencies: function() {
+			return (this.getDependencies() && this.getDependencies().length > 0);
 		}
 
 	}, {
@@ -179,7 +165,14 @@ define(['ioc/engine/annotation/annotation',
 		*	@property NAME
 		*	@type String
 		**/
-		NAME: 'Spec'
+		NAME: 'Spec',
+
+		/**
+		*	@static
+		*	@property PROPERTIES
+		*	@type Array
+		**/
+		PROPERTIES: ['$id', '$specs', '$plugins', '$ready']
 
 	}));
 

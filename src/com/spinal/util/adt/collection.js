@@ -296,7 +296,7 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 		**/
 		findBy: function(finder) {
 			for(var i = 0, found = []; i < this.size(); i++) {
-				if(finder(this.collection[i])) found.push(this.collection[i]);
+				if(finder(this.collection[i], i)) found.push(this.collection[i]);
 			}
 			return found;
 		},
@@ -311,7 +311,7 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 		**/
 		findPosBy: function(finder) {
 			for(var i = 0, ix = -1; i < this.size(); i++) {
-				if(finder(this.collection[i])) { ix = i; break; }
+				if(finder(this.collection[i], i)) { ix = i; break; }
 			}
 			return ix;
 		},

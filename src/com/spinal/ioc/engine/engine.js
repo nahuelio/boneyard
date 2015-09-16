@@ -62,7 +62,7 @@ define(['ioc/engine/annotation/spec',
 		*	@return com.spinal.ioc.engine.Engine
 		**/
 		initialize: function() {
-			this.wire = _.wrap(this.extractPlugins, this.wire, this.setup);
+			this.wire = _.wrap(this.wire, this.setup);
 			this.unwire = _.wrap(this.unwire, this.setup);
 			return Engine.__super__.initialize.apply(this, arguments);;
 		},
@@ -106,7 +106,7 @@ define(['ioc/engine/annotation/spec',
 		ready: function(method, spec, callback) {
 			this.processors.set(Engine.PROCESSORS);
 			this.trigger(Engine.EVENTS.ready, this);
-			(spec) ? method(method, spec, callback) : callback(this);
+			(spec) ? method(spec, callback) : callback(this);
 			return this;
 		},
 
@@ -135,13 +135,13 @@ define(['ioc/engine/annotation/spec',
 		*	@public
 		*	@chainable
 		*	@method wire
-		*	@param method {Function} wire or unwire method reference
 		*	@param spec {Object} spec reference
 		*	@param [callback] {Function} callback reference
 		*	@return com.spinal.ioc.engine.Engine
 		**/
-		wire: function(method, spec, callback) {
-			return method(this.specs.add(spec), callback);
+		wire: function(spec, callback) {
+			var specs = this.addSpec(spec);
+			return this.execute(callback).trigger(Engine.EVENTS.wire, specs);
 		},
 
 		/**
@@ -155,7 +155,7 @@ define(['ioc/engine/annotation/spec',
 		*	@return com.spinal.ioc.engine.Engine
 		**/
 		unwire: function(spec, callback) {
-			return this.trigger(Engine.EVENTS.unwire, this.specs.remove(spec));
+			return this.trigger(Engine.EVENTS.unwire, this.removeSpec(spec));
 		},
 
 		/**
@@ -164,57 +164,105 @@ define(['ioc/engine/annotation/spec',
 		*	@chainable
 		*	@method extractPlugins
 		*	@param spec {com.spinal.ioc.engine.annotation.Spec} spec annotation
-		*	@param [callback] {Function} callback reference
-		*	@return com.spinal.ioc.engine.Engine
+		*	@return Object
 		**/
-		extractPlugins: function(spec, callback) {
+		extractPlugins: function(spec) {
 			var detected = this.plugins.extract(spec);
 			if(detected.length > 0) this.trigger(Engine.EVENTS.plugins, detected);
-			return this.execute(callback).trigger(Engine.EVENTS.wire, spec);
+			return spec;
+		},
+
+		/**
+		*	Add a new spec and dependent specs if found and return them as array.
+		*	This method uses recursion.
+		*	@public
+		*	@method addSpec
+		*	@param spec
+		*	@return Array
+		**/
+		addSpec: function(spec) {
+			var sp = this.extractPlugins(this.specs.add(spec));
+			return _.flatten(sp.hasDependencies() ? _.map(sp.getDependencies(), this.addSpec) : [sp]);
+		},
+
+		/**
+		*	Removes an existing spec and dependent specs if found and return them as array
+		*	This method uses recursion.
+		*	@public
+		*	@method removeSpec
+		*	@param spec
+		*	@return Array
+		**/
+		removeSpec: function(spec) {
+			var sp = this.specs.remove(spec);
+			return _.flatten(sp.hasDependencies() ? _.map(sp.getDependencies(), this.removeSpec) : [sp]);
 		},
 
 		/**
 		*	Perform a spec look up by a given id
 		*	@public
-		*	@method getSpec
+		*	@method spec
 		*	@param id {String} spec id
 		*	@return com.spinal.ioc.engine.annotation.Spec
 		**/
-		getSpec: function(id) {
+		spec: function(id) {
 			return this.specs.find(function(spec) { return spec.getId() === id; });
-		},
-
-		/**
-		*	Filters out specs by predicate
-		*	@public
-		*	@method getSpecsBy
-		*	@param finder {Function} predicate evaluation
-		*	@return Array
-		**/
-		getSpecsBy: function(finder) {
-			return this.specs.findBy(finder);
 		},
 
 		/**
 		*	Retrieves all specs in JSON format
 		*	@public
-		*	@method getAllSpecs
+		*	@method allSpecs
 		*	@return Array
 		**/
-		getAllSpecs: function() {
+		allSpecs: function() {
 			return this.specs.collection;
 		},
 
 		/**
 		*	Retrieves all bones of all specs
 		*	@public
-		*	@method getAllBones
+		*	@method allBones
 		*	@return Array
 		**/
-		getAllBones: function() {
-			var all = _.pluck(this.getAllSpecs(), 'bones');
+		allBones: function() {
+			var all = _.pluck(this.allSpecs(), 'bones');
 			return _.reduce(all, function(prev, curr) { return _.extend(prev.toJSON(), curr.toJSON()); } all[0]);
-		}
+		},
+
+		/**
+		*	Retrieves a bone by a given id
+		*	@public
+		*	@method bone
+		*	@param id {String} bone id
+		*	@return Object
+		**/
+		bone: function(id) {
+			return _.find(this.allSpecs(), function(spec) { return spec.getBone(id); }, this);
+		},
+
+		/**
+		*	Filters out bone by type
+		*	@public
+		*	@method bonesByType
+		*	@param type {String} bone type
+		*	@return Array
+		**/
+		bonesByType: function(type) {
+			return _.flatten(_.filter(this.allSpecs(), function(spec) { return spec.getBonesByType(type); }));
+		},
+
+		/**
+		*	Filters out bone by class constructor
+		*	@public
+		*	@method bonesByClass
+		*	@param clazz {Function} constructor function reference
+		*	@return Array
+		**/
+		bonesByClass: function(clazz) {
+			return _.flatten(_.filter(this.allSpecs(), function(spec) { return spec.getBonesByClass(clazz); }));
+		},
+
 
 	}, {
 

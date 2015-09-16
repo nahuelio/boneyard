@@ -132,6 +132,21 @@ define(['core/spinal',
 		},
 
 		/**
+		*	Transforms an object into an array, creating on each key-value pair a separate object on the resulting
+		*	array
+		*	@static
+		*	@method objToArr
+		*	@param obj {Object} JSON object ref
+		*	@return Array
+		**/
+		objToArr: function(obj) {
+			return _.reduce(obj, function(arr, v, k) {
+				var o = {}; o[k] = v; arr.push(o);
+				return arr;
+			}, []);
+		},
+
+		/**
 		*	Capitalize first letter given an string
 		*	@public
 		*	@method capitalize

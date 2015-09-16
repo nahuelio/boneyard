@@ -60,20 +60,6 @@ define(['ioc/engine',
 		},
 
 		/**
-		*	Check if expr matches the annotation passed as parameter
-		*	If the annotation is omitted, the annotation declared in this processor will be used.
-		*	@public
-		*	@method validate
-		*	@param expr {String} expression to be evaluated
-		*	@return Boolean
-		**/
-		validate: function(expr) {
-			if(!expr || !_.isString(expr)) return false;
-			var ev = (BoneProcessor.PREFIX + expr);
-			return ((ev.indexOf(BoneProcessor.TYPE.bone) !== -1) || (ev.indexOf(BoneProcessor.TYPE.boneRef) !== -1));
-		},
-
-		/**
 		*	Check if a complex dependency make reference to a function of the dependency
 		*	@public
 		*	@method isDependencyRef
@@ -137,49 +123,29 @@ define(['ioc/engine',
 		},
 
 		/**
-		*	Standard Injection resolution
-		*	@public
-		*	@method resolve
-		*	@param expr {String} expression used for resolve direct references
-		*	@param key {String} property key of parent one used to extract dependency.
-		*	@param parent {Object} parent bone reference
-		*	@return Object
-		**/
-		resolve: function(expr, key, parent) {
-			if(!_.defined(expr) || !parent) return null;
-			if(!this.validate(expr)) return expr; // Not a bone expression, the expression value is simply a constant.
-			if(!this.isModuleDependency(expr)) return (parent[key] = this.getDependency(expr).bone);
-			return null;
-		},
-
-		/**
-		*	Filters out and call the predicate function over the notations supported by the processor.
-		*	Predicate function must return the reference to the bone processed, otherwise the rest of the evaluations
-		*	will be skipped.
+		*	Filters out and call the predicate function over the bone annotations supported by the processor.
 		*	@public
 		*	@method execute
 		*	@param predicate {Function} predicate function that filters out bones that are suitable to be processed
-		*	@param [bone] {Object} recursive context
-		*	@return Array
+		*	@param context {Object} current context in which his data structure will be evaluated by the predicate.
+		*	@return com.spinal.ioc.processor.BoneProcessor
 		**/
-		execute: function(predicate, bone) {
-			var bones = [], context = (bone) ? bone : this.getSpecs().getAllBones(), parent = (bone) ? context : null;
+		execute: function(predicate, context) {
 			for(var id in context) {
-				if(r = predicate.call(this, context[id], id, parent)) { bones.push(r); continue; }
-				break;
+				if(!(r = predicate.call(this, context))) break;
 			}
-			return _.compact(_.flatten(bones));
+			return this;
 		},
 
 		/**
 		*	Default processor done handler
 		*	@public
 		*	@method done
-		*	@param bones {Array} collection of bones processed by the current processor
+		*	@param type {String} Processor type
 		*	@return com.spinal.ioc.processor.BoneProcessor
 		**/
-		done: function(type, bones) {
-			return this.trigger(BoneProcessor.EVENTS.done, type, bones);
+		done: function(type) {
+			return this.trigger(BoneProcessor.EVENTS.done, type);
 		}
 
 	}, {
