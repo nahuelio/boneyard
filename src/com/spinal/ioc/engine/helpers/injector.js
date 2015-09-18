@@ -48,6 +48,17 @@ define(['ioc/context'], function(Context) {
 		},
 
 		/**
+		*	Retrieves Annotation Matcher composed by Type and Delimiter
+		*	@public
+		*	@method getAnnotationMatcher
+		*	@return String
+		**/
+		getAnnotationMatcher: function() {
+			var Annotation = this.getAnnotation().constructor;
+			return (Annotation.TYPE + Annotation.DELIMITER);
+		},
+
+		/**
 		*	Retrieves dependency
 		*	@public
 		*	@method get

@@ -22,7 +22,11 @@ define(['ioc/engine/annotation/annotation'], function(Annotation) {
 		*	@return com.spinal.ioc.engine.annotation.Bone
 		**/
 		initialize: function(attrs) {
-			return Bone.__super__.initialize.call(this, { _id: _.keys(attrs)[0], _value: _.values(attrs)[0] });
+			Bone.__super__.initialize.apply(this, arguments);
+			_.extend(this, { _id: _.keys(attrs)[0], _value: _.values(attrs)[0] });
+			this.getDependencies().set(this.retrieve(), { silent: true });
+			console.log(this.getDependencies().invoke('getId'));
+			return this;
 		},
 
 		/**
@@ -52,17 +56,17 @@ define(['ioc/engine/annotation/annotation'], function(Annotation) {
 		*	@return String
 		**/
 		getModule: function() {
-			return this.getValue().$module;
+			return _.isObject(this.getValue()) ? this.getValue().$module : null;
 		},
 
 		/**
-		*	Retrieves annotation module params if exists, otherwise returns bone
+		*	Retrieves annotation module params if exists, otherwise returns bone's value
 		*	@public
 		*	@method getParams
 		*	@return String
 		**/
 		getParams: function() {
-			return this.getValue().$params;
+			return _.isObject(this.getValue()) ? this.getValue().$params : this.getValue();
 		},
 
 		/**
@@ -85,7 +89,9 @@ define(['ioc/engine/annotation/annotation'], function(Annotation) {
 		*	@return Array
 		**/
 		retrieve: function(context) {
-			return Bone.__super__.retrieve.call(this, (context) ? context: this.getParams());
+			context = (context) ? context : this.getParams();
+			return (this.isNativeObject(context) && !this.isNative(context)) ?
+				Bone.__super__.retrieve.call(this, context) : context;
 		},
 
 		/**
@@ -117,7 +123,14 @@ define(['ioc/engine/annotation/annotation'], function(Annotation) {
 		*	@return Boolean
 		**/
 		isNativeObject: function(value) {
-			return (_.defined(value) &&  (_.isObject(value) || _.isArray(value)) && !value.$module);
+			return (_.defined(value) &&
+				!_.isString(value) &&
+				!_.isNumber(value) &&
+				!_.isBoolean(value) &&
+				!_.isFunction(value) &&
+				!_.isRegExp(value) &&
+				!_.isDate(value) &&
+				!_.isArguments(value));
 		},
 
 		/**
@@ -141,7 +154,7 @@ define(['ioc/engine/annotation/annotation'], function(Annotation) {
 		*	@return Boolean
 		**/
 		isBone: function(expr) {
-			return this.isAnnotation(expr) && (expr.indexOf(Bone.TYPE.bone) !== -1);
+			return this.isAnnotation(expr) && (expr.indexOf(Bone.TYPE) !== -1);
 		}
 
 	}, {

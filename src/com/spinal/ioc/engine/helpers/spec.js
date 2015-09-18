@@ -2,21 +2,23 @@
 *	@module com.spinal.ioc.engine.annotation
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define(['ioc/engine/annotation/annotation',
-	'ioc/engine/annotation/bone',
-	'ioc/engine/annotation/ready'], function(Annotation, Bone, Ready) {
+define(['ioc/engine/annotation/bone',
+	'ioc/engine/annotation/ready',
+	'util/adt/collection',
+	'util/string'], function(Bone, Ready, Collection, StringUtil) {
 
 	/**
 	*	Class Spec
 	*	@namespace com.spinal.ioc.engine.annotation
 	*	@class com.spinal.ioc.engine.annotation.Spec
-	*	@extends com.spinal.ioc.engine.annotation.Annotation
+	*	@extends com.spinal.core.SpinalClass
 	*
-	*	@requires com.spinal.ioc.engine.annotation.Annotation
 	*	@requires com.spinal.ioc.engine.annotation.Bone
 	*	@requires com.spinal.ioc.engine.annotation.Ready
+	*	@requires com.spinal.util.adt.Collection
+	*	@requires com.spinal.util.StringUtil
 	**/
-	var Spec = Spinal.namespace('com.spinal.ioc.engine.annotation.Spec', Annotation.inherit({
+	var Spec = Spinal.namespace('com.spinal.ioc.engine.annotation.Spec', Spinal.SpinalClass.inherit({
 
 		/**
 		*	Bones collection
@@ -24,7 +26,7 @@ define(['ioc/engine/annotation/annotation',
 		*	@property bones
 		*	@type com.spinal.util.adt.Collection
 		**/
-		bones: new Collection([], { interface: Bone }),
+		bones: new Collection(null, { interface: Bone }),
 
 		/**
 		*	Ready operation collection
@@ -32,7 +34,7 @@ define(['ioc/engine/annotation/annotation',
 		*	@property ready
 		*	@type com.spinal.util.adt.Collection
 		**/
-		ready: new Collection([], { interface: Ready }),
+		ready: new Collection(null, { interface: Ready }),
 
 		/**
 		*	Initialize
@@ -96,10 +98,11 @@ define(['ioc/engine/annotation/annotation',
 		*	Default Bone annotations parsing strategy
 		*	@public
 		*	@method parse
+		*	@param spec {Object} spec reference
 		*	@return com.spinal.ioc.engine.annotation.Spec
 		**/
 		parse: function(spec) {
-			this.bones.set(_.objToArr(_.omit.call(this, spec, Spec.PROPERTIES)));
+			this.bones.set(StringUtil.objToArr(_.omit.call(this, spec, Spec.PROPERTIES)), { silent: true });
 			return this;
 		},
 
@@ -175,5 +178,7 @@ define(['ioc/engine/annotation/annotation',
 		PROPERTIES: ['$id', '$specs', '$plugins', '$ready']
 
 	}));
+
+	return Spec;
 
 });

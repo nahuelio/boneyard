@@ -2,9 +2,9 @@
 *	com.spinal.ioc.Context Class Tests
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define(['ioc/helpers/injector',
+define(['ioc/engine/helpers/injector',
 		'ioc/processor/bone',
-		'ioc/engine'], function(Injector, BoneProcessor, Engine) {
+		'ioc/engine/engine'], function(Injector, BoneProcessor, Engine) {
 
 	describe('com.spinal.ioc.helpers.Injector', function() {
 

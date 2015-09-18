@@ -2,8 +2,7 @@
 *	@module com.spinal.ioc.engine.helpers
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define(['ioc/engine/annotation/bone',
-	'util/exception/ioc/dependency'], function(Bone, DependencyException) {
+define(['util/exception/ioc/dependency'], function(DependencyException) {
 
 	/**
 	*	Class Dependency
@@ -11,10 +10,9 @@ define(['ioc/engine/annotation/bone',
 	*	@class com.spinal.ioc.engine.helpers.Dependency
 	*	@extends com.spinal.core.SpinalClass
 	*
-	*	@requires com.spinal.ioc.engine.annotation.Bone
 	*	@requires com.spinal.util.exception.ioc.DependencyException
 	**/
-	var Dependency = Spinal.namespace('com.spinal.ioc.engine.helpers.Dependency', Spinal.SpinalClass.inheirt({
+	var Dependency = Spinal.namespace('com.spinal.ioc.engine.helpers.Dependency', Spinal.SpinalClass.inherit({
 
 		/**
 		*	Initialize
@@ -62,7 +60,7 @@ define(['ioc/engine/annotation/bone',
 		*	@return String
 		**/
 		getId: function() {
-			var expr = this.getExpression(), pos = expr.indexOf(Bone.DELIMITER + Bone.TYPE);
+			var expr = this.getExpression(), pos = expr.indexOf(this.injector.getAnnotationMatcher());
 			return (pos !== -1) ? expr.substring((pos + 1), expr.length) : null;
 		},
 

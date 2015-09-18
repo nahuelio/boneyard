@@ -2,7 +2,8 @@
 *	@module com.spinal.ioc.engine.annotation
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define(['ioc/engine/annotation/annotation'], function(Annotation) {
+define(['ioc/engine/annotation/annotation',
+	'util/string'], function(Annotation, StringUtil) {
 
 	/**
 	*	Class Plugins
@@ -11,7 +12,7 @@ define(['ioc/engine/annotation/annotation'], function(Annotation) {
 	*	@extends com.spinal.ioc.engine.annotation.Annotation
 	*
 	*	@requires com.spinal.ioc.engine.annotation.Annotation
-	*	@requires com.spinal.ioc.engine.helpers.Injector
+	*	@requires com.spinal.util.StringUtil
 	**/
 	var Plugins = Spinal.namespace('com.spinal.ioc.engine.annotation.Plugins', Annotation.inherit({
 
@@ -24,7 +25,7 @@ define(['ioc/engine/annotation/annotation'], function(Annotation) {
 		**/
 		initialize: function(attrs) {
 			attrs || (attrs = {});
-			Spec.__super__.initialize.apply(this, arguments);
+			Plugins.__super__.initialize.apply(this, arguments);
 			_.extend(this, StringUtil.toPrivate(attrs));
 			return this;
 		},

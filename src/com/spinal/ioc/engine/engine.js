@@ -2,7 +2,7 @@
 *	@module com.spinal.ioc.engine
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define(['ioc/engine/annotation/spec',
+define(['ioc/engine/helpers/spec',
 		'ioc/engine/annotation/plugins',
 		'util/adt/collection',
 		'util/factories/async-factory',
@@ -28,7 +28,7 @@ define(['ioc/engine/annotation/spec',
 		*	@property specs
 		*	@type com.spinal.util.adt.Collection
 		**/
-		specs: new Collection([], { interface: Spec }),
+		specs: new Collection(null, { interface: Spec }),
 
 		/**
 		*	Plugins
@@ -85,11 +85,12 @@ define(['ioc/engine/annotation/spec',
 		*	@param method {Function} wire or unwire method reference
 		*	@param spec {Object} spec reference
 		*	@param [callback] {Function} callback reference
+		*	@param ctx {com.spinal.ioc.Context} context reference
 		*	@return com.spinal.ioc.engine.Engine
 		**/
-		setup: function(method, spec, callback) {
-			if(!this.processors.isEmpty()) method(spec, callback);
-			this.factory.push(Engine.PROCESSORS).load(_.bind(this.ready, this, method, spec, callback));
+		setup: function(method, spec, callback, ctx) {
+			if(!this.processors.isEmpty()) method.call(this, spec, callback, ctx);
+			this.factory.set(Engine.PROCESSORS).load(_.bind(this.ready, this, method, spec, callback, ctx));
 			return this;
 		},
 
@@ -101,12 +102,13 @@ define(['ioc/engine/annotation/spec',
 		*	@param method {Function} wire or unwire method reference
 		*	@param spec {Object} spec reference
 		*	@param [callback] {Function} callback reference
+		*	@param ctx {com.spinal.ioc.Context} context reference
 		*	@return com.spinal.ioc.engine.Engine
 		**/
-		ready: function(method, spec, callback) {
+		ready: function(method, spec, callback, ctx) {
 			this.processors.set(Engine.PROCESSORS);
 			this.trigger(Engine.EVENTS.ready, this);
-			(spec) ? method(spec, callback) : callback(this);
+			(spec) ? method.call(this, spec, callback, ctx) : this.done(callback, ctx);
 			return this;
 		},
 
@@ -116,17 +118,17 @@ define(['ioc/engine/annotation/spec',
 		*	@chainable
 		*	@method execute
 		*	@param [callback] {Function} callback reference
+		*	@param ctx {com.spinal.ioc.Context} context reference
 		*	@return com.spinal.ioc.engine.Engine
 		**/
-		execute: function(callback) {
+		execute: function(callback, ctx) {
 			if(!this.processors.hasNext()) {
 				this.processors.rewind();
-				callback(this);
+				this.done(callback, ctx);
 				return this;
 			}
-			this.factory.create(iterator.next().path, this)
-				.once(BoneProcessor.EVENTS.done, _.bind(this.execute, this, callback))
-				.execute();
+			var processor = this.factory.create(this.processors.next().path, this);
+			processor.once(processor.constructor.EVENTS.done, _.bind(this.execute, this, callback, ctx)).execute();
 			return this;
 		},
 
@@ -137,11 +139,12 @@ define(['ioc/engine/annotation/spec',
 		*	@method wire
 		*	@param spec {Object} spec reference
 		*	@param [callback] {Function} callback reference
+		*	@param ctx {com.spinal.ioc.Context} context reference
 		*	@return com.spinal.ioc.engine.Engine
 		**/
-		wire: function(spec, callback) {
-			var specs = this.addSpec(spec);
-			return this.execute(callback).trigger(Engine.EVENTS.wire, specs);
+		wire: function(spec, callback, ctx) {
+			this.addSpec(spec);
+			return this.execute(callback, ctx).trigger(Engine.EVENTS.wire, this.specs);
 		},
 
 		/**
@@ -152,10 +155,25 @@ define(['ioc/engine/annotation/spec',
 		*	@method remove
 		*	@param spec {Object} spec reference
 		*	@param [callback] {Function} callback reference
+		*	@param ctx {com.spinal.ioc.Context} context reference
 		*	@return com.spinal.ioc.engine.Engine
 		**/
-		unwire: function(spec, callback) {
+		unwire: function(spec, callback, ctx) {
 			return this.trigger(Engine.EVENTS.unwire, this.removeSpec(spec));
+		},
+
+
+		/**
+		*	Default Finish Operation Handler
+		*	@public
+		*	@method
+		*	@param [callback] {Function} callback reference
+		*	@param ctx {com.spinal.ioc.Context} context reference
+		*	@return com.spinal.ioc.engine.Engine
+		**/
+		done: function(callback, ctx) {
+			if(callback && _.isFunction(callback)) callback(ctx);
+			return this;
 		},
 
 		/**
@@ -177,12 +195,12 @@ define(['ioc/engine/annotation/spec',
 		*	This method uses recursion.
 		*	@public
 		*	@method addSpec
-		*	@param spec
+		*	@param spec {Object} spec reference
 		*	@return Array
 		**/
-		addSpec: function(spec) {
-			var sp = this.extractPlugins(this.specs.add(spec));
-			return _.flatten(sp.hasDependencies() ? _.map(sp.getDependencies(), this.addSpec) : [sp]);
+		addSpec: function(spec, ctx) {
+			var sp = this.extractPlugins(this.specs.add(spec, { silent: true })), ctx = (ctx) ? ctx : [];
+			return sp.hasDependencies() ? _.map(sp.getDependencies(), this.addSpec, this) : sp;
 		},
 
 		/**
@@ -226,8 +244,7 @@ define(['ioc/engine/annotation/spec',
 		*	@return Array
 		**/
 		allBones: function() {
-			var all = _.pluck(this.allSpecs(), 'bones');
-			return _.reduce(all, function(prev, curr) { return _.extend(prev.toJSON(), curr.toJSON()); } all[0]);
+			return _.flatten(_.map(_.pluck(this.allSpecs(), 'bones'), function(bones) { return bones.collection; }));
 		},
 
 		/**
@@ -307,8 +324,8 @@ define(['ioc/engine/annotation/spec',
 		**/
 		PROCESSORS: [
 			{ path: 'ioc/processor/create' },
-			{ path: 'ioc/processor/ready' },
-			{ path: 'ioc/processor/plugin' }
+			//{ path: 'ioc/processor/ready' },
+			//{ path: 'ioc/processor/plugin' }
 		]
 
 	}));

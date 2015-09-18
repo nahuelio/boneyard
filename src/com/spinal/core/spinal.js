@@ -219,7 +219,10 @@ define(['libs/backbone'], function() {
 			proxify: function(t) {
 				if(!t) return this;
 				var members = Array.prototype.slice.call(arguments, 1);
-				_.each(members, function(m) { t[m] = (_.isFunction(this[m])) ? _.bind(this[m], this) : this[m]; }, this);
+				_.each(members, function(m) {
+					if(!_.defined(this[m])) return;
+					t[m] = (_.isFunction(this[m])) ? _.bind(this[m], this) : this[m];
+			}, this);
 				return this;
 			},
 

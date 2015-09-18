@@ -22,10 +22,10 @@ define(['ioc/engine/engine'], function(Engine) {
 		*	@return com.spinal.ioc.Context
 		**/
 		initialize: function() {
-			this.proxy()
-				.listenTo(this.getEngine(), Engine.EVENTS.ready, this.onStart);
-				.listenTo(this.getEngine(), Engine.EVENTS.wire, this.onWire);
-				.listenTo(this.getEngine(), Engine.EVENTS.unwire, this.onUnwire);
+			this.proxy();
+			this.listenTo(this.getEngine(), Engine.EVENTS.ready, this.onStart);
+			this.listenTo(this.getEngine(), Engine.EVENTS.wire, this.onWire);
+			this.listenTo(this.getEngine(), Engine.EVENTS.unwire, this.onUnwire);
 			return Context.__super__.initialize.apply(this, arguments);
 		},
 
@@ -36,7 +36,7 @@ define(['ioc/engine/engine'], function(Engine) {
 		*	@return com.spinal.ioc.Context
 		**/
 		proxy: function() {
-			this.proxify(this.getEngine(), 'wire', 'unwire',
+			this.getEngine().proxify(this,
 				'spec', 'allSpecs', 'allBones',
 				'bone', 'bonesByType', 'bonesByClass');
 			return this;
@@ -50,6 +50,35 @@ define(['ioc/engine/engine'], function(Engine) {
 		**/
 		getEngine: function() {
 			return Context.engine;
+		},
+
+		/**
+		*	Adds and wire a new spec supplied on this context
+		*	@public
+		*	@chainable
+		*	@method wire
+		*	@param spec {Object} spec reference
+		*	@param [callback] {Function} callback reference
+		*	@return com.spinal.ioc.Context
+		**/
+		wire: function(spec, callback) {
+			this.getEngine().wire(spec, callback, this);
+			return this;
+		},
+
+		/**
+		*	Removes an existing spec associated with a context
+		*	@public
+		*	@chainable
+		*	@disabled
+		*	@method remove
+		*	@param spec {Object} spec reference
+		*	@param [callback] {Function} callback reference
+		*	@return com.spinal.ioc.engine.Engine
+		**/
+		unwire: function(spec, callback) {
+			this.getEngine().unwire(spec, callback, this);
+			return this;
 		},
 
 		/**
@@ -120,9 +149,13 @@ define(['ioc/engine/engine'], function(Engine) {
 		*	@return com.spinal.ioc.Context
 		**/
 		Initialize: function(spec, callback) {
-			return (arguments.length === 1 && _.isFunction(spec)) ?
-				new Context().wire(null, spec) :
-				new Context().wire(spec, callback);
+			var ctx = new Context();
+			if(_.defined(spec) && _.isFunction(spec)) {
+				callback = spec;
+				spec = null;
+			}
+			(arguments.length > 0) ? ctx.wire(spec, callback) : ctx.getEngine().setup();
+			return ctx;
 		},
 
 		/**
@@ -139,7 +172,12 @@ define(['ioc/engine/engine'], function(Engine) {
 
 	}));
 
-	// Unique Engine Instance for all context
+	/**
+	*	Unique Engine Reference
+	*	@static
+	*	@property engine
+	*	@type com.spinal.ioc.engine.Engine
+	**/
 	Context.engine = new Engine();
 
 	// Automatic Initializer

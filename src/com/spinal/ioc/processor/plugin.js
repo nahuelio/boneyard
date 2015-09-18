@@ -4,8 +4,8 @@
 **/
 define(['ioc/context',
 		'ioc/processor/bone',
-		'ioc/helpers/injector',
-		'util/exception/processor'], function(Context, BoneProcessor, Injector, ProcessorException) {
+		'ioc/engine/helpers/injector',
+		'util/exception/ioc/processor'], function(Context, BoneProcessor, Injector, ProcessorException) {
 
 	/**
 	*	Defines a processor that acts as a wrapper to trigger plugins functionality

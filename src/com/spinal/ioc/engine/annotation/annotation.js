@@ -2,9 +2,9 @@
 *	@module com.spinal.ioc.engine.annotation
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define(['ioc/engine/helpers/injector'
+define(['ioc/engine/helpers/injector',
 	'ioc/engine/helpers/dependency',
-	'util/adt/collection'], function(Dependency, Collection) {
+	'util/adt/collection'], function(Injector, Dependency, Collection) {
 
 	/**
 	*	Class Annotation
@@ -27,8 +27,8 @@ define(['ioc/engine/helpers/injector'
 		**/
 		initialize: function(attrs) {
 			attrs || (attrs = {});
-			this.valid.apply(this, arguments);
-			this.dependencies = new Collection(this.retrieve(), { interface: Dependency });
+			this.valid(attrs);
+			this.dependencies = new Collection(null, { interface: Dependency });
 			return Annotation.__super__.initialize.apply(this, arguments);
 		},
 
@@ -50,7 +50,7 @@ define(['ioc/engine/helpers/injector'
 		*	@param [attrs] {Object} annotation attributes
 		**/
 		valid: function(attrs) {
-			if(!attrs) throw new Error('Annotation cannot be undefined');
+			if(!_.defined(attrs)) throw new Error('Annotation cannot be undefined');
 			if(!_.isObject(attrs)) throw new Error('Annotation type must be an object');
 		},
 
@@ -79,7 +79,7 @@ define(['ioc/engine/helpers/injector'
 		retrieve: function(context) {
 			if(!context) return [];
 			return _.compact(_.flatten(_.map(context, function(value, key, target) {
-				if(this.isNativeObject(value)) return this.retrieve(target);
+				if(this.isNativeObject(value) && !this.isNative(value)) return this.retrieve(value);
 				return this.create.apply(this, arguments);
 			}, this)));
 		},
@@ -92,7 +92,7 @@ define(['ioc/engine/helpers/injector'
 		*	@return Boolean
 		**/
 		isAnnotation: function(expr) {
-			if(!expr || !_.isString(expr) || expr.indexOf(Annotation.PREFIX) !== 0) return false;
+			return (_.defined(expr) && _.isString(expr) && expr.indexOf(Annotation.PREFIX) === 0);
 		}
 
 	}, {

@@ -335,7 +335,6 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 		/**
 		*	Returns true if the collection is empty.
 		*	@public
-		*	@chainable
 		*	@method isEmpty
 		*	@return Boolean
 		**/
@@ -346,7 +345,6 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 		/**
 		*	Returns the size of the collection.
 		*	@public
-		*	@chainable
 		*	@method size
 		*	@return Number
 		**/

@@ -4,7 +4,7 @@
 *	@version 0.0.1
 **/
 define(['core/spinal',
-		'ioc/engine',
+		'ioc/engine/engine',
 		'util/string'], function(Spinal, Engine, StringUtils) {
 
 	/**
@@ -14,7 +14,7 @@ define(['core/spinal',
 	*	@class com.spinal.ioc.plugins.HTMLPlugin
 	*	@extends com.spinal.core.Spinal.SpinalClass
 	*
-	*	@requires com.spianl.ioc.Engine
+	*	@requires com.spianl.ioc.engine.Engine
 	*	@requires com.spinal.util.StringUtils
 	**/
 	var HTMLPlugin = Spinal.namespace('com.spinal.ioc.plugins.HTMLPlugin', Spinal.SpinalClass.inherit({

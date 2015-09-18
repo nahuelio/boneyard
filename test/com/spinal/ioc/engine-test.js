@@ -3,7 +3,7 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['ioc/context',
-		'ioc/engine'], function(Context, Engine) {
+		'ioc/engine/engine'], function(Context, Engine) {
 
 	describe('com.spinal.ioc.Engine', function() {
 

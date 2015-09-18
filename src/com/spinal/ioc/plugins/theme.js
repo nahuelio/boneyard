@@ -3,7 +3,7 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 *	@version 0.0.1
 **/
-define(['ioc/engine',
+define(['ioc/engine/engine',
 		'util/adt/collection'], function(Engine, Collection) {
 
 	/**
@@ -12,7 +12,7 @@ define(['ioc/engine',
 	*	@class com.spinal.ioc.plugins.ThemePlugin
 	*	@extends com.spinal.core.Spinal.SpinalClass
 	*
-	*	@requires com.spinal.ioc.Engine
+	*	@requires com.spinal.ioc.engine.Engine
 	*	@requires com.spinal.util.adt.Collection
 	**/
 	var ThemePlugin = Spinal.namespace('com.spinal.ioc.plugins.ThemePlugin', Spinal.SpinalClass.inherit({

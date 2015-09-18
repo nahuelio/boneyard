@@ -3,7 +3,7 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['ioc/processor/bone',
-	'util/exception/processor'], function(BoneProcessor, ProcessorException) {
+	'util/exception/ioc/processor'], function(BoneProcessor, ProcessorException) {
 
 	/**
 	*	Create Processor
@@ -48,7 +48,7 @@ define(['ioc/processor/bone',
 		**/
 		enqueue: function(bone) {
 			this.getFactory().push({ path: bone.getModule(), id: bone.getId(), callback: _.bind(this.create, this, bone) });
-			if(bone.getDependencies().length > 0) this.getFactory().swap(this.sort(bone)));
+			if(bone.getDependencies().length > 0) this.getFactory().swap(this.sort(bone));
 			return this;
 		},
 
@@ -62,7 +62,7 @@ define(['ioc/processor/bone',
 		sort: function(bone) {
 			return _.bind(function(maxp, m, ix) {
 				return (this.bone.id === m.id && ix <= maxp) ? maxp : ix;
-			}, this, _.max(this.getPositions(bone));
+			}, this, _.max(this.getPositions(bone)));
 		},
 
 		/**
@@ -100,9 +100,8 @@ define(['ioc/processor/bone',
 		*	@return {com.spinal.ioc.processor.CreateProcessor}
 		**/
 		execute: function() {
-			CreateProcessor.__super__
-				.execute.call(this, this.process, this.getSpecs().allBones())
-				.getFactory().load(_.bind(this.done, this, CreateProcessor.NAME));
+			CreateProcessor.__super__.execute.call(this, this.process, this.getEngine().allBones())
+			this.getFactory().load(_.bind(this.done, this, CreateProcessor.NAME));
 			return this;
 		}
 
