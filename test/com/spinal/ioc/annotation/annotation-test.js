@@ -31,7 +31,16 @@ define(['ioc/engine/annotation/annotation',
 		});
 
 		after(function() {
-
+			delete this.boneStr;
+			delete this.boneNum;
+			delete this.boneBool;
+			delete this.boneBone;
+			delete this.boneObj;
+			delete this.boneObjBone;
+			delete this.boneArr;
+			delete this.boneArrBone;
+			delete this.boneComplex;
+			delete this.annotation;
 		});
 
 		describe('#new()', function() {

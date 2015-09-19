@@ -3,7 +3,8 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['ioc/engine/annotation/annotation',
-	'ioc/engine/helpers/injector'], function(Annotation, Injector) {
+	'ioc/engine/helpers/injector',
+	'util/object'], function(Annotation, Injector, ObjectUtil) {
 
 	/**
 	*	Class Bone
@@ -13,6 +14,7 @@ define(['ioc/engine/annotation/annotation',
 	*
 	*	@requires com.spinal.ioc.engine.annotation.Annotation
 	*	@requires com.spinal.ioc.engine.helpers.Injector
+	*	@requires com.spinal.util.ObjectUtil
 	**/
 	var Bone = Spinal.namespace('com.spinal.ioc.engine.annotation.Bone', Annotation.inherit({
 
@@ -32,11 +34,11 @@ define(['ioc/engine/annotation/annotation',
 		/**
 		*	Retrieves annotation module path
 		*	@public
-		*	@method getId
+		*	@method getPath
 		*	@return String
 		**/
-		getModule: function() {
-			return _.isObject(this.getValue()) ? this.getValue().$module : null;
+		getPath: function() {
+			return this.isModule() ? this.getValue().$module : null;
 		},
 
 		/**
@@ -46,7 +48,7 @@ define(['ioc/engine/annotation/annotation',
 		*	@return Object
 		**/
 		getParams: function() {
-			return _.isObject(this.getValue()) ? this.getValue().$params : this.getValue();
+			return ObjectUtil.isRealObject(this.getValue()) ? this.getValue().$params : this.getValue();
 		},
 
 		/**
@@ -70,7 +72,7 @@ define(['ioc/engine/annotation/annotation',
 		*	@return Object
 		**/
 		create: function(expr, key, context) {
-			if(Bone.__super__.create.apply(this, arguments) && !this.isBone(expr)) return null;
+			if(Bone.__super__.create.apply(this, arguments) && !Bone.isBone(expr)) return null;
 			return { expression: expr, target: context, property: key, injector: new Injector(this) };
 		},
 
@@ -95,7 +97,7 @@ define(['ioc/engine/annotation/annotation',
 		*	@return Boolean
 		**/
 		isModule: function() {
-			return !this.isNative() && _.defined(this.getModule());
+			return !ObjectUtil.isBackbone(this.getValue()) && _.defined(this.getModule());
 		},
 
 		/**
@@ -106,17 +108,6 @@ define(['ioc/engine/annotation/annotation',
 		**/
 		isCreated: function() {
 			return _.defined(this._$created);
-		},
-
-		/**
-		*	Returns true if expression matches a bone nomenclature
-		*	@public
-		*	@method isBone
-		*	@param expr {String} expression to be evaluated
-		*	@return Boolean
-		**/
-		isBone: function(expr) {
-			return (expr.indexOf(Annotation.PREFIX + Bone.TYPE + Bone.DELIMITER) === 0);
 		}
 
 	}, {
@@ -140,7 +131,18 @@ define(['ioc/engine/annotation/annotation',
 		*	@property TYPE
 		*	@type String
 		**/
-		TYPE: 'bone'
+		TYPE: 'bone',
+
+		/**
+		*	Returns true if expression matches a bone nomenclature
+		*	@static
+		*	@method isBone
+		*	@param expr {String} expression to be evaluated
+		*	@return Boolean
+		**/
+		isBone: function(expr) {
+			return (expr.indexOf(Annotation.PREFIX + Bone.TYPE + Bone.DELIMITER) === 0);
+		}
 
 	}));
 
