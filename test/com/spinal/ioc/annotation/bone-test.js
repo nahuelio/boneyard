@@ -144,6 +144,7 @@ define(['ioc/engine/annotation/bone',
 
 		describe('#create()', function() {
 
+			// CONTINUE HERE >>>
 			it('Should return dependency object structure');
 
 			it('Should return null, expression not a valid bone annotation');

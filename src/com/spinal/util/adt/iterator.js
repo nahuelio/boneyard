@@ -5,7 +5,7 @@
 define(['core/spinal'], function(Spinal) {
 
 	/**
-	*	Define a generic interface to communicate with a service in the cloud.
+	*	Defines a generic interface of an iterable collection of elements
 	*	@namespace com.spinal.util.adt
 	*	@class com.spinal.util.adt.Iterator
 	*	@extends com.spinal.core.SpinalClass
