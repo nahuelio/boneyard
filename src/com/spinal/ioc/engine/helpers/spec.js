@@ -5,7 +5,8 @@
 define(['ioc/engine/annotation/bone',
 	'ioc/engine/annotation/ready',
 	'util/adt/collection',
-	'util/string'], function(Bone, Ready, Collection, StringUtil) {
+	'util/string',
+	'util/object'], function(Bone, Ready, Collection, StringUtil, ObjectUtil) {
 
 	/**
 	*	Class Spec
@@ -17,6 +18,7 @@ define(['ioc/engine/annotation/bone',
 	*	@requires com.spinal.ioc.engine.annotation.Ready
 	*	@requires com.spinal.util.adt.Collection
 	*	@requires com.spinal.util.StringUtil
+	*	@requires com.spinal.util.ObjectUtil
 	**/
 	var Spec = Spinal.namespace('com.spinal.ioc.engine.annotation.Spec', Spinal.SpinalClass.inherit({
 
@@ -102,7 +104,7 @@ define(['ioc/engine/annotation/bone',
 		*	@return com.spinal.ioc.engine.annotation.Spec
 		**/
 		parse: function(spec) {
-			this.bones.set(StringUtil.objToArr(_.omit.call(this, spec, Spec.PROPERTIES)), { silent: true });
+			this.bones.set(ObjectUtil.objToArr(_.omit.call(this, spec, Spec.PROPERTIES)), { silent: true });
 			return this;
 		},
 
@@ -133,7 +135,7 @@ define(['ioc/engine/annotation/bone',
 		*	Perform a look up of bones by className passed as parameter.
 		*	@static
 		*	@method findBonesByClass
-		*	@param clazz {String} bone class
+		*	@param clazz {Function} bone constructor function
 		*	@return Array
 		**/
 		getBonesByClass: function(clazz) {

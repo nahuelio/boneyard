@@ -2,9 +2,9 @@
 *	@module com.spinal.ioc.engine.annotation
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define(['ioc/engine/helpers/injector',
-	'ioc/engine/helpers/dependency',
-	'util/adt/collection'], function(Injector, Dependency, Collection) {
+define(['ioc/engine/helpers/dependency',
+	'util/adt/collection',
+	'util/object'], function(Dependency, Collection, ObjectUtil) {
 
 	/**
 	*	Class Annotation
@@ -12,9 +12,9 @@ define(['ioc/engine/helpers/injector',
 	*	@class com.spinal.ioc.engine.annotation.Annotation
 	*	@extends com.spinal.core.SpinalClass
 	*
-	*	@requires com.spinal.ioc.engine.helpers.Injector
 	*	@requires com.spinal.ioc.engine.helpers.Dependency
 	*	@requires com.spinal.util.adt.Collection
+	*	@requires com.spinal.util.ObjectUtil
 	**/
 	var Annotation = Spinal.namespace('com.spinal.ioc.engine.annotation.Annotation', Spinal.SpinalClass.inherit({
 
@@ -26,10 +26,30 @@ define(['ioc/engine/helpers/injector',
 		*	@return com.spinal.ioc.engine.annotation.Annotation
 		**/
 		initialize: function(attrs) {
-			attrs || (attrs = {});
 			this.valid(attrs);
+			_.extend(this, { _id: _.keys(attrs)[0], _value: _.values(attrs)[0] });
 			this.dependencies = new Collection(null, { interface: Dependency });
 			return Annotation.__super__.initialize.apply(this, arguments);
+		},
+
+		/**
+		*	Retrieves annotation id
+		*	@public
+		*	@method getId
+		*	@return Object
+		**/
+		getId: function() {
+			return this._id;
+		},
+
+		/**
+		*	Retrieves annotation value
+		*	@public
+		*	@method getValue
+		*	@return Object
+		**/
+		getValue: function() {
+			return this._value;
 		},
 
 		/**
@@ -55,7 +75,7 @@ define(['ioc/engine/helpers/injector',
 		},
 
 		/**
-		*	Create Dependency
+		*	Default Dependency create strategy
 		*	@public
 		*	@method create
 		*	@param expr {String} expression to be evaluated
@@ -64,8 +84,8 @@ define(['ioc/engine/helpers/injector',
 		*	@return Object
 		**/
 		create: function(expr, key, context) {
-			if(!this.isAnnotation(expr) || !context) return null;
-			return { expression: expr, target: context, property: key, injector: new Injector(this) };
+			if(!Annotation.isExpressionValid(expr) || !context) return null;
+			return this;
 		},
 
 		/**
@@ -73,26 +93,15 @@ define(['ioc/engine/helpers/injector',
 		*	This method uses recursion.
 		*	@public
 		*	@method retrieve
-		*	@param [context] {Object} context found on nested structure
+		*	@param [ctx] {Object} context found on nested structure
 		*	@return Array
 		**/
-		retrieve: function(context) {
-			if(!context) return [];
-			return _.compact(_.flatten(_.map(context, function(value, key, target) {
-				if(this.isNativeObject(value) && !this.isNative(value)) return this.retrieve(value);
-				return this.create.apply(this, arguments);
+		retrieve: function(ctx) {
+			ctx = (ctx) ? ctx : this.getValue();
+			return _.compact(_.flatten(_.map(ctx, function(value, key, target) {
+				return ((ObjectUtil.isRealObject(value) || _.isArray(value)) && !ObjectUtil.isBackbone(value)) ?
+					this.retrieve(value) : this.create.apply(this, arguments);
 			}, this)));
-		},
-
-		/**
-		*	Returns true if expression matches a annotation nomenclature
-		*	@public
-		*	@method isAnnotation
-		*	@param expr {String} expression to be evaluated
-		*	@return Boolean
-		**/
-		isAnnotation: function(expr) {
-			return (_.defined(expr) && _.isString(expr) && expr.indexOf(Annotation.PREFIX) === 0);
 		}
 
 	}, {
@@ -109,7 +118,18 @@ define(['ioc/engine/helpers/injector',
 		*	@property PREFIX
 		*	@type String
 		**/
-		PREFIX: '$'
+		PREFIX: '$',
+
+		/**
+		*	Returns true if expression matches a annotation nomenclature
+		*	@static
+		*	@method isExpressionValid
+		*	@param expr {String} expression to be evaluated
+		*	@return Boolean
+		**/
+		isExpressionValid: function(expr) {
+			return (_.defined(expr) && _.isString(expr) && expr.indexOf(Annotation.PREFIX) === 0);
+		}
 
 	}));
 

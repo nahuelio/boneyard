@@ -22,7 +22,7 @@ define(['ioc/engine/engine'], function(Engine) {
 		*	@return com.spinal.ioc.Context
 		**/
 		initialize: function() {
-			this.proxy();
+			this.api();
 			this.listenTo(this.getEngine(), Engine.EVENTS.ready, this.onStart);
 			this.listenTo(this.getEngine(), Engine.EVENTS.wire, this.onWire);
 			this.listenTo(this.getEngine(), Engine.EVENTS.unwire, this.onUnwire);
@@ -30,12 +30,12 @@ define(['ioc/engine/engine'], function(Engine) {
 		},
 
 		/**
-		*	Proxifies Engine and Query methods into this Context
+		*	Proxifies Engine's methods into this context (API)
 		*	@public
-		*	@method proxy
+		*	@method api
 		*	@return com.spinal.ioc.Context
 		**/
-		proxy: function() {
+		api: function() {
 			this.getEngine().proxify(this,
 				'spec', 'allSpecs', 'allBones',
 				'bone', 'bonesByType', 'bonesByClass');
@@ -53,7 +53,7 @@ define(['ioc/engine/engine'], function(Engine) {
 		},
 
 		/**
-		*	Adds and wire a new spec supplied on this context
+		*	Wires a new spec into this context
 		*	@public
 		*	@chainable
 		*	@method wire
@@ -67,7 +67,7 @@ define(['ioc/engine/engine'], function(Engine) {
 		},
 
 		/**
-		*	Removes an existing spec associated with a context
+		*	Removes an existing spec associated with this context
 		*	@public
 		*	@chainable
 		*	@disabled

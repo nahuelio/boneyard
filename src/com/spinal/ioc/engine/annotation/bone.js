@@ -2,7 +2,8 @@
 *	@module com.spinal.ioc.engine.annotation
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define(['ioc/engine/annotation/annotation'], function(Annotation) {
+define(['ioc/engine/annotation/annotation',
+	'ioc/engine/helpers/injector'], function(Annotation, Injector) {
 
 	/**
 	*	Class Bone
@@ -11,6 +12,7 @@ define(['ioc/engine/annotation/annotation'], function(Annotation) {
 	*	@extends com.spinal.ioc.engine.annotation.Annotation
 	*
 	*	@requires com.spinal.ioc.engine.annotation.Annotation
+	*	@requires com.spinal.ioc.engine.helpers.Injector
 	**/
 	var Bone = Spinal.namespace('com.spinal.ioc.engine.annotation.Bone', Annotation.inherit({
 
@@ -23,30 +25,8 @@ define(['ioc/engine/annotation/annotation'], function(Annotation) {
 		**/
 		initialize: function(attrs) {
 			Bone.__super__.initialize.apply(this, arguments);
-			_.extend(this, { _id: _.keys(attrs)[0], _value: _.values(attrs)[0] });
 			this.getDependencies().set(this.retrieve(), { silent: true });
-			console.log(this.getDependencies().invoke('getId'));
 			return this;
-		},
-
-		/**
-		*	Retrieves bone's id
-		*	@public
-		*	@method getId
-		*	@return Object
-		**/
-		getId: function() {
-			return this._id;
-		},
-
-		/**
-		*	Retrieves bone's metadata
-		*	@public
-		*	@method getValue
-		*	@return Object
-		**/
-		getValue: function() {
-			return this._value;
 		},
 
 		/**
@@ -63,20 +43,35 @@ define(['ioc/engine/annotation/annotation'], function(Annotation) {
 		*	Retrieves annotation module params if exists, otherwise returns bone's value
 		*	@public
 		*	@method getParams
-		*	@return String
+		*	@return Object
 		**/
 		getParams: function() {
 			return _.isObject(this.getValue()) ? this.getValue().$params : this.getValue();
 		},
 
 		/**
-		*	Determines and retrieves this bone either, as a module instance or the bone itself.
+		*	Determines and retrieves annotation bone module instance.
 		*	@public
-		*	@method get
+		*	@method bone
 		*	@return Object
 		**/
-		get: function() {
-			return (this.isModule() && this.isCreated()) ? this._$created : this;
+		bone: function() {
+			return (this.isModule() && this.isCreated()) ? this._$created : null;
+		},
+
+		/**
+		*	Create Dependency
+		*	@public
+		*	@override
+		*	@method create
+		*	@param expr {String} expression to be evaluated
+		*	@param key {String} context property key used to determine where to inject expression
+		*	@param context {Object} bone reference
+		*	@return Object
+		**/
+		create: function(expr, key, context) {
+			if(Bone.__super__.create.apply(this, arguments) && !this.isBone(expr)) return null;
+			return { expression: expr, target: context, property: key, injector: new Injector(this) };
 		},
 
 		/**
@@ -85,13 +80,11 @@ define(['ioc/engine/annotation/annotation'], function(Annotation) {
 		*	@public
 		*	@override
 		*	@method retrieve
-		*	@param [context] {Object} context found on nested structure
+		*	@param [ctx] {Object} context found on nested structure
 		*	@return Array
 		**/
-		retrieve: function(context) {
-			context = (context) ? context : this.getParams();
-			return (this.isNativeObject(context) && !this.isNative(context)) ?
-				Bone.__super__.retrieve.call(this, context) : context;
+		retrieve: function(ctx) {
+			return Bone.__super__.retrieve.call(this, _.defined(ctx) ? ctx : this.getParams());
 		},
 
 		/**
@@ -116,37 +109,6 @@ define(['ioc/engine/annotation/annotation'], function(Annotation) {
 		},
 
 		/**
-		*	Returns true if the value is an object or array and not a module, otherwise returns false
-		*	@public
-		*	@method isNativeObject
-		*	@param value {Object} value to be evaluated
-		*	@return Boolean
-		**/
-		isNativeObject: function(value) {
-			return (_.defined(value) &&
-				!_.isString(value) &&
-				!_.isNumber(value) &&
-				!_.isBoolean(value) &&
-				!_.isFunction(value) &&
-				!_.isRegExp(value) &&
-				!_.isDate(value) &&
-				!_.isArguments(value));
-		},
-
-		/**
-		*	Check if this annotation is an instance of a Backbone class
-		*	@public
-		*	@method isNative
-		*	@return Boolean
-		**/
-		isNative: function() {
-			return (this.getValue() instanceof Backbone.Model ||
-				this.getValue() instanceof Backbone.Collection ||
-				this.getValue() instanceof Backbone.View ||
-				this.getValue() instanceof Backbone.Router);
-		},
-
-		/**
 		*	Returns true if expression matches a bone nomenclature
 		*	@public
 		*	@method isBone
@@ -154,7 +116,7 @@ define(['ioc/engine/annotation/annotation'], function(Annotation) {
 		*	@return Boolean
 		**/
 		isBone: function(expr) {
-			return this.isAnnotation(expr) && (expr.indexOf(Bone.TYPE) !== -1);
+			return (expr.indexOf(Annotation.PREFIX + Bone.TYPE + Bone.DELIMITER) === 0);
 		}
 
 	}, {
@@ -178,7 +140,7 @@ define(['ioc/engine/annotation/annotation'], function(Annotation) {
 		*	@property TYPE
 		*	@type String
 		**/
-		TYPE: 'bone!'
+		TYPE: 'bone'
 
 	}));
 

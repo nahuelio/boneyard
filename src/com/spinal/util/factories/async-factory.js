@@ -91,7 +91,7 @@ define(['core/spinal',
 		*	@return Object
 		**/
 		findByPath: function(path) {
-			return this.stack.find(_.bind(function(r) { return (path && r.path === path); }, this));
+			return this.resources.find(_.bind(function(r) { return (path && r.path === path); }, this));
 		},
 
 		/**

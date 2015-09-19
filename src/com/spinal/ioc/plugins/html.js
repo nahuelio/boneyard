@@ -5,7 +5,7 @@
 **/
 define(['core/spinal',
 		'ioc/engine/engine',
-		'util/string'], function(Spinal, Engine, StringUtils) {
+		'util/object'], function(Spinal, Engine, ObjectUtil) {
 
 	/**
 	*	HTML IoC Plugin
@@ -15,7 +15,7 @@ define(['core/spinal',
 	*	@extends com.spinal.core.Spinal.SpinalClass
 	*
 	*	@requires com.spianl.ioc.engine.Engine
-	*	@requires com.spinal.util.StringUtils
+	*	@requires com.spinal.util.ObjectUtil
 	**/
 	var HTMLPlugin = Spinal.namespace('com.spinal.ioc.plugins.HTMLPlugin', Spinal.SpinalClass.inherit({
 
@@ -58,7 +58,7 @@ define(['core/spinal',
 		*	@return String
 		**/
 		_query: function(query) {
-			return StringUtils.search(query, Spinal.html);
+			return ObjectUtil.search(query, Spinal.html);
 		},
 
 		/**

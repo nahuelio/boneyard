@@ -2,7 +2,7 @@
 *	@module com.spinal.ioc.engine.helpers
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define(['ioc/context'], function(Context) {
+define(['util/string'], function(StringUtil) {
 
 	/**
 	*	Class Injector
@@ -25,16 +25,6 @@ define(['ioc/context'], function(Context) {
 		initialize: function(annotation) {
 			this.annotation = annotation;
 			return Injector.__super__.initialize.apply(this, arguments);
-		},
-
-		/**
-		*	Retrieves Engine from Context
-		*	@public
-		*	@method getEngine
-		*	@return com.spinal.ioc.engine.Engine
-		**/
-		getEngine: function() {
-			return Context.engine;
 		},
 
 		/**
@@ -67,7 +57,8 @@ define(['ioc/context'], function(Context) {
 		**/
 		get: function(dependency) {
 			if(!(m = dependency.getCompound())) return null;
-			return _.isObject(m) ? this.getEngine().bone(m.id)[m.method] : this.getEngine().bone(m);
+			// FIXME: Reference to Engine
+			//return _.isObject(m) ? this.getEngine().bone(m.id)[m.method] : this.getEngine().bone(m);
 		},
 
 		/**

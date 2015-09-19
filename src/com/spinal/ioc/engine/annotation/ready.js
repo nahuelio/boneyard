@@ -23,7 +23,7 @@ define(['ioc/engine/annotation/annotation'], function(Annotation) {
 		**/
 		initialize: function(attrs) {
 			attrs || (attrs = {});
-			Ready.__super__.initialize.apply(this, arguments);
+			Ready.__super__.initialize.call(this, attrs);
 			_.extend(this, StringUtil.toPrivate(attrs));
 			return this;
 		},

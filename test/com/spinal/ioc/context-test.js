@@ -11,7 +11,7 @@ define(['ioc/context',
 		'specs/plugin.spec'], function(Context, Engine, View, Container,
 			SimpleSpec, AdvancedSpec, PluginSpec) {
 
-	describe.only('com.spinal.ioc.Context', function() {
+	describe.skip('com.spinal.ioc.Context', function() {
 
 		this.appContext = null;
 
@@ -46,7 +46,7 @@ define(['ioc/context',
 		**/
 		describe('#wire()', function() {
 
-			it('Should Wire Simple specs (Boolean, String, Numbers, Object, Array, Date, RegExp, etc)', function(done) {
+			it.skip('Should Wire Simple specs (Boolean, String, Numbers, Object, Array, Date, RegExp, etc)', function(done) {
 				this.appContext.off().on(Context.EVENTS.start, _.bind(function(ctx) {
 					expect(ctx).to.be.ok();
 				}, this)).on(Context.EVENTS.complete, _.bind(function(ctx, type, spec) {

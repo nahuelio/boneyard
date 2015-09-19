@@ -34,11 +34,12 @@ require.config({
 
         /** Hack Backbone requirejs **/
         'underscore': 'src/libs/underscore',
-        'jquery': 'src/libs/jquery'
+        'jquery': 'src/libs/jquery',
+        'sinon': 'node_modules/sinon/pkg/sinon'
     },
 
     shim: {
-        'libs/bootstrap': ['jquery', 'libs/modernizr']
+        'libs/bootstrap': ['jquery', 'sinon']
     },
 
     // we have to kickoff jasmine, as it is asynchronous

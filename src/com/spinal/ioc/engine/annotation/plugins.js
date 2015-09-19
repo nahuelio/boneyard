@@ -25,7 +25,7 @@ define(['ioc/engine/annotation/annotation',
 		**/
 		initialize: function(attrs) {
 			attrs || (attrs = {});
-			Plugins.__super__.initialize.apply(this, arguments);
+			Plugins.__super__.initialize.call(this, attrs);
 			_.extend(this, StringUtil.toPrivate(attrs));
 			return this;
 		},

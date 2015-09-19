@@ -6,7 +6,7 @@ define(['ioc/engine/helpers/injector',
 		'ioc/processor/bone',
 		'ioc/engine/engine'], function(Injector, BoneProcessor, Engine) {
 
-	describe('com.spinal.ioc.helpers.Injector', function() {
+	describe.skip('com.spinal.ioc.helpers.Injector', function() {
 
 		before(function() {
 			this.common = 'my-container';

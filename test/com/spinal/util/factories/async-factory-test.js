@@ -9,9 +9,6 @@ define(['util/factories/async-factory',
 
 	describe('com.spinal.util.factories.AsyncFactory', function() {
 
-		/**
-		*	AsyncFactory#new() test
-		**/
 		describe('#new()', function() {
 
 			it('Should Instanciate AsyncFactory Class', function() {
@@ -35,9 +32,6 @@ define(['util/factories/async-factory',
 
 		});
 
-		/**
-		*	AsyncFactory#push() test
-		**/
 		describe('#push()', function() {
 
 			it('Should push a new resource into the factory resource collection', function() {
@@ -57,9 +51,6 @@ define(['util/factories/async-factory',
 
 		});
 
-		/**
-		*	AsyncFactory#set() test
-		**/
 		describe('#set()', function() {
 
 			it('Should feed the factory resource collection with a list of resources', function() {
@@ -72,9 +63,6 @@ define(['util/factories/async-factory',
 
 		});
 
-		/**
-		*	AsyncFactory#findByPath() test
-		**/
 		describe('#findByPath', function() {
 
 			it('Should retrieve an existing resource by path', function() {
@@ -91,9 +79,6 @@ define(['util/factories/async-factory',
 
 		});
 
-		/**
-		*	AsyncFactory#findPosBy() test
-		**/
 		describe('#findPosBy', function() {
 
 			it('Should retrieve the position (0-based) of an existing resource inside the factory resource collection', function() {
@@ -108,9 +93,6 @@ define(['util/factories/async-factory',
 
 		});
 
-		/**
-		*	AsyncFactory#exists() test
-		**/
 		describe('#exists', function() {
 
 			it('Should return true on a resource that exists in the stack', function() {
@@ -127,9 +109,6 @@ define(['util/factories/async-factory',
 
 		});
 
-		/**
-		*	AsyncFactory#remove() test
-		**/
 		describe('#remove()', function() {
 
 			it('Should remove an existing resource from the stack', function() {
@@ -149,9 +128,6 @@ define(['util/factories/async-factory',
 
 		});
 
-		/**
-		*	AsyncFactory#load() test
-		**/
 		describe('#load()', function() {
 
 			it('Should load the resources that are currently in the factory stack', function(done) {

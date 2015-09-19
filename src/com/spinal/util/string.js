@@ -112,41 +112,6 @@ define(['core/spinal',
 		},
 
 		/**
-		*	Perform a query using a string (dot notation) on the obj passed as parameter.
-		*	If the input doesn't match, it returns null.
-		*	@static
-		*	@method search
-		*	@param query {String} query in dot notation format
-		*	@param obj {Object} JSON object ref
-		*	@return Object
-		**/
-		search: function(query, obj) {
-			if(!query || !obj || query === '') return null;
-			if(_.isEmpty(obj)) return obj;
-			var q = query.split("."), o = obj;
-		    for (var i = 0; i < q.length; i++) {
-				if(!o[q[i]]) { o = ''; break; }
-				o = o[q[i]];
-			}
-		    return o;
-		},
-
-		/**
-		*	Transforms an object into an array, creating on each key-value pair a separate object on the resulting
-		*	array
-		*	@static
-		*	@method objToArr
-		*	@param obj {Object} JSON object ref
-		*	@return Array
-		**/
-		objToArr: function(obj) {
-			return _.reduce(obj, function(arr, v, k) {
-				var o = {}; o[k] = v; arr.push(o);
-				return arr;
-			}, []);
-		},
-
-		/**
 		*	Capitalize first letter given an string
 		*	@public
 		*	@method capitalize
