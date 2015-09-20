@@ -3,9 +3,7 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['ioc/engine/annotation/annotation',
-	'ioc/engine/helpers/dependency',
-	'ioc/engine/helpers/injector',
-	'util/adt/collection'], function(Annotation, Dependency, Injector, Collection) {
+	'ioc/engine/helpers/injector'], function(Annotation, Injector) {
 
 	describe('com.spinal.ioc.engine.annotation.Annotation', function() {
 
@@ -27,6 +25,11 @@ define(['ioc/engine/annotation/annotation',
 					other: { option: [{ key: '$bone!boneArr'}, 100] }
 				}
 			}};
+			this.dependenciesFeed = [{
+				expression: '$bone!boneObj',
+				target: { key: '$bone!boneObj' },
+				property: 'key'
+			}];
 			this.annotation = null;
 		});
 
@@ -48,15 +51,6 @@ define(['ioc/engine/annotation/annotation',
 			it('Should return a new contructor', function() {
 				this.annotation = new Annotation(this.boneStr);
 				expect(this.annotation).to.be.ok();
-			});
-
-		});
-
-		describe('#getDependencies()', function() {
-
-			it('Should return a collection of type Dependency', function() {
-				expect(this.annotation.getDependencies()).to.be.a(Collection);
-				expect(this.annotation.getDependencies()._interface).to.be(Dependency);
 			});
 
 		});
@@ -87,6 +81,14 @@ define(['ioc/engine/annotation/annotation',
 
 		});
 
+		describe('#getInjector()', function() {
+
+			it('Should return annotation injector', function() {
+				expect(this.annotation.getInjector()).to.be.an(Injector);
+			});
+
+		});
+
 		describe('#valid()', function() {
 
 			it('Should throw Error: constructor parameter is null or not an object', function() {
@@ -108,28 +110,34 @@ define(['ioc/engine/annotation/annotation',
 		describe('#create()', function() {
 
 			it('Should return a dependency object structure', function() {
+				this.retrieveStub = sinon.stub(Annotation.prototype, 'retrieve').returns(this.dependenciesFeed);
 				var annotation = new Annotation(this.boneBone);
 				this.isAnnotationStub = sinon.stub(Annotation, 'isExpressionValid').returns(true);
 
 				var result = annotation.create('$bone!boneStr', 'boneBone', this.boneBone);
 				expect(result).to.be.ok();
-				expect(result).to.be.an(Annotation);
+				expect(result).to.be.an('object');
 
+				this.retrieveStub.restore();
 				this.isAnnotationStub.restore();
 			});
 
 			it('Should return null: expression not valid', function() {
+				this.retrieveStub = sinon.stub(Annotation.prototype, 'retrieve').returns(this.dependenciesFeed);
 				var annotation = new Annotation(this.boneObjBone);
 				this.isAnnotationStub = sinon.stub(Annotation, 'isExpressionValid').returns(false);
 
 				expect(annotation.create('boneStr', 'property', this.boneBone)).not.be.ok();
 
+				this.retrieveStub.restore();
 				this.isAnnotationStub.restore();
 			});
 
 			it('Should return null: context is not defined', function() {
+				this.retrieveStub = sinon.stub(Annotation.prototype, 'retrieve').returns(this.dependenciesFeed);
 				var annotation = new Annotation(this.boneObjBone);
 				expect(annotation.create('boneStr', 'property', null)).not.be.ok();
+				this.retrieveStub.restore();
 			});
 
 		});

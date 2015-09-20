@@ -5,8 +5,7 @@
 define(['ioc/engine/annotation/bone',
 	'ioc/engine/helpers/injector',
 	'ioc/engine/helpers/dependency',
-	'util/adt/collection',
-	'util/object'], function(Bone, Injector, Dependency, Collection, ObjectUtil) {
+	'util/object'], function(Bone, Injector, Dependency, ObjectUtil) {
 
 	describe('com.spinal.ioc.engine.annotation.Bone', function() {
 
@@ -23,10 +22,8 @@ define(['ioc/engine/annotation/bone',
 			this.dependenciesFeed = [{
 				expression: '$bone!boneObj',
 				target: { key: '$bone!boneObj' },
-				property: 'key',
-				injector: new Injector()
+				property: 'key'
 			}];
-			this.dependencies = new Collection(null, { interface: Dependency });
 			this.bone = null;
 		});
 
@@ -40,18 +37,16 @@ define(['ioc/engine/annotation/bone',
 		describe('#new()', function() {
 
 			it('Should return an instance of a bone annotation', function() {
-				this.retrieveStub = sinon.stub(Bone.prototype, 'retrieve').returns(this.dependenciesFeed);
-				this.dependenciesStub = sinon.stub(Bone.prototype, 'getDependencies').returns(this.dependencies);
+				var retrieveStub = sinon.stub(Bone.prototype, 'retrieve').returns(this.dependenciesFeed);
 				this.bone = new Bone(this.boneComplex);
 
 				expect(this.bone).to.be.ok();
 				expect(this.bone.toString()).to.be('[object Bone]');
 				expect(this.bone.getId()).to.be('complex');
 				expect(this.bone.getValue()).to.be.an('object');
-				expect(this.bone.getDependencies()).to.be.a(Collection);
+				expect(this.bone.getInjector()).to.be.a(Injector);
 
-				this.retrieveStub.restore();
-				this.dependenciesStub.restore();
+				retrieveStub.restore();
 			});
 
 		});
@@ -59,21 +54,21 @@ define(['ioc/engine/annotation/bone',
 		describe('#getPath()', function() {
 
 			it('Should return bone module path as string', function() {
-				this.isModuleStub = sinon.stub(this.bone, 'isModule').returns(true);
+				var isModuleStub = sinon.stub(this.bone, 'isModule').returns(true);
 
 				var result = this.bone.getPath();
 				expect(result).to.be.ok();
 				expect(result).to.be(this.boneComplex.complex.$module);
 
-				this.isModuleStub.restore();
+				isModuleStub.restore();
 			});
 
 			it('Should return bone module path as null, the bone is not a module', function() {
-				this.isModuleStub = sinon.stub(this.bone, 'isModule').returns(false);
+				var isModuleStub = sinon.stub(this.bone, 'isModule').returns(false);
 
 				expect(this.bone.getPath()).not.be.ok();
 
-				this.isModuleStub.restore();
+				isModuleStub.restore();
 			});
 
 		});
@@ -81,23 +76,31 @@ define(['ioc/engine/annotation/bone',
 		describe('#getParams()', function() {
 
 			it('Should return parameters of a bone module', function() {
-				this.isRealObjectStub = sinon.stub(ObjectUtil, 'isRealObject').returns(true);
+				var isRealObjectStub = sinon.stub(ObjectUtil, 'isRealObject').returns(true);
 
 				var result = this.bone.getParams();
 				expect(result).to.be.ok();
 				expect(result).to.be(this.boneComplex.complex.$params);
 
-				this.isRealObjectStub.restore();
+				isRealObjectStub.restore();
 			});
 
 			it('Should return the value of the bone, bone is not a module', function() {
-				this.isRealObjectStub = sinon.stub(ObjectUtil, 'isRealObject').returns(false);
+				var isRealObjectStub = sinon.stub(ObjectUtil, 'isRealObject').returns(false);
 
 				var result = this.bone.getParams();
 				expect(result).to.be.ok();
 				expect(result).to.be(this.boneComplex.complex);
 
-				this.isRealObjectStub.restore();
+				isRealObjectStub.restore();
+			});
+
+		});
+
+		describe('#getBoneExpression()', function() {
+
+			it('Should return constant of a bone expression', function() {
+				expect(this.bone.getBoneExpression()).to.be('$bone!');
 			});
 
 		});
@@ -105,81 +108,155 @@ define(['ioc/engine/annotation/bone',
 		describe('#bone()', function() {
 
 			it('Should return instance of a module', function() {
-				this.isModuleStub = sinon.stub(this.bone, 'isModule').returns(true);
-				this.isCreatedStub = sinon.stub(this.bone, 'isCreated').returns(true);
+				var isModuleStub = sinon.stub(this.bone, 'isModule').returns(true);
+				var isCreatedStub = sinon.stub(this.bone, 'isCreated').returns(true);
 
 				// Returns undefined because another process will be responsible of assigning _$created a value.
 				var result = this.bone.bone();
 				expect(result).to.be(undefined);
 
-				this.isModuleStub.restore();
-				this.isCreatedStub.restore();
+				isModuleStub.restore();
+				isCreatedStub.restore();
 			});
 
 			it('Should return null, bone is not a module', function() {
-				this.isModuleStub = sinon.stub(this.bone, 'isModule').returns(false);
-				this.isCreatedStub = sinon.stub(this.bone, 'isCreated').returns(true);
+				var isModuleStub = sinon.stub(this.bone, 'isModule').returns(false);
+				var isCreatedStub = sinon.stub(this.bone, 'isCreated').returns(true);
 
 				// Returns undefined because another process will take care of that
 				var result = this.bone.bone();
 				expect(result).not.be.ok();
 
-				this.isModuleStub.restore();
-				this.isCreatedStub.restore();
+				isModuleStub.restore();
+				isCreatedStub.restore();
 			});
 
 			it('Should return null, bone was not created', function() {
-				this.isModuleStub = sinon.stub(this.bone, 'isModule').returns(true);
-				this.isCreatedStub = sinon.stub(this.bone, 'isCreated').returns(false);
+				var isModuleStub = sinon.stub(this.bone, 'isModule').returns(true);
+				var isCreatedStub = sinon.stub(this.bone, 'isCreated').returns(false);
 
 				// Returns undefined because another process will take care of that
 				var result = this.bone.bone();
 				expect(result).not.be.ok();
 
-				this.isModuleStub.restore();
-				this.isCreatedStub.restore();
+				isModuleStub.restore();
+				isCreatedStub.restore();
 			});
 
 		});
 
 		describe('#create()', function() {
 
-			// CONTINUE HERE >>>
-			it('Should return dependency object structure');
+			it('Should return dependency object structure', function() {
+				var superCreateStub = sinon.stub(Bone.__super__, 'create').returns(this.dependenciesFeed[0]);
+				var isBoneStub = sinon.stub(this.bone, 'isBone').returns(true);
 
-			it('Should return null, expression not a valid bone annotation');
+				var dep = this.dependenciesFeed[0];
+				var result = this.bone.create(dep.expression, dep.property, dep.target);
+				expect(result).to.be.ok();
+				expect(result).to.be.an('object');
+				expect(result.expression).to.be(dep.expression);
+				expect(result.property).to.be(dep.property);
+				expect(result.target).to.be.an('object');
+				expect(result.target.key).to.be(dep.target.key);
+
+				superCreateStub.restore();
+				isBoneStub.restore();
+			});
+
+			it('Should return null: dependency expression is not a valid bone annotation', function() {
+				var superCreateStub = sinon.stub(Bone.__super__, 'create').returns(this.dependenciesFeed[0]);
+				var isBoneStub = sinon.stub(this.bone, 'isBone').returns(false);
+
+				var dep = this.dependenciesFeed[0];
+				var result = this.bone.create('non-valid', dep.property, dep.target);
+				expect(result).not.be.ok();
+
+				superCreateStub.restore();
+				isBoneStub.restore();
+			});
 
 		});
 
 		describe('#retrieve()', function() {
 
-			it('Should retrieve array of dependency object structure');
+			it('Should retrieve array of dependency object structure', function() {
+				this.bone = new Bone(this.boneComplex);
+				expect(this.bone.getInjector().getDependencies().size()).to.be(3);
+			});
 
-			it('Should return an empty array of dependency object structures');
+			it('Should return an empty array of dependency object structures', function() {
+				this.bone = new Bone({ nodependency: true });
+				expect(this.bone.getInjector().getDependencies().size()).to.be(0);
+			});
 
 		});
 
 		describe('#isModule()', function() {
 
-			it('Should return true, the bone is a module');
+			it('Should return true, the bone is a module', function() {
+				var isBackboneStub = sinon.stub(ObjectUtil, 'isBackbone').returns(false);
+				var getPathStub = sinon.stub(this.bone, 'getPath').returns('ui/view');
 
-			it('Should return false, the bone is not a module');
+				expect(this.bone.isModule()).to.be(true);
+
+				isBackboneStub.restore();
+				getPathStub.restore();
+			});
+
+			it('Should return false, the bone is backbone class', function() {
+				var isBackboneStub = sinon.stub(ObjectUtil, 'isBackbone').returns(true);
+				var getPathStub = sinon.stub(this.bone, 'getPath').returns('ui/view');
+
+				expect(this.bone.isModule()).to.be(false);
+
+				isBackboneStub.restore();
+				getPathStub.restore();
+			});
+
+			it('Should return false, the bone module path is not defined', function() {
+				var isBackboneStub = sinon.stub(ObjectUtil, 'isBackbone').returns(false);
+				var getPathStub = sinon.stub(this.bone, 'getPath').returns(undefined);
+
+				expect(this.bone.isModule()).to.be(false);
+
+				isBackboneStub.restore();
+				getPathStub.restore();
+			});
 
 		});
 
 		describe('#isCreated()', function() {
 
-			it('Should return true, the bone was created');
+			it('Should return true, the bone was created', function() {
+				this.bone._$created = function() {};
+				expect(this.bone.isCreated()).to.be(true);
+				delete this.bone._$created;
+			});
 
-			it('Should return false, the bone was not created');
+			it('Should return false, the bone was not created', function() {
+				expect(this.bone.isCreated()).to.be(false);
+			});
 
 		});
 
-		describe('static#isBone()', function() {
+		describe('#isBone()', function() {
 
-			it('Should return true, the expression is a valid bone annotation');
+			it('Should return true, the expression is a valid bone annotation', function() {
+				var getBoneExpressionStub = sinon.stub(this.bone, 'getBoneExpression').returns('$bone!');
 
-			it('Should return false, the expression is a not valid bone annotation');
+				expect(this.bone.isBone('$bone!')).to.be(true);
+
+				getBoneExpressionStub.restore();
+			});
+
+			it('Should return false, the expression is a not valid bone annotation', function() {
+				var getBoneExpressionStub = sinon.stub(this.bone, 'getBoneExpression').returns('$bone!');
+
+				expect(this.bone.isBone('noBone')).to.be(false);
+
+				getBoneExpressionStub.restore();
+			});
 
 		});
 

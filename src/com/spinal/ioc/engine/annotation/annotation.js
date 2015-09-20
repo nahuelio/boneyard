@@ -2,9 +2,8 @@
 *	@module com.spinal.ioc.engine.annotation
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define(['ioc/engine/helpers/dependency',
-	'util/adt/collection',
-	'util/object'], function(Dependency, Collection, ObjectUtil) {
+define(['ioc/engine/helpers/injector',
+	'util/object'], function(Injector, ObjectUtil) {
 
 	/**
 	*	Class Annotation
@@ -12,7 +11,7 @@ define(['ioc/engine/helpers/dependency',
 	*	@class com.spinal.ioc.engine.annotation.Annotation
 	*	@extends com.spinal.core.SpinalClass
 	*
-	*	@requires com.spinal.ioc.engine.helpers.Dependency
+	*	@requires com.spinal.ioc.engine.helpers.Injector
 	*	@requires com.spinal.util.adt.Collection
 	*	@requires com.spinal.util.ObjectUtil
 	**/
@@ -28,8 +27,18 @@ define(['ioc/engine/helpers/dependency',
 		initialize: function(attrs) {
 			this.valid(attrs);
 			_.extend(this, { _id: _.keys(attrs)[0], _value: _.values(attrs)[0] });
-			this.dependencies = new Collection(null, { interface: Dependency });
+			this.injector = new Injector(this);
 			return Annotation.__super__.initialize.apply(this, arguments);
+		},
+
+		/**
+		*	Returns a reference of this Annotation
+		*	@public
+		*	@method get
+		*	@return com.spinal.ioc.engine.annotation.Annotation
+		**/
+		get: function() {
+			return this;
 		},
 
 		/**
@@ -53,13 +62,13 @@ define(['ioc/engine/helpers/dependency',
 		},
 
 		/**
-		*	Retrieves dependencies
+		*	Retrieves annotation's Injector
 		*	@public
-		*	@method getDependencies
-		*	@return com.spinal.util.adt.Collection
+		*	@method getInjector
+		*	@return com.spinal.ioc.engine.helpers.Injector
 		**/
-		getDependencies: function() {
-			return this.dependencies;
+		getInjector: function() {
+			return this.injector;
 		},
 
 		/**
@@ -85,11 +94,11 @@ define(['ioc/engine/helpers/dependency',
 		**/
 		create: function(expr, key, context) {
 			if(!Annotation.isExpressionValid(expr) || !context) return null;
-			return this;
+			return { expression: expr, target: context, property: key };
 		},
 
 		/**
-		*	Dependency gathering on this annotation
+		*	Default dependency gathering strategy
 		*	This method uses recursion.
 		*	@public
 		*	@method retrieve

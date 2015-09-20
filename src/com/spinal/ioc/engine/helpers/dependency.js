@@ -15,6 +15,14 @@ define(['util/exception/ioc/dependency'], function(DependencyException) {
 	var Dependency = Spinal.namespace('com.spinal.ioc.engine.helpers.Dependency', Spinal.SpinalClass.inherit({
 
 		/**
+		*	Ioc engine
+		*	@public
+		*	@property Engine
+		*	@type com.spinal.ioc.engine.Engine
+		**/
+		engine: null,
+
+		/**
 		*	Initialize
 		*	@public
 		*	@chainable
@@ -24,7 +32,8 @@ define(['util/exception/ioc/dependency'], function(DependencyException) {
 		**/
 		initialize: function(attrs) {
 			attrs || (attrs = {});
-			this.valid(attrs);
+			this.valid(attrs)
+			this.engine = require('ioc/engine/engine');
 			Dependency.__super__.initialize.apply(this, arguments);
 			return _.extend(this, attrs);
 		},
@@ -38,19 +47,52 @@ define(['util/exception/ioc/dependency'], function(DependencyException) {
 		**/
 		valid: function(attrs) {
 			if(!attrs.target || !_.isObject(attrs.target)) throw new DependencyException('TargetRequired');
-			if(!attrs.property || !_.isString(attrs.property)) throw new DependencyException('PropertyRequired');
-			if(!attrs.injector) throw new DependencyException('InjectorRequired');
+			if(!_.defined(attrs.property)) throw new DependencyException('PropertyRequired');
 			if(!attrs.target[attrs.property]) throw new DependencyException('UndefinedTargetProperty');
 		},
 
 		/**
-		*	Default Injection strategy
+		*	Retrieves engine
 		*	@public
-		*	@method inject
-		*	@param engine
+		*	@method getEngine
+		*	@return com.spinal.ioc.engine.Engine
 		**/
-		resolve: function() {
-			return this.injector.inject(this);
+		getEngine: function() {
+			return this.engine;
+		},
+
+		/**
+		*	Default Resolve strategy
+		*	@public
+		*	@method resolve
+		*	@param injector {com.spinal.ioc.engine.helpers.Injector} injector reference
+		*	@return com.spinal.ioc.engine.helpers.Dependency
+		**/
+		resolve: function(injector) {
+			return this.canResolve() ? injector.inject(this) : injector.hold(this);
+		},
+
+		/**
+		*	Returns true if this dependency can be resolved
+		*	@public
+		*	@method canResolve
+		*	@param injector {com.spinal.ioc.engine.helpers.Injector} injector reference
+		*	@return Boolean
+		**/
+		canResolve: function(injector) {
+			var bone = this.getEngine().bone(this.getId());
+			return (bone && (!bone.isModule() || bone.isCreated()));
+		},
+
+		/**
+		*	Retrieves dependency
+		*	@public
+		*	@method get
+		*	@return Object
+		**/
+		get: function() {
+			if(!(m = this.getCompound())) return null;
+			return _.isObject(m) ? this.getEngine().bone(m.id)[m.method] : this.getEngine().bone(m);
 		},
 
 		/**
@@ -60,7 +102,7 @@ define(['util/exception/ioc/dependency'], function(DependencyException) {
 		*	@return String
 		**/
 		getId: function() {
-			var expr = this.getExpression(), pos = expr.indexOf(this.injector.getAnnotationMatcher());
+			var expr = this.getExpression(), annot = this.injector.get(), pos = expr.indexOf(annot.getBoneExpression());
 			return (pos !== -1) ? expr.substring((pos + 1), expr.length) : null;
 		},
 

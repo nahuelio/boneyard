@@ -35,7 +35,7 @@ define(['ioc/processor/bone',
 		*	@return Array
 		**/
 		getPositions: function(bone) {
-			var dependencies = bone.getDependencies().map(function(dependency) { return dependency.getId(); });
+			var dependencies = bone.getInjector().getDependencies().map(function(dependency) { return dependency.getId(); });
 			return this.getFactory().findPositionsBy(function(res) { return _.contains(dependencies, res.id); });
 		},
 
@@ -48,7 +48,7 @@ define(['ioc/processor/bone',
 		**/
 		enqueue: function(bone) {
 			this.getFactory().push({ path: bone.getModule(), id: bone.getId(), callback: _.bind(this.create, this, bone) });
-			if(bone.getDependencies().length > 0) this.getFactory().swap(this.sort(bone));
+			if(bone.getInjector().getDependencies().length > 0) this.getFactory().swap(this.sort(bone));
 			return this;
 		},
 
@@ -77,7 +77,7 @@ define(['ioc/processor/bone',
 		**/
 		create: function(bone, path) {
 			if(!bone || !path) throw new ProcessorException('CreateModuleException');
-			bone._$created = this.getFactory().create(path, bone.getParams());
+			bone.injector.create(this.getFactory().create(path, bone.getParams()));
 			return this;
 		},
 
@@ -89,7 +89,7 @@ define(['ioc/processor/bone',
 		*	@return com.spinal.ioc.processor.CreateProcessor
 		**/
 		process: function(bone) {
-			bone.isModule() ? this.enqueue(bone) : bone.getDependencies().invoke('resolve');
+			bone.isModule() ? this.enqueue(bone) : bone.injector.resolve();
 			return this;
 		},
 
@@ -103,6 +103,20 @@ define(['ioc/processor/bone',
 			CreateProcessor.__super__.execute.call(this, this.process, this.getEngine().allBones())
 			this.getFactory().load(_.bind(this.done, this, CreateProcessor.NAME));
 			return this;
+		},
+
+		/**
+		*	Processor done handler
+		*	@public
+		*	@override
+		*	@method done
+		*	@param type {String} Processor type
+		*	@return com.spinal.ioc.processor.BoneProcessor
+		**/
+		done: function(type) {
+			console.log('CREATE DONE LOADING: ', arguments);
+			// Execute dependencies on hold, try to query
+			return CreateProcessor.__super__.done.apply(this, arguments);
 		}
 
 	}, {
