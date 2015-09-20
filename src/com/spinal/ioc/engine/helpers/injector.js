@@ -41,13 +41,13 @@ define(['ioc/engine/helpers/dependency',
 		},
 
 		/**
-		*	Creates Bone module instance
+		*	Assings a module instance into the bone
 		*	@public
-		*	@method create
+		*	@method assign
 		*	@param instance {Object} module instance
 		*	@return
 		**/
-		create: function(instance) {
+		assign: function(instance) {
 			this.get()._$created = instance;
 			return this;
 		},
