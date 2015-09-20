@@ -83,7 +83,8 @@ define(['ioc/engine/helpers/dependency',
 		*	@return com.spinal.ioc.engine.helpers.Dependency
 		**/
 		hold: function(dependency) {
-			return dependency.hold = _.bind(this.inject, this, dependency);
+			dependency.hold = _.bind(this.inject, this, dependency);
+			return dependency;
 		}
 
 	}, {

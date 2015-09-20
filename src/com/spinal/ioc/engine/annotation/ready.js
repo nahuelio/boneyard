@@ -35,7 +35,18 @@ define(['ioc/engine/annotation/annotation'], function(Annotation) {
 		*	@property NAME
 		*	@type String
 		**/
-		NAME: 'Ready'
+		NAME: 'Ready',
+
+		/**
+		*	Gather ready bones from a given spec
+		*	@static
+		*	@method only
+		*	@param spec {Object} spec reference
+		*	@return	Array
+		**/
+		only: function(spec) {
+			return _.pick(spec, '$ready');
+		}
 
 	}));
 

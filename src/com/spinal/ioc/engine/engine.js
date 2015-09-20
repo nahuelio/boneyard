@@ -185,7 +185,7 @@ define(['ioc/engine/helpers/spec',
 		*	@return Object
 		**/
 		extractPlugins: function(spec) {
-			var detected = this.plugins.extract(spec);
+			var detected = this.plugins.extract(Plugins.only(spec));
 			if(detected.length > 0) this.trigger(Engine.EVENTS.plugins, detected);
 			return spec;
 		},

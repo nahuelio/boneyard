@@ -33,10 +33,10 @@ define(['ioc/engine/annotation/bone',
 		/**
 		*	Ready operation collection
 		*	@public
-		*	@property ready
+		*	@property operations
 		*	@type com.spinal.util.adt.Collection
 		**/
-		ready: new Collection(null, { interface: Ready }),
+		operations: new Collection(null, { interface: Ready }),
 
 		/**
 		*	Initialize
@@ -48,7 +48,7 @@ define(['ioc/engine/annotation/bone',
 		initialize: function(attrs) {
 			attrs || (attrs = {});
 			Spec.__super__.initialize.apply(this, arguments);
-			_.extend(this, StringUtil.toPrivate(_.pick.call(this, attrs, Spec.PROPERTIES)));
+			_.extend(this, StringUtil.toPrivate(Spec.only(attrs)));
 			return this.parse(attrs);
 		},
 
@@ -87,16 +87,6 @@ define(['ioc/engine/annotation/bone',
 		},
 
 		/**
-		*	Retrieves a $plugins annotation if found
-		*	@public
-		*	@method getPlugins
-		*	@return Object
-		**/
-		getPlugins: function() {
-			return this._$plugins;
-		},
-
-		/**
 		*	Default Bone annotations parsing strategy
 		*	@public
 		*	@method parse
@@ -104,7 +94,8 @@ define(['ioc/engine/annotation/bone',
 		*	@return com.spinal.ioc.engine.annotation.Spec
 		**/
 		parse: function(spec) {
-			this.bones.set(ObjectUtil.objToArr(_.omit.call(this, spec, Spec.PROPERTIES)), { silent: true });
+			this.bones.set(ObjectUtil.objToArr(Bone.only(spec)), { silent: true });
+			this.operations.set(Ready.only(spec), { silent: true });
 			return this;
 		},
 
@@ -173,11 +164,15 @@ define(['ioc/engine/annotation/bone',
 		NAME: 'Spec',
 
 		/**
+		*	Gather spec metadata from a given spec
 		*	@static
-		*	@property PROPERTIES
-		*	@type Array
+		*	@method only
+		*	@param spec {Object} spec reference
+		*	@return	Array
 		**/
-		PROPERTIES: ['$id', '$specs', '$plugins', '$ready']
+		only: function(spec) {
+			return _.pick(spec, '$id', '$specs');
+		}
 
 	}));
 

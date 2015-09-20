@@ -148,7 +148,18 @@ define(['ioc/engine/annotation/annotation',
 		*	@property TYPE
 		*	@type String
 		**/
-		TYPE: 'bone'
+		TYPE: 'bone',
+
+		/**
+		*	Gather bones from a given spec
+		*	@static
+		*	@method only
+		*	@param spec {Object} spec reference
+		*	@return	Array
+		**/
+		only: function(spec) {
+			return _.pick(spec, function(v, k) { return (k.indexOf(Bone.PREFIX) === -1); });
+		}
 
 	}));
 

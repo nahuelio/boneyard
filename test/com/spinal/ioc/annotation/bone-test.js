@@ -260,6 +260,17 @@ define(['ioc/engine/annotation/bone',
 
 		});
 
+		describe('static#only()', function() {
+
+			it('Should extract only bones', function() {
+				var result = Bone.only(_.extend({}, this.boneComplex, { $plugins: {} }));
+				expect(result).to.be.ok();
+				expect(result.$plugins).to.be(undefined);
+				expect(result.complex).to.be.ok();
+			});
+
+		});
+
 	});
 
 });

@@ -34,11 +34,11 @@ define(['ioc/engine/annotation/annotation',
 		*	Extracts plugins from Spec annotation
 		*	@public
 		*	@method extract
-		*	@param spec {com.spinal.ioc.engine.annotation.Spec} spec annotation
+		*	@param plugins {Object} plugins reference
 		*	@return Array
 		**/
-		extract: function(spec) {
-			return _.compact(_.map(spec.getPlugins(), function(plugin, name) {
+		extract: function(plugins) {
+			return _.compact(_.map(plugins, function(plugin, name) {
 				return !this.getPlugin(name) ? (this[name] = plugin) : null;
 			}));
 		},
@@ -61,7 +61,18 @@ define(['ioc/engine/annotation/annotation',
 		*	@property NAME
 		*	@type String
 		**/
-		NAME: 'Plugins'
+		NAME: 'Plugins',
+
+		/**
+		*	Gather plugins bones from a given spec
+		*	@static
+		*	@method only
+		*	@param spec {Object} spec reference
+		*	@return	Array
+		**/
+		only: function(spec) {
+			return _.pick(spec, '$plugins');
+		}
 
 	}));
 

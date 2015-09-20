@@ -77,7 +77,7 @@ define(['ioc/processor/bone',
 		**/
 		create: function(bone, path) {
 			if(!bone || !path) throw new ProcessorException('CreateModuleException');
-			bone.injector.create(this.getFactory().create(path, bone.getParams()));
+			bone.injector.assign(this.getFactory().create(path, bone.getParams()));
 			return this;
 		},
 
