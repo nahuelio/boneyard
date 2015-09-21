@@ -47,7 +47,6 @@ define(['core/spinal',
 		TYPES: {
 			TargetRequired: _.template('Dependency Target is not defined'),
 			PropertyRequired: _.template('Dependency Target Property is not defined'),
-			InjectorRequired: _.template('Dependency requires an instance of injector in order to work'),
 			UndefinedTargetProperty: _.template('Dependency Target property doesn\'t exists in Dependency Target')
 		}
 

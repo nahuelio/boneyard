@@ -2,7 +2,8 @@
 *	@module com.spinal.ioc.engine.helpers
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define(['util/exception/ioc/dependency'], function(DependencyException) {
+define(['util/exception/ioc/dependency',
+	'util/object'], function(DependencyException, ObjectUtil) {
 
 	/**
 	*	Class Dependency
@@ -33,7 +34,7 @@ define(['util/exception/ioc/dependency'], function(DependencyException) {
 		initialize: function(attrs) {
 			attrs || (attrs = {});
 			this.valid(attrs)
-			this.engine = require('ioc/engine/engine');
+			this.engine = require('ioc/context').engine;
 			Dependency.__super__.initialize.apply(this, arguments);
 			return _.extend(this, attrs);
 		},
@@ -46,7 +47,8 @@ define(['util/exception/ioc/dependency'], function(DependencyException) {
 		*	@param attrs {Object} attributes
 		**/
 		valid: function(attrs) {
-			if(!_.defined(attrs.target) || !_.isObject(attrs.target)) throw new DependencyException('TargetRequired');
+			if(!_.defined(attrs.target) || (!ObjectUtil.isRealObject(attrs.target) && !_.isArray(attrs.target)))
+				throw new DependencyException('TargetRequired');
 			if(!_.defined(attrs.property)) throw new DependencyException('PropertyRequired');
 			if(!attrs.target[attrs.property]) throw new DependencyException('UndefinedTargetProperty');
 		},
