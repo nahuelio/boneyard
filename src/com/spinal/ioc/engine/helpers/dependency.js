@@ -46,7 +46,7 @@ define(['util/exception/ioc/dependency'], function(DependencyException) {
 		*	@param attrs {Object} attributes
 		**/
 		valid: function(attrs) {
-			if(!attrs.target || !_.isObject(attrs.target)) throw new DependencyException('TargetRequired');
+			if(!_.defined(attrs.target) || !_.isObject(attrs.target)) throw new DependencyException('TargetRequired');
 			if(!_.defined(attrs.property)) throw new DependencyException('PropertyRequired');
 			if(!attrs.target[attrs.property]) throw new DependencyException('UndefinedTargetProperty');
 		},
