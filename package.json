@@ -55,7 +55,10 @@
 		"BackboneJS"
 	],
 	"author": "Patricio Ferreira <3dimentionar@gmail.com>",
-	"license": "MIT",
+	"license": {
+		"type": "MIT",
+		"url": "http://www.opensource.org/licenses/mit-license.php"
+    },
 	"readmeFilename": "README.md",
 	"bugs": {
 		"url": "https://github.com/3dimention/spinal/issues"
@@ -66,7 +69,6 @@
 	"files": [
 		"bin",
 		"dist",
-		"tools",
-		"LICENSE"
+		"tools"
 	]
 }
