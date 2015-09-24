@@ -63,7 +63,7 @@ define(['ioc/engine/annotation/bone',
 		valid: function(attrs) {
 			Spec.__super__.valid.apply(this, arguments);
 			if(!_.defined(attrs.$id) || attrs.$id === '') throw new Error('Spec Annotation $id cannot be null or empty');
-			if(_.defined(attrs.$specs) || !_.isArray(attrs.$specs)) throw new Error('Spec $specs annotation must an array');
+			if(_.defined(attrs.$specs) || !_.isArray(attrs.$specs)) throw new Error('Spec $specs annotation must be an array');
 		},
 
 		/**
