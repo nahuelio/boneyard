@@ -77,19 +77,22 @@ define(['ioc/engine/helpers/injector',
 				resolveStub.onFirstCall().returns(new Dependency({
 					expression: '$bone!boneObj',
 					property: '0',
-					target: this.boneComplex.complex.$params.views
+					target: this.boneComplex.complex.$params.views,
+					bone: this.bone
 				}));
 
 				resolveStub.onSecondCall().returns(new Dependency({
 					expression: '$bone!boneBool',
 					property: 'render',
-					target: this.boneComplex.complex.$params
+					target: this.boneComplex.complex.$params,
+					bone: this.bone
 				}));
 
 				resolveStub.onThirdCall().returns(new Dependency({
 					expression: '$bone!boneArr',
 					property: 'key',
-					target: this.boneComplex.complex.$params.other.option[0]
+					target: this.boneComplex.complex.$params.other.option[0],
+					bone: this.bone
 				}));
 
 				this.injector = new Injector(this.bone);
@@ -115,7 +118,8 @@ define(['ioc/engine/helpers/injector',
 				var dependency = new Dependency({
 					expression: '$bone!boneObj',
 					property: '0',
-					target: this.boneComplex.complex.$params.views
+					target: this.boneComplex.complex.$params.views,
+					bone: this.bone
 				});
 				var stubGet = sinon.stub(dependency, 'get').returns(function() {});
 				var result = this.injector.inject(dependency);
@@ -133,6 +137,7 @@ define(['ioc/engine/helpers/injector',
 					expression: '$bone!boneObj',
 					property: '0',
 					target: this.boneComplex.complex.$params.views,
+					bone: this.bone,
 					hold: function() {}
 				});
 				var stubGet = sinon.stub(dependency, 'get').returns(function() {});
@@ -155,7 +160,8 @@ define(['ioc/engine/helpers/injector',
 				var dependency = new Dependency({
 					expression: '$bone!boneObj',
 					property: '0',
-					target: this.boneComplex.complex.$params.views
+					target: this.boneComplex.complex.$params.views,
+					bone: this.bone
 				});
 				var injectStub = sinon.stub(this.injector, 'inject').returns(dependency);
 				var result = this.injector.hold(dependency);

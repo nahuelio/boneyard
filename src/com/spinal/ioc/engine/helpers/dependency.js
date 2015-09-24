@@ -33,7 +33,7 @@ define(['util/exception/ioc/dependency',
 		**/
 		initialize: function(attrs) {
 			attrs || (attrs = {});
-			this.valid(attrs)
+			this.valid(attrs);
 			this.engine = require('ioc/context').engine;
 			Dependency.__super__.initialize.apply(this, arguments);
 			return _.extend(this, attrs);
@@ -51,6 +51,7 @@ define(['util/exception/ioc/dependency',
 				throw new DependencyException('TargetRequired');
 			if(!_.defined(attrs.property)) throw new DependencyException('PropertyRequired');
 			if(!attrs.target[attrs.property]) throw new DependencyException('UndefinedTargetProperty');
+			if(!attrs.bone) throw new DependencyException('UndefinedBoneReference');
 		},
 
 		/**
@@ -78,12 +79,11 @@ define(['util/exception/ioc/dependency',
 		*	Returns true if this dependency can be resolved
 		*	@public
 		*	@method canResolve
-		*	@param injector {com.spinal.ioc.engine.helpers.Injector} injector reference
 		*	@return Boolean
 		**/
-		canResolve: function(injector) {
+		canResolve: function() {
 			var bone = this.getEngine().bone(this.getId());
-			return (bone && (!bone.isModule() || bone.isCreated()));
+			return (_.defined(bone) && (!bone.isModule() || bone.isCreated()));
 		},
 
 		/**
@@ -104,8 +104,8 @@ define(['util/exception/ioc/dependency',
 		*	@return String
 		**/
 		getId: function() {
-			var expr = this.getExpression(), annot = this.injector.get(), pos = expr.indexOf(annot.getBoneExpression());
-			return (pos !== -1) ? expr.substring((pos + 1), expr.length) : null;
+			var expr = this.getExpression(), boneExpr = this.bone.getBoneExpression(), pos = expr.indexOf(boneExpr);
+			return (pos === 0) ? expr.substring((pos + boneExpr.length), expr.length) : null;
 		},
 
 		/**
@@ -117,7 +117,7 @@ define(['util/exception/ioc/dependency',
 		getCompound: function() {
 			if(!(id = this.getId())) return null;
 			var compound = id.split('.');
-			return (compound.length > 1) ? { id: compound[0], method: [0] } : id;
+			return (compound.length === 2) ? { id: compound[0], method: compound[1] } : id;
 		},
 
 		/**

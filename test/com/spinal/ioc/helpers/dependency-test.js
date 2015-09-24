@@ -9,22 +9,42 @@ define(['ioc/engine/helpers/dependency',
 	describe('com.spinal.ioc.engine.helpers.Dependency', function() {
 
 		before(function() {
+			this.dependency = null;
+			this.fakeBone = { isModule: function() { }, isCreated: function() { }, getBoneExpression: function() {} };
 			this.data = {
 				expression: '$bone!str',
 				property: 'test',
-				target: { test: '$bone!str' }
-			};
-			this.dependency = null;
-			this.fakeInjector = {
-				inject: function(dependency) { return dependency; },
-				hold: function(dependency) { return dependency; }
+				target: { test: '$bone!str' },
+				bone: this.fakeBone
 			};
 		});
 
-		after(function() {
-			delete this.data;
-			delete this.dependency;
+		beforeEach(function() {
+			this.fakeInjector = {
+				get: function() {},
+				inject: function(dependency) { return dependency; },
+				hold: function(dependency) { return dependency; }
+			};
+			this.fakeEngine = { bone: function() { } };
+			this.engineMock = sinon.mock(this.fakeEngine);
+			this.boneMock = sinon.mock(this.fakeBone);
+		});
+
+		afterEach(function() {
 			delete this.fakeInjector;
+
+			this.engineMock.restore();
+			delete this.engineMock;
+			delete this.fakeEngine;
+
+			this.boneMock.restore();
+		});
+
+		after(function() {
+			delete this.dependency;
+			delete this.fakeBone;
+			delete this.data;
+			delete this.boneMock;
 		});
 
 		describe('#new()', function() {
@@ -85,6 +105,14 @@ define(['ioc/engine/helpers/dependency',
 				});
 			});
 
+			it('Should throw an error: bone reference is not defined', function() {
+				expect(_.bind(function() {
+					this.dependency.valid(_.omit(this.data, 'bone'));
+				}, this)).to.throwException(function(e) {
+					expect(e.message).to.be('Dependency Bone Reference is not defined');
+				});
+			});
+
 		});
 
 		describe('#getEngine()', function() {
@@ -129,40 +157,155 @@ define(['ioc/engine/helpers/dependency',
 
 		describe('#canResolve()', function() {
 
-			// CONTINUE HERE...
-			it('Should return true: dependency is not a module');
+			it('Should return true: dependency is not a module', function() {
+				var getIdStub = sinon.stub(this.dependency, 'getId').returns('str');
+				var getEngineStub = sinon.stub(this.dependency, 'getEngine').returns(this.fakeEngine);
 
-			it('Should return true: dependency is a module and it\'s available to retrieve');
+				this.boneMock.expects('isModule').once().returns(false);
+				this.boneMock.expects('isCreated').never();
+				this.engineMock.expects('bone').once().returns(this.fakeBone);
 
-			it('Should return false: dependency is was not found');
+				expect(this.dependency.canResolve()).to.be(true);
+
+				this.boneMock.verify();
+				this.engineMock.verify();
+
+				getIdStub.restore();
+				getEngineStub.restore();
+			});
+
+			it('Should return true: dependency is a module and it\'s available to retrieve', function() {
+				var getIdStub = sinon.stub(this.dependency, 'getId').returns('str');
+				var getEngineStub = sinon.stub(this.dependency, 'getEngine').returns(this.fakeEngine);
+
+				this.boneMock.expects('isModule').once().returns(true);
+				this.boneMock.expects('isCreated').once().returns(true);
+				this.engineMock.expects('bone').once().returns(this.fakeBone);
+
+				expect(this.dependency.canResolve()).to.be(true);
+
+				this.boneMock.verify();
+				this.engineMock.verify();
+
+				getIdStub.restore();
+				getEngineStub.restore();
+			});
+
+			it('Should return false: dependency is was not found', function() {
+				var getIdStub = sinon.stub(this.dependency, 'getId').returns('non-existent');
+				var getEngineStub = sinon.stub(this.dependency, 'getEngine').returns(this.fakeEngine);
+
+				this.boneMock.expects('isModule').never();
+				this.boneMock.expects('isCreated').never();
+				this.engineMock.expects('bone').once().returns(null);
+
+				expect(this.dependency.canResolve()).to.be(false);
+
+				this.boneMock.verify();
+				this.engineMock.verify();
+
+				getIdStub.restore();
+				getEngineStub.restore();
+			});
 
 		});
 
 		describe('#get()', function() {
 
-			it('Should return dependency as an object');
+			it('Should return dependency as an object', function() {
+				var compound = 'str';
+				var getCompoundStub = sinon.stub(this.dependency, 'getCompound').returns(compound);
+				var getEngineStub = sinon.stub(this.dependency, 'getEngine').returns(this.fakeEngine);
 
-			it('Should return dependency method as a function');
+				this.engineMock.expects('bone').once().withArgs(sinon.match.string).returns(compound);
 
-			it('Should return null: dependency not found');
+				expect(this.dependency.get()).to.be(compound);
+
+				getCompoundStub.restore();
+				getEngineStub.restore();
+			});
+
+			it('Should return dependency method as a function', function() {
+				var compound = { id: 'obj', method: 'methodName' };
+				var getCompoundStub = sinon.stub(this.dependency, 'getCompound').returns(compound);
+				var getEngineStub = sinon.stub(this.dependency, 'getEngine').returns(this.fakeEngine);
+
+				this.engineMock.expects('bone')
+					.once().withArgs(sinon.match.string)
+					.returns({ methodName: function() {} });
+
+				expect(this.dependency.get()).to.be.a('function');
+
+				getCompoundStub.restore();
+				getEngineStub.restore();
+			});
+
+			it('Should return null: dependency not found', function() {
+				var getCompoundStub = sinon.stub(this.dependency, 'getCompound').returns(null);
+				var getEngineStub = sinon.stub(this.dependency, 'getEngine').returns(this.fakeEngine);
+
+				this.engineMock.expects('bone').never();
+
+				expect(this.dependency.get()).not.be.ok();
+
+				getCompoundStub.restore();
+				getEngineStub.restore();
+			});
 
 		});
 
 		describe('#getId()', function() {
 
-			it('Should return dependency id');
+			it('Should return dependency id', function() {
+				var getExpressionStub = sinon.stub(this.dependency, 'getExpression').returns('$bone!str');
+				this.boneMock.expects('getBoneExpression').once().returns('$bone!');
 
-			it('Should return null: dependency expression not valid');
+				expect(this.dependency.getId()).to.be('str');
+
+				this.boneMock.verify();
+				getExpressionStub.restore();
+			});
+
+			it('Should return null: dependency expression not valid', function() {
+				var getExpressionStub = sinon.stub(this.dependency, 'getExpression').returns('$b!str');
+				this.boneMock.expects('getBoneExpression').once().returns('$bone!');
+
+				expect(this.dependency.getId()).not.to.be('str');
+
+				this.boneMock.verify();
+				getExpressionStub.restore();
+			});
 
 		});
 
 		describe('#getCompound()', function() {
 
-			it('Should return a simple dependency reference');
+			it('Should return a simple dependency reference', function() {
+				var getIdStub = sinon.stub(this.dependency, 'getId').returns('str');
 
-			it('Should return a complex dependency reference (id and method)');
+				expect(this.dependency.getCompound()).to.be('str');
 
-			it('Should return null: dependency by id not found');
+				getIdStub.restore();
+			});
+
+			it('Should return a complex dependency reference (id and method)', function() {
+				var getIdStub = sinon.stub(this.dependency, 'getId').returns('obj.method');
+
+				var result = this.dependency.getCompound();
+				expect(result).to.be.an('object');
+				expect(result.id).to.be('obj');
+				expect(result.method).to.be('method');
+
+				getIdStub.restore();
+			});
+
+			it('Should return null: dependency by id not found', function() {
+				var getIdStub = sinon.stub(this.dependency, 'getId').returns(null);
+
+				expect(this.dependency.getCompound()).not.be.ok();
+
+				getIdStub.restore();
+			});
 
 		});
 
@@ -177,7 +320,8 @@ define(['ioc/engine/helpers/dependency',
 		describe('#getTarget()', function() {
 
 			it('Should return dependency target', function() {
-				expect(this.dependency.getTarget()).to.be(this.data.target);
+				expect(this.dependency.getTarget()).to.be.an('object');
+				expect(this.dependency.getTarget().test).to.be(this.data.target.test);
 			});
 
 		});

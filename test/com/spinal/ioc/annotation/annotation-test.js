@@ -28,7 +28,8 @@ define(['ioc/engine/annotation/annotation',
 			this.dependenciesFeed = [{
 				expression: '$bone!boneObj',
 				target: { key: '$bone!boneObj' },
-				property: 'key'
+				property: 'key',
+				bone: {}
 			}];
 			this.annotation = null;
 		});

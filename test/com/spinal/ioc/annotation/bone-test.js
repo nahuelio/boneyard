@@ -22,7 +22,8 @@ define(['ioc/engine/annotation/bone',
 			this.dependenciesFeed = [{
 				expression: '$bone!boneObj',
 				target: { key: '$bone!boneObj' },
-				property: 'key'
+				property: 'key',
+				bone: {}
 			}];
 			this.bone = null;
 		});
@@ -159,6 +160,7 @@ define(['ioc/engine/annotation/bone',
 				expect(result.property).to.be(dep.property);
 				expect(result.target).to.be.an('object');
 				expect(result.target.key).to.be(dep.target.key);
+				expect(result.bone).to.be.ok();
 
 				superCreateStub.restore();
 				isBoneStub.restore();

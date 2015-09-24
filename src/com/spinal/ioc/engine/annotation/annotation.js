@@ -94,7 +94,7 @@ define(['ioc/engine/helpers/injector',
 		**/
 		create: function(expr, key, context) {
 			if(!Annotation.isExpressionValid(expr) || !context) return null;
-			return { expression: expr, target: context, property: key };
+			return { expression: expr, target: context, property: key, bone: this };
 		},
 
 		/**

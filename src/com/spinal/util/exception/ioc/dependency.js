@@ -38,8 +38,8 @@ define(['core/spinal',
 		*		Generic (inherited from com.spinal.util.exception.Exception)
 		*		TargetRequired
 		*		PropertyRequired
-		*		InjectorRequired
 		*		UndefinedTargetProperty
+		*		UndefinedBoneReference
 		*	@static
 		*	@property TYPES
 		*	@type Object
@@ -47,7 +47,8 @@ define(['core/spinal',
 		TYPES: {
 			TargetRequired: _.template('Dependency Target is not defined'),
 			PropertyRequired: _.template('Dependency Target Property is not defined'),
-			UndefinedTargetProperty: _.template('Dependency Target property doesn\'t exists in Dependency Target')
+			UndefinedTargetProperty: _.template('Dependency Target property doesn\'t exists in Dependency Target'),
+			UndefinedBoneReference: _.template('Dependency Bone Reference is not defined')
 		}
 
 	}));
