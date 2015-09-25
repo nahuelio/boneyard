@@ -200,7 +200,7 @@ define(['ioc/engine/helpers/spec',
 		**/
 		addSpec: function(spec, ctx) {
 			var sp = this.extractPlugins(this.specs.add(spec, { silent: true })), ctx = (ctx) ? ctx : [];
-			return sp.hasDependencies() ? _.map(sp.getDependencies(), this.addSpec, this) : sp;
+			return sp.hasSpecs() ? _.map(sp.getSpecs(), this.addSpec, this) : sp;
 		},
 
 		/**
@@ -213,7 +213,7 @@ define(['ioc/engine/helpers/spec',
 		**/
 		removeSpec: function(spec) {
 			var sp = this.specs.remove(spec);
-			return _.flatten(sp.hasDependencies() ? _.map(sp.getDependencies(), this.removeSpec) : [sp]);
+			return _.flatten(sp.hasSpecs() ? _.map(sp.getSpecs(), this.removeSpec) : [sp]);
 		},
 
 		/**

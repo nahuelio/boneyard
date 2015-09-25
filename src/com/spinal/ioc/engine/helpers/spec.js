@@ -42,12 +42,12 @@ define(['ioc/engine/annotation/bone',
 		*	Initialize
 		*	@public
 		*	@method initialize
-		*	@param [attrs] {Object} annotation attributes
+		*	@param attrs {Object} annotation attributes
 		*	@return com.spinal.ioc.engine.annotation.Spec
 		**/
 		initialize: function(attrs) {
-			attrs || (attrs = {});
 			Spec.__super__.initialize.apply(this, arguments);
+			this.valid(attrs);
 			_.extend(this, StringUtil.toPrivate(Spec.only(attrs)));
 			return this.parse(attrs);
 		},
@@ -61,9 +61,9 @@ define(['ioc/engine/annotation/bone',
 		*	@param [attrs] {Object} annotation attributes
 		**/
 		valid: function(attrs) {
-			Spec.__super__.valid.apply(this, arguments);
+			if(!_.defined(attrs)) throw new Error('Spec attributes cannot be null or undefined');
 			if(!_.defined(attrs.$id) || attrs.$id === '') throw new Error('Spec Annotation $id cannot be null or empty');
-			if(_.defined(attrs.$specs) || !_.isArray(attrs.$specs)) throw new Error('Spec $specs annotation must be an array');
+			if(_.defined(attrs.$specs) && !_.isArray(attrs.$specs)) throw new Error('Spec $specs annotation must be an array');
 		},
 
 		/**
@@ -79,10 +79,10 @@ define(['ioc/engine/annotation/bone',
 		/**
 		*	Retrieves dependent specs if found
 		*	@public
-		*	@method getDependencies
+		*	@method getSpecs
 		*	@return Array
 		**/
-		getDependencies: function() {
+		getSpecs: function() {
 			return this._$specs;
 		},
 
@@ -147,11 +147,11 @@ define(['ioc/engine/annotation/bone',
 		/**
 		*	Returns true if this specs has dependencies on other specs, otherwise returns false
 		*	@public
-		*	@method hasDependencies
+		*	@method hasSpecs
 		*	@return Boolean
 		**/
-		hasDependencies: function() {
-			return (this.getDependencies() && this.getDependencies().length > 0);
+		hasSpecs: function() {
+			return (this.getSpecs() && this.getSpecs().length > 0);
 		}
 
 	}, {

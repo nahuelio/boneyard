@@ -95,8 +95,9 @@ define(['core/spinal',
 		*	@return Object
 		**/
 		toPrivate: function(props) {
-			_.each(props, function(v, k, o) { o['_' + k] = v; delete o[k]; });
-			return props;
+			var o = _.clone(props);
+			_.each(props, function(v, k) { o['_' + k] = v; delete o[k]; });
+			return o;
 		},
 
 		/**
