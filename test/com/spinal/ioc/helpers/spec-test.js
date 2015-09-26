@@ -36,9 +36,11 @@ define(['ioc/engine/helpers/spec',
 				interface: Bone
 			};
 			Spec.prototype.operations = { set: function() {}, interface: Ready };
+			this.fakeBone = { get: function() {}, getId: function() {} };
 			// Mocks
 			this.bonesMock = sinon.mock(Spec.prototype.bones);
 			this.operationsMock = sinon.mock(Spec.prototype.operations);
+			this.boneMock = sinon.mock(this.fakeBone);
 		});
 
 		afterEach(function() {
@@ -49,6 +51,8 @@ define(['ioc/engine/helpers/spec',
 			delete this.bonesMock;
 			this.operationsMock.restore();
 			delete this.operationsMock;
+			this.boneMock.restore();
+			delete this.boneMock;
 		});
 
 		after(function() {
@@ -166,47 +170,136 @@ define(['ioc/engine/helpers/spec',
 
 		describe('#getBone()', function() {
 
-			it('Should retrieve an existing bone by id');
+			it('Should retrieve an existing bone by id', function() {
+				this.bonesMock.expects('find')
+					.once()
+					.yields(this.fakeBone)
+					.returns(this.fakeBone);
+				this.boneMock.expects('getId')
+					.atLeast(1)
+					.returns('someId');
+				this.boneMock.expects('get')
+					.once()
+					.returns(this.fakeBone)
+					.calledAfter(this.bonesMock);
 
-			it('Should return null: bone doesn\'t exists by id');
+				var result = this.spec.getBone('someId');
+				expect(result).to.be.ok();
+				expect(result).to.be.an('object');
+
+				this.bonesMock.verify();
+				this.boneMock.verify();
+
+				expect(this.bonesMock.calledOnce);
+				expect(this.boneMock.calledOnce);
+			});
+
+			it('Should return null: bone doesn\'t exists by id', function() {
+				this.bonesMock.expects('find')
+					.once()
+					.yields(this.fakeBone)
+					.returns(null);
+				this.boneMock.expects('getId')
+					.atLeast(1)
+					.returns('someother');
+				this.boneMock.expects('get').never();
+
+				expect(this.spec.getBone('someId')).not.be.ok();
+
+				this.bonesMock.verify();
+				this.boneMock.verify();
+
+				expect(this.bonesMock.calledOnce);
+				expect(this.boneMock.calledOnce);
+			});
 
 		});
 
 		describe('#getBonesBy()', function() {
 
-			it('Should retrieve an array of bones by predicate');
+			it('Should retrieve an array of bones by predicate', function() {
+				this.bonesMock.expects('findBy')
+					.once()
+					.yields(this.fakeBone)
+					.returns([this.fakeBone]);
 
-			it('Should retrieve an empty array of bones by predicate');
+				var result = this.spec.getBonesBy(function() {});
+				expect(result).to.be.an('array');
+				expect(result).to.have.length(1);
+
+				this.bonesMock.verify();
+
+				expect(this.bonesMock.calledOnce);
+			});
 
 		});
 
 		describe('#getBonesByClass()', function() {
 
-			it('Should retrieve an array of bones by class (constructor function)');
+			it('Should retrieve an array of bones by class (constructor function)', function() {
+				var specMock = sinon.mock(this.spec);
+				specMock.expects('getBonesBy')
+					.once()
+					.yields(this.fakeBone)
+					.returns([this.fakeBone]);
+				this.boneMock.expects('get')
+					.once()
+					.returns(this.fakeBone)
+					.calledAfter(specMock);
 
-			it('Should retrieve an empty array of bones by class (constructor function)');
+				var result = this.spec.getBonesByClass(Function);
+				expect(result).to.be.an('array');
+				expect(result).to.have.length(1);
+
+				specMock.verify();
+				expect(specMock.calledOnce);
+				specMock.restore();
+			});
 
 		});
 
 		describe('#getBonesByType()', function() {
 
-			it('Should retrieve an array of bones by type');
+			it('Should retrieve an array of bones by type', function() {
+				var specMock = sinon.mock(this.spec);
+				specMock.expects('getBonesBy')
+					.once()
+					.yields(this.fakeBone)
+					.returns([this.fakeBone]);
+				this.boneMock.expects('get')
+					.once()
+					.returns(this.fakeBone)
+					.calledAfter(specMock);
 
-			it('Should retrieve an empty array of bones by type');
+				var result = this.spec.getBonesByType('function');
+				expect(result).to.be.an('array');
+				expect(result).to.have.length(1);
+
+				specMock.verify();
+				expect(specMock.calledOnce);
+				specMock.restore();
+			});
 
 		});
 
 		describe('#hasSpecs()', function() {
 
-			it('Should retrieve true if specs has parent specs dependencies');
-
-			it('Should retrieve false if specs doesn\'t have parent specs dependencies');
+			it('Should retrieve true if specs has parent specs dependencies', function() {
+				var getSpecsStub = sinon.stub(this.spec, 'getSpecs').returns(this.$rootSpecs);
+				expect(this.spec.hasSpecs()).to.be(true);
+				getSpecsStub.restore();
+			});
 
 		});
 
 		describe('static#only()', function() {
 
-			it('Should retrieve an object only spec properties ($id and $specs) from spec');
+			it('Should retrieve an object only spec properties ($id and $specs) from spec', function() {
+				var result = Spec.only(SimpleSpec);
+				expect(result).to.be.ok();
+				expect(result).not.be.empty();
+				expect(_.keys(result)).to.have.length(2);
+			});
 
 		});
 
