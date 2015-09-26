@@ -3,17 +3,17 @@
 *	@module com.spinal.ioc.processor
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define(['ioc/processor/bone'], function(BoneProcessor) {
+define(['ioc/processor/processor'], function(Processor) {
 
 	/**
 	*	Ready Processor
 	*	@namespace com.spinal.ioc.processor
 	*	@class com.spinal.ioc.processor.ReadyProcessor
-	*	@extends com.spinal.ioc.processor.BoneProcessor
+	*	@extends com.spinal.ioc.processor.Processor
 	*
-	*	@requires com.spinal.ioc.processor.BoneProcessor
+	*	@requires com.spinal.ioc.processor.Processor
 	**/
-	var ReadyProcessor = Spinal.namespace('com.spinal.ioc.processor.ReadyProcessor', BoneProcessor.inherit({
+	var ReadyProcessor = Spinal.namespace('com.spinal.ioc.processor.ReadyProcessor', Processor.inherit({
 
 		/**
 		*	Initialize

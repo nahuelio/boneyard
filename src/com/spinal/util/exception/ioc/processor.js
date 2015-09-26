@@ -36,17 +36,13 @@ define(['core/spinal',
 		*	__Type List__
 		*
 		*		Generic (inherited from com.spinal.util.exception.Exception)
-		*		BoneNotFound
-		*		InvalidModuleDeclaration
-		*		CreateModuleException
+		*		EngineRequired
 		*	@static
 		*	@property TYPES
 		*	@type Object
 		**/
 		TYPES: {
-			BoneNotFound: _.template('Bone <%= id %> was not found.'),
-			InvalidModuleDeclaration: _.template('Module bone <%= id %> is missing required \'class\' declaration.'),
-			CreateModuleException: _.template('Create Model operation requires a \'className\' and module \'data\' in order to work.')
+			EngineRequired: _.template('Processor requires an instance of Engine in order to work.')
 		}
 
 	}));

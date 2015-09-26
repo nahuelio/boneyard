@@ -3,20 +3,20 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['ioc/context',
-		'ioc/processor/bone',
+		'ioc/processor/processor',
 		'ioc/engine/helpers/injector',
-		'util/exception/ioc/processor'], function(Context, BoneProcessor, Injector, ProcessorException) {
+		'util/exception/ioc/processor'], function(Context, Processor, Injector, ProcessorException) {
 
 	/**
 	*	Defines a processor that acts as a wrapper to trigger plugins functionality
 	*	@namespace com.spinal.ioc.processor
 	*	@class com.spinal.ioc.processor.PluginProcessor
-	*	@extends com.spinal.ioc.processor.BoneProcessor
+	*	@extends com.spinal.ioc.processor.Processor
 	*
 	*	@requires com.spinal.ioc.Context
-	*	@requires com.spinal.ioc.processor.BoneProcessor
+	*	@requires com.spinal.ioc.processor.Processor
 	**/
-	var PluginProcessor = Spinal.namespace('com.spinal.ioc.processor.PluginProcessor', BoneProcessor.inherit({
+	var PluginProcessor = Spinal.namespace('com.spinal.ioc.processor.PluginProcessor', Processor.inherit({
 
 		/**
 		*	Default plugins path processors
@@ -31,7 +31,7 @@ define(['ioc/context',
 		*	@public
 		*	@chainable
 		*	@method initialize
-		*	@return {com.spinal.ioc.processor.CreateProcessor}
+		*	@return com.spinal.ioc.processor.PluginProcessor
 		**/
 		initialize: function() {
 			return PluginProcessor.__super__.initialize.apply(this, arguments);

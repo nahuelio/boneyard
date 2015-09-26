@@ -2,19 +2,19 @@
 *	@module com.spinal.ioc.processor
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define(['ioc/processor/bone',
-	'util/exception/ioc/processor'], function(BoneProcessor, ProcessorException) {
+define(['ioc/processor/processor',
+	'util/exception/ioc/processor'], function(Processor, ProcessorException) {
 
 	/**
 	*	Create Processor
 	*	@namespace com.spinal.ioc.processor
 	*	@class com.spinal.ioc.processor.CreateProcessor
-	*	@extends com.spinal.ioc.processor.BoneProcessor
+	*	@extends com.spinal.ioc.processor.Processor
 	*
-	*	@requires com.spinal.ioc.processor.BoneProcessor
+	*	@requires com.spinal.ioc.processor.Processor
 	*	@requires com.spinal.util.exception.ProcessorException
 	**/
-	var CreateProcessor = Spinal.namespace('com.spinal.ioc.processor.CreateProcessor', BoneProcessor.inherit({
+	var CreateProcessor = Spinal.namespace('com.spinal.ioc.processor.CreateProcessor', Processor.inherit({
 
 		/**
 		*	Initialize

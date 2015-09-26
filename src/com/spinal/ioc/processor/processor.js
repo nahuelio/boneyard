@@ -2,29 +2,32 @@
 *	@module com.spinal.ioc.processor
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define(['core/spinal'], function(Spinal) {
+define(['ioc/engine/engine',
+	'util/exception/ioc/processor'], function(Engine, ProcessorException) {
 
 	/**
-	*	Class BoneProcessor
+	*	Class Processor
 	*	@namespace com.spinal.ioc.processor
-	*	@class com.spinal.ioc.processor.BoneProcessor
+	*	@class com.spinal.ioc.processor.Processor
 	*	@extends com.spinal.core.SpinalClass
 	*
-	*	@requires com.spinal.core.SpinalClass
+	*	@requires com.spinal.ioc.engine.Engine
+	*	@requires com.spinal.util.exception.ioc.ProcessorException
 	**/
-	var BoneProcessor = Spinal.namespace('com.spinal.ioc.processor.BoneProcessor', Spinal.SpinalClass.inherit({
+	var Processor = Spinal.namespace('com.spinal.ioc.processor.Processor', Spinal.SpinalClass.inherit({
 
 		/**
 		*	Initialize
 		*	@public
 		*	@chainable
 		*	@method initialize
-		*	@param engine {com.spinal.ioc.Engine} engine reference
-		*	@return {com.spinal.ioc.processor.BoneProcessor}
+		*	@param engine {com.spinal.ioc.engine.Engine} engine reference
+		*	@return com.spinal.ioc.processor.Processor
 		**/
 		initialize: function(engine) {
+			if(!engine || !(engine instanceof Engine)) throw new ProcessorException('EngineRequired');
 			this.engine = engine;
-			return BoneProcessor.__super__.initialize.apply(this, arguments);
+			return Processor.__super__.initialize.apply(this, arguments);
 		},
 
 		/**
@@ -61,11 +64,12 @@ define(['core/spinal'], function(Spinal) {
 		*	Iterates over list of bone annotations and excecutes the predicate function on each one
 		*	@public
 		*	@method execute
+		*	@param bones {Array} list of bone annotations
 		*	@param predicate {Function} predicate function that process each bone annotation
-		*	@param bones {Array} list of bone annotatioms
 		*	@return Array
 		**/
-		execute: function(predicate, bones) {
+		execute: function(bones, predicate) {
+			if(!predicate || !_.isFunction(predicate)) return bones;
 			return _.map(bones, function(bone) { return predicate.call(this, bone); }, this);
 		},
 
@@ -77,7 +81,7 @@ define(['core/spinal'], function(Spinal) {
 		*	@return com.spinal.ioc.processor.BoneProcessor
 		**/
 		done: function(type) {
-			return this.trigger(BoneProcessor.EVENTS.done, type);
+			return this.trigger(Processor.EVENTS.done, type);
 		}
 
 	}, {
@@ -88,7 +92,7 @@ define(['core/spinal'], function(Spinal) {
 		*	@property NAME
 		*	@type String
 		**/
-		NAME: 'BoneProcessor',
+		NAME: 'Processor',
 
 		/**
 		*	BoneProcessor Events
@@ -105,6 +109,6 @@ define(['core/spinal'], function(Spinal) {
 
 	}));
 
-	return BoneProcessor;
+	return Processor;
 
 });
