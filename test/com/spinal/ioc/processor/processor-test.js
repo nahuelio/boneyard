@@ -17,14 +17,6 @@ define(['ioc/processor/processor',
 			this.engineRequiredEx = new ProcessorException('EngineRequired');
 		});
 
-		beforeEach(function() {
-
-		});
-
-		afterEach(function() {
-
-		});
-
 		after(function() {
 			delete this.engineRequiredEx;
 			this.engineMock.restore();
