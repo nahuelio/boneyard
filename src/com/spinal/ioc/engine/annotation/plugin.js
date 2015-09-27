@@ -6,28 +6,55 @@ define(['ioc/engine/annotation/annotation',
 	'util/string'], function(Annotation, StringUtil) {
 
 	/**
-	*	Class Plugins
+	*	Class Plugin
 	*	@namespace com.spinal.ioc.engine.annotation
-	*	@class com.spinal.ioc.engine.annotation.Plugins
+	*	@class com.spinal.ioc.engine.annotation.Plugin
 	*	@extends com.spinal.ioc.engine.annotation.Annotation
 	*
 	*	@requires com.spinal.ioc.engine.annotation.Annotation
 	*	@requires com.spinal.util.StringUtil
 	**/
-	var Plugins = Spinal.namespace('com.spinal.ioc.engine.annotation.Plugins', Annotation.inherit({
+	var Plugin = Spinal.namespace('com.spinal.ioc.engine.annotation.Plugin', Annotation.inherit({
+
+		/**
+		*	Plugin base path
+		*	@public
+		*	@property basePath
+		*	@type String
+		**/
+		basePath: 'ioc/plugins',
 
 		/**
 		*	Initialize
 		*	@public
 		*	@method initialize
-		*	@param [attrs] {Object} annotation attributes
-		*	@return com.spinal.ioc.engine.annotation.Plugins
+		*	@return com.spinal.ioc.engine.annotation.Plugin
 		**/
-		initialize: function(attrs) {
-			attrs || (attrs = {});
-			Plugins.__super__.initialize.call(this, attrs);
-			_.extend(this, StringUtil.toPrivate(attrs));
-			return this;
+		initialize: function() {
+			return Plugin.__super__.initialize.call(this, arguments);
+		},
+
+		/**
+		*	Retrieves Plugin base path
+		*	@public
+		*	@method getBasePath
+		*	@return String
+		**/
+		getBasePath: function() {
+			return this.basePath;
+		},
+
+		/**
+		*	Dependency gathering on this annotation
+		*	This method uses recursion.
+		*	@public
+		*	@override
+		*	@method retrieve
+		*	@param [ctx] {Object} context found on nested structure
+		*	@return Array
+		**/
+		retrieve: function(ctx) {
+			return Plugin.__super__.retrieve.call(this, _.defined(ctx) ? ctx : this.getParams());
 		},
 
 		/**
@@ -39,19 +66,8 @@ define(['ioc/engine/annotation/annotation',
 		**/
 		extract: function(plugins) {
 			return _.compact(_.map(plugins, function(plugin, name) {
-				return !this.getPlugin(name) ? (this[name] = plugin) : null;
+				return !_.defined(this[name]) ? (this[name] = plugin) : null;
 			}));
-		},
-
-		/**
-		*	Retrieves plugin
-		*	@public
-		*	@method getPlugin
-		*	@param name {String} plugin name
-		*	@return Object
-		**/
-		getPlugin: function(name) {
-			return this[name];
 		}
 
 	}, {
@@ -61,7 +77,7 @@ define(['ioc/engine/annotation/annotation',
 		*	@property NAME
 		*	@type String
 		**/
-		NAME: 'Plugins',
+		NAME: 'Plugin',
 
 		/**
 		*	Gather plugins bones from a given spec
@@ -76,6 +92,6 @@ define(['ioc/engine/annotation/annotation',
 
 	}));
 
-	return Plugins;
+	return Plugin;
 
 });

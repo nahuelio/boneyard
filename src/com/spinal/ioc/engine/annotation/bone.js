@@ -48,16 +48,6 @@ define(['ioc/engine/annotation/annotation',
 		},
 
 		/**
-		*	Retrieves bone expression
-		*	@static
-		*	@method getBoneExpression
-		*	@return String
-		**/
-		getBoneExpression: function() {
-			return (Annotation.PREFIX + Bone.TYPE + Bone.DELIMITER);
-		},
-
-		/**
 		*	Determines and retrieves annotation bone module instance.
 		*	@public
 		*	@method bone
@@ -69,6 +59,7 @@ define(['ioc/engine/annotation/annotation',
 
 		/**
 		*	Create Dependency
+		*	FIXME: Review this one to see if we can move it into the base class!!
 		*	@public
 		*	@override
 		*	@method create
@@ -114,17 +105,6 @@ define(['ioc/engine/annotation/annotation',
 		**/
 		isCreated: function() {
 			return _.defined(this._$created);
-		},
-
-		/**
-		*	Returns true if expression matches a bone nomenclature
-		*	@static
-		*	@method isBone
-		*	@param expr {String} expression to be evaluated
-		*	@return Boolean
-		**/
-		isBone: function(expr) {
-			return (expr.indexOf(this.getBoneExpression()) === 0);
 		}
 
 	}, {
@@ -137,20 +117,6 @@ define(['ioc/engine/annotation/annotation',
 		NAME: 'Bone',
 
 		/**
-		*	@static
-		*	@property DELIMITER
-		*	@type String
-		**/
-		DELIMITER: '!',
-
-		/**
-		*	@static
-		*	@property TYPE
-		*	@type String
-		**/
-		TYPE: 'bone',
-
-		/**
 		*	Gather bones from a given spec
 		*	@static
 		*	@method only
@@ -158,7 +124,7 @@ define(['ioc/engine/annotation/annotation',
 		*	@return	Array
 		**/
 		only: function(spec) {
-			return _.pick(spec, function(v, k) { return (k.indexOf(Bone.PREFIX) === -1); });
+			return _.pick(spec, function(v, k) { return (k.indexOf(Annotation.PREFIX) === -1); });
 		}
 
 	}));

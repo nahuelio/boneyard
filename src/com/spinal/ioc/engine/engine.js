@@ -3,10 +3,10 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['ioc/engine/helpers/spec',
-		'ioc/engine/annotation/plugins',
+		'ioc/engine/annotation/plugin',
 		'util/adt/collection',
 		'util/factories/async-factory',
-		'util/adt/iterator'], function(Spec, Plugins, Collection, AsyncFactory, Iterator) {
+		'util/adt/iterator'], function(Spec, Plugin, Collection, AsyncFactory, Iterator) {
 
 	/**
 	*	Class Engine
@@ -15,7 +15,7 @@ define(['ioc/engine/helpers/spec',
 	*	@extends com.spinal.core.SpinalClass
 	*
 	*	@requires com.spinal.ioc.engine.annotation.Spec
-	*	@requires com.spinal.ioc.engine.annotation.Plugins
+	*	@requires com.spinal.ioc.engine.annotation.Plugin
 	*	@requires com.spinal.util.adt.Collection
 	*	@requires com.spinal.util.factories.AsyncFactory
 	*	@requires com.spinal.util.adt.Iterator
@@ -34,9 +34,9 @@ define(['ioc/engine/helpers/spec',
 		*	Plugins
 		*	@public
 		*	@property plugins
-		*	@type com.spinal.ioc.engine.annotation.Plugins
+		*	@type com.spinal.util.adt.Collection
 		**/
-		plugins: new Plugins(),
+		plugins: new Collection(null, { interface: Plugin }),
 
 		/**
 		*	Asynchronous Processor Factory
@@ -185,8 +185,8 @@ define(['ioc/engine/helpers/spec',
 		*	@return Object
 		**/
 		extractPlugins: function(spec) {
-			var detected = this.plugins.extract(Plugins.only(spec));
-			if(detected.length > 0) this.trigger(Engine.EVENTS.plugins, detected);
+			//var detected = this.plugins.set(Plugin.only(spec));
+			//if(detected.length > 0) this.trigger(Engine.EVENTS.plugins, detected);
 			return spec;
 		},
 

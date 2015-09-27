@@ -35,7 +35,7 @@ define(['ioc/processor/processor',
 		*	@return Array
 		**/
 		getPositions: function(bone) {
-			var dependencies = bone.getInjector().getDependencies().map(function(dependency) { return dependency.getId(); });
+			var dependencies = bone.getDependencies().map(function(dependency) { return dependency.getId(); });
 			return this.getFactory().findPositionsBy(function(res) { return _.contains(dependencies, res.id); });
 		},
 
@@ -48,7 +48,7 @@ define(['ioc/processor/processor',
 		**/
 		enqueue: function(bone) {
 			this.getFactory().push({ path: bone.getModule(), id: bone.getId(), callback: _.bind(this.create, this, bone) });
-			if(bone.getInjector().getDependencies().length > 0) this.getFactory().swap(this.sort(bone));
+			if(bone.getDependencies().length > 0) this.getFactory().swap(this.sort(bone));
 			return this;
 		},
 
@@ -77,7 +77,7 @@ define(['ioc/processor/processor',
 		**/
 		create: function(bone, path) {
 			if(!bone || !path) throw new ProcessorException('CreateModuleException');
-			bone.injector.assign(this.getFactory().create(path, bone.getParams()));
+			bone.getInjector().assign(this.getFactory().create(path, bone.getParams()));
 			return this;
 		},
 

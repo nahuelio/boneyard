@@ -98,14 +98,6 @@ define(['ioc/engine/annotation/bone',
 
 		});
 
-		describe('#getBoneExpression()', function() {
-
-			it('Should return constant of a bone expression', function() {
-				expect(this.bone.getBoneExpression()).to.be('$bone!');
-			});
-
-		});
-
 		describe('#bone()', function() {
 
 			it('Should return instance of a module', function() {
@@ -238,26 +230,6 @@ define(['ioc/engine/annotation/bone',
 
 			it('Should return false, the bone was not created', function() {
 				expect(this.bone.isCreated()).to.be(false);
-			});
-
-		});
-
-		describe('#isBone()', function() {
-
-			it('Should return true, the expression is a valid bone annotation', function() {
-				var getBoneExpressionStub = sinon.stub(this.bone, 'getBoneExpression').returns('$bone!');
-
-				expect(this.bone.isBone('$bone!')).to.be(true);
-
-				getBoneExpressionStub.restore();
-			});
-
-			it('Should return false, the expression is a not valid bone annotation', function() {
-				var getBoneExpressionStub = sinon.stub(this.bone, 'getBoneExpression').returns('$bone!');
-
-				expect(this.bone.isBone('noBone')).to.be(false);
-
-				getBoneExpressionStub.restore();
 			});
 
 		});

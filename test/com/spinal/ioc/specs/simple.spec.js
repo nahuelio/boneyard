@@ -21,7 +21,7 @@ define(['specs/main.spec'], function(MainSpec) {
 			{ deep: '$bone!o' },
 			{ prop: '$bone!n' }
 		],
-		holder: { myview: '$bone!mycomponent' },
+		holder: { subcontent: '$bone!subcontent' },
 
 		model: {
 			$module: 'util/schema',
@@ -38,19 +38,24 @@ define(['specs/main.spec'], function(MainSpec) {
 			}
 		},
 
-		content: {
-			$module: 'ui/container',
-			$params: { id: 'content' }
-		},
-
 		simple: {
 			$module: 'ui/view',
 			$params: { id: 'simple' }
 		},
 
-		mycomponent: {
+		content: {
+			$module: 'ui/container',
+			$params: { id: 'content', views: ['$bone!simple', '$bone!subcontent'] }
+		},
+
+		subcontent: {
+			$module: 'ui/container',
+			$params: { id: 'subcontent', views: ['$bone!advanced'] }
+		},
+
+		advanced: {
 			$module: 'ui/view',
-			$params: { id: 'mycomponent', views: ['$bone!simple'] }
+			$params: { id: 'advanced' }
 		},
 
 		$ready: [

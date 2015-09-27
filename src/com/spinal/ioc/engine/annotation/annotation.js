@@ -72,6 +72,16 @@ define(['ioc/engine/helpers/injector',
 		},
 
 		/**
+		*	Retrieves annotation's dependencies via injector
+		*	@public
+		*	@method getDependencies
+		*	@return com.spinal.util.adt.Collection
+		**/
+		getDependencies: function() {
+			return this.getInjector().getDependencies();
+		},
+
+		/**
 		*	Validates annotation
 		*	@public
 		*	@method valid
@@ -81,6 +91,27 @@ define(['ioc/engine/helpers/injector',
 		valid: function(attrs) {
 			if(!_.defined(attrs)) throw new Error('Annotation cannot be undefined');
 			if(!_.isObject(attrs)) throw new Error('Annotation type must be an object');
+		},
+
+		/**
+		*	Retrieves bone expression
+		*	@static
+		*	@method getBoneExpression
+		*	@return String
+		**/
+		getBoneExpression: function() {
+			return (Annotation.PREFIX + Annotation.TYPE + Annotation.DELIMITER);
+		},
+
+		/**
+		*	Returns true if expression matches a bone nomenclature
+		*	@static
+		*	@method isBone
+		*	@param expr {String} expression to be evaluated
+		*	@return Boolean
+		**/
+		isBone: function(expr) {
+			return (expr.indexOf(this.getBoneExpression()) === 0);
 		},
 
 		/**
@@ -128,6 +159,20 @@ define(['ioc/engine/helpers/injector',
 		*	@type String
 		**/
 		PREFIX: '$',
+
+		/**
+		*	@static
+		*	@property TYPE
+		*	@type String
+		**/
+		TYPE: 'bone',
+
+		/**
+		*	@static
+		*	@property DELIMITER
+		*	@type String
+		**/
+		DELIMITER: '!',
 
 		/**
 		*	Returns true if expression matches a annotation nomenclature
