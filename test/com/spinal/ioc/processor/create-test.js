@@ -140,51 +140,9 @@ define(['ioc/processor/create',
 
 		});
 
-		describe('#getPositions()', function() {
-
-			it('Should return an array of resources positions inside the factory stack', function() {
-				this.contentMock
-					.expects('getDependencies')
-					.once()
-					.returns(this.contentDependencies)
-				this.contentDependenciesMock
-					.expects('map')
-					.once()
-					.yields(this.contentSimpleDependency)
-					.returns(['simple', 'subcontent']);
-				this.contentSimpleDependencyMock
-					.expects('getId')
-					.once()
-					.returns('simple')
-					.calledAfter(this.contentDependenciesMock);
-				this.engineMock
-					.expects('getFactory')
-					.once()
-					.returns(this.factory)
-					.calledAfter(this.contentDependenciesMock);
-				this.factoryMock
-					.expects('findPositionsBy')
-					.once()
-					.yields({ id: 'simple' })
-					.returns([1])
-					.calledAfter(this.engineMock);
-
-				var result = this.create.getPositions(this.bones[2]);
-				expect(result).to.be.an('array');
-				expect(result).to.have.length(1);
-
-				this.contentMock.verify();
-				this.contentDependenciesMock.verify();
-				this.contentSubContentDependencyMock.verify();
-				this.engineMock.verify();
-				this.factoryMock.verify();
-			});
-
-		});
-
 		describe('#enqueue()', function() {
 
-			it('Should enqueue a new resource inside the factory stack (without sorting dependencies)', function() {
+			it('Should enqueue a new resource inside the factory stack (no dependencies)', function() {
 				this.simpleMock
 					.expects('getPath')
 					.once()
@@ -193,14 +151,6 @@ define(['ioc/processor/create',
 					.expects('getId')
 					.once()
 					.returns('simple');
-				this.simpleMock
-					.expects('getDependencies')
-					.once()
-					.returns(this.simpleDependencies);
-				this.simpleDependenciesMock
-					.expects('isEmpty')
-					.once()
-					.returns(true);
 				this.engineMock
 					.expects('getFactory')
 					.once()
@@ -214,59 +164,82 @@ define(['ioc/processor/create',
 				expect(result).to.be(this.create);
 
 				this.simpleMock.verify();
-				this.simpleDependenciesMock.verify();
 				this.engineMock.verify();
 				this.factoryMock.verify();
 			});
 
-			it('Should enqueue a new resource inside the factory stack and sort dependencies', function() {
-				var sortStub = sinon.stub(this.create, 'sort').returns(function() {});
-				this.subcontentMock
+			it('Should enqueue a new resource inside the factory stack', function() {
+				this.contentMock
 					.expects('getPath')
 					.once()
-					.returns('ui/container');
-				this.subcontentMock
+					.returns('ui/view');
+				this.contentMock
 					.expects('getId')
 					.once()
-					.returns('subcontent');
-				this.subcontentMock
-					.expects('getDependencies')
-					.atLeast(1)
-					.returns(this.subcontentDependencies);
-				this.subcontentDependenciesMock
-					.expects('isEmpty')
-					.once()
-					.returns(false);
+					.returns('simple');
 				this.engineMock
 					.expects('getFactory')
-					.twice()
+					.once()
 					.returns(this.factory);
 				this.factoryMock
 					.expects('push')
 					.once()
 					.calledAfter(this.engineMock);
-				this.factoryMock
-					.expects('swap')
-					.once()
-					.yields(sortStub)
-					.calledAfter(this.engineMock);
 
-				var result = this.create.enqueue(this.bones[3]);
-				expect(result).to.be(this.create);
+					var result = this.create.enqueue(this.bones[2]);
+					expect(result).to.be(this.create);
 
-				this.subcontentMock.verify();
-				this.subcontentDependenciesMock.verify();
-				this.engineMock.verify();
-				this.factoryMock.verify();
+					this.contentMock.verify();
+					this.engineMock.verify();
+					this.factoryMock.verify();
 
-				sortStub.restore();
+					this.contentMock.verify();
+					this.contentDependenciesMock.verify();
 			});
 
-		});
+			it('Should NOT have dependencies on hold', function() {
+				var injectorResolveStub = sinon.stub(this.bones[2].getInjector(), 'resolve', _.bind(function() {
+					this.contentSubContentDependency.hold = function() {};
+				}, this));
 
-		describe('#sort()', function() {
+				this.contentMock
+					.expects('getDependencies')
+					.once()
+					.returns(this.contentDependencies);
+				this.contentDependenciesMock
+					.expects('get')
+					.once()
+					.returns(this.contentSimpleDependency);
 
-			it('Should sort existing resources in the factory stack');
+				this.bones[2].getInjector().resolve(); // Explicit call to simulate partial resolution
+				var dependencies = this.bones[2].getDependencies();
+				var simple = dependencies.get(0);
+				expect(simple.hold).not.be.ok();
+
+				this.bones[2].getInjector().resolve.restore();
+			});
+
+			it('Should have at least one dependency on hold', function() {
+				var injectorResolveStub = sinon.stub(this.bones[2].getInjector(), 'resolve', _.bind(function() {
+					this.contentSubContentDependency.hold = function() {};
+				}, this));
+
+				this.contentMock
+					.expects('getDependencies')
+					.once()
+					.returns(this.contentDependencies);
+				this.contentDependenciesMock
+					.expects('get')
+					.once()
+					.returns(this.contentSubContentDependency);
+
+				this.bones[2].getInjector().resolve(); // Explicit call to simulate partial resolution
+				var dependencies = this.bones[2].getDependencies();
+				var subcontent = dependencies.get(1);
+				expect(subcontent.hold).to.be.ok();
+
+				this.bones[2].getInjector().resolve.restore();
+			});
 
 		});
 

@@ -28,18 +28,6 @@ define(['ioc/processor/processor',
 		},
 
 		/**
-		*	Retrieves dependency positions of a bone passed by parameter from the factory
-		*	@public
-		*	@method getPositions
-		*	@param bone {com.spinal.ioc.engine.annotation.Bone} bone annotation reference
-		*	@return Array
-		**/
-		getPositions: function(bone) {
-			var dependencies = bone.getDependencies().map(function(dependency) { return dependency.getId(); });
-			return this.getFactory().findPositionsBy(function(res) { return _.contains(dependencies, res.id); });
-		},
-
-		/**
 		*	Add the module into the async factory resource collection
 		*	@public
 		*	@method enqueue
@@ -48,21 +36,7 @@ define(['ioc/processor/processor',
 		**/
 		enqueue: function(bone) {
 			this.getFactory().push({ path: bone.getPath(), id: bone.getId(), callback: _.bind(this.create, this, bone) });
-			if(!bone.getDependencies().isEmpty()) this.getFactory().swap(this.sort(bone));
 			return this;
-		},
-
-		/**
-		*	Returns Sorting Comparator that resolves resources order inside the factory based on bone dependencies
-		*	@public
-		*	@method sort
-		*	@param bone {com.spinal.ioc.engine.annotation.Bone} bone annotation reference
-		*	@return Function
-		**/
-		sort: function(bone) {
-			return _.bind(function(maxp, m, ix) {
-				return (this.bone.id === m.id && ix <= maxp) ? maxp : ix;
-			}, this, _.max(this.getPositions(bone)));
 		},
 
 		/**
@@ -77,7 +51,9 @@ define(['ioc/processor/processor',
 		**/
 		create: function(bone, path) {
 			if(!bone || !path) throw new ProcessorException('CreateModuleException');
-			bone.getInjector().assign(this.getFactory().create(path, bone.getParams()));
+			bone.getInjector()
+				.assign(this.getFactory().create(path, bone.getParams()))
+				.resolve();
 			return this;
 		},
 
