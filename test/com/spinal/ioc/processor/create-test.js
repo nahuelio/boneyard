@@ -15,10 +15,7 @@ define(['ioc/processor/create',
 		before(function() {
 			this.create = null;
 			this.engine = new Engine();
-			this.engineMock = sinon.mock(this.engine);
 			this.factory = new AsyncFactory();
-			this.factoryMock = sinon.mock(this.factory);
-
 			this.bones = [
 				new Bone(_.pick(SimpleSpec, 'holder')),
 				new Bone(_.pick(SimpleSpec, 'simple')),
@@ -26,6 +23,11 @@ define(['ioc/processor/create',
 				new Bone(_.pick(SimpleSpec, 'subcontent')),
 				new Bone(_.pick(SimpleSpec, 'advanced'))
 			];
+		});
+
+		beforeEach(function() {
+			this.engineMock = sinon.mock(this.engine);
+			this.factoryMock = sinon.mock(this.factory);
 
 			this.holderMock = sinon.mock(this.bones[0]);
 			this.simpleMock = sinon.mock(this.bones[1]);
@@ -34,10 +36,12 @@ define(['ioc/processor/create',
 			this.advancedMock = sinon.mock(this.bones[4]);
 
 			this.holderDependencies = this.bones[0].getDependencies();
+			this.simpleDependencies = this.bones[1].getDependencies();
 			this.contentDependencies = this.bones[2].getDependencies();
 			this.subcontentDependencies = this.bones[3].getDependencies();
 
 			this.holderDependenciesMock = sinon.mock(this.holderDependencies);
+			this.simpleDependenciesMock = sinon.mock(this.simpleDependencies);
 			this.contentDependenciesMock = sinon.mock(this.contentDependencies);
 			this.subcontentDependenciesMock = sinon.mock(this.subcontentDependencies);
 
@@ -54,7 +58,7 @@ define(['ioc/processor/create',
 			this.subcontentDependencyMock = sinon.mock(this.subcontentDependency);
 		});
 
-		after(function() {
+		afterEach(function() {
 			// Dependencies
 
 			delete this.subcontentDependency;
@@ -77,6 +81,7 @@ define(['ioc/processor/create',
 			// Dependencies Collection
 
 			delete this.holderDependencies;
+			delete this.simpleDependencies;
 			delete this.contentDependencies;
 			delete this.subcontentDependencies;
 
@@ -85,6 +90,9 @@ define(['ioc/processor/create',
 
 			this.contentDependenciesMock.restore();
 			delete this.contentDependenciesMock;
+
+			this.simpleDependenciesMock.restore();
+			delete this.simpleDependenciesMock;
 
 			this.holderDependenciesMock.restore();
 			delete this.holderDependenciesMock;
@@ -108,14 +116,15 @@ define(['ioc/processor/create',
 
 			// Global
 
-			delete this.bones;
-
 			this.factoryMock.restore();
 			delete this.factoryMock;
 
 			this.engineMock.restore();
 			delete this.engineMock;
+		});
 
+		after(function() {
+			delete this.bones;
 			delete this.factory;
 			delete this.engine;
 			delete this.create;
@@ -169,19 +178,89 @@ define(['ioc/processor/create',
 				this.contentSubContentDependencyMock.verify();
 				this.engineMock.verify();
 				this.factoryMock.verify();
-
-				expect(this.contentMock.calledOnce);
-				expect(this.contentDependenciesMock.calledOnce);
-				expect(this.contentSubContentDependencyMock.calledOnce);
-				expect(this.engineMock.calledOnce);
-				expect(this.factoryMock.calledOnce);
 			});
 
 		});
 
 		describe('#enqueue()', function() {
 
-			it('Should enqueue a new resource inside the factory stack');
+			it('Should enqueue a new resource inside the factory stack (without sorting dependencies)', function() {
+				this.simpleMock
+					.expects('getPath')
+					.once()
+					.returns('ui/view');
+				this.simpleMock
+					.expects('getId')
+					.once()
+					.returns('simple');
+				this.simpleMock
+					.expects('getDependencies')
+					.once()
+					.returns(this.simpleDependencies);
+				this.simpleDependenciesMock
+					.expects('isEmpty')
+					.once()
+					.returns(true);
+				this.engineMock
+					.expects('getFactory')
+					.once()
+					.returns(this.factory);
+				this.factoryMock
+					.expects('push')
+					.once()
+					.calledAfter(this.engineMock);
+
+				var result = this.create.enqueue(this.bones[1]);
+				expect(result).to.be(this.create);
+
+				this.simpleMock.verify();
+				this.simpleDependenciesMock.verify();
+				this.engineMock.verify();
+				this.factoryMock.verify();
+			});
+
+			it('Should enqueue a new resource inside the factory stack and sort dependencies', function() {
+				var sortStub = sinon.stub(this.create, 'sort').returns(function() {});
+				this.subcontentMock
+					.expects('getPath')
+					.once()
+					.returns('ui/container');
+				this.subcontentMock
+					.expects('getId')
+					.once()
+					.returns('subcontent');
+				this.subcontentMock
+					.expects('getDependencies')
+					.atLeast(1)
+					.returns(this.subcontentDependencies);
+				this.subcontentDependenciesMock
+					.expects('isEmpty')
+					.once()
+					.returns(false);
+				this.engineMock
+					.expects('getFactory')
+					.twice()
+					.returns(this.factory);
+				this.factoryMock
+					.expects('push')
+					.once()
+					.calledAfter(this.engineMock);
+				this.factoryMock
+					.expects('swap')
+					.once()
+					.yields(sortStub)
+					.calledAfter(this.engineMock);
+
+				var result = this.create.enqueue(this.bones[3]);
+				expect(result).to.be(this.create);
+
+				this.subcontentMock.verify();
+				this.subcontentDependenciesMock.verify();
+				this.engineMock.verify();
+				this.factoryMock.verify();
+
+				sortStub.restore();
+			});
 
 		});
 

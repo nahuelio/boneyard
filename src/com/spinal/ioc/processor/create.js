@@ -47,8 +47,8 @@ define(['ioc/processor/processor',
 		*	@return com.spinal.ioc.processor.CreateProcessor
 		**/
 		enqueue: function(bone) {
-			this.getFactory().push({ path: bone.getModule(), id: bone.getId(), callback: _.bind(this.create, this, bone) });
-			if(bone.getDependencies().length > 0) this.getFactory().swap(this.sort(bone));
+			this.getFactory().push({ path: bone.getPath(), id: bone.getId(), callback: _.bind(this.create, this, bone) });
+			if(!bone.getDependencies().isEmpty()) this.getFactory().swap(this.sort(bone));
 			return this;
 		},
 
