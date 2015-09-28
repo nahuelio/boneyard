@@ -138,40 +138,6 @@ define(['ioc/engine/annotation/bone',
 
 		});
 
-		describe('#create()', function() {
-
-			it('Should return dependency object structure', function() {
-				var superCreateStub = sinon.stub(Bone.__super__, 'create').returns(this.dependenciesFeed[0]);
-				var isBoneStub = sinon.stub(this.bone, 'isBone').returns(true);
-
-				var dep = this.dependenciesFeed[0];
-				var result = this.bone.create(dep.expression, dep.property, dep.target);
-				expect(result).to.be.ok();
-				expect(result).to.be.an('object');
-				expect(result.expression).to.be(dep.expression);
-				expect(result.property).to.be(dep.property);
-				expect(result.target).to.be.an('object');
-				expect(result.target.key).to.be(dep.target.key);
-				expect(result.bone).to.be.ok();
-
-				superCreateStub.restore();
-				isBoneStub.restore();
-			});
-
-			it('Should return null: dependency expression is not a valid bone annotation', function() {
-				var superCreateStub = sinon.stub(Bone.__super__, 'create').returns(this.dependenciesFeed[0]);
-				var isBoneStub = sinon.stub(this.bone, 'isBone').returns(false);
-
-				var dep = this.dependenciesFeed[0];
-				var result = this.bone.create('non-valid', dep.property, dep.target);
-				expect(result).not.be.ok();
-
-				superCreateStub.restore();
-				isBoneStub.restore();
-			});
-
-		});
-
 		describe('#retrieve()', function() {
 
 			it('Should retrieve array of dependency object structure', function() {

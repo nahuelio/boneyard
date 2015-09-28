@@ -58,22 +58,6 @@ define(['ioc/engine/annotation/annotation',
 		},
 
 		/**
-		*	Create Dependency
-		*	FIXME: Review this one to see if we can move it into the base class!!
-		*	@public
-		*	@override
-		*	@method create
-		*	@param expr {String} expression to be evaluated
-		*	@param key {String} context property key used to determine where to inject expression
-		*	@param context {Object} bone reference
-		*	@return Object
-		**/
-		create: function(expr, key, context) {
-			if(!(dependency = Bone.__super__.create.apply(this, arguments)) || !this.isBone(expr)) return null;
-			return dependency;
-		},
-
-		/**
 		*	Dependency gathering on this annotation
 		*	This method uses recursion.
 		*	@public
