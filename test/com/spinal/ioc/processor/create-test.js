@@ -245,25 +245,150 @@ define(['ioc/processor/create',
 
 		describe('#create()', function() {
 
-			it('Should instanciate a group of module bones and pass them to the bone injector.assign()');
+			it('Should instanciate a group of module bones and pass them to the bone injector.assign()', function() {
+				var contentInjector = this.bones[2].getInjector();
+				var contentParams = { id: 'content', views: ['$bone!simple', '$bone!subcontent'] };
+
+				var injectorAssignStub = sinon.stub(contentInjector, 'assign', function(instance) {
+					expect(instance).to.be('fakeContentInstance');
+					return contentInjector;
+				});
+				var injectorResolveStub = sinon.stub(contentInjector, 'resolve').returns(contentInjector);
+
+				this.contentMock
+					.expects('getParams')
+					.once()
+					.returns(contentParams);
+				this.engineMock
+					.expects('getFactory')
+					.once()
+					.returns(this.factory);
+				this.factoryMock
+					.expects('create')
+					.once()
+					.withExactArgs('ui/container', contentParams)
+					.returns('fakeContentInstance')
+					.calledAfter(this.engineMock);
+
+				var result = this.create.create(this.bones[2], 'ui/container');
+				expect(result).to.be.ok();
+
+				this.contentMock.verify();
+				this.engineMock.verify();
+				this.factoryMock.verify();
+
+				this.bones[2].getInjector().assign.restore();
+				this.bones[2].getInjector().resolve.restore();
+			});
 
 		});
 
 		describe('#process()', function() {
 
-			it('Should determine if the current bone should be enqueued or resolve dependencies by itself via injector');
+			it('Should enqueue a module bone', function() {
+				var enqueueStub = sinon.stub(this.create, 'enqueue')
+					.withArgs(this.bones[3])
+					.returns(this.create);
+
+				this.subcontentMock
+					.expects('isModule')
+					.once()
+					.returns(true);
+
+				expect(this.create.process(this.bones[3])).to.be.ok();
+
+				this.subcontentMock.verify();
+				this.create.enqueue.restore();
+			});
+
+			it('Should try to resolve "non-module" bone dependencies (no enqueuing)', function() {
+				var contentInjector = this.bones[0].getInjector();
+				var injectorResolveStub = sinon.stub(contentInjector, 'resolve')
+					.returns(contentInjector);
+
+				this.holderMock
+					.expects('isModule')
+					.once()
+					.returns(false);
+
+				expect(this.create.process(this.bones[0])).to.be.ok();
+
+				this.holderMock.verify();
+				contentInjector.resolve.restore();
+			});
 
 		});
 
 		describe('#execute()', function() {
 
-			it('Should execute processor\'s strategy over bones and call factory load');
+			it('Should execute processor\'s strategy over bones and call factory load', function() {
+				var superExecuteStub = sinon.stub(CreateProcessor.__super__, 'execute')
+					.withArgs(this.bones, this.create.process)
+					.returns([]);
+
+				this.engineMock
+					.expects('getFactory')
+					.once()
+					.returns(this.factory);
+				this.factoryMock
+					.expects('load')
+					.once()
+					.returns(this.factory);
+
+				expect(this.create.execute()).to.be.ok();
+
+				this.engineMock.verify();
+				this.factoryMock.verify();
+				CreateProcessor.__super__.execute.restore();
+			});
+
+		});
+
+		describe('#resolveOnHold()', function() {
+
+			it('Should resolve all bone dependencies set as on hold (if any)', function() {
+				var getEngineStub = sinon.stub(this.create, 'getEngine').returns(this.engine);
+				var forEachMock = sinon.mock(this.bones);
+
+				this.engineMock
+					.expects('allBones')
+					.once()
+					.returns(this.bones);
+				forEachMock
+					.expects('forEach')
+					.once()
+					.yields(this.bones[3]);
+				this.subcontentMock
+					.expects('getInjector')
+					.once()
+					.returns({ resolve: function() {} })
+					.calledAfter(this.engineMock);
+
+				expect(this.create.resolveOnHold()).to.be.ok();
+
+				this.engineMock.verify();
+				forEachMock.verify();
+				this.subcontentMock.verify();
+
+				this.create.getEngine.restore();
+				forEachMock.restore();
+			});
 
 		});
 
 		describe('#done()', function() {
 
-			it('Should finish processor\'s strategy by calling super class done method');
+			it('Should finish processor\'s strategy by calling super class done method', function() {
+				var superDoneStub = sinon.stub(CreateProcessor.__super__, 'done')
+					.withArgs(CreateProcessor.NAME)
+					.returns(this.create);
+				var resolveOnHoldStub = sinon.stub(this.create, 'resolveOnHold').returns(this.create);
+
+				expect(this.create.done(CreateProcessor.NAME)).to.be.ok();
+
+				CreateProcessor.__super__.done.restore();
+				this.create.resolveOnHold.restore();
+			});
 
 		});
 

@@ -2,24 +2,21 @@
 *	@module com.spinal.ioc.processor
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define(['ioc/processor/processor',
-	'util/exception/ioc/processor'], function(Processor, ProcessorException) {
+define(['ioc/processor/processor'], function(Processor) {
 
 	/**
-	*	Create Processor
+	*	CreateProcessor Class
 	*	@namespace com.spinal.ioc.processor
 	*	@class com.spinal.ioc.processor.CreateProcessor
 	*	@extends com.spinal.ioc.processor.Processor
 	*
 	*	@requires com.spinal.ioc.processor.Processor
-	*	@requires com.spinal.util.exception.ProcessorException
 	**/
 	var CreateProcessor = Spinal.namespace('com.spinal.ioc.processor.CreateProcessor', Processor.inherit({
 
 		/**
 		*	Initialize
 		*	@public
-		*	@chainable
 		*	@method initialize
 		*	@return com.spinal.ioc.processor.CreateProcessor
 		**/
@@ -44,16 +41,12 @@ define(['ioc/processor/processor',
 		*	the constructor function (including dependencies if they exists).
 		*	@public
 		*	@method create
-		*	@throws {com.spinal.util.error.types.ProcessorException}
 		*	@param bone {com.spinal.ioc.engine.annotation.Bone} bone annotation reference
 		*	@param path {String} bone's resource path to pass to factory to create an instance
 		*	@return com.spinal.ioc.processor.CreateProcessor
 		**/
 		create: function(bone, path) {
-			if(!bone || !path) throw new ProcessorException('CreateModuleException');
-			bone.getInjector()
-				.assign(this.getFactory().create(path, bone.getParams()))
-				.resolve();
+			bone.getInjector().assign(this.getFactory().create(path, bone.getParams())).resolve();
 			return this;
 		},
 
@@ -65,7 +58,7 @@ define(['ioc/processor/processor',
 		*	@return com.spinal.ioc.processor.CreateProcessor
 		**/
 		process: function(bone) {
-			bone.isModule() ? this.enqueue(bone) : bone.injector.resolve();
+			bone.isModule() ? this.enqueue(bone) : bone.getInjector().resolve();
 			return this;
 		},
 
@@ -73,11 +66,23 @@ define(['ioc/processor/processor',
 		*	Execute Processor
 		*	@public
 		*	@method execute
-		*	@return {com.spinal.ioc.processor.CreateProcessor}
+		*	@return com.spinal.ioc.processor.CreateProcessor
 		**/
 		execute: function() {
-			CreateProcessor.__super__.execute.call(this, this.process, this.getEngine().allBones())
+			CreateProcessor.__super__.execute.call(this, this.getEngine().allBones(), this.process);
 			this.getFactory().load(_.bind(this.done, this, CreateProcessor.NAME));
+			return this;
+		},
+
+		/**
+		*	Resolves all bone dependencies that were set as 'on hold' via injector.
+		*	This method will assume that all bone modules were loaded and instanciated.
+		*	@public
+		*	@method resolveOnHold
+		*	@return com.spinal.ioc.processor.CreateProcessor
+		**/
+		resolveOnHold: function() {
+			this.getEngine().allBones().forEach(function(bone) { bone.getInjector().resolve(); });
 			return this;
 		},
 
@@ -90,8 +95,7 @@ define(['ioc/processor/processor',
 		*	@return com.spinal.ioc.processor.BoneProcessor
 		**/
 		done: function(type) {
-			console.log('CREATE DONE LOADING: ', arguments);
-			// Execute dependencies on hold, try to query
+			this.resolveOnHold();
 			return CreateProcessor.__super__.done.apply(this, arguments);
 		}
 
