@@ -3,7 +3,8 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['ioc/engine/annotation/annotation',
-	'ioc/engine/helpers/injector'], function(Annotation, Injector) {
+	'ioc/engine/engine',
+	'ioc/engine/helpers/injector'], function(Annotation, Engine, Injector) {
 
 	describe('com.spinal.ioc.engine.annotation.Annotation', function() {
 
@@ -52,6 +53,18 @@ define(['ioc/engine/annotation/annotation',
 			it('Should return a new contructor', function() {
 				this.annotation = new Annotation(this.boneStr);
 				expect(this.annotation).to.be.ok();
+			});
+
+		});
+
+		describe('#getEngine()', function() {
+
+			it('Should return a unique instance of Engine', function() {
+				expect(this.annotation.getEngine()).to.be.a(Engine);
+			});
+
+			it('Should return a unique instance of Engine (cached)', function() {
+				expect(this.annotation.getEngine()).to.be.a(Engine);
 			});
 
 		});

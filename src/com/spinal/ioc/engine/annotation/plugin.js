@@ -17,31 +17,14 @@ define(['ioc/engine/annotation/annotation',
 	var Plugin = Spinal.namespace('com.spinal.ioc.engine.annotation.Plugin', Annotation.inherit({
 
 		/**
-		*	Plugin base path
-		*	@public
-		*	@property basePath
-		*	@type String
-		**/
-		basePath: 'ioc/plugins',
-
-		/**
 		*	Initialize
 		*	@public
 		*	@method initialize
+		*	@param attrs {Object} plugin attributes
 		*	@return com.spinal.ioc.engine.annotation.Plugin
 		**/
-		initialize: function() {
-			return Plugin.__super__.initialize.call(this, arguments);
-		},
-
-		/**
-		*	Retrieves Plugin base path
-		*	@public
-		*	@method getBasePath
-		*	@return String
-		**/
-		getBasePath: function() {
-			return this.basePath;
+		initialize: function(attrs) {
+			return Plugin.__super__.initialize.apply(this, arguments);
 		},
 
 		/**
@@ -54,20 +37,28 @@ define(['ioc/engine/annotation/annotation',
 		*	@return Array
 		**/
 		retrieve: function(ctx) {
-			return Plugin.__super__.retrieve.call(this, _.defined(ctx) ? ctx : this.getParams());
+			return Plugin.__super__.retrieve.call(this, _.defined(ctx) ? ctx : this.getValue());
 		},
 
 		/**
-		*	Extracts plugins from Spec annotation
+		*	Default Plugin Execution strategy
 		*	@public
-		*	@method extract
-		*	@param plugins {Object} plugins reference
-		*	@return Array
+		*	@method run
+		*	@return com.spinal.ioc.engine.annotation.Plugin
 		**/
-		extract: function(plugins) {
-			return _.compact(_.map(plugins, function(plugin, name) {
-				return !_.defined(this[name]) ? (this[name] = plugin) : null;
-			}));
+		run: function() {
+			if(this.isCreated()) this._$created.run();
+			return this;
+		},
+
+		/**
+		*	Checks if this annotation was succesfully created
+		*	@static
+		*	@method isCreated
+		*	@return Boolean
+		**/
+		isCreated: function() {
+			return _.defined(this._$created);
 		}
 
 	}, {
@@ -78,6 +69,14 @@ define(['ioc/engine/annotation/annotation',
 		*	@type String
 		**/
 		NAME: 'Plugin',
+
+		/**
+		*	Plugin base path
+		*	@static
+		*	@property DefaultPath
+		*	@type String
+		**/
+		DefaultPath: 'ioc/plugins',
 
 		/**
 		*	Gather plugins bones from a given spec

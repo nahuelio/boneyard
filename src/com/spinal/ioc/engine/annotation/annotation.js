@@ -32,6 +32,16 @@ define(['ioc/engine/helpers/injector',
 		},
 
 		/**
+		*	Retrieves Engine unique instance from context
+		*	@static
+		*	@method getEngine
+		*	@return com.spinal.ioc.engine.Engine
+		**/
+		getEngine: function() {
+			return (!Annotation.engine) ? (Annotation.engine = require('ioc/context').engine) : Annotation.engine;
+		},
+
+		/**
 		*	Returns a reference of this Annotation
 		*	@public
 		*	@method get

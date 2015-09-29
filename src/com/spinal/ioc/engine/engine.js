@@ -6,7 +6,8 @@ define(['ioc/engine/helpers/spec',
 		'ioc/engine/annotation/plugin',
 		'util/adt/collection',
 		'util/factories/async-factory',
-		'util/adt/iterator'], function(Spec, Plugin, Collection, AsyncFactory, Iterator) {
+		'util/adt/iterator',
+		'util/object'], function(Spec, Plugin, Collection, AsyncFactory, Iterator, ObjectUtil) {
 
 	/**
 	*	Class Engine
@@ -19,6 +20,7 @@ define(['ioc/engine/helpers/spec',
 	*	@requires com.spinal.util.adt.Collection
 	*	@requires com.spinal.util.factories.AsyncFactory
 	*	@requires com.spinal.util.adt.Iterator
+	*	@requires com.spinal.util.ObjectUtil
 	**/
 	var Engine = Spinal.namespace('com.spinal.ioc.engine.Engine', Spinal.SpinalClass.inherit({
 
@@ -185,8 +187,11 @@ define(['ioc/engine/helpers/spec',
 		*	@return Object
 		**/
 		extractPlugins: function(spec) {
-			//var detected = this.plugins.set(Plugin.only(spec));
-			//if(detected.length > 0) this.trigger(Engine.EVENTS.plugins, detected);
+			var detected = ObjectUtil.objToArray(Plugin.only(spec));
+			if(detected.length > 0) {
+				this.plugins.set(detected);
+				this.trigger(Engine.EVENTS.plugins, detected);
+			}
 			return spec;
 		},
 

@@ -1,7 +1,7 @@
 /**
 *	@module com.spinal.ioc.plugins
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
-*	@version 0.0.1
+*	@version 0.1.0
 **/
 define(['core/spinal',
 		'ioc/engine/engine',
@@ -14,7 +14,7 @@ define(['core/spinal',
 	*	@class com.spinal.ioc.plugins.HTMLPlugin
 	*	@extends com.spinal.core.Spinal.SpinalClass
 	*
-	*	@requires com.spianl.ioc.engine.Engine
+	*	@requires com.spinal.ioc.engine.Engine
 	*	@requires com.spinal.util.ObjectUtil
 	**/
 	var HTMLPlugin = Spinal.namespace('com.spinal.ioc.plugins.HTMLPlugin', Spinal.SpinalClass.inherit({

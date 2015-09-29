@@ -10,7 +10,12 @@ define(['ioc/engine/helpers/dependency',
 
 		before(function() {
 			this.dependency = null;
-			this.fakeBone = { isModule: function() { }, isCreated: function() { }, getBoneExpression: function() {} };
+			this.fakeBone = {
+				isModule: function() {},
+				getEngine: function() {},
+				isCreated: function() {},
+				getBoneExpression: function() {}
+			};
 			this.data = {
 				expression: '$bone!str',
 				property: 'test',
@@ -118,9 +123,15 @@ define(['ioc/engine/helpers/dependency',
 		describe('#getEngine()', function() {
 
 			it('Should return a reference to IoC Engine', function() {
+				this.boneMock.expects('getEngine')
+					.once()
+					.returns(this.fakeEngine);
+
 				var result = this.dependency.getEngine();
 				expect(result).to.be.ok();
-				expect(result).to.be.an(Engine);
+				expect(result.bone).to.be.ok();
+
+				this.boneMock.verify();
 			});
 
 		});

@@ -16,14 +16,6 @@ define(['util/exception/ioc/dependency',
 	var Dependency = Spinal.namespace('com.spinal.ioc.engine.helpers.Dependency', Spinal.SpinalClass.inherit({
 
 		/**
-		*	Ioc engine
-		*	@public
-		*	@property Engine
-		*	@type com.spinal.ioc.engine.Engine
-		**/
-		engine: null,
-
-		/**
 		*	Initialize
 		*	@public
 		*	@chainable
@@ -34,7 +26,6 @@ define(['util/exception/ioc/dependency',
 		initialize: function(attrs) {
 			attrs || (attrs = {});
 			this.valid(attrs);
-			this.engine = require('ioc/context').engine;
 			Dependency.__super__.initialize.apply(this, arguments);
 			return _.extend(this, attrs);
 		},
@@ -61,7 +52,7 @@ define(['util/exception/ioc/dependency',
 		*	@return com.spinal.ioc.engine.Engine
 		**/
 		getEngine: function() {
-			return this.engine;
+			return this.bone.getEngine();
 		},
 
 		/**
