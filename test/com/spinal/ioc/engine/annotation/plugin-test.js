@@ -88,7 +88,10 @@ define(['ioc/engine/annotation/plugin',
 
 		describe('#isCreated()', function() {
 
-			it('Should return true when plugin is instanciated');
+			it('Should return true when plugin is instanciated', function() {
+				this.plugin._$created = { run: function() {} };
+				expect(this.plugin.isCreated()).to.be(true);
+			});
 
 		});
 
