@@ -60,7 +60,7 @@ define(['specs/main.spec'], function(MainSpec) {
 
 		$ready: [
 			{ '$bone!model.set': ['_test', '$bone!simple.toString'] },
-			{ '$bone!simple.listenTo': ['$bone!model', 'change:_b', '$bone-ref!simple.update'] }
+			{ '$bone!simple.listenTo': ['$bone!model', 'change:_b', '$bone!simple.update'] }
 		]
 
 	};

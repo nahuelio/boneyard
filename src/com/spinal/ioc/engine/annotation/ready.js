@@ -2,7 +2,8 @@
 *	@module com.spinal.ioc.engine.annotation
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define(['ioc/engine/annotation/annotation'], function(Annotation) {
+define(['ioc/engine/annotation/annotation',
+	'ioc/engine/helpers/dependency'], function(Annotation, Dependency) {
 
 	/**
 	*	Class Ready
@@ -22,11 +23,31 @@ define(['ioc/engine/annotation/annotation'], function(Annotation) {
 		*	@return com.spinal.ioc.engine.annotation.Ready
 		**/
 		initialize: function(attrs) {
-			attrs || (attrs = {});
-			Ready.__super__.initialize.call(this, attrs);
-			_.extend(this, StringUtil.toPrivate(attrs));
-			return this;
+			return Ready.__super__.initialize.apply(this, arguments);
 		},
+
+		/**
+		*	Retrieves target operation
+		*	@public
+		*	@method getTarget
+		*	@return Object
+		**/
+		getTarget: function() {
+			return this.target;
+		},
+
+		/**
+		*	Default target resolution strategy
+		*	@public
+		*	@method getTarget
+		*	@return com.spinal.ioc.engine.annotation.Ready
+		**/
+		resolve: function() {
+			var target = new Dependency({ expression: this.getId(), target: this, property: '_id', bone: this });
+			this.target = this.getInjector().inject(target);
+			delete target;
+			return this;
+		}
 
 	}, {
 
