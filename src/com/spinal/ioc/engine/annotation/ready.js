@@ -47,6 +47,16 @@ define(['ioc/engine/annotation/annotation',
 			this.target = this.getInjector().inject(target);
 			delete target;
 			return this;
+		},
+
+		/**
+		*	Default operation execution
+		*	@public
+		*	@method execute
+		*	@return com.spinal.ioc.engine.annotation.Ready
+		**/
+		execute: function() {
+			return _.defined(this.getTarget()) ? this.getTarget().apply(this, arguments) : this;
 		}
 
 	}, {
