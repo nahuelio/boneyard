@@ -141,33 +141,16 @@ define(['ioc/engine/engine'], function(Engine) {
 		},
 
 		/**
-		*	Static IoC Initializer
-		*	@static
-		*	@method Initialize
-		*	@param spec {Object} Default spec
-		*	@param callback {Function} callback pass to the wire
-		*	@return com.spinal.ioc.Context
-		**/
-		Initialize: function(spec, callback) {
-			var ctx = new Context();
-			if(_.defined(spec) && _.isFunction(spec)) {
-				callback = spec;
-				spec = null;
-			}
-			(arguments.length > 0) ? ctx.wire(spec, callback) : ctx.getEngine().setup();
-			return ctx;
-		},
-
-		/**
 		*	Main Spec LazyLoad
 		*	@static
 		*	@method LazyLoad
-		*	@param pathSpec {String} main spec path
-		*	@param callback {Function} callback pass to the wire
+		*	@param [callback] {Function} optional callback
 		*	@return com.spinal.ioc.Context
 		**/
-		LazyLoad: function(pathSpec, callback) {
-			require([pathSpec], callback);
+		LazyLoad: function(callback) {
+			var mainSpec = $('script[data-spec]').data('spec');
+			if(mainSpec) require([mainSpec], function(spec) { Spinal.app = new Context().wire(spec, callback); });
+			return Context;
 		}
 
 	}));
@@ -179,10 +162,6 @@ define(['ioc/engine/engine'], function(Engine) {
 	*	@type com.spinal.ioc.engine.Engine
 	**/
 	Context.engine = new Engine();
-
-	// Automatic Initializer
-	var mainSpec = $('script[data-spec]').data('spec');
-	if(mainSpec) Context.LazyLoad(mainSpec, function(spec) { Spinal.app = Context.Initialize(spec); });
 
 	return Context;
 

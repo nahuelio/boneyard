@@ -3,254 +3,179 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['ioc/context',
-		'ioc/engine/engine',
-		'ui/view',
-		'ui/container',
-		'specs/simple.spec',
-		'specs/advanced.spec',
-		'specs/plugin.spec'], function(Context, Engine, View, Container,
-			SimpleSpec, AdvancedSpec, PluginSpec) {
+	'ioc/engine/engine'], function(Context, Engine) {
 
-	describe.skip('com.spinal.ioc.Context', function() {
-
-		this.appContext = null;
+	describe('com.spinal.ioc.Context', function() {
 
 		before(function() {
-			$('body').append('<div class="global"></div>');
+			this.context = null;
+			this.spec = { $id: 'test' };
 		});
 
 		after(function() {
-			delete this.appContext;
+			delete this.spec;
+			delete this.context;
 		});
 
-		/**
-		*	Context#new() test
-		**/
 		describe('#new()', function() {
 
-			it('Should Initialize IoC Container', function(done) {
-				this.appContext = Context.Initialize(_.bind(function(ctx) {
-					expect(ctx).to.be.ok();
-					expect(ctx).to.be.a(Context);
-					expect(ctx.getEngine()).to.be.ok();
-					done();
-				}, this));
-				expect(this.appContext).to.be.ok();
-				expect(this.appContext).to.be.a(Context);
+			it('Should return a new instance of Context', function() {
+				var ContextApiStub = sinon.stub(Context.prototype, 'api').returns(Context.prototype);
+
+				this.context = new Context();
+				expect(this.context).to.be.ok();
+				expect(_.keys(this.context._listeningTo)[0]).to.be(this.context.getEngine()._listenId);
+
+				Context.prototype.api.restore();
 			});
 
 		});
 
-		/**
-		*	Context#wire() test
-		**/
+		describe('#api()', function() {
+
+			it('Should proxify Engine\'s public api to make it available on the current context', function() {
+				expect(this.context.api()).to.be.a(Context);
+				expect(this.context.spec).to.be.a('function');
+				expect(this.context.bone).to.be.a('function');
+				expect(this.context.bonesByClass).to.be.a('function');
+			});
+
+		});
+
+		describe('#getEngine()', function() {
+
+			it('Should return unique Engine instance reference', function() {
+				expect(this.context.getEngine()).to.be.an(Engine);
+			});
+
+		});
+
 		describe('#wire()', function() {
 
-			it.skip('Should Wire Simple specs (Boolean, String, Numbers, Object, Array, Date, RegExp, etc)', function(done) {
-				this.appContext.off().on(Context.EVENTS.start, _.bind(function(ctx) {
-					expect(ctx).to.be.ok();
-				}, this)).on(Context.EVENTS.complete, _.bind(function(ctx, type, spec) {
-					expect(ctx).to.be.ok();
-					expect(type).to.be(Engine.EVENTS.wire);
-					expect(spec).to.be.an('object');
-					done();
-				}, this));
+			it('Should wire a new spec and executes callback once finished', function() {
+				var callback = sinon.spy(), engineMock = sinon.mock(Context.engine);
 
-				this.appContext.wire(SimpleSpec, _.bind(function(ctx) {
-					expect(ctx).to.be.ok();
-					expect(ctx).to.be.a(Context);
+				engineMock.expects('wire')
+					.once()
+					.yields([this.spec, callback, this.context])
+					.returns(Context.engine);
 
-					var globalView = ctx.bone('global');
-					console.log(globalView);
-					// 	model = ctx.bone('model'),
-					// 	simple = ctx.bone('simple');
+				var result = this.context.wire(this.spec, callback);
+				expect(result).to.be.a(Context);
+				expect(callback.calledOnce);
 
-					// expect(globalView).to.be.a(Container);
-					// expect(globalView.$el.hasClass('chrome')).to.be(true);
-					//
-					// expect(model.get('_o')).to.be.an('object');
-					// expect(model.get('_b')).to.be.an('boolean');
-					// expect(model.get('_a')[0]).to.be.equal(model.get('_n'));
-					// expect(model.get('_o').prop).to.be.equal(model.get('_s'));
-					// expect(model.get('_nested')[0].deep.prop).to.be.equal(model.get('_o').prop);
-					// expect(model.get('_nested')[1].prop).to.be.equal(model.get('_n'));
-					// // Check out $ready first command, _test is being changed
-					// expect(model.get('_test')).to.be(simple.toString());
-				}, this));
+				engineMock.verify();
+				engineMock.restore();
 			});
 
-			it.skip('Should Wire Advanced Spec (Module Dependency)', function(done) {
-				this.appContext.off().on(Context.EVENTS.initialize, _.bind(function(ctx) {
-					expect(ctx).to.be.ok();
-				}, this)).on(Context.EVENTS.complete, _.bind(function(ctx) {
-					expect(ctx).to.be.ok();
-					done();
-				}, this));
+			it('Should wire a new spec and without a callback', function() {
+				var engineMock = sinon.mock(Context.engine);
 
-				this.appContext.wire(AdvancedSpec, function(ctx) {
-					expect(ctx).to.be.ok();
-					var model = ctx.getBone('model'),
-						theme = ctx.getBone('theme'),
-						content = ctx.getBone('content'),
-						subcontent = ctx.getBone('subcontent'),
-						integrity = ctx.getBone('integrity'),
-						viewC = ctx.getBone('viewC');
+				engineMock.expects('wire')
+					.once()
+					.withExactArgs(this.spec, undefined, this.context)
+					.returns(Context.engine);
 
-					expect(model.get('_string')).to.be.equal(theme);
+				var result = this.context.wire(this.spec);
+				expect(result).to.be.a(Context);
 
-					expect(theme).to.be('chrome');
-
-					expect(content.get(0)).to.be(viewC);
-
-					expect(subcontent.model).to.be.ok();
-					expect(subcontent.model.get('_int')).to.be.equal(10);
-					expect(subcontent.get(0).lookup(function(view) { return (view.id === 'subcontent'); })).to.be(subcontent);
-
-					expect(integrity.get('anotherView').$el).to.be.ok();
-					expect(integrity.get('schema')).to.be.ok();
-					expect(integrity.get('schema')._float).to.be('float');
-
-					expect(viewC.lookup(function(view) { return (view.id === 'content'); })).to.be(content);
-					expect(viewC.get(1)).to.be(ctx.getBone('view2'));
-				});
-			});
-
-			it.skip('Should NOT wire Specs (Spect format is invalid)', function() {
-				expect(_.bind(function() {
-					this.appContext.wire('non-valid-format');
-				}, this)).to.throwException(function(e) {
-					expect(e).to.be.ok();
-					expect(e.message).to.be.equal(ContextException.TYPES.InvalidSpecFormat());
-				});
+				engineMock.verify();
+				engineMock.restore();
 			});
 
 		});
 
-		/**
-		*	Context#getBonesByClass() test
-		**/
-		describe.skip('#getBonesByClass()', function() {
+		describe('#unwire()', function() {
 
-			it('Should return a list of bones filtered by class', function() {
-				var bones = this.appContext.getBonesByClass(View.NAME);
-				expect(bones).to.have.length(8);
-				_.each(bones, function(b) { expect(b).to.be.an(View); });
+			it('Should unwire an existing spec and executes callback once finished', function() {
+				var callback = sinon.spy(), engineMock = sinon.mock(Context.engine);
+
+				engineMock.expects('unwire')
+					.once()
+					.yields([this.spec, callback, this.context])
+					.returns(Context.engine);
+
+				var result = this.context.unwire(this.spec, callback);
+				expect(result).to.be.a(Context);
+				expect(callback.calledOnce);
+
+				engineMock.verify();
+				engineMock.restore();
+			});
+
+			it('Should unwire an existing spec and without a callback', function() {
+				var engineMock = sinon.mock(Context.engine);
+
+				engineMock.expects('unwire')
+					.once()
+					.withExactArgs(this.spec, undefined, this.context)
+					.returns(Context.engine);
+
+				var result = this.context.unwire(this.spec);
+				expect(result).to.be.a(Context);
+
+				engineMock.verify();
+				engineMock.restore();
 			});
 
 		});
 
-		/**
-		*	Context#getBonesByType() test
-		**/
-		describe.skip('#getBonesByType()', function() {
+		describe('#onStart()', function() {
 
-			it('Should return a list of bones filtered by type', function() {
-				var bones = this.appContext.getBonesByType(Container);
-				expect(bones).to.have.length(6);
-				_.each(bones, function(b) { expect(b).to.be.an(Container); });
+			it('Should trigger Context.EVENTS.start event', function() {
+				var callback = sinon.spy();
+				this.context.on(Context.EVENTS.start, callback);
+				expect(this.context.onStart(Context.engine)).to.be.a(Context);
+				expect(callback.calledOnce);
+				expect(callback.calledWith(this.context)).to.be(true);
 			});
 
 		});
 
-		/**
-		*	Context#wire() test
-		*	Plugin Specs
-		**/
-		describe.skip('#wire() - PluginSpec', function() {
+		describe('#onWire()', function() {
 
-			it('Should Wire Plugin Spec (Plugins tasks)', function(done) {
-				this.appContext.off().on(Context.EVENTS.initialize, _.bind(function(ctx) {
-					expect(ctx).to.be.ok();
-					done();
-				}, this)).on(Context.EVENTS.complete, _.bind(function(ctx) {
-					expect(ctx).to.be.ok();
+			it('Should trigger Context.EVENTS.complete (Engine.EVENTS.wire) event', function() {
+				var callback = sinon.spy();
+				this.context.on(Context.EVENTS.complete, callback);
+				expect(this.context.onWire(this.spec)).to.be.a(Context);
+				expect(callback.calledOnce);
+				expect(callback.calledWith(this.context, Engine.EVENTS.wire, this.spec)).to.be(true);
+			});
+
+		});
+
+		describe('#onUnwire()', function() {
+
+			it('Should trigger Context.EVENTS.complete (Engine.EVENTS.unwire) event', function() {
+				var callback = sinon.spy();
+				this.context.on(Context.EVENTS.complete, callback);
+				expect(this.context.onUnwire(this.spec)).to.be.a(Context);
+				expect(callback.calledOnce);
+				expect(callback.calledWith(this.context, Engine.EVENTS.unwire, this.spec)).to.be(true);
+			});
+
+		});
+
+		describe('static#LazyLoad()', function() {
+
+			it('Should trigger automatic Context Lazy Loading (with spec wiring from \'data-spec\' attribute)', function(done) {
+				var callback = _.bind(function() { Context.prototype.wire.restore(); done(); }, this),
+					contextWireStub = sinon.stub(Context.prototype, 'wire', _.bind(function() {
+					callback();
+					return this.context;
 				}, this));
 
-				this.appContext.wire(PluginSpec, function(ctx) {
-					expect(ctx).to.be.ok();
-					// Checks Context wrapped methods from plugins
-					// Theme
-					expect(Spinal.changeTheme).to.be.ok();
-					expect(Spinal.currentTheme).to.be.ok();
-					expect(Spinal.resetTheme).to.be.ok();
-					// HTML Plugin
-					expect(Spinal.isTemplateLoaded).to.be.ok();
-					expect(Spinal.loadTemplate).to.be.ok();
-					expect(Spinal.tpl).to.be.ok();
-				});
+				$('head').append('<script data-spec="specs/simple.spec"></script>');
+
+				var result = Context.LazyLoad(callback);
+				expect(result).to.be(Context);
+
+				$('head > script[data-spec]').remove();
 			});
 
-			it.skip('HTMLPlugin: Should Retrieve a template with params', function(done) {
-				var evaluation = _.bind(function() {
-					var output = Spinal.tpl('my.content.menu', { cls: 'menu' });
-					expect($(output).attr('class')).to.be.equal('menu');
-					expect($(output).prop('tagName').toLowerCase()).to.be.equal('div');
-					done();
-				}, this);
-				(!Spinal.isTemplateLoaded('my')) ?
-					this.appContext.off().on(Engine.EVENTS.plugin, _.bind(evaluation, this)) :
-					evaluation();
-			});
-
-			it.skip('HTMLPlugin: Should Load a new Template package at runtime', function(done) {
-				this.appContext.off();
-				Spinal.loadTemplate('other', _.bind(function() {
-					var output = Spinal.tpl('other.content.other', { cls: 'myclass' });
-					expect($(output).hasClass('myclass')).to.be.equal(true);
-					expect($(output).prop('tagName').toLowerCase()).to.be.equal('p');
-					// Without params
-					output = Spinal.tpl('other.content.rule');
-					expect($(output).prop('tagName').toLowerCase()).to.be.equal('hr');
-					// Javascript Logic though the usage of _$ symbol (simple 'cls' class check with default 'default')
-					output = Spinal.tpl('other.content.other', {});
-					expect($(output).hasClass('default')).to.be.equal(true);
-					done();
-				}, this));
-			});
-
-			it.skip('HTMLPlugin: Should Retrieve a template using the default provided by spinal', function() {
-				// span
-				var output = Spinal.tpl('tag', { tagName: 'span', id: 'testId', cls: 'testCls' });
-				expect($(output).prop('tagName').toLowerCase()).to.be.equal('span');
-				expect($(output).attr('id')).to.be.equal('testId');
-				expect($(output).attr('class')).to.be.equal('testCls');
-				// link
-				var output = Spinal.tpl('tag', { tagName: 'a', attrs: { href: 'testHref' } });
-				expect($(output).prop('tagName').toLowerCase()).to.be.equal('a');
-				expect($(output).attr('href')).to.be.equal('testHref');
-			});
-
-			it.skip('HTMLPlugin: Errors', function() {
-				// No Route
-				var output = Spinal.tpl();
-				expect(output).to.be.empty();
-				// Query with no package
-				var output = Spinal.tpl('non.existent');
-				expect(output).to.be.equal('');
-				// No Template Package name specified
-				Spinal.loadTemplate();
-			});
-
-			it.skip('ThemePlugin: Should Change the theme (with Bootstrap active)', function() {
-				// Bootstrap Active
-				var $linkBootstrap = $('head > link[theme="bootstrap"]');
-				expect($linkBootstrap.length).to.be.equal(1);
-
-				// User-defined default theme "My"
-				var $linkMy = $('head > link[theme="my"]');
-				var $linkYours = $('head > link[theme="yours"]');
-				expect($linkMy.length).to.be.equal(1);
-				expect($linkYours.length).to.be.equal(0);
-				expect(Spinal.currentTheme().name).to.be.equal('my');
-
-				Spinal.changeTheme('yours');
-
-				// "Yours" Theme active
-				var $linkMy = $('head > link[theme="my"]');
-				var $linkYours = $('head > link[theme="yours"]');
-				expect($linkMy.length).to.be.equal(0);
-				expect($linkYours.length).to.be.equal(1);
-				expect(Spinal.currentTheme().name).to.be.equal('yours');
+			it('Should NOT trigger automatic Context Lazy Loading', function() {
+				var result = Context.LazyLoad();
+				expect(result).to.be(Context);
 			});
 
 		});
