@@ -2,33 +2,79 @@
 *	com.spinal.ioc.engine.Engine Class Tests
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define(['ioc/engine/engine'], function(Engine) {
+define(['ioc/engine/engine',
+	'util/factories/async-factory'], function(Engine, AsyncFactory) {
 
 	describe('com.spinal.ioc.engine.Engine', function() {
 
 		before(function() {
+			this.factory = {
+				set: function() {},
+				load: function() {},
+				create: function() {}
+			};
+			this.factoryMock = sinon.mock(this.factory);
+			this.processors = {
+				set: function() {},
+				isEmpty: function() {},
+				hasNext: function() {},
+				next: function() {},
+				rewind: function() {},
+				once: function() {}
+			};
+			this.processorsMock = sinon.mock(this.processors);
 			this.engine = null;
+
+			this.getFactoryStub = null;
 		});
 
 		after(function() {
+			this.factoryMock.restore();
+			delete this.factoryMock;
+
+			this.processorsMock.restore();
+			delete this.processorsMock;
+
+			delete this.getFactoryStub;
+
+			delete this.factory;
+			delete this.processors;
 			delete this.engine;
 		});
 
 		describe('#new()', function() {
 
-			it('Should return an instanciate of an Engine class');
+			it('Should return an instanciate of an Engine class', function() {
+				this.engine = new Engine();
+				expect(this.engine).to.be.ok();
+				expect(this.engine.wire).to.be.a('function');
+				expect(this.engine.unwire).to.be.a('function');
+			});
 
 		});
 
 		describe('#getFactory()', function() {
 
-			it('Should return engine\'s asynchronous factory reference');
+			it('Should return engine\'s asynchronous factory reference', function() {
+				expect(this.engine.getFactory()).to.be.a(AsyncFactory);
+			});
 
 		});
 
 		describe('#setup()', function() {
 
-			it('Should Setup Engine initialization by loading processors');
+			it('Should Setup Engine initialization by loading processors', function() {
+				var method = sinon.spy();
+
+				this.processorsMock
+					.expects('isEmpty')
+					.once()
+					.returns(true);
+				//this.factoryMock
+
+				//var result = this.engine.
+				// CONTINUE HERE...
+			});
 
 			it('Should NOT trigger Engine initialization (processors already loaded and ready)');
 
