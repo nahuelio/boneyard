@@ -91,8 +91,11 @@ define(['ioc/engine/helpers/spec',
 		*	@return com.spinal.ioc.engine.Engine
 		**/
 		setup: function(method, spec, callback, ctx) {
-			if(!this.processors.isEmpty()) method.call(this, spec, callback, ctx);
-			this.factory.set(Engine.PROCESSORS).load(_.bind(this.ready, this, method, spec, callback, ctx));
+			if(!this.processors.isEmpty()) {
+				method.call(this, spec, callback, ctx);
+				return this;
+			}
+			this.getFactory().set(Engine.PROCESSORS).load(_.bind(this.ready, this, method, spec, callback, ctx));
 			return this;
 		},
 

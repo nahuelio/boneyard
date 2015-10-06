@@ -3,16 +3,17 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['ioc/engine/engine',
-	'util/factories/async-factory'], function(Engine, AsyncFactory) {
+	'util/factories/async-factory',
+	'specs/simple.spec'], function(Engine, AsyncFactory, SimpleSpec) {
 
 	describe('com.spinal.ioc.engine.Engine', function() {
 
 		before(function() {
-			this.factory = {
-				set: function() {},
-				load: function() {},
-				create: function() {}
-			};
+			this.engine = null;
+		});
+
+		beforeEach(function() {
+			this.factory = new AsyncFactory();
 			this.factoryMock = sinon.mock(this.factory);
 			this.processors = {
 				set: function() {},
@@ -23,22 +24,26 @@ define(['ioc/engine/engine',
 				once: function() {}
 			};
 			this.processorsMock = sinon.mock(this.processors);
-			this.engine = null;
 
-			this.getFactoryStub = null;
+			if(this.engine) {
+				// Mock Injections
+				this.engine.processors = this.processors;
+				this.engine.factory = this.factory;
+			}
 		});
 
-		after(function() {
+		afterEach(function() {
 			this.factoryMock.restore();
 			delete this.factoryMock;
 
 			this.processorsMock.restore();
 			delete this.processorsMock;
 
-			delete this.getFactoryStub;
-
 			delete this.factory;
 			delete this.processors;
+		});
+
+		after(function() {
 			delete this.engine;
 		});
 
@@ -64,19 +69,55 @@ define(['ioc/engine/engine',
 		describe('#setup()', function() {
 
 			it('Should Setup Engine initialization by loading processors', function() {
-				var method = sinon.spy();
+				var ctx = {}, callback = sinon.spy();
+				callback.withArgs(ctx);
+				// FIXME: Review this stub: It might not be a good idea to mock the this.ready handler...
+				var readyStub = sinon.stub(this.engine, 'ready', _.bind(function(method, spec, callback, ctx) {
+					callback(ctx);
+					return this.engine;
+				}, this));
 
 				this.processorsMock
 					.expects('isEmpty')
 					.once()
 					.returns(true);
-				//this.factoryMock
+				this.factoryMock
+					.expects('set')
+					.once()
+					.returns(this.factory);
+				this.factoryMock
+					.expects('load')
+					.once()
+					.yields(callback)
+					.returns(this.factory);
 
-				//var result = this.engine.
-				// CONTINUE HERE...
+				var result = this.engine.setup(function() {}, SimpleSpec, callback, ctx);
+				expect(result).to.be.an(Engine);
+
+				this.processorsMock.verify();
+				this.factoryMock.verify();
+
+				expect(callback.calledOnce).to.be(true);
+				expect(callback.calledWith(ctx)).to.be(true);
+				readyStub.restore();
 			});
 
-			it('Should NOT trigger Engine initialization (processors already loaded and ready)');
+			it('Should NOT trigger Engine initialization (processors already loaded and ready)', function() {
+				var method = sinon.spy(), callback = sinon.spy(), ctx = {};
+
+				this.processorsMock
+					.expects('isEmpty')
+					.once()
+					.returns(false);
+
+				var result = this.engine.setup(method, SimpleSpec, callback, ctx);
+				expect(result).to.be.an(Engine);
+
+				this.processorsMock.verify();
+
+				expect(method.calledOnce);
+				expect(method.calledWith(SimpleSpec, callback, ctx));
+			});
 
 		});
 
