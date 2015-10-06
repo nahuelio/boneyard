@@ -127,12 +127,8 @@ define(['ioc/engine/helpers/spec',
 		*	@return com.spinal.ioc.engine.Engine
 		**/
 		execute: function(callback, ctx) {
-			if(!this.processors.hasNext()) {
-				this.processors.rewind();
-				this.done(callback, ctx);
-				return this;
-			}
-			var processor = this.factory.create(this.processors.next().path, this);
+			if(!this.processors.hasNext()) return this.done(callback, ctx);
+			var processor = this.getFactory().create(this.processors.next().path, this);
 			processor.once(processor.constructor.EVENTS.done, _.bind(this.execute, this, callback, ctx)).execute();
 			return this;
 		},
@@ -177,6 +173,7 @@ define(['ioc/engine/helpers/spec',
 		*	@return com.spinal.ioc.engine.Engine
 		**/
 		done: function(callback, ctx) {
+			this.processors.rewind();
 			if(callback && _.isFunction(callback)) callback(ctx);
 			return this;
 		},

@@ -3,8 +3,9 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['ioc/engine/engine',
+	'ioc/processor/ready',
 	'util/factories/async-factory',
-	'specs/simple.spec'], function(Engine, AsyncFactory, SimpleSpec) {
+	'specs/simple.spec'], function(Engine, ReadyProcessor, AsyncFactory, SimpleSpec) {
 
 	describe('com.spinal.ioc.engine.Engine', function() {
 
@@ -123,15 +124,107 @@ define(['ioc/engine/engine',
 
 		describe('#ready()', function() {
 
-			it('Should trigger engine method call after engine initialization is complete (spec defined)');
+			it('Should trigger engine method call after engine initialization is complete (spec defined)', function() {
+				var method = sinon.spy(), callback = sinon.spy(), ctx = {};
+				method.withArgs(SimpleSpec, callback, ctx);
 
-			it('Should NOT trigger engine method call after engine initialization is complete (spec NOT defined)');
+				this.processorsMock.expects('set').once();
+
+				this.engine.on(Engine.EVENTS.ready, _.bind(function(engine) {
+					expect(engine).to.be.ok();
+					expect(engine).to.be.an(Engine);
+				}, this));
+
+				var result = this.engine.ready(method, SimpleSpec, callback, ctx);
+				expect(result).to.be.an(Engine);
+
+				this.processorsMock.verify();
+				expect(method.called).to.be(true);
+				this.engine.off(Engine.EVENTS.ready);
+			});
+
+			it('Should NOT trigger engine method call after engine initialization is complete (spec NOT defined)', function() {
+				var method = sinon.spy(), callback = sinon.spy(), ctx = {};
+				var doneStub = sinon.stub(this.engine, 'done').returns(this.engine);
+				method.withArgs(undefined, callback, ctx);
+
+				this.processorsMock.expects('set').once();
+
+				this.engine.on(Engine.EVENTS.ready, _.bind(function(engine) {
+					expect(engine).to.be.ok();
+					expect(engine).to.be.an(Engine);
+				}, this));
+
+				var result = this.engine.ready(method, undefined, callback, ctx);
+				expect(result).to.be.an(Engine);
+
+				this.processorsMock.verify();
+				expect(method.called).to.be(false);
+				this.engine.off(Engine.EVENTS.ready);
+				this.engine.done.restore();
+			});
 
 		});
 
 		describe('#execute()', function() {
 
-			it('Should fire up engine\'s processor battery execution');
+			it('Should fire up engine\'s processor battery execution', function() {
+				var callback = sinon.spy(), ctx = {}, nextProcessor = { path: 'ioc/processor/ready' };
+				var processor = new ReadyProcessor(this.engine),
+					processorMock = sinon.mock(processor);
+
+				processorMock
+					.expects('once')
+					.once()
+					.returns(processor);
+				processorMock
+					.expects('execute')
+					.once();
+				this.processorsMock
+					.expects('hasNext')
+					.once()
+					.returns(true)
+					.calledBefore(this.processorMock);
+				this.processorsMock
+					.expects('next')
+					.once()
+					.returns(nextProcessor);
+				this.factoryMock
+					.expects('create')
+					.once()
+					.withArgs(nextProcessor.path, this.engine)
+					.returns(processor);
+
+				var result = this.engine.execute(callback, ctx);
+				expect(result).to.be.an(Engine);
+
+				processorMock.verify();
+				this.processorsMock.verify();
+				this.factoryMock.verify();
+
+				expect(callback.called).to.be(false);
+				processorMock.restore();
+			});
+
+			it('Should execute callback (processors execution complete)', function() {
+				var callback = sinon.spy(), ctx = {};
+
+				this.processorsMock
+					.expects('hasNext')
+					.once()
+					.returns(false)
+				this.processorsMock
+					.expects('rewind')
+					.once()
+					.returns(this.processors);
+
+				var result = this.engine.execute(callback, ctx);
+				expect(result).to.be.an(Engine);
+
+				this.processorsMock.verify();
+
+				expect(callback.called).to.be(true);
+			});
 
 		});
 
