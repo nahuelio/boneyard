@@ -98,11 +98,17 @@ define(['ioc/engine/annotation/plugin',
 		describe('static#only()', function() {
 
 			it('Should extract only plugins', function() {
-				var result = Plugin.only({ $id: 'something', $specs: [], bone: true, $plugins: {} });
+				var result = Plugin.only({ $id: 'something', $specs: [], bone: true, $plugins: { pluginA: {} } });
 				expect(result).to.be.ok();
-				expect(result.$id).to.be(undefined);
-				expect(result.$specs).to.be(undefined);
-				expect(result.$plugins).to.be.ok();
+				expect(result).to.be.an('object');
+				expect(result.pluginA).to.be.ok();
+			});
+
+			it('Should not extract plugins (plugins annotation not found)', function() {
+				var result = Plugin.only({ $id: 'something', $specs: [], bone: true });
+				expect(result).to.be.ok();
+				expect(result).to.be.an('object');
+				expect(result).to.be.empty();
 			});
 
 		});

@@ -83,10 +83,11 @@ define(['ioc/engine/annotation/annotation',
 		*	@static
 		*	@method only
 		*	@param spec {Object} spec reference
-		*	@return	Array
+		*	@return	Object
 		**/
 		only: function(spec) {
-			return _.pick(spec, '$plugins');
+			var out = _.pick(spec, '$plugins');
+			return !_.isEmpty(out) ? out.$plugins : out;
 		}
 
 	}));

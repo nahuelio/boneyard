@@ -4,8 +4,10 @@
 **/
 define(['ioc/engine/engine',
 	'ioc/processor/ready',
+	'ioc/engine/annotation/plugin',
 	'util/factories/async-factory',
-	'specs/simple.spec'], function(Engine, ReadyProcessor, AsyncFactory, SimpleSpec) {
+	'specs/simple.spec',
+	'specs/plugin.spec'], function(Engine, ReadyProcessor, Plugin, AsyncFactory, SimpleSpec, PluginSpec) {
 
 	describe('com.spinal.ioc.engine.Engine', function() {
 
@@ -230,33 +232,159 @@ define(['ioc/engine/engine',
 
 		describe('#wire()', function() {
 
-			it('Should wire a new spec with callback');
+			it('Should wire a new spec with callback', function() {
+				var callback = sinon.spy(), ctx = {};
+				var addSpecStub = sinon.stub(this.engine, 'addSpec').returns(SimpleSpec);
 
-			it('Should wire a new spec without callback');
+				this.processorsMock
+					.expects('hasNext')
+					.once()
+					.returns(false);
+				this.processorsMock
+					.expects('rewind')
+					.once();
+
+				this.engine.on(Engine.EVENTS.wire, function(specs) {
+					expect(specs).to.be.ok();
+					expect(specs.size()).to.be(0);
+				});
+
+				var result = this.engine.wire(SimpleSpec, callback, ctx);
+				expect(result).to.be.an(Engine);
+
+				this.processorsMock.verify();
+
+				expect(callback.calledOnce).to.be(true);
+
+				this.engine.off(Engine.EVENTS.wire);
+				addSpecStub.restore();
+			});
+
+			it('Should wire a new spec without callback', function() {
+				var callback = sinon.spy(), ctx = {};
+				var addSpecStub = sinon.stub(this.engine, 'addSpec').returns(SimpleSpec);
+
+				this.processorsMock
+					.expects('hasNext')
+					.once()
+					.returns(false);
+				this.processorsMock
+					.expects('rewind')
+					.once();
+
+				this.engine.on(Engine.EVENTS.wire, function(specs) {
+					expect(specs).to.be.ok();
+					expect(specs.size()).to.be(0);
+				});
+
+				var result = this.engine.wire(SimpleSpec, undefined, ctx);
+				expect(result).to.be.an(Engine);
+
+				this.processorsMock.verify();
+
+				expect(callback.called).to.be(false);
+
+				this.engine.off(Engine.EVENTS.wire);
+				addSpecStub.restore();
+			});
 
 		});
 
 		describe('#unwire()', function() {
 
-			it('Should unwire an existing spec with callback');
+			it('Should unwire an existing spec with callback', function() {
+				var removeSpecStub = sinon.stub(this.engine, 'removeSpec').returns(SimpleSpec);
 
-			it('Should unwire an existing spec without callback');
+				this.engine.on(Engine.EVENTS.unwire, function(spec) {
+					expect(spec).to.be.ok();
+				});
+
+				var result = this.engine.unwire(SimpleSpec);
+				expect(result).to.be.an(Engine);
+
+				removeSpecStub.restore();
+			});
 
 		});
 
 		describe('#done()', function() {
 
-			it('Should execute callback whenever done strategy is executed');
+			it('Should execute callback whenever done strategy is executed', function() {
+				var callback = sinon.spy(), ctx = {};
 
-			it('Should NOT execute a callback whenever done strategy is executed (Callback not defined or not a function)');
+				this.processorsMock
+					.expects('rewind')
+					.once();
+
+				var result = this.engine.done(callback, ctx);
+				expect(result).to.be.an(Engine);
+
+				this.processorsMock.verify();
+				expect(callback.calledOnce).to.be(true);
+				expect(callback.calledWith(ctx)).to.be(true);
+			});
+
+			it('Should NOT execute a callback whenever done strategy is executed (Callback not defined or not a function)', function() {
+				this.processorsMock
+					.expects('rewind')
+					.twice();
+
+				var result = this.engine.done(undefined, {});
+				expect(result).to.be.an(Engine);
+
+				result = this.engine.done("not-a-function", {});
+				expect(result).to.be.an(Engine);
+
+				this.processorsMock.verify();
+			});
 
 		});
 
 		describe('#extractPlugins()', function() {
 
-			it('Should extract $plugins from spec ($plugins annotation found)');
+			it('Should extract $plugins from spec ($plugins annotation found)', function() {
+				var $plugins = { html: {}, theme: {} };
+				var pluginMock = sinon.mock(Plugin);
 
-			it('Should NOT extract $plugins from spec ($plugins annotation not found)');
+				pluginMock
+					.expects('only')
+					.once()
+					.returns($plugins);
+
+				this.engine.on(Engine.EVENTS.plugins, function(plugins) {
+					expect(plugins).to.be.ok();
+					expect(plugins).to.be.an('array');
+					expect(plugins).to.have.length(2);
+				});
+
+				var result = this.engine.extractPlugins(PluginSpec);
+				expect(result).to.be.an('object');
+				expect(this.engine.plugins.size()).to.be(2);
+				expect(this.engine.plugins.get(0)).to.be.a(Plugin);
+
+				pluginMock.verify();
+
+				pluginMock.restore();
+				this.engine.plugins.reset();
+				this.engine.off(Engine.EVENTS.plugins);
+			});
+
+			it('Should NOT extract $plugins from spec ($plugins annotation not found)', function() {
+				var pluginMock = sinon.mock(Plugin);
+
+				pluginMock
+					.expects('only')
+					.once()
+					.returns({});
+
+				var result = this.engine.extractPlugins(PluginSpec);
+				expect(result).to.be.an('object');
+				expect(this.engine.plugins.size()).to.be(0);
+
+				pluginMock.verify();
+
+				pluginMock.restore();
+			});
 
 		});
 

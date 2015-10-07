@@ -163,7 +163,6 @@ define(['ioc/engine/helpers/spec',
 			return this.trigger(Engine.EVENTS.unwire, this.removeSpec(spec));
 		},
 
-
 		/**
 		*	Default Finish Operation Handler
 		*	@public
@@ -187,7 +186,7 @@ define(['ioc/engine/helpers/spec',
 		*	@return Object
 		**/
 		extractPlugins: function(spec) {
-			var detected = ObjectUtil.objToArray(Plugin.only(spec));
+			var detected = ObjectUtil.objToArr(Plugin.only(spec));
 			if(detected.length > 0) {
 				this.plugins.set(detected);
 				this.trigger(Engine.EVENTS.plugins, detected);
