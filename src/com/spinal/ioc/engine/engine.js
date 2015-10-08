@@ -195,6 +195,19 @@ define(['ioc/engine/helpers/spec',
 		},
 
 		/**
+		*	Predicate strategy that check if a given spec exists in the collection.
+		*	Will return true if predicate logical operation is positive, otherwise returns false.
+		*	@public
+		*	@method exists
+		*	@param current {com.spinal.ioc.engine.helpers.Spec} current spec inside the collection
+		*	@param spec {Object} spec reference to be evaluated
+		*	@return Boolean
+		**/
+		exists: function(spec, current) {
+			return (spec.$id === current._$id);
+		},
+
+		/**
 		*	Add a new spec and dependent specs if found and return them as array.
 		*	This method uses recursion.
 		*	@public
@@ -203,8 +216,11 @@ define(['ioc/engine/helpers/spec',
 		*	@return Array
 		**/
 		addSpec: function(spec, ctx) {
+			if(this.specs.containsBy(this.exists, spec)) return [];
 			var sp = this.extractPlugins(this.specs.add(spec, { silent: true })), ctx = (ctx) ? ctx : [];
-			return sp.hasSpecs() ? _.map(sp.getSpecs(), this.addSpec, this) : sp;
+			ctx.push(sp);
+			if(sp.hasSpecs()) _.flatten(_.map(sp.getSpecs(), function(psp) { return this.addSpec(psp, ctx); }, this));
+			return ctx;
 		},
 
 		/**
@@ -215,9 +231,12 @@ define(['ioc/engine/helpers/spec',
 		*	@param spec
 		*	@return Array
 		**/
-		removeSpec: function(spec) {
-			var sp = this.specs.remove(spec);
-			return _.flatten(sp.hasSpecs() ? _.map(sp.getSpecs(), this.removeSpec) : [sp]);
+		removeSpec: function(spec, ctx) {
+			if(!this.specs.containsBy(this.exists, spec)) return [];
+			var sp = this.specs.removeBy(_.bind(this.exists, this, spec), { silent: true })[0], ctx = (ctx) ? ctx : [];
+			ctx.push(sp);
+			if(sp.hasSpecs()) _.flatten(_.map(sp.getSpecs(), function(psp) { return this.removeSpec(psp, ctx); }, this));
+			return ctx;
 		},
 
 		/**
@@ -259,7 +278,7 @@ define(['ioc/engine/helpers/spec',
 		*	@return Object
 		**/
 		bone: function(id) {
-			return _.find(this.allSpecs(), function(spec) { return spec.getBone(id); }, this);
+			return _.find(this.allBones(), function(bone) { return (bone.getId() === id); }, this);
 		},
 
 		/**

@@ -29,17 +29,7 @@ define(['ioc/engine/helpers/spec',
 			this.errAttr = new Error('Spec attributes cannot be null or undefined');
 			this.errId = new Error('Spec Annotation $id cannot be null or empty');
 			this.errSpecs = new Error('Spec $specs annotation must be an array');
-			Spec.prototype.bones = {
-				set: function() {},
-				find: function() {},
-				findBy: function() {},
-				interface: Bone
-			};
-			Spec.prototype.operations = { set: function() {}, interface: Ready };
 			this.fakeBone = { get: function() {}, getId: function() {} };
-			// Mocks
-			this.bonesMock = sinon.mock(Spec.prototype.bones);
-			this.operationsMock = sinon.mock(Spec.prototype.operations);
 			this.boneMock = sinon.mock(this.fakeBone);
 		});
 
@@ -47,10 +37,6 @@ define(['ioc/engine/helpers/spec',
 			delete this.errAttr;
 			delete this.errId;
 			delete this.errSpecs;
-			this.bonesMock.restore();
-			delete this.bonesMock;
-			this.operationsMock.restore();
-			delete this.operationsMock;
 			this.boneMock.restore();
 			delete this.boneMock;
 		});
@@ -147,23 +133,29 @@ define(['ioc/engine/helpers/spec',
 		describe('#parse()', function() {
 
 			it('Should parse bones and operations', function() {
-				this.bonesMock.expects('set')
+				var bonesMock = sinon.mock(this.spec.bones);
+				var operationsMock = sinon.mock(this.spec.operations);
+
+				bonesMock.expects('set')
 					.once()
 					.withArgs(ObjectUtil.objToArr(Bone.only()))
 					.returns(true);
-				this.operationsMock.expects('set')
+				operationsMock.expects('set')
 					.once()
 					.withArgs(Ready.only())
 					.returns(true)
-					.calledAfter(this.bonesMock);
+					.calledAfter(bonesMock);
 
 				var result = this.spec.parse(SimpleSpec);
 
-				this.bonesMock.verify();
-				this.operationsMock.verify();
+				bonesMock.verify();
+				operationsMock.verify();
 
-				expect(this.bonesMock.calledOnce);
-				expect(this.operationsMock.calledOnce);
+				expect(bonesMock.calledOnce);
+				expect(operationsMock.calledOnce);
+
+				bonesMock.restore();
+				operationsMock.restore();
 			});
 
 		});
@@ -171,7 +163,9 @@ define(['ioc/engine/helpers/spec',
 		describe('#getBone()', function() {
 
 			it('Should retrieve an existing bone by id', function() {
-				this.bonesMock.expects('find')
+				var bonesMock = sinon.mock(this.spec.bones);
+
+				bonesMock.expects('find')
 					.once()
 					.yields(this.fakeBone)
 					.returns(this.fakeBone);
@@ -181,21 +175,25 @@ define(['ioc/engine/helpers/spec',
 				this.boneMock.expects('get')
 					.once()
 					.returns(this.fakeBone)
-					.calledAfter(this.bonesMock);
+					.calledAfter(bonesMock);
 
 				var result = this.spec.getBone('someId');
 				expect(result).to.be.ok();
 				expect(result).to.be.an('object');
 
-				this.bonesMock.verify();
+				bonesMock.verify();
 				this.boneMock.verify();
 
-				expect(this.bonesMock.calledOnce);
+				expect(bonesMock.calledOnce);
 				expect(this.boneMock.calledOnce);
+
+				bonesMock.restore();
 			});
 
 			it('Should return null: bone doesn\'t exists by id', function() {
-				this.bonesMock.expects('find')
+				var bonesMock = sinon.mock(this.spec.bones);
+
+				bonesMock.expects('find')
 					.once()
 					.yields(this.fakeBone)
 					.returns(null);
@@ -206,11 +204,13 @@ define(['ioc/engine/helpers/spec',
 
 				expect(this.spec.getBone('someId')).not.be.ok();
 
-				this.bonesMock.verify();
+				bonesMock.verify();
 				this.boneMock.verify();
 
-				expect(this.bonesMock.calledOnce);
+				expect(bonesMock.calledOnce);
 				expect(this.boneMock.calledOnce);
+
+				bonesMock.restore();
 			});
 
 		});
@@ -218,7 +218,9 @@ define(['ioc/engine/helpers/spec',
 		describe('#getBonesBy()', function() {
 
 			it('Should retrieve an array of bones by predicate', function() {
-				this.bonesMock.expects('findBy')
+				var bonesMock = sinon.mock(this.spec.bones);
+
+				bonesMock.expects('findBy')
 					.once()
 					.yields(this.fakeBone)
 					.returns([this.fakeBone]);
@@ -227,9 +229,11 @@ define(['ioc/engine/helpers/spec',
 				expect(result).to.be.an('array');
 				expect(result).to.have.length(1);
 
-				this.bonesMock.verify();
+				bonesMock.verify();
 
-				expect(this.bonesMock.calledOnce);
+				expect(bonesMock.calledOnce);
+
+				bonesMock.restore();
 			});
 
 		});

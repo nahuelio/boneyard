@@ -233,7 +233,7 @@ define(['libs/backbone'], function() {
 			*	@return Object
 			**/
 			toJSON: function() {
-				return JSON.parse(JSON.stringify(_.omit(this, _.functions(this))));
+				return _.clone(_.omit(this, _.functions(this)));
 			},
 
 			/**

@@ -156,7 +156,7 @@ define(['ioc/engine/annotation/bone',
 
 			it('Should return true, the bone is a module', function() {
 				var isBackboneStub = sinon.stub(ObjectUtil, 'isBackbone').returns(false);
-				var getPathStub = sinon.stub(this.bone, 'getPath').returns('ui/view');
+				var getPathStub = sinon.stub(this.bone, 'getValue').returns({ $module: 'ui/view' });
 
 				expect(this.bone.isModule()).to.be(true);
 
@@ -166,7 +166,7 @@ define(['ioc/engine/annotation/bone',
 
 			it('Should return false, the bone is backbone class', function() {
 				var isBackboneStub = sinon.stub(ObjectUtil, 'isBackbone').returns(true);
-				var getPathStub = sinon.stub(this.bone, 'getPath').returns('ui/view');
+				var getPathStub = sinon.stub(this.bone, 'getValue').returns({ $module: 'ui/view' });
 
 				expect(this.bone.isModule()).to.be(false);
 
@@ -176,7 +176,7 @@ define(['ioc/engine/annotation/bone',
 
 			it('Should return false, the bone module path is not defined', function() {
 				var isBackboneStub = sinon.stub(ObjectUtil, 'isBackbone').returns(false);
-				var getPathStub = sinon.stub(this.bone, 'getPath').returns(undefined);
+				var getPathStub = sinon.stub(this.bone, 'getValue').returns({});
 
 				expect(this.bone.isModule()).to.be(false);
 

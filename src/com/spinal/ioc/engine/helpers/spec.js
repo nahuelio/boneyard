@@ -28,7 +28,7 @@ define(['ioc/engine/annotation/bone',
 		*	@property bones
 		*	@type com.spinal.util.adt.Collection
 		**/
-		bones: new Collection(null, { interface: Bone }),
+		bones: null,
 
 		/**
 		*	Ready operation collection
@@ -36,7 +36,7 @@ define(['ioc/engine/annotation/bone',
 		*	@property operations
 		*	@type com.spinal.util.adt.Collection
 		**/
-		operations: new Collection(null, { interface: Ready }),
+		operations: null,
 
 		/**
 		*	Initialize
@@ -49,6 +49,8 @@ define(['ioc/engine/annotation/bone',
 			Spec.__super__.initialize.apply(this, arguments);
 			this.valid(attrs);
 			_.extend(this, StringUtil.toPrivate(Spec.only(attrs)));
+			this.bones = new Collection(null, { interface: Bone });
+			this.operations = new Collection(null, { interface: Ready });
 			return this.parse(attrs);
 		},
 

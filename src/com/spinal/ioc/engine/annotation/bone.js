@@ -78,7 +78,7 @@ define(['ioc/engine/annotation/annotation',
 		*	@return Boolean
 		**/
 		isModule: function() {
-			return !ObjectUtil.isBackbone(this.getValue()) && _.defined(this.getPath());
+			return !ObjectUtil.isBackbone(this.getValue()) && _.defined(this.getValue().$module);
 		},
 
 		/**

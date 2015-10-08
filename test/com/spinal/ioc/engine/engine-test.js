@@ -4,10 +4,11 @@
 **/
 define(['ioc/engine/engine',
 	'ioc/processor/ready',
+	'ioc/engine/helpers/spec',
 	'ioc/engine/annotation/plugin',
 	'util/factories/async-factory',
 	'specs/simple.spec',
-	'specs/plugin.spec'], function(Engine, ReadyProcessor, Plugin, AsyncFactory, SimpleSpec, PluginSpec) {
+	'specs/plugin.spec'], function(Engine, ReadyProcessor, Spec, Plugin, AsyncFactory, SimpleSpec, PluginSpec) {
 
 	describe('com.spinal.ioc.engine.Engine', function() {
 
@@ -390,53 +391,103 @@ define(['ioc/engine/engine',
 
 		describe('#addSpec()', function() {
 
-			it('Should Add a new spec into engine\'s spec collection');
+			it('Should Add a new spec into engine\'s spec collection', function() {
+				var result = this.engine.addSpec(SimpleSpec);
+				expect(result).to.be.ok();
+				expect(result).to.be.an('array');
+				expect(result).to.have.length(4);
+				expect(result[0].getId()).to.be.ok();
+				expect(result[0].getId()).to.be(SimpleSpec.$id);
 
-			it('Should Add a new spec and parent specs defined');
+				expect(this.engine.allSpecs()).to.have.length(4);
+			});
 
-			it('Should NOT add a new spec (spec already exists)');
+			it('Should NOT add a new spec (spec already exists)', function() {
+				var result = this.engine.addSpec(SimpleSpec);
+				expect(result).to.be.ok();
+				expect(result).to.be.an('array');
+				expect(result).to.have.length(0);
+
+				expect(this.engine.allSpecs()).to.have.length(4);
+			});
 
 		});
 
 		describe('#removeSpec()', function() {
 
-			it('Should Remove an existing spec from engine\'s spec collection');
+			it('Should Remove an existing spec from engine\'s spec collection', function() {
+				var result = this.engine.removeSpec(SimpleSpec);
+				expect(result).to.be.ok();
+				expect(result).to.be.an('array');
+				expect(result).to.have.length(4);
+				expect(result[0].getId()).to.be.ok();
+				expect(result[0].getId()).to.be(SimpleSpec.$id);
 
-			it('Should Remove an existing spec and parent specs from engine\'s spec collection');
+				expect(this.engine.allSpecs()).to.be.empty();
+			});
 
-			it('Should NOT remove an existing spec (spec doesn\'t exists)');
+			it('Should NOT remove an existing spec (spec doesn\'t exists)', function() {
+				var result = this.engine.removeSpec(SimpleSpec);
+				expect(result).to.be.ok();
+				expect(result).to.be.an('array');
+				expect(result).to.have.length(0);
+
+				expect(this.engine.allSpecs()).to.be.empty();
+			});
 
 		});
 
 		describe('#spec()', function() {
 
-			it('Should return a spec instance by id');
+			it('Should return a spec instance by id', function() {
+				this.engine.addSpec(SimpleSpec);
+				var result = this.engine.spec('footer');
+				expect(result).to.be.ok();
+				expect(result).to.be.an('object');
+				expect(result.getId()).to.be('footer');
+			});
 
-			it('Should NOT return a spec instance by id (spec not found)');
+			it('Should NOT return a spec instance by id (spec not found)', function() {
+				var result = this.engine.spec('non-existent');
+				expect(result).not.be.ok();
+			});
 
 		});
 
 		describe('#allSpecs()', function() {
 
-			it('Should return all specs from engine\'s spec collection');
-
-			it('Should return an empty array of specs from engine\'s spec collection');
+			it('Should return all specs from engine\'s spec collection', function() {
+				var result = this.engine.allSpecs();
+				expect(result).to.be.ok();
+				expect(result).to.be.an('array');
+				expect(result).to.have.length(4);
+			});
 
 		});
 
 		describe('#allBones()', function() {
 
-			it('Should return all bones from all specs from engine\'s spec collection');
-
-			it('Should return an empty array of bones from engine\'s spec collection');
+			it('Should return all bones from all specs from engine\'s spec collection', function() {
+				var result = this.engine.allBones();
+				expect(result).to.be.ok();
+				expect(result).to.be.an('array');
+				expect(result).to.have.length(21);
+			});
 
 		});
 
 		describe('#bone()', function() {
 
-			it('Should return a bone instance by id');
+			it('Should return a bone instance by id', function() {
+				var result = this.engine.bone('global');
+				expect(result).to.be.ok();
+				expect(result.getPath()).to.be('ui/container');
+			});
 
-			it('Should NOT return a bone instance by id (bone not found)');
+			it('Should NOT return a bone instance by id (bone not found)', function() {
+				var result = this.engine.bone('non-existent');
+				expect(result).not.be.ok();
+			});
 
 		});
 

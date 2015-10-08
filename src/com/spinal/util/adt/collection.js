@@ -172,6 +172,24 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 		},
 
 		/**
+		*	Returns true if this collections contains any elements evaluated by predicate passed by parameter.
+		*	@public
+		*	@method containsBy
+		*	@param predicate {Function} predicate function used for evaluation
+		*	@param element {Object} element to evaluate
+		*	@return Boolean
+		**/
+		containsBy: function(predicate, element) {
+			if(!element || !predicate || !_.isFunction(predicate)) return false;
+			var result = false, col = (this._interface && this._interface.prototype.toJSON) ?
+				this.invoke('toJSON') : this.collection;
+			for(var i = 0; i < col.length; i++) {
+				if(predicate(element, col[i])) { result = true; break; }
+			}
+			return result;
+		},
+
+		/**
 		*	Returns true if this collection contains the specified element.
 		*	@public
 		*	@method contains
@@ -179,11 +197,12 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 		*	@return Boolean
 		**/
 		contains: function(element) {
-			if(!this._valid(element)) return false;
+			if(!this._valid(element) || this.isEmpty()) return false;
 			var result = false, col = (this._interface && this._interface.prototype.toJSON) ?
 				this.invoke('toJSON') : this.collection;
-			for(var i = 0; i < col.length; i++)
+			for(var i = 0; i < col.length; i++) {
 				if(_.isEqual(col[i], element)) { result = true; break; }
+			}
 			return result;
 		},
 
