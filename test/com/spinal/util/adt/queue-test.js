@@ -51,6 +51,20 @@ define(['core/spinal', 'util/adt/queue'], function(Spinal, Queue) {
 
 		});
 
+		describe('#set()', function() {
+
+			it('Should throw an Error: set new elements for the queue without capacity', function() {
+				expect(function() {
+					var testSet = new Queue([], { capacity: 1 });
+					testSet.set([1]);
+				}).to.throwException(function(e) {
+					expect(e).to.be.a(Error);
+					expect(e.message).to.be.equal('Queue requires a \'capacity\' property in order to be instanciate it.');
+				});
+			});
+
+		});
+
 		describe('#_valid()', function() {
 
 			it('Should return false (capacity excedded)', function() {
