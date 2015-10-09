@@ -289,7 +289,7 @@ define(['ioc/engine/helpers/spec',
 		*	@return Array
 		**/
 		bonesByType: function(type) {
-			return _.flatten(_.filter(this.allSpecs(), function(spec) { return spec.getBonesByType(type); }));
+			return _.flatten(_.map(this.allSpecs(), function(spec) { return spec.getBonesByType(type); }));
 		},
 
 		/**
@@ -300,7 +300,7 @@ define(['ioc/engine/helpers/spec',
 		*	@return Array
 		**/
 		bonesByClass: function(clazz) {
-			return _.flatten(_.filter(this.allSpecs(), function(spec) { return spec.getBonesByClass(clazz); }));
+			return _.flatten(_.map(this.allSpecs(), function(spec) { return spec.getBonesByClass(clazz); }));
 		},
 
 

@@ -104,7 +104,7 @@ define(['ioc/engine/annotation/bone',
 				var isModuleStub = sinon.stub(this.bone, 'isModule').returns(true);
 				var isCreatedStub = sinon.stub(this.bone, 'isCreated').returns(true);
 
-				// Returns undefined because another process will be responsible of assigning _$created a value.
+				// Returns bone metatada because another process will be responsible of assigning _$created a value.
 				var result = this.bone.bone();
 				expect(result).to.be(undefined);
 
@@ -116,9 +116,10 @@ define(['ioc/engine/annotation/bone',
 				var isModuleStub = sinon.stub(this.bone, 'isModule').returns(false);
 				var isCreatedStub = sinon.stub(this.bone, 'isCreated').returns(true);
 
-				// Returns undefined because another process will take care of that
+				// Returns bone metadata because another process will take care of that
 				var result = this.bone.bone();
-				expect(result).not.be.ok();
+				expect(result).to.be.an('object');
+				expect(result.$module).to.be.ok();
 
 				isModuleStub.restore();
 				isCreatedStub.restore();
@@ -128,9 +129,10 @@ define(['ioc/engine/annotation/bone',
 				var isModuleStub = sinon.stub(this.bone, 'isModule').returns(true);
 				var isCreatedStub = sinon.stub(this.bone, 'isCreated').returns(false);
 
-				// Returns undefined because another process will take care of that
+				// Returns bone metadata because another process will take care of that
 				var result = this.bone.bone();
-				expect(result).not.be.ok();
+				expect(result).to.be.an('object');
+				expect(result.$module).to.be.ok();
 
 				isModuleStub.restore();
 				isCreatedStub.restore();

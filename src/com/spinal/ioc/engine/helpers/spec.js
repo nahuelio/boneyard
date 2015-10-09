@@ -132,7 +132,7 @@ define(['ioc/engine/annotation/bone',
 		*	@return Array
 		**/
 		getBonesByClass: function(clazz) {
-			return this.getBonesBy(function(bone) { return (bone.get() instanceof clazz); });
+			return this.getBonesBy(function(bone) { return (bone.bone() instanceof clazz); });
 		},
 
 		/**
@@ -143,7 +143,9 @@ define(['ioc/engine/annotation/bone',
 		*	@return Array
 		**/
 		getBonesByType: function(type) {
-			return this.getBonesBy(function(bone) { return (typeof(bone.get()) === type); });
+			return this.getBonesBy(function(bone) {
+				return (Object.prototype.toString.call(bone.bone()).indexOf(type) !== -1);
+			});
 		},
 
 		/**

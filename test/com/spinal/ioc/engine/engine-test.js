@@ -493,17 +493,35 @@ define(['ioc/engine/engine',
 
 		describe('#bonesByType()', function() {
 
-			it('Should return an array of bones by type');
+			it('Should return an array of bones by type', function() {
+				var result = this.engine.bonesByType('Array');
+				expect(result).to.be.an('array');
+				expect(result).to.have.length(2);
+				expect(result[0].bone()).to.be.an('array');
+			});
 
-			it('Should return an empty array of bones by type');
+			it('Should return an empty array of bones by type', function() {
+				var result = this.engine.bonesByType('NonExistent');
+				expect(result).to.be.an('array');
+				expect(result).to.have.length(0);
+			});
 
 		});
 
 		describe('#bonesByClass()', function() {
 
-			it('Should return an array of bones by class');
+			it('Should return an array of bones by class', function() {
+				var result = this.engine.bonesByClass(Array);
+				expect(result).to.be.an('array');
+				expect(result).to.have.length(2);
+				expect(result[0].bone()).to.be.an('array');
+			});
 
-			it('Should return an empty array of bones by class');
+			it('Should return an empty array of bones by class', function() {
+				var result = this.engine.bonesByType(Spec);
+				expect(result).to.be.an('array');
+				expect(result).to.have.length(0);
+			});
 
 		});
 

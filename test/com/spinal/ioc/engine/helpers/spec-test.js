@@ -29,7 +29,7 @@ define(['ioc/engine/helpers/spec',
 			this.errAttr = new Error('Spec attributes cannot be null or undefined');
 			this.errId = new Error('Spec Annotation $id cannot be null or empty');
 			this.errSpecs = new Error('Spec $specs annotation must be an array');
-			this.fakeBone = { get: function() {}, getId: function() {} };
+			this.fakeBone = { get: function() {}, getId: function() {}, bone: function() {} };
 			this.boneMock = sinon.mock(this.fakeBone);
 		});
 
@@ -246,8 +246,8 @@ define(['ioc/engine/helpers/spec',
 					.once()
 					.yields(this.fakeBone)
 					.returns([this.fakeBone]);
-				this.boneMock.expects('get')
-					.once()
+				this.boneMock.expects('bone')
+					.atLeast(1)
 					.returns(this.fakeBone)
 					.calledAfter(specMock);
 
@@ -270,8 +270,8 @@ define(['ioc/engine/helpers/spec',
 					.once()
 					.yields(this.fakeBone)
 					.returns([this.fakeBone]);
-				this.boneMock.expects('get')
-					.once()
+				this.boneMock.expects('bone')
+					.atLeast(1)
 					.returns(this.fakeBone)
 					.calledAfter(specMock);
 

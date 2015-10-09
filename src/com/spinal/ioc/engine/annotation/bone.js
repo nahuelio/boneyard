@@ -54,7 +54,7 @@ define(['ioc/engine/annotation/annotation',
 		*	@return Object
 		**/
 		bone: function() {
-			return (this.isModule() && this.isCreated()) ? this._$created : null;
+			return (this.isModule() && this.isCreated()) ? this._$created : this.getValue();
 		},
 
 		/**
