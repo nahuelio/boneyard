@@ -2,8 +2,7 @@
 *	@module com.spinal.ioc.engine.helpers
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define(['ioc/engine/annotation/bone',
-	'util/adt/collection'], function(Bone, Collection) {
+define(['core/spinal'], function(Spinal) {
 
 	/**
 	*	Class TSort
@@ -12,9 +11,16 @@ define(['ioc/engine/annotation/bone',
 	*	@extends com.spinal.core.SpinalClass
 	*
 	*	@requires com.spinal.core.SpinalClass
-	*	@requires com.spinal.util.adt.collection
 	**/
 	var TSort = Spinal.namespace('com.spinal.ioc.engine.helpers.TSort', Spinal.SpinalClass.inherit({
+
+		/**
+		*	Graph nodes
+		*	@public
+		*	@property nodes
+		*	@type Object
+		**/
+		nodes: null,
 
 		/**
 		*	Initialize
@@ -23,7 +29,7 @@ define(['ioc/engine/annotation/bone',
 		*	@return com.spinal.ioc.engine.helpers.TSort
 		**/
 		initialize: function() {
-			this.bones = new Collection([], { interface: Bone });
+			this.reset();
 			return TSort.__super__.initialize.apply(this, arguments);
 		},
 
@@ -34,39 +40,51 @@ define(['ioc/engine/annotation/bone',
 		*	@return com.spinal.ioc.engine.helpers.TSort
 		**/
 		reset: function() {
-			this.bones.reset();
+			this.nodes = {};
 			return this;
 		},
 
 		/**
-		*	Adds dependency bones into topological dependency graph
+		*	Default Add handler
+		*	@public
+		*	@method onAdd
+		*	@param nodes {Array} list of nodes
+		**/
+		onAdd: function(nodes) {
+			nodes.forEach(function(node) { if(!this.nodes[node]) return this.nodes[node] = []; }, this);
+		},
+
+		/**
+		*	Adds dependency nodes into topological dependency graph
 		*	@public
 		*	@method add
-		*	@param bones {Array} list of bones
+		*	@param nodes {Array} list of nodes
 		*	@return com.spinal.ioc.engine.helpers.TSort
 		**/
-		add: function(bones) {
-			this.bones.addAll(bones);
+		add: function(nodes) {
+			this.onAdd(nodes);
+			for(var i = 1; i < nodes.length; i++)
+				this.nodes[nodes[i]].push(nodes[i - 1]);
 			return this;
 		},
 
 		/**
-		*	Sorts and returns collection of bones based on topological dependency graph.
+		*	Sorts and returns collection of nodes based on topological dependency graph.
 		*	@public
 		*	@method sort
 		*	@return Array
 		**/
 		sort: function() {
 			var out = [], marks = {};
-			this.bones.each(function(bone) {
-				if(!marks[bone.getId()]) out.push(this.visit(marks, bone));
+			_.each(this.nodes, function(value, key) {
+				if(!marks[key]) this.visit(out, marks, key);
 			}, this);
-			return out;
+			return out.reverse();
 		},
 
 		/**
 		*	Determine if the dependency graph has circular dependencies.
-		*	If so, this method will throw an error, otherwise will resolve sorting by return the bone
+		*	If so, this method will throw an error, otherwise will resolve sorting and returning each node.
 		*	This method uses recursion.
 		*	@public
 		*	@throws Error
@@ -75,19 +93,16 @@ define(['ioc/engine/annotation/bone',
 		*	@param node {Object} node reference
 		*	@return Object
 		**/
-		visit: function(marks, bone) {
-			// CONTINUE HERE...
-			if(marks[bone.getId()] === TSort.TYPE.VOLATILE)
+		visit: function(out, marks, key) {
+			if(marks[key] === TSort.TYPE.VOLATILE) {
 				throw new Error('Circular dependency detected. It\'s not possible to derive a topological sort.');
-			if(marks[bone.getId()]) return;
-			if(bone.getDependencies) {
-				marks[bone.getId()] = TSort.TYPE.VOLATILE;
-				bone.getDependencies().each(_.bind(this.visit, this, marks));
-			} else {
-				return bone.getId();
+			} else if(marks[key]) {
+				return;
 			}
-			marks[bone.getId()] = TSort.TYPE.PERMANENT;
-			return bone.getId();
+			marks[key] = TSort.TYPE.VOLATILE;
+			this.nodes[key].forEach(_.bind(this.visit, this, out, marks));
+			marks[key] = TSort.TYPE.PERMANENT;
+			return out.push(key);
 		}
 
 	}, {

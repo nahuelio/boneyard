@@ -69,18 +69,20 @@ define(['ioc/processor/processor',
 		*	@return Array
 		**/
 		tsort: function() {
-			return this.graph.reset().add(this.dependencies).sort();
+			this.graph.reset();
+			this.getEngine().allBones.forEach(this.dependendencies);
+			return this.graph.sort();
 		},
 
 		/**
-		*	Build and returns all bone dependency graph found in the current context
+		*	Build
 		*	@public
 		*	@method dependencies
+		*	@param bone {com.spinal.ioc.engine.annotation.Bone} bone reference
 		*	@return Array
 		**/
-		dependencies: function() {
-			var bones = this.getEngine().allBones();
-			return [];
+		dependencies: function(bone) {
+			return this.graph.add([bone.getId()].concat(bone.getDependencies().invoke['getId']));
 		},
 
 		/**
