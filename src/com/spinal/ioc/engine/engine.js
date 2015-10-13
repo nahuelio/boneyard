@@ -46,7 +46,7 @@ define(['ioc/engine/helpers/spec',
 		*	@property factory
 		*	@type com.spinal.util.AsyncFactory
 		**/
-		factory: new AsyncFactory(),
+		factory: null,
 
 		/**
 		*	Processors Iterator
@@ -54,7 +54,7 @@ define(['ioc/engine/helpers/spec',
 		*	@property processors
 		*	@type com.spinal.util.adt.Iterator
 		**/
-		processors: new Iterator(),
+		processors: null,
 
 		/**
 		*	Initialize
@@ -64,6 +64,8 @@ define(['ioc/engine/helpers/spec',
 		*	@return com.spinal.ioc.engine.Engine
 		**/
 		initialize: function() {
+			this.factory = new AsyncFactory();
+			this.processors = new Iterator();
 			this.wire = _.wrap(this.wire, this.setup);
 			this.unwire = _.wrap(this.unwire, this.setup);
 			return Engine.__super__.initialize.apply(this, arguments);
@@ -144,8 +146,10 @@ define(['ioc/engine/helpers/spec',
 		*	@return com.spinal.ioc.engine.Engine
 		**/
 		wire: function(spec, callback, ctx) {
+			callback || (callback = {});
 			this.addSpec(spec);
-			return this.execute(callback, ctx).trigger(Engine.EVENTS.wire, this.specs);
+			callback.type = Engine.EVENTS.wire;
+			return this.execute(callback, ctx);
 		},
 
 		/**
@@ -174,7 +178,7 @@ define(['ioc/engine/helpers/spec',
 		done: function(callback, ctx) {
 			this.processors.rewind();
 			if(callback && _.isFunction(callback)) callback(ctx);
-			return this;
+			return this.trigger(callback.type, this.specs);
 		},
 
 		/**
@@ -278,7 +282,8 @@ define(['ioc/engine/helpers/spec',
 		*	@return Object
 		**/
 		bone: function(id) {
-			return _.find(this.allBones(), function(bone) { return (bone.getId() === id); }, this);
+			var bone = _.find(this.allBones(), function(bone) { return (bone.getId() === id); }, this);
+			return (bone) ? bone : null;
 		},
 
 		/**
@@ -346,9 +351,9 @@ define(['ioc/engine/helpers/spec',
 		*	@type Array
 		**/
 		PROCESSORS: [
-			{ path: 'ioc/processor/create' },
-			{ path: 'ioc/processor/ready' },
-			{ path: 'ioc/processor/plugin' }
+			{ path: 'ioc/processor/create' }
+			//{ path: 'ioc/processor/ready' },
+			//{ path: 'ioc/processor/plugin' }
 		]
 
 	}));

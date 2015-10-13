@@ -159,6 +159,20 @@ define(['util/factories/async-factory',
 				}, this));
 			});
 
+			it('Should load resources in subsequent calls to load (through callback chaining)', function(done) {
+				delete this.asyncFactory;
+				this.asyncFactory = new AsyncFactory();
+				this.asyncFactory.push({ path: 'ui/view' });
+				this.asyncFactory.load(_.bind(function() {
+					expect(this.asyncFactory.isRegistered('ui/view')).to.be(true);
+					this.asyncFactory.push({ path: 'ui/container' });
+					this.asyncFactory.load(_.bind(function() {
+						expect(this.asyncFactory.isRegistered('ui/container')).to.be(true);
+						done();
+					}, this));
+				}, this));
+			});
+
 			it('Should Failed to load unexisting resources on the factory stack', function(done) {
 				this.asyncFactory.off().on(AsyncFactory.EVENTS.failed, _.bind(function(err) {
 					expect(err).to.be.ok();

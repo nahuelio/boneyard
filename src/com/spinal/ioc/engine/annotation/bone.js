@@ -89,6 +89,30 @@ define(['ioc/engine/annotation/annotation',
 		**/
 		isCreated: function() {
 			return _.defined(this._$created);
+		},
+
+		/**
+		*	Returns list of dependencies id for this Bone
+		*	@public
+		*	@method getDependenciesIds
+		*	@return Array
+		**/
+		getDependencyIds: function() {
+			return this.getDependencies().invoke('getId');
+		},
+
+		/**
+		*	Returns number of dependencies matched
+		*	@public
+		*	@method getDependencyMatches
+		*	@param [...dependencies] {String} list of dependency id
+		*	@return	Number
+		**/
+		getDependencyMatches: function() {
+			var args = _.flatten(_.toArray(arguments));
+			return this.getDependencies().filter(function(dependency) {
+				return (!dependency.isResolved() && _.contains(args, dependency.getId()));
+			}, this).length;
 		}
 
 	}, {

@@ -159,6 +159,19 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 		},
 
 		/**
+		*	Filter result by iterating over all the elements inside the collection given a predicate.
+		*	@public
+		*	@method filter
+		*	@param func {Function} predicate function used to iterate over the elements.
+		*	@return Function
+		**/
+		filter: function(func) {
+			var args = Array.prototype.slice.call(arguments);
+			args.unshift(this.collection);
+			return _.filter.apply(this, args);
+		},
+
+		/**
 		*	Produces a new array of values by mapping each value in list through a transformation function (predicate)
 		*	@public
 		*	@method map

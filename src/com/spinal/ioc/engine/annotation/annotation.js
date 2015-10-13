@@ -92,6 +92,16 @@ define(['ioc/engine/helpers/injector',
 		},
 
 		/**
+		*	Returns true if the bone has dependencies, otherwise returns false
+		*	@public
+		*	@method hasDependencies
+		*	@return Boolean
+		**/
+		hasDependencies: function() {
+			return !this.getDependencies().isEmpty();
+		},
+
+		/**
 		*	Validates annotation
 		*	@public
 		*	@method valid

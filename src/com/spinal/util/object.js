@@ -37,7 +37,7 @@ define(['core/spinal',
 
 		/**
 		*	Returns true if the value is an object, otherwise returns false
-		*	@public
+		*	@static
 		*	@method isRealObject
 		*	@param value {Object} value to be evaluated
 		*	@return Boolean
@@ -56,7 +56,7 @@ define(['core/spinal',
 
 		/**
 		*	Check if a given object is an instance of a Backbone class
-		*	@public
+		*	@static
 		*	@method isBackbone
 		*	@param value {Object} value to be evaluated
 		*	@return Boolean

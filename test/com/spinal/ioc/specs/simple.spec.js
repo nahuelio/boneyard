@@ -10,17 +10,17 @@ define(['specs/main.spec'], function(MainSpec) {
 		$specs: [MainSpec],
 
 		b: true,
-		s: 'Hello',
 		n: 10,
-		o: { prop: '$bone!s' },
 		a: ['$bone!n', 2, '$bone!b'],
 		d: new Date(),
 		r: new RegExp('/\./', 'i'),
-		test: 'default',
+		s: 'Hello',
+		test: 'advanced',
 		nested: [
 			{ deep: '$bone!o' },
 			{ prop: '$bone!n' }
 		],
+		o: { prop: '$bone!s' },
 		holder: { subcontent: '$bone!subcontent' },
 
 		model: {
@@ -55,7 +55,7 @@ define(['specs/main.spec'], function(MainSpec) {
 
 		advanced: {
 			$module: 'ui/view',
-			$params: { id: 'advanced' }
+			$params: { id: '$bone!test' }
 		},
 
 		$ready: [

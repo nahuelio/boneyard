@@ -29,7 +29,7 @@ define(['core/spinal',
 	*
 	*	@requires com.spinal.core.Spinal
 	*	@requires com.spinal.util.factories.Factory
-	*	@requires com.spinal.util.adt.Collection
+	*	@requires com.spinal.util.adt.Stack
 	*	@requires com.spinal.util.StringUtil
 	**/
 	var AsyncFactory = Spinal.namespace('com.spinal.util.factories.AsyncFactory', Factory.inherit({
@@ -188,11 +188,37 @@ define(['core/spinal',
 		},
 
 		/**
+		*	Default Load Handler
+		*	@public
+		*	@method onLoad
+		*	@param [callback] {Function} optional callback
+		*	@param [opts] {Object} additional options
+		*	@return com.spinal.util.factories.AsyncFactory
+		**/
+		onLoad: function(callback, opts) {
+			var rs = this._handle(Array.prototype.slice.call(arguments, 2), opts);
+			if(callback && _.isFunction(callback)) callback(rs);
+			if(!opts.silent) this.trigger(AsyncFactory.EVENTS.loaded, rs);
+			return this;
+		},
+
+		/**
+		*	Default Error Handler
+		*	@public
+		*	@method onError
+		*	@param err {Object} error reference
+		*	@return com.spinal.util.factories.AsyncFactory
+		**/
+		onError: function(err) {
+			return this.trigger(AsyncFactory.EVENTS.failed, err);
+		},
+
+		/**
 		*	Handle Resources loaded by the current factory resource collection
 		*	@private
 		*	@method _handle
 		*	@param resources {Array} resource reference
-		*	@param [opts] {Object} options
+		*	@param [opts] {Object} additional options
 		*	@return Array
 		**/
 		_handle: function(resources, opts) {
@@ -205,7 +231,23 @@ define(['core/spinal',
 		},
 
 		/**
-		*	Triggers loading phase of the current resources in the factory resource collection
+		*	Enqueues and triggers a new require call.
+		*	If subsequents calls are made, the queue will manage asynchronous to be called in FIFO order.
+		*	This is: always execute the callback before calling a new "require" call.
+		*	@private
+		*	@method _require
+		*	@param paths {Array} collection of require paths to modules
+		*	@param [callback] {Function} optional callback
+		*	@param [opts] {Object} additional options
+		*	@return com.spinal.util.factories.AsyncFactory
+		**/
+		_require: function(paths, callback, opts) {
+			require(paths, _.bind(this.onLoad, this, callback, opts), _.bind(this.onError, this));
+			return this;
+		},
+
+		/**
+		*	Triggers loading phase by enqueing require calls to pull resources in the current factory resource stack.
 		*	@private
 		*	@method _execute
 		*	@param callback {Function} callback to be executed after all resources are loaded
@@ -213,13 +255,7 @@ define(['core/spinal',
 		*	@return com.spinal.util.factories.AsyncFactory
 		**/
 		_execute: function(callback, opts) {
-			var paths = _.pluck(this.resources.collection, 'path');
-			require(paths, _.bind(function() {
-				var rs = this._handle(Array.prototype.slice.apply(arguments), opts);
-				if(callback && _.isFunction(callback)) callback(rs);
-				if(!opts.silent) this.trigger(AsyncFactory.EVENTS.loaded, rs);
-			}, this), _.bind(function(err) { this.trigger(AsyncFactory.EVENTS.failed, err); }, this));
-			return this;
+			return this._require(_.pluck(this.resources.collection, 'path'), callback, opts);
 		}
 
 	}, {

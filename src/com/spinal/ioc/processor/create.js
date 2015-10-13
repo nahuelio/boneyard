@@ -2,7 +2,8 @@
 *	@module com.spinal.ioc.processor
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define(['ioc/processor/processor'], function(Processor) {
+define(['ioc/processor/processor',
+	'ioc/engine/helpers/tsort'], function(Processor, TSort) {
 
 	/**
 	*	CreateProcessor Class
@@ -11,8 +12,17 @@ define(['ioc/processor/processor'], function(Processor) {
 	*	@extends com.spinal.ioc.processor.Processor
 	*
 	*	@requires com.spinal.ioc.processor.Processor
+	*	@requires com.spinal.ioc.engine.helpers.TSort
 	**/
 	var CreateProcessor = Spinal.namespace('com.spinal.ioc.processor.CreateProcessor', Processor.inherit({
+
+		/**
+		*	Topological Dependency Graph
+		*	@public
+		*	@property graph
+		*	@type com.spinal.ioc.helpers.TSort
+		**/
+		graph: null,
 
 		/**
 		*	Initialize
@@ -21,6 +31,7 @@ define(['ioc/processor/processor'], function(Processor) {
 		*	@return com.spinal.ioc.processor.CreateProcessor
 		**/
 		initialize: function() {
+			this.graph = new TSort();
 			return CreateProcessor.__super__.initialize.apply(this, arguments);
 		},
 
@@ -46,8 +57,30 @@ define(['ioc/processor/processor'], function(Processor) {
 		*	@return com.spinal.ioc.processor.CreateProcessor
 		**/
 		create: function(bone, path) {
-			bone.getInjector().assign(this.getFactory().create(path, bone.getParams())).resolve();
+			bone.getInjector().resolve();
 			return this;
+		},
+
+		/**
+		*	Builds, sort and returns topological dependency graph for all bones dependencies.
+		*	@public
+		*	@method sort
+		*	@param bones {Array} list of bones reference
+		*	@return Array
+		**/
+		tsort: function() {
+			return this.graph.reset().add(this.dependencies).sort();
+		},
+
+		/**
+		*	Build and returns all bone dependency graph found in the current context
+		*	@public
+		*	@method dependencies
+		*	@return Array
+		**/
+		dependencies: function() {
+			var bones = this.getEngine().allBones();
+			return [];
 		},
 
 		/**
@@ -78,11 +111,13 @@ define(['ioc/processor/processor'], function(Processor) {
 		*	Resolves all bone dependencies that were set as 'on hold' via injector.
 		*	This method will assume that all bone modules were loaded and instanciated.
 		*	@public
-		*	@method resolveOnHold
+		*	@method resolve
 		*	@return com.spinal.ioc.processor.CreateProcessor
 		**/
-		resolveOnHold: function() {
-			this.getEngine().allBones().forEach(function(bone) { bone.getInjector().resolve(); });
+		resolve: function() {
+			var bones = this.tsort();
+			console.log('ORDER: ', _.invoke(bones, 'getId'));
+			_.each(bones, function(bone) { bone.getInjector().resolve(this.getFactory()); }, this);
 			return this;
 		},
 
@@ -95,7 +130,8 @@ define(['ioc/processor/processor'], function(Processor) {
 		*	@return com.spinal.ioc.processor.BoneProcessor
 		**/
 		done: function(type) {
-			this.resolveOnHold();
+			console.log('------------------------------------------------------------------------------------------');
+			this.resolve();
 			return CreateProcessor.__super__.done.apply(this, arguments);
 		}
 
