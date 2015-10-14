@@ -31,6 +31,16 @@ define(['ioc/engine/helpers/dependency',
 		},
 
 		/**
+		*	Retrieves Engine's Factory
+		*	@public
+		*	@method getFactory
+		*	@return com.spinal.util.adt.AsyncFactory
+		**/
+		getFactory: function() {
+			return this.get().getEngine().getFactory();
+		},
+
+		/**
 		*	Retrieves dependencies
 		*	@public
 		*	@method getDependencies
@@ -47,8 +57,8 @@ define(['ioc/engine/helpers/dependency',
 		*	@param factory {com.spinal.util.factories.AsyncFactory} engine's factory reference
 		*	@return com.spinal.ioc.helpers.Injector
 		**/
-		create: function(factory, bone) {
-			if(bone.isModule()) bone._$created = factory.create(bone.getPath(), bone.getParams());
+		create: function(bone) {
+			if(bone.isModule()) bone._$created = this.getFactory().create(bone.getPath(), bone.getParams());
 			return this;
 		},
 
@@ -56,12 +66,10 @@ define(['ioc/engine/helpers/dependency',
 		*	Resolve injector dependencies and returns the collection of dependencies resolved.
 		*	@public
 		*	@method resolve
-		*	@param [factory] {com.spinal.util.factories.AsyncFactory} engine's factory reference
-		*	@return com.spinal.ioc.helpers.Injector
+		*	@return Array
 		**/
-		resolve: function(factory) {
-			this.getDependencies().invoke('resolve', this, factory);
-			return this;
+		resolve: function() {
+			return this.getDependencies().invoke('resolve', this);
 		},
 
 		/**
@@ -69,10 +77,9 @@ define(['ioc/engine/helpers/dependency',
 		*	@public
 		*	@method inject
 		*	@param dependency {com.spinal.ioc.engine.helpers.Dependency} dependency reference
-		*	@param [factory] {com.spinal.util.factories.AsyncFactory} engine's factory reference
 		*	@return com.spinal.ioc.helpers.Dependency
 		**/
-		inject: function(dependency, factory) {
+		inject: function(dependency) {
 			dependency.getTarget()[dependency.getProperty()] = dependency.get().bone();
 			//console.log('INJECT: ', dependency.getTarget(), dependency.getProperty(), dependency.get().getId());
 			return this.resolved(dependency);
@@ -83,12 +90,11 @@ define(['ioc/engine/helpers/dependency',
 		*	@public
 		*	@method hold
 		*	@param dependency {com.spinal.ioc.engine.helpers.Dependency} dependency reference
-		*	@param [factory] {com.spinal.util.factories.AsyncFactory} engine's factory reference
 		*	@return com.spinal.ioc.engine.helpers.Dependency
 		**/
-		hold: function(dependency, factory) {
-			console.log('HOLD: ', dependency.getId());
-			dependency.hold = _.bind(this.inject, this, dependency, factory);
+		hold: function(dependency) {
+			//console.log('HOLD: ', dependency.getId());
+			dependency.hold = _.bind(this.inject, this, dependency);
 			return dependency;
 		},
 

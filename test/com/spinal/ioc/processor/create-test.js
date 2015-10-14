@@ -147,10 +147,6 @@ define(['ioc/processor/create',
 					.expects('getPath')
 					.once()
 					.returns('ui/view');
-				this.simpleMock
-					.expects('getId')
-					.once()
-					.returns('simple');
 				this.engineMock
 					.expects('getFactory')
 					.once()
@@ -173,10 +169,6 @@ define(['ioc/processor/create',
 					.expects('getPath')
 					.once()
 					.returns('ui/view');
-				this.contentMock
-					.expects('getId')
-					.once()
-					.returns('simple');
 				this.engineMock
 					.expects('getFactory')
 					.once()
@@ -243,43 +235,54 @@ define(['ioc/processor/create',
 
 		});
 
-		describe('#create()', function() {
+		describe('#onLoad()', function() {
 
-			it('Should instanciate a group of module bones and pass them to the bone injector.assign()', function() {
+			it('Should execute bone dependency resolve via injector', function() {
 				var contentInjector = this.bones[2].getInjector();
-				var contentParams = { id: 'content', views: ['$bone!simple', '$bone!subcontent'] };
+				var injectorResolveStub = sinon.stub(contentInjector, 'resolve').returns([]);
 
-				var injectorAssignStub = sinon.stub(contentInjector, 'assign', function(instance) {
-					expect(instance).to.be('fakeContentInstance');
-					return contentInjector;
-				});
-				var injectorResolveStub = sinon.stub(contentInjector, 'resolve').returns(contentInjector);
+				var result = this.create.onLoad(this.bones[2], 'ui/container');
+				expect(result).to.be.an(CreateProcessor);
 
-				this.contentMock
-					.expects('getParams')
-					.once()
-					.returns(contentParams);
-				this.engineMock
-					.expects('getFactory')
-					.once()
-					.returns(this.factory);
-				this.factoryMock
-					.expects('create')
-					.once()
-					.withExactArgs('ui/container', contentParams)
-					.returns('fakeContentInstance')
-					.calledAfter(this.engineMock);
-
-				var result = this.create.create(this.bones[2], 'ui/container');
-				expect(result).to.be.ok();
-
-				this.contentMock.verify();
-				this.engineMock.verify();
-				this.factoryMock.verify();
-
-				this.bones[2].getInjector().assign.restore();
 				this.bones[2].getInjector().resolve.restore();
 			});
+
+		});
+
+		describe('#tsort()', function() {
+
+			it('Should Build, sort and return all bones dependencies using topological graph class');
+			// var getEngineStub = sinon.stub(this.create, 'getEngine').returns(this.engine);
+			// var forEachMock = sinon.mock(this.bones);
+			//
+			// this.engineMock
+			// 	.expects('allBones')
+			// 	.once()
+			// 	.returns(this.bones);
+			// forEachMock
+			// 	.expects('forEach')
+			// 	.once()
+			// 	.yields(this.bones[3]);
+			// this.subcontentMock
+			// 	.expects('getInjector')
+			// 	.once()
+			// 	.returns({ resolve: function() {} })
+			// 	.calledAfter(this.engineMock);
+			//
+			// expect(this.create.resolveOnHold()).to.be.ok();
+			//
+			// this.engineMock.verify();
+			// forEachMock.verify();
+			// this.subcontentMock.verify();
+			//
+			// this.create.getEngine.restore();
+			// forEachMock.restore();
+
+		});
+
+		describe('#dependencies()', function() {
+
+			it('Should Retrieve for each bone and dependency array to insert into tsort graph');
 
 		});
 
@@ -344,33 +347,38 @@ define(['ioc/processor/create',
 
 		});
 
-		describe('#resolveOnHold()', function() {
+		describe('#resolve()', function() {
 
 			it('Should resolve all bone dependencies set as on hold (if any)', function() {
-				var getEngineStub = sinon.stub(this.create, 'getEngine').returns(this.engine);
-				var forEachMock = sinon.mock(this.bones);
+				var tsortResult = ['advanced', 'simple', 'subcontent', 'content', 'holder'];
+				var tsortStub = sinon.stub(this.create, 'tsort').returns(tsortResult);
+				var forEachMock = sinon.mock(tsortResult);
+				var resolveSpy = sinon.spy();
 
-				this.engineMock
-					.expects('allBones')
-					.once()
-					.returns(this.bones);
 				forEachMock
 					.expects('forEach')
 					.once()
-					.yields(this.bones[3]);
+					.yields('subcontent');
+				this.engineMock
+					.expects('bone')
+					.once()
+					.withArgs('subcontent')
+					.returns(this.bones[3]);
 				this.subcontentMock
 					.expects('getInjector')
 					.once()
-					.returns({ resolve: function() {} })
+					.returns({ resolve: resolveSpy })
 					.calledAfter(this.engineMock);
 
-				expect(this.create.resolveOnHold()).to.be.ok();
+				expect(this.create.resolve()).to.be.ok();
+				expect(resolveSpy.calledOnce).to.be(true);
+				expect(resolveSpy.calledWith(this.create.getFactory())).to.be(true);
 
 				this.engineMock.verify();
 				forEachMock.verify();
 				this.subcontentMock.verify();
 
-				this.create.getEngine.restore();
+				this.create.tsort.restore();
 				forEachMock.restore();
 			});
 
@@ -382,12 +390,12 @@ define(['ioc/processor/create',
 				var superDoneStub = sinon.stub(CreateProcessor.__super__, 'done')
 					.withArgs(CreateProcessor.NAME)
 					.returns(this.create);
-				var resolveOnHoldStub = sinon.stub(this.create, 'resolveOnHold').returns(this.create);
+				var resolveStub = sinon.stub(this.create, 'resolve').returns(this.create);
 
 				expect(this.create.done(CreateProcessor.NAME)).to.be.ok();
 
 				CreateProcessor.__super__.done.restore();
-				this.create.resolveOnHold.restore();
+				this.create.resolve.restore();
 			});
 
 		});

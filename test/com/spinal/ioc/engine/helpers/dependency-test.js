@@ -30,7 +30,7 @@ define(['ioc/engine/helpers/dependency',
 				inject: function(dependency) { return dependency; },
 				hold: function(dependency) { return dependency; }
 			};
-			this.fakeEngine = { bone: function() { } };
+			this.fakeEngine = { bone: function() {}, getFactory: function() {} };
 			this.engineMock = sinon.mock(this.fakeEngine);
 			this.boneMock = sinon.mock(this.fakeBone);
 		});
@@ -149,6 +149,18 @@ define(['ioc/engine/helpers/dependency',
 
 				canResolveStub.restore();
 				this.fakeInjector.inject.restore();
+			});
+
+			it('Should not resolve dependency (dependency was resolved already)', function() {
+				var canResolveSpy = sinon.spy(this.dependency, 'canResolve');
+				var isResolvedStub = sinon.stub(this.dependency, 'isResolved').returns(true);
+
+				expect(this.dependency.resolve(this.fakeInjector, this.fakeEngine.getFactory()))
+					.to.be.an(Dependency);
+				expect(canResolveSpy.called).to.be(false);
+
+				this.dependency.isResolved.restore();
+				this.dependency.canResolve.restore();
 			});
 
 			it('Should put the dependency on hold', function() {

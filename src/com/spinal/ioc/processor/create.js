@@ -43,20 +43,19 @@ define(['ioc/processor/processor',
 		*	@return com.spinal.ioc.processor.CreateProcessor
 		**/
 		enqueue: function(bone) {
-			this.getFactory().push({ path: bone.getPath(), id: bone.getId(), callback: _.bind(this.create, this, bone) });
+			this.getFactory().push({ path: bone.getPath(), callback: _.bind(this.onLoad, this, bone) });
 			return this;
 		},
 
 		/**
-		*	Default bone load handler that creates an instance of the module by passing the parameters to
-		*	the constructor function (including dependencies if they exists).
+		*	Default bone load handler that executes bone dependency resolve via injector.
 		*	@public
-		*	@method create
+		*	@method onLoad
 		*	@param bone {com.spinal.ioc.engine.annotation.Bone} bone annotation reference
-		*	@param path {String} bone's resource path to pass to factory to create an instance
+		*	@param path {String} bone's resource path reference
 		*	@return com.spinal.ioc.processor.CreateProcessor
 		**/
-		create: function(bone, path) {
+		onLoad: function(bone, path) {
 			bone.getInjector().resolve();
 			return this;
 		},
@@ -70,7 +69,7 @@ define(['ioc/processor/processor',
 		**/
 		tsort: function() {
 			this.graph.reset();
-			this.getEngine().allBones.forEach(this.dependendencies);
+			this.getEngine().allBones.forEach(this.dependencies);
 			return this.graph.sort();
 		},
 
@@ -117,9 +116,9 @@ define(['ioc/processor/processor',
 		*	@return com.spinal.ioc.processor.CreateProcessor
 		**/
 		resolve: function() {
-			var bones = this.tsort();
-			console.log('ORDER: ', _.invoke(bones, 'getId'));
-			_.each(bones, function(bone) { bone.getInjector().resolve(this.getFactory()); }, this);
+			this.tsort().forEach(_.bind(function(id) {
+				this.getEngine().bone(id).getInjector().resolve(this.getFactory());
+			}, this));
 			return this;
 		},
 
@@ -132,7 +131,6 @@ define(['ioc/processor/processor',
 		*	@return com.spinal.ioc.processor.BoneProcessor
 		**/
 		done: function(type) {
-			console.log('------------------------------------------------------------------------------------------');
 			this.resolve();
 			return CreateProcessor.__super__.done.apply(this, arguments);
 		}

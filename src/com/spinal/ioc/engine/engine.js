@@ -126,12 +126,13 @@ define(['ioc/engine/helpers/spec',
 		*	@method execute
 		*	@param [callback] {Function} callback reference
 		*	@param ctx {com.spinal.ioc.Context} context reference
+		*	@param type {String} method type
 		*	@return com.spinal.ioc.engine.Engine
 		**/
-		execute: function(callback, ctx) {
-			if(!this.processors.hasNext()) return this.done(callback, ctx);
+		execute: function(callback, ctx, type) {
+			if(!this.processors.hasNext()) return this.done(callback, ctx, type);
 			var processor = this.getFactory().create(this.processors.next().path, this);
-			processor.once(processor.constructor.EVENTS.done, _.bind(this.execute, this, callback, ctx)).execute();
+			processor.once(processor.constructor.EVENTS.done, _.bind(this.execute, this, callback, ctx, type)).execute();
 			return this;
 		},
 
@@ -146,10 +147,8 @@ define(['ioc/engine/helpers/spec',
 		*	@return com.spinal.ioc.engine.Engine
 		**/
 		wire: function(spec, callback, ctx) {
-			callback || (callback = {});
 			this.addSpec(spec);
-			callback.type = Engine.EVENTS.wire;
-			return this.execute(callback, ctx);
+			return this.execute(callback, ctx, Engine.EVENTS.wire);
 		},
 
 		/**
@@ -171,14 +170,15 @@ define(['ioc/engine/helpers/spec',
 		*	Default Finish Operation Handler
 		*	@public
 		*	@method
-		*	@param [callback] {Function} callback reference
+		*	@param callback {Function} callback reference
 		*	@param ctx {com.spinal.ioc.Context} context reference
+		*	@param type {String} method type
 		*	@return com.spinal.ioc.engine.Engine
 		**/
-		done: function(callback, ctx) {
+		done: function(callback, ctx, type) {
 			this.processors.rewind();
 			if(callback && _.isFunction(callback)) callback(ctx);
-			return this.trigger(callback.type, this.specs);
+			return this.trigger(type, this.specs);
 		},
 
 		/**

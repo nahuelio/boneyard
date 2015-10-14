@@ -103,6 +103,16 @@ define(['ioc/engine/annotation/annotation',
 
 		});
 
+		describe('#hasDependencies', function() {
+
+			it('Shoul return true/false is annotation has dependencies or not', function() {
+				expect(this.annotation.hasDependencies()).to.be(false);
+				var test = new Annotation(this.boneComplex);
+				expect(test.hasDependencies()).to.be(true);
+			});
+
+		});
+
 		describe('#valid()', function() {
 
 			it('Should throw Error: constructor parameter is null or not an object', function() {

@@ -55,16 +55,36 @@ define(['ioc/engine/helpers/injector',
 
 		describe('#create()', function() {
 
-			it('Should assign an instance into the injector bone', function() {
-				var spyGet = sinon.spy(this.bone, 'get');
-				this.instance = new Array();
+			it('Should create and assign an instance into the bone', function() {
+				var factoryMock = sinon.mock(this.injector.getFactory());
 
-				expect(this.injector.assign(this.instance));
+				factoryMock
+					.expects('create')
+					.once()
+					.returns(new Array());
+
+				expect(this.injector.create(this.bone));
 				expect(this.injector.get()._$created).to.be.ok();
 				expect(this.injector.get()._$created).to.be.an('array');
-				expect(spyGet.called);
 
-				this.bone.get.restore();
+				factoryMock.verify();
+				factoryMock.restore();
+			});
+
+			it('Should not create and assign an instance into the bone, the bone is not a module', function() {
+				var factoryMock = sinon.mock(this.injector.getFactory());
+				var isModuleStub = sinon.stub(this.bone, 'isModule').returns(false);
+
+				factoryMock
+					.expects('create')
+					.never()
+					.returns(new Array());
+
+				expect(this.injector.create(this.bone)).to.be.an(Injector);
+
+				factoryMock.verify();
+				factoryMock.restore();
+				this.bone.isModule.restore();
 			});
 
 		});
@@ -97,8 +117,9 @@ define(['ioc/engine/helpers/injector',
 
 				this.injector = new Injector(this.bone);
 
-				var spyInvoke = sinon.spy(this.injector.getDependencies(), 'invoke').withArgs('resolve', this.injector);
-				var result = this.injector.resolve();
+				var spyInvoke = sinon.spy(this.injector.getDependencies(), 'invoke')
+					.withArgs('resolve', this.injector, this.bone.getEngine().getFactory());
+				var result = this.injector.resolve(this.bone.getEngine().getFactory());
 
 				expect(spyInvoke.calledOnce);
 				expect(result).to.be.ok();

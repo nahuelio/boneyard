@@ -60,12 +60,11 @@ define(['util/exception/ioc/dependency',
 		*	@public
 		*	@method resolve
 		*	@param injector {com.spinal.ioc.engine.helpers.Injector} injector reference
-		*	@param [factory] {com.spinal.util.factories.AsyncFactory} engine's factory reference
 		*	@return com.spinal.ioc.engine.helpers.Dependency
 		**/
-		resolve: function(injector, factory) {
+		resolve: function(injector) {
 			if(this.isResolved()) return this;
-			return (this.canResolve() || factory) ? injector.inject(this, factory) : injector.hold(this);
+			return this.canResolve() ? injector.inject(this) : injector.hold(this);
 		},
 
 		/**

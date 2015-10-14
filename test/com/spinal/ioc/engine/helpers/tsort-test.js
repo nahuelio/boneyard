@@ -4,7 +4,7 @@
 **/
 define(['ioc/engine/helpers/tsort'], function(TSort) {
 
-	describe.only('com.spinal.ioc.helpers.TSort', function() {
+	describe('com.spinal.ioc.helpers.TSort', function() {
 
 		before(function() {
 			this.bone1 = ['holder', 'subcontent'];
