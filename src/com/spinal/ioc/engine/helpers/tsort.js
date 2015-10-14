@@ -116,7 +116,10 @@ define(['core/spinal'], function(Spinal) {
 		NAME: 'TSort',
 
 		/**
-		*	Comment
+		*	TSort Types
+		*	@static
+		*	@property TYPE
+		*	@type Object
 		**/
 		TYPE: {
 			VOLATILE: 'volatile',

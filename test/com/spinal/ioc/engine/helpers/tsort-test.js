@@ -11,16 +11,23 @@ define(['ioc/engine/helpers/tsort'], function(TSort) {
 			this.bone2 = ['content', 'simple', 'subcontent'];
 			this.bone3 = ['subcontent', 'advanced'];
 			this.bone4 = ['advanced', 'test'];
+
+			this.boneA = ['boneA', 'boneB'];
+			this.boneB = ['boneB', 'boneC', 'boneD'];
+			this.boneC = ['boneC', 'boneA'];
+
 			this.graph = null;
 		});
 
 		after(function() {
+			delete this.boneA;
+			delete this.boneB;
+			delete this.boneC;
+
 			delete this.bone1;
 			delete this.bone2;
 			delete this.bone3;
 			delete this.bone4;
-			delete this.bone5;
-			delete this.bone6;
 			delete this.graph;
 		});
 
@@ -51,13 +58,27 @@ define(['ioc/engine/helpers/tsort'], function(TSort) {
 		describe('#sort()', function() {
 
 			it('Should sort and return dependency nodes graph', function() {
-				this.graph.sort();
-				// continue here...
+				var result = this.graph.sort();
+				expect(result).to.be.an('array');
+				expect(result).to.have.length(6);
+				// checking dependency order
+				expect(_.indexOf(result, 'test')).to.be.below(_.indexOf(result, 'advanced'));
+				expect(_.indexOf(result, 'advanced')).to.be.below(_.indexOf(result, 'subcontent'));
+				expect(_.indexOf(result, 'subcontent')).to.be.below(_.indexOf(result, 'content'));
+				expect(_.indexOf(result, 'holder')).to.be.above(_.indexOf(result, 'subcontent'));
+				expect(_.indexOf(result, 'content')).to.be.above(_.indexOf(result, 'simple'));
 			});
 
-		});
-
-		describe('#visit()', function() {
+			it('Should throw an Error: Circular Dependency detected', function() {
+				expect(_.bind(function() {
+					var graphCD = new TSort();
+					var result = graphCD.add(this.boneA)
+						.add(this.boneB)
+						.add(this.boneC).sort();
+				}, this)).to.throwException(function(e) {
+					expect(e.message).to.be('Circular dependency detected. It\'s not possible to derive a topological sort.');
+				})
+			});
 
 		});
 
