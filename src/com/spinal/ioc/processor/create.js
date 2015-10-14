@@ -69,12 +69,17 @@ define(['ioc/processor/processor',
 		**/
 		tsort: function() {
 			this.graph.reset();
-			this.getEngine().allBones.forEach(this.dependencies);
+			this.getEngine().allBones().forEach(this.dependencies);
 			return this.graph.sort();
 		},
 
 		/**
-		*	Build
+		*	Default bone's dependency handler that builds up the current bone and his dependencies with the following
+		*	format:
+		*		<h5>Example</h5>
+		*		// Given a bone with id 'boneA' with dependencies 'boneB' and 'boneC'
+		*		this.dependencies(bone);
+		*		// Outputs: ['boneA', 'boneB', 'boneC']
 		*	@public
 		*	@method dependencies
 		*	@param bone {com.spinal.ioc.engine.annotation.Bone} bone reference

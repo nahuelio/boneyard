@@ -251,32 +251,33 @@ define(['ioc/processor/create',
 
 		describe('#tsort()', function() {
 
-			it('Should Build, sort and return all bones dependencies using topological graph class');
-			// var getEngineStub = sinon.stub(this.create, 'getEngine').returns(this.engine);
-			// var forEachMock = sinon.mock(this.bones);
-			//
-			// this.engineMock
-			// 	.expects('allBones')
-			// 	.once()
-			// 	.returns(this.bones);
-			// forEachMock
-			// 	.expects('forEach')
-			// 	.once()
-			// 	.yields(this.bones[3]);
-			// this.subcontentMock
-			// 	.expects('getInjector')
-			// 	.once()
-			// 	.returns({ resolve: function() {} })
-			// 	.calledAfter(this.engineMock);
-			//
-			// expect(this.create.resolveOnHold()).to.be.ok();
-			//
-			// this.engineMock.verify();
-			// forEachMock.verify();
-			// this.subcontentMock.verify();
-			//
-			// this.create.getEngine.restore();
-			// forEachMock.restore();
+			it('Should Build, sort and return all bones dependencies using topological graph class', function() {
+				var bonesMock = sinon.mock(this.bones);
+				var dependenciesResult = ['subcontent', 'advanced'];
+				var dependenciesStub = sinon.stub(this.create, 'dependencies').returns(dependenciesResult);
+				var graphSortStub = sinon.stub(this.create.graph, 'sort').returns(dependenciesResult.reverse());
+
+				this.engineMock
+					.expects('allBones')
+					.once()
+					.returns(this.bones);
+				bonesMock
+					.expects('forEach')
+					.once()
+					.calledAfter(this.engineMock);
+
+				var result = this.create.tsort();
+				expect(result).to.be.an('array');
+				expect(result).to.have.length(2);
+				expect(result[0]).to.be('advanced');
+
+				this.engineMock.verify();
+				bonesMock.verify();
+
+				this.create.dependencies.restore();
+				this.create.graph.sort.restore();
+				bonesMock.restore();
+			});
 
 		});
 
