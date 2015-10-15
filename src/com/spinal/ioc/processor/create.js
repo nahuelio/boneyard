@@ -86,7 +86,7 @@ define(['ioc/processor/processor',
 		*	@return Array
 		**/
 		dependencies: function(bone) {
-			return this.graph.add([bone.getId()].concat(bone.getDependencies().invoke['getId']));
+			return this.graph.add([bone.getId()].concat(bone.getDependencies().invoke('getId')));
 		},
 
 		/**

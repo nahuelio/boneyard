@@ -6,9 +6,11 @@ define(['ioc/processor/create',
 	'ioc/engine/engine',
 	'ioc/engine/annotation/bone',
 	'ioc/engine/helpers/dependency',
+	'ioc/engine/helpers/tsort',
 	'util/factories/async-factory',
 	'util/adt/collection',
-	'specs/simple.spec'], function(CreateProcessor, Engine, Bone, Dependency, AsyncFactory, Collection, SimpleSpec) {
+	'specs/simple.spec'], function(CreateProcessor, Engine, Bone, Dependency,
+		TSort, AsyncFactory, Collection, SimpleSpec) {
 
 	describe('com.spinal.ioc.processor.CreateProcessor', function() {
 
@@ -283,7 +285,30 @@ define(['ioc/processor/create',
 
 		describe('#dependencies()', function() {
 
-			it('Should Retrieve for each bone and dependency array to insert into tsort graph');
+			it('Should Retrieve for each bone and dependency array to insert into tsort graph', function() {
+				this.contentMock
+					.expects('getId')
+					.atLeast(1)
+					.returns('content');
+				this.contentMock
+					.expects('getDependencies')
+					.atLeast(1)
+					.returns(this.contentDependencies);
+				this.contentDependenciesMock
+					.expects('invoke')
+					.atLeast(1)
+					.withArgs('getId')
+					.returns(['simple', 'subcontent']);
+
+				var result = this.create.dependencies(this.bones[2]);
+				expect(result).to.be.a(TSort);
+				expect(result.nodes).to.be.an('object');
+				expect(result.nodes.simple).to.be.an('array');
+				expect(result.nodes.subcontent[0]).to.be('simple');
+
+				this.contentMock.verify();
+				this.contentDependenciesMock.verify();
+			});
 
 		});
 
