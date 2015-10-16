@@ -33,7 +33,7 @@ define(['ioc/processor/processor'], function(Processor) {
 		*	@return com.spinal.ioc.engine.annotation.Action
 		**/
 		process: function(action) {
-			return action.resolve(); //.execute();
+			return action.resolve().execute();
 		},
 
 		/**

@@ -27,7 +27,7 @@ define(['util/exception/ioc/dependency',
 			attrs || (attrs = {});
 			this.valid(attrs);
 			Dependency.__super__.initialize.apply(this, arguments);
-			return _.extend(this, attrs);
+			return _.extend(this, attrs, { resolved: false });
 		},
 
 		/**
@@ -86,7 +86,8 @@ define(['util/exception/ioc/dependency',
 		**/
 		get: function() {
 			if(!(m = this.getCompound())) return null;
-			return _.isObject(m) ? this.getEngine().bone(m.id)[m.method] : this.getEngine().bone(m).bone();
+			var bone = this.getEngine().bone(_.isObject(m) ? m.id : m);
+			return (bone && _.isObject(m)) ? bone.bone()[m.method] : bone.bone();
 		},
 
 		/**

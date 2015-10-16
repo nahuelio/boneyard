@@ -254,13 +254,14 @@ define(['ioc/engine/helpers/dependency',
 			});
 
 			it('Should return dependency method as a function', function() {
-				var compound = { id: 'obj', method: 'methodName' };
+				var compound = { id: 'obj', method: 'method' };
 				var getCompoundStub = sinon.stub(this.dependency, 'getCompound').returns(compound);
 				var getEngineStub = sinon.stub(this.dependency, 'getEngine').returns(this.fakeEngine);
 
 				this.engineMock.expects('bone')
 					.once().withArgs(sinon.match.string)
-					.returns({ methodName: function() {} });
+					.returns(this.fakeBone);
+				this.boneMock.expects('bone').once().returns({ id: 'object', method: function() {} });
 
 				expect(this.dependency.get()).to.be.a('function');
 

@@ -10,17 +10,12 @@ define(['ioc/engine/annotation/action',
 
 		before(function() {
 			this.actionSimple = null;
-
 			this.actionSpy = sinon.spy();
-			this.dependency = {
-				expression: '$bone!simple.listenTo',
-				target: this.actionSimple,
-				property: '_id',
-				bone: this.actionSimple
-			};
-			this.dependencyMock = sinon.mock(this.dependency);
 
-			this.injector = { inject: function() {} };
+			this.injector = {
+				inject: function() {},
+				resolve: function() {}
+			};
 			this.injectorMock = sinon.mock(this.injector);
 
 			this.dependencyPrototypeMock = sinon.mock(Dependency.prototype);
@@ -35,10 +30,6 @@ define(['ioc/engine/annotation/action',
 
 			this.dependencyPrototypeMock.restore();
 			delete this.dependencyPrototypeMock;
-
-			this.dependencyMock.restore();
-			delete this.dependencyMock;
-			delete this.dependency;
 
 			delete this.actionSimple;
 		});
@@ -67,32 +58,80 @@ define(['ioc/engine/annotation/action',
 				var getIdStub = sinon.stub(this.actionSimple, 'getId').returns('$bone!model.set');
 				var getInjectorStub = sinon.stub(this.actionSimple, 'getInjector').returns(this.injector);
 
+				var dependency = {
+					expression: '$bone!simple.listenTo',
+					target: this.actionSimple,
+					property: '_id',
+					bone: this.actionSimple
+				};
+				var dependencyMock = sinon.mock(dependency);
+
 				this.dependencyPrototypeMock
 					.expects('constructor')
 					.once()
-					.withArgs(this.dependency)
-					.returns(this.dependency);
+					.withArgs(dependency)
+					.returns(dependency);
 				this.injectorMock
 					.expects('inject')
 					.once()
-					.returns(this.actionSpy);
+					.returns(dependency);
 
 				var result = this.actionSimple.resolve();
 				expect(result).to.be.ok();
-				expect(result.getTarget()).to.be.a('function');
+				expect(result.getTarget().expression).to.be(dependency.expression);
 
 				this.dependencyPrototypeMock.verify();
 				this.injectorMock.verify();
 
+				dependencyMock.restore();
 				this.actionSimple.getId.restore();
 				this.actionSimple.getInjector.restore();
 			});
 
 		});
 
-		describe('#parameters()', function() {
+		describe.skip('#parameters()', function() {
 
 			it('Should resolve all dependencies on Action\'s parameters', function() {
+				var dependencyA = {
+					expression: '$bone!model',
+					target: this.actionSimple,
+					property: '0',
+					bone: this.actionSimple,
+					resolve: function() {}
+				};
+				var dependencyMockA = sinon.mock(dependencyA);
+				var dependencyB = {
+					expression: '$bone!simple.update',
+					target: this.actionSimple,
+					property: '2',
+					bone: this.actionSimple,
+					resolve: function() {}
+				};
+				var dependencyMockB = sinon.mock(dependencyB);
+				var dependencies = [dependencyA, dependencyB];
+
+				var dependenciesInvokeStub =
+					sinon.stub(this.actionSimple.getInjector().getDependencies(), 'invoke',
+						_.bind(function(action, injector) { return _.invoke(dependencies, 'resolve', injector); }, this));
+
+				dependencyMockA
+					.expects('resolve')
+					.once()
+					.withArgs(this.actionSimple.getInjector())
+					.returns(dependencyA);
+				dependencyMockB
+					.expects('resolve')
+					.once()
+					.withArgs(this.actionSimple.getInjector())
+					.returns(dependencyB);
+
+				var result = this.actionSimple.parameters();
+				expect(result).to.be.an('array');
+				expect(result).to.have.length(3);
+
+				dependencyMockA.verify();
+				dependencyMockB.verify();
 
 			});
 

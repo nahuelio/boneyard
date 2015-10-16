@@ -56,8 +56,8 @@ define(['ioc/engine/annotation/annotation',
 		*	@return Array
 		**/
 		parameters: function() {
-			//return this.getInjector().resolve();
-			return [];
+			var deps = this.getInjector().resolve();
+			return this.getValue();
 		},
 
 		/**

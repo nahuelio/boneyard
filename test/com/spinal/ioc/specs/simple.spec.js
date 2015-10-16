@@ -23,7 +23,7 @@ define(['specs/main.spec'], function(MainSpec) {
 		o: { prop: '$bone!s' },
 		holder: { subcontent: '$bone!subcontent' },
 
-		model: new Backbone.Model({ value: "initial" }),
+		model: new Backbone.Model({ prop: "initial" }),
 
 		simple: {
 			$module: 'ui/view',
@@ -46,7 +46,7 @@ define(['specs/main.spec'], function(MainSpec) {
 		},
 
 		$actions: [
-			{ '$bone!simple.listenTo': ['$bone!model', 'change:value', '$bone!simple.update'] }
+			{ '$bone!simple.listenTo': ['$bone!model', 'change', '$bone!simple.update'] }
 		]
 
 	};
