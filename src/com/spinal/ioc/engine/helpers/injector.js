@@ -54,10 +54,10 @@ define(['ioc/engine/helpers/dependency',
 		*	Assings a module instance into the bone
 		*	@public
 		*	@method create
-		*	@param factory {com.spinal.util.factories.AsyncFactory} engine's factory reference
 		*	@return com.spinal.ioc.helpers.Injector
 		**/
-		create: function(bone) {
+		create: function() {
+			var bone = this.get();
 			if(bone.isModule()) bone._$created = this.getFactory().create(bone.getPath(), bone.getParams());
 			return this;
 		},
@@ -81,7 +81,6 @@ define(['ioc/engine/helpers/dependency',
 		**/
 		inject: function(dependency) {
 			dependency.getTarget()[dependency.getProperty()] = dependency.get().bone();
-			//console.log('INJECT: ', dependency.getTarget(), dependency.getProperty(), dependency.get().getId());
 			return this.resolved(dependency);
 		},
 
@@ -93,7 +92,6 @@ define(['ioc/engine/helpers/dependency',
 		*	@return com.spinal.ioc.engine.helpers.Dependency
 		**/
 		hold: function(dependency) {
-			//console.log('HOLD: ', dependency.getId());
 			dependency.hold = _.bind(this.inject, this, dependency);
 			return dependency;
 		},

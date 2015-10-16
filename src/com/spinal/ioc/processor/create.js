@@ -69,7 +69,7 @@ define(['ioc/processor/processor',
 		**/
 		tsort: function() {
 			this.graph.reset();
-			this.getEngine().allBones().forEach(this.dependencies);
+			this.getEngine().allBones().forEach(_.bind(this.dependencies, this));
 			return this.graph.sort();
 		},
 
@@ -122,7 +122,9 @@ define(['ioc/processor/processor',
 		**/
 		resolve: function() {
 			this.tsort().forEach(_.bind(function(id) {
-				this.getEngine().bone(id).getInjector().resolve(this.getFactory());
+				var injector = this.getEngine().bone(id).getInjector()
+				injector.resolve(this.getFactory());
+				injector.create();
 			}, this));
 			return this;
 		},

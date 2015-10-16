@@ -380,6 +380,7 @@ define(['ioc/processor/create',
 				var tsortStub = sinon.stub(this.create, 'tsort').returns(tsortResult);
 				var forEachMock = sinon.mock(tsortResult);
 				var resolveSpy = sinon.spy();
+				var createSpy = sinon.spy();
 
 				forEachMock
 					.expects('forEach')
@@ -393,11 +394,13 @@ define(['ioc/processor/create',
 				this.subcontentMock
 					.expects('getInjector')
 					.once()
-					.returns({ resolve: resolveSpy })
+					.returns({ resolve: resolveSpy, create: createSpy })
 					.calledAfter(this.engineMock);
 
 				expect(this.create.resolve()).to.be.ok();
 				expect(resolveSpy.calledOnce).to.be(true);
+				expect(createSpy.calledOnce).to.be(true);
+				expect(resolveSpy.calledBefore(createSpy)).to.be(true);
 				expect(resolveSpy.calledWith(this.create.getFactory())).to.be(true);
 
 				this.engineMock.verify();

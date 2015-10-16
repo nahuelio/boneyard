@@ -23,21 +23,6 @@ define(['specs/main.spec'], function(MainSpec) {
 		o: { prop: '$bone!s' },
 		holder: { subcontent: '$bone!subcontent' },
 
-		model: {
-			$module: 'util/schema',
-			$params: {
-				_b: '$bone!b',
-				_s: '$bone!s',
-				_n: '$bone!n',
-				_o: '$bone!o',
-				_a: '$bone!a',
-				_d: '$bone!d',
-				_r: '$bone!r',
-				_test: '$bone!test',
-				_nested: '$bone!nested'
-			}
-		},
-
 		simple: {
 			$module: 'ui/view',
 			$params: { id: 'simple' }

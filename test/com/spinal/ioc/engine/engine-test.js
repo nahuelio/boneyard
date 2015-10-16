@@ -471,7 +471,7 @@ define(['ioc/engine/engine',
 				var result = this.engine.allBones();
 				expect(result).to.be.ok();
 				expect(result).to.be.an('array');
-				expect(result).to.have.length(21);
+				expect(result).to.have.length(20);
 			});
 
 		});
