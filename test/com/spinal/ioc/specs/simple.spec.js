@@ -44,8 +44,7 @@ define(['specs/main.spec'], function(MainSpec) {
 		},
 
 		$actions: [
-			{ '$bone!model.set': ['_test', '$bone!simple.toString'] },
-			{ '$bone!simple.listenTo': ['$bone!model', 'change:_b', '$bone!simple.update'] }
+			{ '$bone!simple.listenTo': ['$bone!model', 'change:value', '$bone!simple.update'] }
 		]
 
 	};

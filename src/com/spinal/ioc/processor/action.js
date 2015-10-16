@@ -26,26 +26,14 @@ define(['ioc/processor/processor'], function(Processor) {
 		},
 
 		/**
-		*	Resolves and processes actions declared in module's action section by parsing expression as methods
-		*	and params to be passed to the result of those methods
-		*	@private
-		*	@method resolve
-		*	@return Array
-		**/
-		resolve: function(exprs, params) {
-
-		},
-
-		/**
 		*	Defaul Process strategy that operates on each action.
 		*	@public
 		*	@method process
 		*	@param action {com.spinal.ioc.engine.annotation.Action} action annotation reference
-		*	@return com.spinal.ioc.engine.processor.ActionProcessor
+		*	@return com.spinal.ioc.engine.annotation.Action
 		**/
 		process: function(action) {
-			//this.action.getTarget().resolve()
-			return this;
+			return action.resolve(); //.execute();
 		},
 
 		/**
@@ -57,7 +45,7 @@ define(['ioc/processor/processor'], function(Processor) {
 		*	@return Array
 		**/
 		execute: function() {
-			ActionProcessor.__super__.execute.call(this, this.getEngine().allOperations(), this.process);
+			ActionProcessor.__super__.execute.call(this, this.getEngine().allActions(), this.process);
 			return ActionProcessor.__super__.done.apply(this, arguments);
 		},
 

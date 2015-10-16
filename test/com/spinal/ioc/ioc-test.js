@@ -8,7 +8,7 @@ define(['ioc/context',
 	'specs/simple.spec',
 	'specs/advanced.spec'], function(Context, View, Container, SimpleSpec, AdvancedSpec) {
 
-	describe('IoC Master Pass', function() {
+	describe.skip('IoC Master Pass', function() {
 
 		before(function() {
 			this.context = null;

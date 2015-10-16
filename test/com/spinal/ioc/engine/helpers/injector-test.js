@@ -142,25 +142,16 @@ define(['ioc/engine/helpers/injector',
 					target: this.boneComplex.complex.$params.views,
 					bone: this.bone
 				});
-				this.boneMock = sinon.mock(this.bone);
-
-				this.boneMock
-					.expects('bone')
-					.once()
-					.returns(function() {});
 
 				var stubGet = sinon.stub(dependency, 'get').returns(this.bone);
 				var result = this.injector.inject(dependency);
 
-				this.boneMock.verify();
-
 				expect(result).to.be.ok();
 				expect(result).to.be.a(Dependency);
 				expect(result.getExpression()).to.be(dependency.getExpression());
-				expect(result.getTarget()[result.getProperty()]).to.be.a('function');
+				expect(result.getTarget()[result.getProperty()]).to.be.a(Bone);
 
 				stubGet.restore();
-				this.boneMock.restore();
 			});
 
 			it('Should inject dependency and delete partial function as on hold', function() {
@@ -171,18 +162,10 @@ define(['ioc/engine/helpers/injector',
 					bone: this.bone,
 					hold: function() {}
 				});
-				this.boneMock = sinon.mock(this.bone);
-
-				this.boneMock
-					.expects('bone')
-					.once()
-					.returns(function() {});
 
 				var stubGet = sinon.stub(dependency, 'get').returns(this.bone);
 				var stubHold = sinon.stub(dependency, 'hold').returns(_.bind(this.injector.inject, this.injector, dependency));
 				var result = this.injector.inject(dependency);
-
-				this.boneMock.verify();
 
 				expect(result).to.be.ok();
 				expect(result).to.be.a(Dependency);
@@ -190,7 +173,6 @@ define(['ioc/engine/helpers/injector',
 
 				stubGet.restore();
 				stubHold.restore();
-				this.boneMock.restore();
 			});
 
 		});

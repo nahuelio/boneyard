@@ -86,7 +86,7 @@ define(['util/exception/ioc/dependency',
 		**/
 		get: function() {
 			if(!(m = this.getCompound())) return null;
-			return _.isObject(m) ? this.getEngine().bone(m.id)[m.method] : this.getEngine().bone(m);
+			return _.isObject(m) ? this.getEngine().bone(m.id)[m.method] : this.getEngine().bone(m).bone();
 		},
 
 		/**

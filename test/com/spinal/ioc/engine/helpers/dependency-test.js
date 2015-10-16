@@ -11,6 +11,7 @@ define(['ioc/engine/helpers/dependency',
 		before(function() {
 			this.dependency = null;
 			this.fakeBone = {
+				bone: function() {},
 				isModule: function() {},
 				getEngine: function() {},
 				isCreated: function() {},
@@ -240,9 +241,13 @@ define(['ioc/engine/helpers/dependency',
 				var getCompoundStub = sinon.stub(this.dependency, 'getCompound').returns(compound);
 				var getEngineStub = sinon.stub(this.dependency, 'getEngine').returns(this.fakeEngine);
 
-				this.engineMock.expects('bone').once().withArgs(sinon.match.string).returns(compound);
+				this.engineMock.expects('bone').once().withArgs(sinon.match.string).returns(this.fakeBone);
+				this.boneMock.expects('bone').once().returns(compound);
 
 				expect(this.dependency.get()).to.be(compound);
+
+				this.engineMock.verify();
+				this.boneMock.verify();
 
 				getCompoundStub.restore();
 				getEngineStub.restore();

@@ -275,6 +275,16 @@ define(['ioc/engine/helpers/spec',
 		},
 
 		/**
+		*	Retrieves all actions of all specs
+		*	@public
+		*	@method allActions
+		*	@return Array
+		**/
+		allActions: function() {
+			return _.flatten(_.map(_.pluck(this.allSpecs, 'actions'), function(actions) { return actions.collection; }));
+		},
+
+		/**
 		*	Retrieves a bone by a given id
 		*	@public
 		*	@method bone

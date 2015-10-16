@@ -50,13 +50,24 @@ define(['ioc/engine/annotation/annotation',
 		},
 
 		/**
+		*	Default Action parameter dependencies resolution strategy
+		*	@public
+		*	@method parameters
+		*	@return Array
+		**/
+		parameters: function() {
+			//return this.getInjector().resolve();
+			return [];
+		},
+
+		/**
 		*	Default action execution
 		*	@public
 		*	@method execute
 		*	@return com.spinal.ioc.engine.annotation.Action
 		**/
 		execute: function() {
-			return _.defined(this.getTarget()) ? this.getTarget().apply(this, arguments) : this;
+			return _.defined(this.getTarget()) ? this.getId().apply(this, this.parameters()) : this;
 		}
 
 	}, {

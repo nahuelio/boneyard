@@ -80,7 +80,7 @@ define(['ioc/engine/helpers/dependency',
 		*	@return com.spinal.ioc.helpers.Dependency
 		**/
 		inject: function(dependency) {
-			dependency.getTarget()[dependency.getProperty()] = dependency.get().bone();
+			dependency.getTarget()[dependency.getProperty()] = dependency.get();
 			return this.resolved(dependency);
 		},
 
