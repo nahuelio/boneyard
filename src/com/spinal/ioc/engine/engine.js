@@ -340,9 +340,9 @@ define(['ioc/engine/helpers/spec',
 			plugin: 'com:spinal:ioc:engine:plugin',
 
 			/**
-			*	@event ready
+			*	@event action
 			**/
-			ready: 'com:spinal:ioc:engine:ready'
+			action: 'com:spinal:ioc:engine:action'
 		},
 
 		/**
@@ -352,7 +352,7 @@ define(['ioc/engine/helpers/spec',
 		**/
 		PROCESSORS: [
 			{ path: 'ioc/processor/create' }
-			//{ path: 'ioc/processor/ready' },
+			//{ path: 'ioc/processor/action' }
 			//{ path: 'ioc/processor/plugin' }
 		]
 

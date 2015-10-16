@@ -43,7 +43,7 @@ define(['specs/main.spec'], function(MainSpec) {
 			$params: { id: '$bone!test' }
 		},
 
-		$ready: [
+		$actions: [
 			{ '$bone!model.set': ['_test', '$bone!simple.toString'] },
 			{ '$bone!simple.listenTo': ['$bone!model', 'change:_b', '$bone!simple.update'] }
 		]

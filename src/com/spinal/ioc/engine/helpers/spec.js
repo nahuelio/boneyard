@@ -3,10 +3,10 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['ioc/engine/annotation/bone',
-	'ioc/engine/annotation/ready',
+	'ioc/engine/annotation/action',
 	'util/adt/collection',
 	'util/string',
-	'util/object'], function(Bone, Ready, Collection, StringUtil, ObjectUtil) {
+	'util/object'], function(Bone, Action, Collection, StringUtil, ObjectUtil) {
 
 	/**
 	*	Class Spec
@@ -15,7 +15,7 @@ define(['ioc/engine/annotation/bone',
 	*	@extends com.spinal.core.SpinalClass
 	*
 	*	@requires com.spinal.ioc.engine.annotation.Bone
-	*	@requires com.spinal.ioc.engine.annotation.Ready
+	*	@requires com.spinal.ioc.engine.annotation.Action
 	*	@requires com.spinal.util.adt.Collection
 	*	@requires com.spinal.util.StringUtil
 	*	@requires com.spinal.util.ObjectUtil
@@ -31,12 +31,12 @@ define(['ioc/engine/annotation/bone',
 		bones: null,
 
 		/**
-		*	Ready operation collection
+		*	Actions collection
 		*	@public
-		*	@property operations
+		*	@property actions
 		*	@type com.spinal.util.adt.Collection
 		**/
-		operations: null,
+		actions: null,
 
 		/**
 		*	Initialize
@@ -50,7 +50,7 @@ define(['ioc/engine/annotation/bone',
 			this.valid(attrs);
 			_.extend(this, StringUtil.toPrivate(Spec.only(attrs)));
 			this.bones = new Collection(null, { interface: Bone });
-			this.operations = new Collection(null, { interface: Ready });
+			this.actions = new Collection(null, { interface: Action });
 			return this.parse(attrs);
 		},
 
@@ -97,7 +97,7 @@ define(['ioc/engine/annotation/bone',
 		**/
 		parse: function(spec) {
 			this.bones.set(ObjectUtil.objToArr(Bone.only(spec)), { silent: true });
-			this.operations.set(Ready.only(spec), { silent: true });
+			this.actions.set(Action.only(spec), { silent: true });
 			return this;
 		},
 

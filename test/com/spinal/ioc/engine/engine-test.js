@@ -3,12 +3,12 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['ioc/engine/engine',
-	'ioc/processor/ready',
+	'ioc/processor/action',
 	'ioc/engine/helpers/spec',
 	'ioc/engine/annotation/plugin',
 	'util/factories/async-factory',
 	'specs/simple.spec',
-	'specs/plugin.spec'], function(Engine, ReadyProcessor, Spec, Plugin, AsyncFactory, SimpleSpec, PluginSpec) {
+	'specs/plugin.spec'], function(Engine, ActionProcessor, Spec, Plugin, AsyncFactory, SimpleSpec, PluginSpec) {
 
 	describe('com.spinal.ioc.engine.Engine', function() {
 
@@ -172,8 +172,8 @@ define(['ioc/engine/engine',
 		describe('#execute()', function() {
 
 			it('Should fire up engine\'s processor battery execution', function() {
-				var callback = sinon.spy(), ctx = {}, nextProcessor = { path: 'ioc/processor/ready' };
-				var processor = new ReadyProcessor(this.engine),
+				var callback = sinon.spy(), ctx = {}, nextProcessor = { path: 'ioc/processor/action' };
+				var processor = new ActionProcessor(this.engine),
 					processorMock = sinon.mock(processor);
 
 				processorMock

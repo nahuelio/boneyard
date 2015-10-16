@@ -24,7 +24,7 @@ define([], function() {
 			$params: { id: 'child' }
 		},
 
-		$ready: [
+		$actions: [
 			{ '$bone!container.add': ['$bone!view', { renderOnAdd: true }] }
 		],
 

@@ -28,7 +28,7 @@ define(['specs/header.spec',
 			$params: { id: 'viewB' }
 		},
 
-		$ready: [
+		$actions: [
 			{ '$bone!global.add': ['$bone!header'] },
 			{ '$bone!global.add': ['$bone!footer'] },
 			{

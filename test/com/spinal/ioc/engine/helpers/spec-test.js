@@ -4,9 +4,9 @@
 **/
 define(['ioc/engine/helpers/spec',
 	'ioc/engine/annotation/bone',
-	'ioc/engine/annotation/ready',
+	'ioc/engine/annotation/action',
 	'specs/simple.spec',
-	'util/object'], function(Spec, Bone, Ready, SimpleSpec, ObjectUtil) {
+	'util/object'], function(Spec, Bone, Action, SimpleSpec, ObjectUtil) {
 
 	describe('com.spinal.ioc.engine.helpers.Spec', function() {
 
@@ -17,7 +17,7 @@ define(['ioc/engine/helpers/spec',
 			this.spec = null;
 			// Stubs
 			this.boneOnlyStub = sinon.stub(Bone, 'only').returns(_.pick(SimpleSpec, 'content', 'model', 'mycomponent'));
-			this.readyOnlyStub = sinon.stub(Ready, 'only').returns({}, {});
+			this.actionOnlyStub = sinon.stub(Action, 'only').returns({}, {});
 			this.objToArrStub = sinon.stub(ObjectUtil, 'objToArr').returns([
 				SimpleSpec.content,
 				SimpleSpec.model,
@@ -44,8 +44,8 @@ define(['ioc/engine/helpers/spec',
 		after(function() {
 			this.boneOnlyStub.restore();
 			delete this.boneOnlyStub;
-			this.readyOnlyStub.restore();
-			delete this.readyOnlyStub;
+			this.actionOnlyStub.restore();
+			delete this.actionOnlyStub;
 			this.objToArrStub.restore();
 			delete this.objToArrStub;
 			delete this.$specBspecs;
@@ -134,28 +134,28 @@ define(['ioc/engine/helpers/spec',
 
 			it('Should parse bones and operations', function() {
 				var bonesMock = sinon.mock(this.spec.bones);
-				var operationsMock = sinon.mock(this.spec.operations);
+				var actionsMock = sinon.mock(this.spec.actions);
 
 				bonesMock.expects('set')
 					.once()
 					.withArgs(ObjectUtil.objToArr(Bone.only()))
 					.returns(true);
-				operationsMock.expects('set')
+				actionsMock.expects('set')
 					.once()
-					.withArgs(Ready.only())
+					.withArgs(Action.only())
 					.returns(true)
 					.calledAfter(bonesMock);
 
 				var result = this.spec.parse(SimpleSpec);
 
 				bonesMock.verify();
-				operationsMock.verify();
+				actionsMock.verify();
 
 				expect(bonesMock.calledOnce);
-				expect(operationsMock.calledOnce);
+				expect(actionsMock.calledOnce);
 
 				bonesMock.restore();
-				operationsMock.restore();
+				actionsMock.restore();
 			});
 
 		});

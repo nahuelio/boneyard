@@ -6,28 +6,28 @@ define(['ioc/engine/annotation/annotation',
 	'ioc/engine/helpers/dependency'], function(Annotation, Dependency) {
 
 	/**
-	*	Class Ready
+	*	Class Action
 	*	@namespace com.spinal.ioc.engine.annotation
-	*	@class com.spinal.ioc.engine.annotation.Ready
+	*	@class com.spinal.ioc.engine.annotation.Action
 	*	@extends com.spinal.ioc.engine.annotation.Annotation
 	*
 	*	@requires com.spinal.ioc.engine.annotation.Annotation
 	**/
-	var Ready = Spinal.namespace('com.spinal.ioc.engine.annotation.Ready', Annotation.inherit({
+	var Action = Spinal.namespace('com.spinal.ioc.engine.annotation.Action', Annotation.inherit({
 
 		/**
 		*	Initialize
 		*	@public
 		*	@method initialize
 		*	@param [attrs] {Object} annotation attributes
-		*	@return com.spinal.ioc.engine.annotation.Ready
+		*	@return com.spinal.ioc.engine.annotation.Action
 		**/
 		initialize: function(attrs) {
-			return Ready.__super__.initialize.apply(this, arguments);
+			return Action.__super__.initialize.apply(this, arguments);
 		},
 
 		/**
-		*	Retrieves target operation
+		*	Retrieves action's target
 		*	@public
 		*	@method getTarget
 		*	@return Object
@@ -37,10 +37,10 @@ define(['ioc/engine/annotation/annotation',
 		},
 
 		/**
-		*	Default target resolution strategy
+		*	Default action's target resolution strategy
 		*	@public
 		*	@method getTarget
-		*	@return com.spinal.ioc.engine.annotation.Ready
+		*	@return com.spinal.ioc.engine.annotation.Action
 		**/
 		resolve: function() {
 			var target = new Dependency({ expression: this.getId(), target: this, property: '_id', bone: this });
@@ -50,10 +50,10 @@ define(['ioc/engine/annotation/annotation',
 		},
 
 		/**
-		*	Default operation execution
+		*	Default action execution
 		*	@public
 		*	@method execute
-		*	@return com.spinal.ioc.engine.annotation.Ready
+		*	@return com.spinal.ioc.engine.annotation.Action
 		**/
 		execute: function() {
 			return _.defined(this.getTarget()) ? this.getTarget().apply(this, arguments) : this;
@@ -66,21 +66,21 @@ define(['ioc/engine/annotation/annotation',
 		*	@property NAME
 		*	@type String
 		**/
-		NAME: 'Ready',
+		NAME: 'Action',
 
 		/**
-		*	Gather ready bones from a given spec
+		*	Gather action bones from a given spec
 		*	@static
 		*	@method only
 		*	@param spec {Object} spec reference
 		*	@return	Array
 		**/
 		only: function(spec) {
-			return _.pick(spec, '$ready');
+			return _.pick(spec, '$actions');
 		}
 
 	}));
 
-	return Ready;
+	return Action;
 
 });
