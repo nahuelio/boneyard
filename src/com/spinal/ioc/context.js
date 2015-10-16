@@ -37,7 +37,7 @@ define(['ioc/engine/engine'], function(Engine) {
 		**/
 		api: function() {
 			this.getEngine().proxify(this,
-				'spec', 'allSpecs', 'allBones',
+				'spec', 'allSpecs', 'allBones', 'allActions',
 				'bone', 'bonesByType', 'bonesByClass');
 			return this;
 		},

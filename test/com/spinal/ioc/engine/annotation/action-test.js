@@ -162,12 +162,16 @@ define(['ioc/engine/annotation/action',
 		});
 
 		describe('static#only()', function() {
-			var result = Action.only(SimpleSpec);
-			expect(result).to.be.ok();
-			expect(result.$id).to.be(undefined);
-			expect(result.$specs).to.be(undefined);
-			expect(result.$plugins).to.be(undefined);
-			expect(result.$actions).to.be.ok();
+
+			it('Should retrieves $actions annotations', function() {
+				var result = Action.only(SimpleSpec);
+				expect(result).to.be.ok();
+				expect(result.$id).to.be(undefined);
+				expect(result.$specs).to.be(undefined);
+				expect(result.$plugins).to.be(undefined);
+				expect(result.$actions).to.be.ok();
+			});
+
 		});
 
 	});

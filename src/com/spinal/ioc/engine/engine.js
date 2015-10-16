@@ -281,7 +281,7 @@ define(['ioc/engine/helpers/spec',
 		*	@return Array
 		**/
 		allActions: function() {
-			return _.flatten(_.map(_.pluck(this.allSpecs, 'actions'), function(actions) { return actions.collection; }));
+			return _.flatten(_.map(_.pluck(this.allSpecs(), 'actions'), function(actions) { return actions.collection; }));
 		},
 
 		/**
@@ -361,8 +361,8 @@ define(['ioc/engine/helpers/spec',
 		*	@type Array
 		**/
 		PROCESSORS: [
-			{ path: 'ioc/processor/create' }
-			//{ path: 'ioc/processor/action' }
+			{ path: 'ioc/processor/create' },
+			{ path: 'ioc/processor/action' }
 			//{ path: 'ioc/processor/plugin' }
 		]
 

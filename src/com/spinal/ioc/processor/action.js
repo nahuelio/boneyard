@@ -46,7 +46,7 @@ define(['ioc/processor/processor'], function(Processor) {
 		**/
 		execute: function() {
 			ActionProcessor.__super__.execute.call(this, this.getEngine().allActions(), this.process);
-			return ActionProcessor.__super__.done.apply(this, arguments);
+			return ActionProcessor.__super__.done.apply(this, [ActionProcessor.NAME]);
 		},
 
 	}, {

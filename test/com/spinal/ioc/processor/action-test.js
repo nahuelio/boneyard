@@ -30,7 +30,8 @@ define(['ioc/processor/action',
 			this.boneViewMock = sinon.mock(this.fakeViewBone);
 			this.boneModelMock = sinon.mock(this.fakeModelBone);
 
-			this.view = new View(SimpleSpec.simple.$params);
+			this.model = new Backbone.Model({ value: 'initial' });
+			this.view = new View(_.extend(SimpleSpec.simple.$params, { model: this.model }));
 			this.action = new Action(SimpleSpec.$actions[0]);
 		});
 
@@ -47,6 +48,8 @@ define(['ioc/processor/action',
 			this.engineMock.restore();
 			delete this.engineMock;
 
+			delete this.model;
+			delete this.view;
 			delete this.action;
 			delete this.processor;
 		});
@@ -71,7 +74,6 @@ define(['ioc/processor/action',
 						this.action.getInjector().inject(dependencyB)
 					];
 				}, this));
-				var model = new Backbone.Model({ value: 'initial' });
 
 				this.boneViewMock
 					.expects('bone')
@@ -80,7 +82,7 @@ define(['ioc/processor/action',
 				this.boneModelMock
 					.expects('bone')
 					.once()
-					.returns(model);
+					.returns(this.model);
 
 				this.engineMock
 					.expects('bone')
@@ -97,7 +99,7 @@ define(['ioc/processor/action',
 				expect(result).to.be.a(Action);
 				expect(result.getId()).to.be.a('function');
 				expect(result.getValue()).to.be.an('array');
-				expect(result.getValue()[0].get('value')).to.be(model.get('value'));
+				expect(result.getValue()[0].get('value')).to.be(this.model.get('value'));
 
 				this.engineMock.verify();
 				this.boneViewMock.verify();
@@ -109,6 +111,19 @@ define(['ioc/processor/action',
 		});
 
 		describe('#execute()', function() {
+
+			it('Should trigger processor process over all the actions', function() {
+				var superDoneStub = sinon.stub(ActionProcessor.__super__, 'done')
+					.withArgs(ActionProcessor.NAME)
+					.returns(this.processor);
+				var processStub = sinon.stub(this.processor, 'process').returns([]);
+
+				var result = this.processor.execute();
+				expect(result).to.be.a(ActionProcessor);
+
+				ActionProcessor.__super__.done.restore();
+				this.processor.process.restore();
+			});
 
 		});
 

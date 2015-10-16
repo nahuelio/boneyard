@@ -97,7 +97,7 @@ define(['ioc/engine/annotation/bone',
 		**/
 		parse: function(spec) {
 			this.bones.set(ObjectUtil.objToArr(Bone.only(spec)), { silent: true });
-			this.actions.set(Action.only(spec), { silent: true });
+			this.actions.set(Action.only(spec).$actions, { silent: true });
 			return this;
 		},
 

@@ -17,7 +17,7 @@ define(['ioc/engine/helpers/spec',
 			this.spec = null;
 			// Stubs
 			this.boneOnlyStub = sinon.stub(Bone, 'only').returns(_.pick(SimpleSpec, 'content', 'model', 'mycomponent'));
-			this.actionOnlyStub = sinon.stub(Action, 'only').returns({}, {});
+			this.actionOnlyStub = sinon.stub(Action, 'only').returns([]);
 			this.objToArrStub = sinon.stub(ObjectUtil, 'objToArr').returns([
 				SimpleSpec.content,
 				SimpleSpec.model,
@@ -42,11 +42,11 @@ define(['ioc/engine/helpers/spec',
 		});
 
 		after(function() {
-			this.boneOnlyStub.restore();
+			Bone.only.restore();
 			delete this.boneOnlyStub;
-			this.actionOnlyStub.restore();
+			Action.only.restore();
 			delete this.actionOnlyStub;
-			this.objToArrStub.restore();
+			ObjectUtil.objToArr.restore();
 			delete this.objToArrStub;
 			delete this.$specBspecs;
 			delete this.$rootSpecs;
@@ -142,7 +142,7 @@ define(['ioc/engine/helpers/spec',
 					.returns(true);
 				actionsMock.expects('set')
 					.once()
-					.withArgs(Action.only())
+					.withArgs(Action.only().$actions)
 					.returns(true)
 					.calledAfter(bonesMock);
 

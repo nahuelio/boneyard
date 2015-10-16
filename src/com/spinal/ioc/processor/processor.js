@@ -64,13 +64,13 @@ define(['ioc/engine/engine',
 		*	Iterates over list of bone annotations and excecutes the predicate function on each one
 		*	@public
 		*	@method execute
-		*	@param bones {Array} list of bone annotations
+		*	@param elements {Array} list of annotations
 		*	@param predicate {Function} predicate function that process each bone annotation
 		*	@return Array
 		**/
-		execute: function(bones, predicate) {
-			if(!predicate || !_.isFunction(predicate)) return bones;
-			return _.map(bones, function(bone) { return predicate.call(this, bone); }, this);
+		execute: function(elements, predicate) {
+			if(!predicate || !_.isFunction(predicate)) return elements;
+			return _.map(elements, function(element) { return predicate.call(this, element); }, this);
 		},
 
 		/**
