@@ -23,6 +23,8 @@ define(['specs/main.spec'], function(MainSpec) {
 		o: { prop: '$bone!s' },
 		holder: { subcontent: '$bone!subcontent' },
 
+		model: new Backbone.Model({ value: "initial" }),
+
 		simple: {
 			$module: 'ui/view',
 			$params: { id: 'simple' }
