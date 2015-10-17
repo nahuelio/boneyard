@@ -4,7 +4,7 @@
 **/
 define(['ioc/engine/annotation/action',
 	'ioc/engine/helpers/dependency',
-	'specs/simple.spec'], function(Action, Dependency, SimpleSpec) {
+	'specs/ioc.spec'], function(Action, Dependency, IocSpec) {
 
 	describe('com.spinal.ioc.engine.annotation.Action', function() {
 
@@ -32,7 +32,7 @@ define(['ioc/engine/annotation/action',
 		describe('#new()', function() {
 
 			it('Should return an instance of Action Annotation', function() {
-				this.actionSimple = new Action(SimpleSpec.$actions[0]);
+				this.actionSimple = new Action(IocSpec.$actions[0]);
 				expect(this.actionSimple).to.be.ok();
 			});
 
@@ -60,7 +60,7 @@ define(['ioc/engine/annotation/action',
 				var getIdStub = sinon.stub(Action.prototype, 'getId').returns('$bone!simple.listenTo');
 				var getInjectorStub = sinon.stub(Action.prototype, 'getInjector').returns(this.injector);
 
-				this.actionSimple = new Action(SimpleSpec.$actions[0]);
+				this.actionSimple = new Action(IocSpec.$actions[0]);
 
 				var getCompoundStub = sinon.stub(this.actionSimple.getTarget(), 'getCompound')
 					.returns({ id: 'simple', method: 'listenTo' });
@@ -174,7 +174,7 @@ define(['ioc/engine/annotation/action',
 		describe('static#only()', function() {
 
 			it('Should retrieves $actions annotations', function() {
-				var result = Action.only(SimpleSpec);
+				var result = Action.only(IocSpec);
 				expect(result).to.be.ok();
 				expect(result.$id).to.be(undefined);
 				expect(result.$specs).to.be(undefined);

@@ -5,8 +5,7 @@
 define(['ioc/context',
 	'ui/view',
 	'ui/container',
-	'specs/simple.spec',
-	'specs/advanced.spec'], function(Context, View, Container, SimpleSpec, AdvancedSpec) {
+	'specs/ioc.spec'], function(Context, View, Container, IocSpec, AdvancedSpec) {
 
 	describe('IoC Master Pass', function() {
 
@@ -18,9 +17,9 @@ define(['ioc/context',
 			delete this.context;
 		});
 
-		describe('Simple Spec', function() {
+		describe('IoC Spec', function() {
 
-			it('Should Wire Simple Spec', function(done) {
+			it('Should Wire IoC Spec', function(done) {
 				this.context = new Context();
 				this.context.on(Context.EVENTS.complete, _.bind(function(type, spec) {
 					// Non-module test case
@@ -47,18 +46,14 @@ define(['ioc/context',
 
 					model.set('prop', 'Hello IoC!');
 				}, this));
-				this.context.wire(SimpleSpec);
+				this.context.wire(IocSpec);
 			});
 
 		});
 
-		describe('Advanced Spec', function() {
-
-			it('Should Wire Advanced Spec');
-
-		});
-
 		describe('Plugin Spec', function() {
+
+			it('Should wire and setup plugins from Spec');
 
 		});
 

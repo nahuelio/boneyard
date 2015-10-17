@@ -5,8 +5,8 @@
 define(['ioc/engine/helpers/spec',
 	'ioc/engine/annotation/bone',
 	'ioc/engine/annotation/action',
-	'specs/simple.spec',
-	'util/object'], function(Spec, Bone, Action, SimpleSpec, ObjectUtil) {
+	'specs/ioc.spec',
+	'util/object'], function(Spec, Bone, Action, IocSpec, ObjectUtil) {
 
 	describe('com.spinal.ioc.engine.helpers.Spec', function() {
 
@@ -16,12 +16,12 @@ define(['ioc/engine/helpers/spec',
 			this.simple = { $id: 'rootSpec', $specs: this.$rootSpecs };
 			this.spec = null;
 			// Stubs
-			this.boneOnlyStub = sinon.stub(Bone, 'only').returns(_.pick(SimpleSpec, 'content', 'model', 'mycomponent'));
+			this.boneOnlyStub = sinon.stub(Bone, 'only').returns(_.pick(IocSpec, 'content', 'model', 'mycomponent'));
 			this.actionOnlyStub = sinon.stub(Action, 'only').returns([]);
 			this.objToArrStub = sinon.stub(ObjectUtil, 'objToArr').returns([
-				SimpleSpec.content,
-				SimpleSpec.model,
-				SimpleSpec.mycomponent
+				IocSpec.content,
+				IocSpec.model,
+				IocSpec.mycomponent
 			]);
 		});
 
@@ -146,7 +146,7 @@ define(['ioc/engine/helpers/spec',
 					.returns(true)
 					.calledAfter(bonesMock);
 
-				var result = this.spec.parse(SimpleSpec);
+				var result = this.spec.parse(IocSpec);
 
 				bonesMock.verify();
 				actionsMock.verify();
@@ -299,7 +299,7 @@ define(['ioc/engine/helpers/spec',
 		describe('static#only()', function() {
 
 			it('Should retrieve an object only spec properties ($id and $specs) from spec', function() {
-				var result = Spec.only(SimpleSpec);
+				var result = Spec.only(IocSpec);
 				expect(result).to.be.ok();
 				expect(result).not.be.empty();
 				expect(_.keys(result)).to.have.length(2);

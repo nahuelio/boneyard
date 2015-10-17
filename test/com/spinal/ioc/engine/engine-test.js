@@ -7,8 +7,8 @@ define(['ioc/engine/engine',
 	'ioc/engine/helpers/spec',
 	'ioc/engine/annotation/plugin',
 	'util/factories/async-factory',
-	'specs/simple.spec',
-	'specs/plugin.spec'], function(Engine, ActionProcessor, Spec, Plugin, AsyncFactory, SimpleSpec, PluginSpec) {
+	'specs/ioc.spec',
+	'specs/plugin.spec'], function(Engine, ActionProcessor, Spec, Plugin, AsyncFactory, IocSpec, PluginSpec) {
 
 	describe('com.spinal.ioc.engine.Engine', function() {
 
@@ -95,7 +95,7 @@ define(['ioc/engine/engine',
 					.yields(callback)
 					.returns(this.factory);
 
-				var result = this.engine.setup(function() {}, SimpleSpec, callback, ctx);
+				var result = this.engine.setup(function() {}, IocSpec, callback, ctx);
 				expect(result).to.be.an(Engine);
 
 				this.processorsMock.verify();
@@ -114,13 +114,13 @@ define(['ioc/engine/engine',
 					.once()
 					.returns(false);
 
-				var result = this.engine.setup(method, SimpleSpec, callback, ctx);
+				var result = this.engine.setup(method, IocSpec, callback, ctx);
 				expect(result).to.be.an(Engine);
 
 				this.processorsMock.verify();
 
 				expect(method.calledOnce);
-				expect(method.calledWith(SimpleSpec, callback, ctx));
+				expect(method.calledWith(IocSpec, callback, ctx));
 			});
 
 		});
@@ -129,7 +129,7 @@ define(['ioc/engine/engine',
 
 			it('Should trigger engine method call after engine initialization is complete (spec defined)', function() {
 				var method = sinon.spy(), callback = sinon.spy(), ctx = {};
-				method.withArgs(SimpleSpec, callback, ctx);
+				method.withArgs(IocSpec, callback, ctx);
 
 				this.processorsMock.expects('set').once();
 
@@ -138,7 +138,7 @@ define(['ioc/engine/engine',
 					expect(engine).to.be.an(Engine);
 				}, this));
 
-				var result = this.engine.ready(method, SimpleSpec, callback, ctx);
+				var result = this.engine.ready(method, IocSpec, callback, ctx);
 				expect(result).to.be.an(Engine);
 
 				this.processorsMock.verify();
@@ -235,7 +235,7 @@ define(['ioc/engine/engine',
 
 			it('Should wire a new spec with callback', function() {
 				var callback = sinon.spy(), ctx = {};
-				var addSpecStub = sinon.stub(this.engine, 'addSpec').returns(SimpleSpec);
+				var addSpecStub = sinon.stub(this.engine, 'addSpec').returns(IocSpec);
 
 				this.processorsMock
 					.expects('hasNext')
@@ -250,7 +250,7 @@ define(['ioc/engine/engine',
 					expect(specs.size()).to.be(0);
 				});
 
-				var result = this.engine.wire(SimpleSpec, callback, ctx);
+				var result = this.engine.wire(IocSpec, callback, ctx);
 				expect(result).to.be.an(Engine);
 
 				this.processorsMock.verify();
@@ -263,7 +263,7 @@ define(['ioc/engine/engine',
 
 			it('Should wire a new spec without callback', function() {
 				var callback = sinon.spy(), ctx = {};
-				var addSpecStub = sinon.stub(this.engine, 'addSpec').returns(SimpleSpec);
+				var addSpecStub = sinon.stub(this.engine, 'addSpec').returns(IocSpec);
 
 				this.processorsMock
 					.expects('hasNext')
@@ -278,7 +278,7 @@ define(['ioc/engine/engine',
 					expect(specs.size()).to.be(0);
 				});
 
-				var result = this.engine.wire(SimpleSpec, undefined, ctx);
+				var result = this.engine.wire(IocSpec, undefined, ctx);
 				expect(result).to.be.an(Engine);
 
 				this.processorsMock.verify();
@@ -294,13 +294,13 @@ define(['ioc/engine/engine',
 		describe('#unwire()', function() {
 
 			it('Should unwire an existing spec with callback', function() {
-				var removeSpecStub = sinon.stub(this.engine, 'removeSpec').returns(SimpleSpec);
+				var removeSpecStub = sinon.stub(this.engine, 'removeSpec').returns(IocSpec);
 
 				this.engine.on(Engine.EVENTS.unwire, function(spec) {
 					expect(spec).to.be.ok();
 				});
 
-				var result = this.engine.unwire(SimpleSpec);
+				var result = this.engine.unwire(IocSpec);
 				expect(result).to.be.an(Engine);
 
 				removeSpecStub.restore();
@@ -392,18 +392,18 @@ define(['ioc/engine/engine',
 		describe('#addSpec()', function() {
 
 			it('Should Add a new spec into engine\'s spec collection', function() {
-				var result = this.engine.addSpec(SimpleSpec);
+				var result = this.engine.addSpec(IocSpec);
 				expect(result).to.be.ok();
 				expect(result).to.be.an('array');
 				expect(result).to.have.length(4);
 				expect(result[0].getId()).to.be.ok();
-				expect(result[0].getId()).to.be(SimpleSpec.$id);
+				expect(result[0].getId()).to.be(IocSpec.$id);
 
 				expect(this.engine.allSpecs()).to.have.length(4);
 			});
 
 			it('Should NOT add a new spec (spec already exists)', function() {
-				var result = this.engine.addSpec(SimpleSpec);
+				var result = this.engine.addSpec(IocSpec);
 				expect(result).to.be.ok();
 				expect(result).to.be.an('array');
 				expect(result).to.have.length(0);
@@ -416,18 +416,18 @@ define(['ioc/engine/engine',
 		describe('#removeSpec()', function() {
 
 			it('Should Remove an existing spec from engine\'s spec collection', function() {
-				var result = this.engine.removeSpec(SimpleSpec);
+				var result = this.engine.removeSpec(IocSpec);
 				expect(result).to.be.ok();
 				expect(result).to.be.an('array');
 				expect(result).to.have.length(4);
 				expect(result[0].getId()).to.be.ok();
-				expect(result[0].getId()).to.be(SimpleSpec.$id);
+				expect(result[0].getId()).to.be(IocSpec.$id);
 
 				expect(this.engine.allSpecs()).to.be.empty();
 			});
 
 			it('Should NOT remove an existing spec (spec doesn\'t exists)', function() {
-				var result = this.engine.removeSpec(SimpleSpec);
+				var result = this.engine.removeSpec(IocSpec);
 				expect(result).to.be.ok();
 				expect(result).to.be.an('array');
 				expect(result).to.have.length(0);
@@ -440,7 +440,7 @@ define(['ioc/engine/engine',
 		describe('#spec()', function() {
 
 			it('Should return a spec instance by id', function() {
-				this.engine.addSpec(SimpleSpec);
+				this.engine.addSpec(IocSpec);
 				var result = this.engine.spec('footer');
 				expect(result).to.be.ok();
 				expect(result).to.be.an('object');

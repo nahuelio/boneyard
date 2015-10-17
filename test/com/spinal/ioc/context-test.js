@@ -165,7 +165,7 @@ define(['ioc/context',
 					return this.context;
 				}, this));
 
-				$('head').append('<script data-spec="specs/simple.spec"></script>');
+				$('head').append('<script data-spec="specs/ioc.spec"></script>');
 
 				var result = Context.LazyLoad(callback);
 				expect(result).to.be(Context);

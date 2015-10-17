@@ -9,8 +9,8 @@ define(['ioc/processor/create',
 	'ioc/engine/helpers/tsort',
 	'util/factories/async-factory',
 	'util/adt/collection',
-	'specs/simple.spec'], function(CreateProcessor, Engine, Bone, Dependency,
-		TSort, AsyncFactory, Collection, SimpleSpec) {
+	'specs/ioc.spec'], function(CreateProcessor, Engine, Bone, Dependency,
+		TSort, AsyncFactory, Collection, IocSpec) {
 
 	describe('com.spinal.ioc.processor.CreateProcessor', function() {
 
@@ -19,11 +19,11 @@ define(['ioc/processor/create',
 			this.engine = new Engine();
 			this.factory = new AsyncFactory();
 			this.bones = [
-				new Bone(_.pick(SimpleSpec, 'holder')),
-				new Bone(_.pick(SimpleSpec, 'simple')),
-				new Bone(_.pick(SimpleSpec, 'content')),
-				new Bone(_.pick(SimpleSpec, 'subcontent')),
-				new Bone(_.pick(SimpleSpec, 'advanced'))
+				new Bone(_.pick(IocSpec, 'holder')),
+				new Bone(_.pick(IocSpec, 'simple')),
+				new Bone(_.pick(IocSpec, 'content')),
+				new Bone(_.pick(IocSpec, 'subcontent')),
+				new Bone(_.pick(IocSpec, 'advanced'))
 			];
 		});
 

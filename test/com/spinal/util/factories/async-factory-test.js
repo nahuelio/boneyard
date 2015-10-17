@@ -35,12 +35,12 @@ define(['util/factories/async-factory',
 		describe('#push()', function() {
 
 			it('Should push a new resource into the factory resource collection', function() {
-				this.asyncFactory.push({ path: 'specs/simple.spec' });
-				this.asyncFactory.push({ path: 'specs/advanced.spec' });
+				this.asyncFactory.push({ path: 'specs/ioc.spec' });
+				this.asyncFactory.push({ path: 'specs/plugin.spec' });
 				expect(this.asyncFactory.resources.size()).to.be.equal(2);
 				// Trying to get a factory that it wasn't loaded (and registered) yet,
 				// just present in the resource collection.
-				expect(this.asyncFactory.getFactory('specs/simple.spec')).not.to.be.ok();
+				expect(this.asyncFactory.getFactory('specs/ioc.spec')).not.to.be.ok();
 			});
 
 			it('Should NOT push a new resource into the factory resource collection (resource obj with no path specified)', function() {
@@ -55,8 +55,8 @@ define(['util/factories/async-factory',
 
 			it('Should feed the factory resource collection with a list of resources', function() {
 				this.asyncFactory.set([
-					{ path: 'specs/simple.spec' },
-					{ path: 'specs/advanced.spec' }
+					{ path: 'specs/ioc.spec' },
+					{ path: 'specs/plugin.spec' }
 				]);
 				expect(this.asyncFactory.resources.size()).to.be.equal(2);
 			});
@@ -66,10 +66,10 @@ define(['util/factories/async-factory',
 		describe('#findByPath', function() {
 
 			it('Should retrieve an existing resource by path', function() {
-				var resource = this.asyncFactory.findByPath('specs/simple.spec');
+				var resource = this.asyncFactory.findByPath('specs/ioc.spec');
 				expect(resource).to.be.ok();
 				expect(resource.path).to.be.ok();
-				expect(resource.path).to.be.equal('specs/simple.spec');
+				expect(resource.path).to.be.equal('specs/ioc.spec');
 			});
 
 			it('Should NOT retrieve a resource by id (not found)', function() {
@@ -82,7 +82,7 @@ define(['util/factories/async-factory',
 		describe('#findPosBy', function() {
 
 			it('Should retrieve the position (0-based) of an existing resource inside the factory resource collection', function() {
-				var resourcePos = this.asyncFactory.findPosBy(function(resource) { return (resource.path === 'specs/advanced.spec') });
+				var resourcePos = this.asyncFactory.findPosBy(function(resource) { return (resource.path === 'specs/plugin.spec') });
 				expect(resourcePos).to.be.equal(1);
 			});
 
@@ -96,7 +96,7 @@ define(['util/factories/async-factory',
 		describe('#exists', function() {
 
 			it('Should return true on a resource that exists in the stack', function() {
-				var resourceExists = this.asyncFactory.exists('specs/simple.spec');
+				var resourceExists = this.asyncFactory.exists('specs/ioc.spec');
 				expect(resourceExists).to.be.a('boolean');
 				expect(resourceExists).to.be(true);
 			});
@@ -192,7 +192,7 @@ define(['util/factories/async-factory',
 
 			it('Should load resources but no callback specified and no events (silent "on")', function() {
 				this.asyncFactory.resources.reset();
-				this.asyncFactory.push({ path: 'specs/simple.spec' });
+				this.asyncFactory.push({ path: 'specs/ioc.spec' });
 				this.asyncFactory.load(null, { silent: true });
 			});
 

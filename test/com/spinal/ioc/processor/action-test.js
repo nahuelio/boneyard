@@ -7,7 +7,7 @@ define(['ioc/processor/action',
 	'ioc/engine/annotation/bone',
 	'ioc/engine/annotation/action',
 	'ui/view',
-	'specs/simple.spec'], function(ActionProcessor, Context, Bone, Action, View, SimpleSpec) {
+	'specs/ioc.spec'], function(ActionProcessor, Context, Bone, Action, View, IocSpec) {
 
 	describe('com.spinal.ioc.processor.ActionProcessor', function() {
 
@@ -31,8 +31,8 @@ define(['ioc/processor/action',
 			this.boneModelMock = sinon.mock(this.fakeModelBone);
 
 			this.model = new Backbone.Model({ value: 'initial' });
-			this.view = new View(_.extend(SimpleSpec.simple.$params, { model: this.model }));
-			this.action = new Action(SimpleSpec.$actions[0]);
+			this.view = new View(_.extend(IocSpec.simple.$params, { model: this.model }));
+			this.action = new Action(IocSpec.$actions[0]);
 		});
 
 		after(function() {
