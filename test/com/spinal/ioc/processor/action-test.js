@@ -66,34 +66,26 @@ define(['ioc/processor/action',
 		describe('#process()', function() {
 
 			it('Should process a given action', function() {
-				var invokeStub = sinon.stub(this.action.getInjector().getDependencies(), 'invoke', _.bind(function() {
-					var dependencyA = this.action.getDependencies().get(0);
-					var dependencyB = this.action.getDependencies().get(1);
-					return [
-						this.action.getInjector().inject(dependencyA),
-						this.action.getInjector().inject(dependencyB)
-					];
-				}, this));
+				var injectStub = sinon.stub(this.action.getInjector(), 'inject').returns({});
+				var resolveStub = sinon.stub(this.action.getInjector(), 'resolve').returns({});
+				var getValueStub = sinon.stub(this.action, 'getValue').returns([
+					this.model, 'change:prop', this.view
+				]);
+				var getIdStub = sinon.stub(this.action, 'getId').returns(this.model.listenTo);
+
+				var getCompoundStub = sinon.stub(this.action.getTarget(), 'getCompound')
+					.returns({ id: 'simple', method: 'listenTo' });
 
 				this.boneViewMock
 					.expects('bone')
-					.twice()
-					.returns(this.view);
-				this.boneModelMock
-					.expects('bone')
 					.once()
-					.returns(this.model);
+					.returns(this.view);
 
 				this.engineMock
 					.expects('bone')
-					.withExactArgs('simple')
-					.twice()
-					.returns(this.fakeViewBone);
-				this.engineMock
-					.expects('bone')
-					.withExactArgs('model')
 					.once()
-					.returns(this.fakeModelBone);
+					.withArgs('simple')
+					.returns(this.fakeViewBone);
 
 				var result = this.processor.process(this.action);
 				expect(result).to.be.a(Action);
@@ -103,9 +95,12 @@ define(['ioc/processor/action',
 
 				this.engineMock.verify();
 				this.boneViewMock.verify();
-				this.boneModelMock.verify();
 
-				this.action.getInjector().getDependencies().invoke.restore();
+				this.action.getInjector().inject.restore();
+				this.action.getInjector().resolve.restore();
+				this.action.getValue.restore();
+				this.action.getId.restore();
+				this.action.getTarget().getCompound.restore();
 			});
 
 		});

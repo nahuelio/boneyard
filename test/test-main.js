@@ -45,6 +45,8 @@ require.config({
     // we have to kickoff jasmine, as it is asynchronous
     callback: function() {
         require.onError = function(err) { console.log(err) };
+        // Add an initial div element
+        $('body').append('<div class="global"></div>');
         window.__karma__.start();
     }
 });

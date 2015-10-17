@@ -16,6 +16,22 @@ define(['ioc/engine/annotation/annotation',
 	var Action = Spinal.namespace('com.spinal.ioc.engine.annotation.Action', Annotation.inherit({
 
 		/**
+		*	Action's Target
+		*	@private
+		*	@property _target
+		*	@type com.spinal.ioc.engine.helpers.Dependency
+		**/
+		_target: null,
+
+		/**
+		*	Action's Context
+		*	@private
+		*	@property _context
+		*	@type Object
+		**/
+		_context: null,
+
+		/**
 		*	Initialize
 		*	@public
 		*	@method initialize
@@ -23,7 +39,9 @@ define(['ioc/engine/annotation/annotation',
 		*	@return com.spinal.ioc.engine.annotation.Action
 		**/
 		initialize: function(attrs) {
-			return Action.__super__.initialize.apply(this, arguments);
+			Action.__super__.initialize.apply(this, arguments);
+			this._target = new Dependency({ expression: this.getId(), target: this, property: '_id', bone: this });
+			return this;
 		},
 
 		/**
@@ -33,7 +51,17 @@ define(['ioc/engine/annotation/annotation',
 		*	@return Object
 		**/
 		getTarget: function() {
-			return this.target;
+			return this._target;
+		},
+
+		/**
+		*	Retrieves Action's target Context
+		*	@public
+		*	@method getContext
+		*	@return Object
+		**/
+		getContext: function() {
+			return this._context;
 		},
 
 		/**
@@ -43,9 +71,8 @@ define(['ioc/engine/annotation/annotation',
 		*	@return com.spinal.ioc.engine.annotation.Action
 		**/
 		resolve: function() {
-			var target = new Dependency({ expression: this.getId(), target: this, property: '_id', bone: this });
-			this.target = this.getInjector().inject(target);
-			delete target;
+			this._context = this.getEngine().bone(this.getTarget().getCompound().id).bone();
+			this.getInjector().inject(this.getTarget());
 			return this;
 		},
 
@@ -67,7 +94,8 @@ define(['ioc/engine/annotation/annotation',
 		*	@return com.spinal.ioc.engine.annotation.Action
 		**/
 		execute: function() {
-			return _.defined(this.getTarget()) ? this.getId().apply(this, this.parameters()) : this;
+			if(this.getContext()) this.getId().apply(this.getContext(), this.parameters());
+			return this;
 		}
 
 	}, {

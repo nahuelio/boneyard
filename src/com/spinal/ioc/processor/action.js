@@ -26,6 +26,19 @@ define(['ioc/processor/processor'], function(Processor) {
 		},
 
 		/**
+		*	Default Sort strategy for execution of actions
+		*	@public
+		*	@method sort
+		*	@param actionA {com.spinal.ioc.engine.annotation.Action} action A reference
+		*	@param actionB {com.spinal.ioc.engine.annotation.Action} action B reference
+		*	@return Number
+		**/
+		sort: function(actionA, actionB) {
+			if(actionA.getId().indexOf('listenTo') !== -1 || actionB.getId().indexOf('listenTo') !== -1) return -1;
+			return 0;
+		},
+
+		/**
 		*	Defaul Process strategy that operates on each action.
 		*	@public
 		*	@method process
@@ -45,7 +58,8 @@ define(['ioc/processor/processor'], function(Processor) {
 		*	@return Array
 		**/
 		execute: function() {
-			ActionProcessor.__super__.execute.call(this, this.getEngine().allActions(), this.process);
+			var actions = this.getEngine().allActions().sort(this.sort);
+			ActionProcessor.__super__.execute.call(this, actions, this.process);
 			return ActionProcessor.__super__.done.apply(this, [ActionProcessor.NAME]);
 		},
 

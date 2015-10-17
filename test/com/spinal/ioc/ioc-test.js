@@ -8,7 +8,7 @@ define(['ioc/context',
 	'specs/simple.spec',
 	'specs/advanced.spec'], function(Context, View, Container, SimpleSpec, AdvancedSpec) {
 
-	describe.skip('IoC Master Pass', function() {
+	describe('IoC Master Pass', function() {
 
 		before(function() {
 			this.context = null;
@@ -29,16 +29,23 @@ define(['ioc/context',
 					expect(nested[0].deep.prop).to.be(s);
 
 					// Module test cases
+					var globalView = this.context.bone('global').bone();
 					var content = this.context.bone('content').bone();
 					var holder = this.context.bone('holder').bone();
 					var simple = this.context.bone('simple').bone();
+					var model = this.context.bone('model').bone();
 
 					expect(content.get(0)).to.be.a(View);
 					expect(content.get(0).id).to.be(simple.id);
 					expect(holder.subcontent).to.be.a(View);
 					expect(holder.subcontent.id).to.be(content.get(1).id);
 
-					done();
+					simple.on(View.EVENTS.update, _.bind(function(view) {
+						expect(view.model.get('prop')).to.be('Hello IoC!');
+						done();
+					}, this));
+
+					model.set('prop', 'Hello IoC!');
 				}, this));
 				this.context.wire(SimpleSpec);
 			});

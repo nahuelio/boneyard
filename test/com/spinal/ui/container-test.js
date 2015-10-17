@@ -207,9 +207,9 @@ define(['core/spinal',
 
 			it('Should render the views inside the container', function() {
 				this.testContainer = new Container({ id: 'render-container', interface: View });
-				this.testContainer.off().on(Container.EVENTS.render, _.bind(function(ev) {
-					expect(ev).to.be.ok();
-					expect(ev.view).to.be.ok();
+				this.testContainer.off().on(Container.EVENTS.render, _.bind(function(container) {
+					expect(container).to.be.ok();
+					expect(container).to.be.a(Container);
 				}, this));
 				var viewA = this.testContainer.add(this.viewA),
 					viewB = this.testContainer.add(this.viewB);
@@ -251,9 +251,9 @@ define(['core/spinal',
 				this.testContainer = new Container({ id: 'main', interface: View });
 				var viewA = this.testContainer.add(this.viewA),
 					viewB = this.testContainer.add(this.viewB);
-				this.cglobal.on(Container.EVENTS.update, function(ev) {
-					expect(ev).to.be.ok();
-					expect(ev.view).to.be.ok();
+				this.cglobal.on(Container.EVENTS.update, function(container) {
+					expect(container).to.be.ok();
+					expect(container).to.be.a(Container);
 				});
 				this.cglobal.add(this.testContainer);
 				this.cglobal.render();

@@ -113,10 +113,10 @@ define(['core/spinal',
 			it('Should render a View instance', function() {
 				this.testView = { id: 'render-test' };
 				var view = this.cglobal.add(this.testView);
-				view.off().on(View.EVENTS.render, function(ev) {
-					expect(ev).to.be.ok();
-					expect(ev.view).to.be.ok();
-					expect(ev.view.$el.attr('class')).to.be.equal('ui-view');
+				view.off().on(View.EVENTS.render, function(view) {
+					expect(view).to.be.ok();
+					expect(view).to.be.a(View);
+					expect(view.$el.attr('class')).to.be.equal('ui-view');
 				});
 				var result = view.render();
 				expect(result).to.be.ok();
@@ -230,9 +230,9 @@ define(['core/spinal',
 			it('Should update the View and return the instance', function() {
 				this.testView = { id: 'test-update'};
 				var view = this.cglobal.add(this.testView);
-				view.off().on(View.EVENTS.update, function(ev) {
-					expect(ev).to.be.ok();
-					expect(ev.view).to.be.ok();
+				view.off().on(View.EVENTS.update, function(view) {
+					expect(view).to.be.ok();
+					expect(view).to.be.a(View);
 				});
 				var result = view.update();
 				expect(result).to.be.a(View);

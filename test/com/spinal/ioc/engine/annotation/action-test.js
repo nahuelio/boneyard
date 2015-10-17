@@ -17,8 +17,6 @@ define(['ioc/engine/annotation/action',
 				resolve: function() {}
 			};
 			this.injectorMock = sinon.mock(this.injector);
-
-			this.dependencyPrototypeMock = sinon.mock(Dependency.prototype);
 		});
 
 		after(function() {
@@ -27,9 +25,6 @@ define(['ioc/engine/annotation/action',
 			this.injectorMock.restore();
 			delete this.injectorMock;
 			delete this.injector;
-
-			this.dependencyPrototypeMock.restore();
-			delete this.dependencyPrototypeMock;
 
 			delete this.actionSimple;
 		});
@@ -46,8 +41,15 @@ define(['ioc/engine/annotation/action',
 		describe('#getTarget()', function() {
 
 			it('Should retrieve Action target', function() {
-				this.actionSimple.target = {};
 				expect(this.actionSimple.getTarget()).to.be.ok();
+			});
+
+		});
+
+		describe('#getContext()', function() {
+
+			it('Should retrieve Action context', function() {
+				expect(this.actionSimple.getContext()).not.to.be.ok();
 			});
 
 		});
@@ -55,42 +57,49 @@ define(['ioc/engine/annotation/action',
 		describe('#resolve()', function() {
 
 			it('Should resolve action target bone method\'s reference to the operation', function() {
-				var getIdStub = sinon.stub(this.actionSimple, 'getId').returns('$bone!model.set');
-				var getInjectorStub = sinon.stub(this.actionSimple, 'getInjector').returns(this.injector);
+				var getIdStub = sinon.stub(Action.prototype, 'getId').returns('$bone!simple.listenTo');
+				var getInjectorStub = sinon.stub(Action.prototype, 'getInjector').returns(this.injector);
 
-				var dependency = {
-					expression: '$bone!simple.listenTo',
-					target: this.actionSimple,
-					property: '_id',
-					bone: this.actionSimple
-				};
-				var dependencyMock = sinon.mock(dependency);
+				this.actionSimple = new Action(SimpleSpec.$actions[0]);
 
-				this.dependencyPrototypeMock
-					.expects('constructor')
+				var getCompoundStub = sinon.stub(this.actionSimple.getTarget(), 'getCompound')
+					.returns({ id: 'simple', method: 'listenTo' });
+				var engineMock = sinon.mock(this.actionSimple.getEngine());
+				var fakeBone = { bone: function() {} };
+				var boneMock = sinon.mock(fakeBone);
+
+				boneMock
+					.expects('bone')
 					.once()
-					.withArgs(dependency)
-					.returns(dependency);
+					.returns(fakeBone);
+				engineMock
+					.expects('bone')
+					.once()
+					.withArgs('simple')
+					.returns(fakeBone);
 				this.injectorMock
 					.expects('inject')
 					.once()
-					.returns(dependency);
+					.withArgs(this.actionSimple.getTarget());
 
 				var result = this.actionSimple.resolve();
 				expect(result).to.be.ok();
-				expect(result.getTarget().expression).to.be(dependency.expression);
+				expect(result.getTarget().expression).to.be(this.actionSimple.getTarget().getExpression());
 
-				this.dependencyPrototypeMock.verify();
+				boneMock.verify();
+				engineMock.verify();
 				this.injectorMock.verify();
 
-				dependencyMock.restore();
-				this.actionSimple.getId.restore();
-				this.actionSimple.getInjector.restore();
+				boneMock.restore();
+				engineMock.restore();
+				Action.prototype.getId.restore();
+				Action.prototype.getInjector.restore();
+				this.actionSimple.getTarget().getCompound.restore();
 			});
 
 		});
 
-		describe.skip('#parameters()', function() {
+		describe('#parameters()', function() {
 
 			it('Should resolve all dependencies on Action\'s parameters', function() {
 				var dependencyA = {
@@ -140,23 +149,24 @@ define(['ioc/engine/annotation/action',
 		describe('#execute', function() {
 
 			it('Should execute the operation on a target that it has been resolve', function() {
-				var getTargetStub = sinon.stub(this.actionSimple, 'getTarget').returns(true);
+				var getContextStub = sinon.stub(this.actionSimple, 'getContext').returns({});
 				var getIdStub = sinon.stub(this.actionSimple, 'getId').returns(this.actionSpy)
 				var parametersStub = sinon.stub(this.actionSimple, 'parameters').returns(['value'])
 
 				this.actionSimple.execute();
 				expect(this.actionSpy.calledOnce);
 
-				this.actionSimple.getTarget.restore();
 				this.actionSimple.getId.restore();
+				this.actionSimple.getContext.restore();
+				this.actionSimple.parameters.restore();
 			});
 
 			it('Should NOT execute the operation on a target that it has not been resolve yet', function() {
-				var getTargetStub = sinon.stub(this.actionSimple, 'getTarget').returns(null);
+				var getContextStub = sinon.stub(this.actionSimple, 'getContext').returns(null);
 
 				this.actionSimple.execute();
 
-				this.actionSimple.getTarget.restore();
+				this.actionSimple.getContext.restore();
 			});
 
 		});

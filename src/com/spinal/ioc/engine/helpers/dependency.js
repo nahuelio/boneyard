@@ -74,7 +74,9 @@ define(['util/exception/ioc/dependency',
 		*	@return Boolean
 		**/
 		canResolve: function() {
-			var bone = this.getEngine().bone(this.getId());
+			var m = this.getCompound();
+			if(_.isObject(m)) return true;
+			var bone = this.getEngine().bone(m);
 			return (_.defined(bone) && (!bone.isModule() || bone.isCreated()));
 		},
 
