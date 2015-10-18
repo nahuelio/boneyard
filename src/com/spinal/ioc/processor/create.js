@@ -52,10 +52,9 @@ define(['ioc/processor/processor',
 		*	@public
 		*	@method onLoad
 		*	@param bone {com.spinal.ioc.engine.annotation.Bone} bone annotation reference
-		*	@param path {String} bone's resource path reference
 		*	@return com.spinal.ioc.processor.CreateProcessor
 		**/
-		onLoad: function(bone, path) {
+		onLoad: function(bone) {
 			bone.getInjector().resolve();
 			return this;
 		},
@@ -122,9 +121,9 @@ define(['ioc/processor/processor',
 		**/
 		resolve: function() {
 			this.tsort().forEach(_.bind(function(id) {
-				var injector = this.getEngine().bone(id).getInjector()
+				var bone = this.getEngine().bone(id), injector = bone.getInjector();
 				injector.resolve(this.getFactory());
-				injector.create();
+				injector.create(bone.getPath(), bone.getParams());
 			}, this));
 			return this;
 		},

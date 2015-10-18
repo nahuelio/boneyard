@@ -159,14 +159,14 @@ define(['ioc/engine/annotation/annotation',
 
 		});
 
-		describe('#create()', function() {
+		describe('#createDependency()', function() {
 
 			it('Should return a dependency object structure', function() {
 				this.retrieveStub = sinon.stub(Annotation.prototype, 'retrieve').returns(this.dependenciesFeed);
 				var annotation = new Annotation(this.boneBone);
 				this.isAnnotationStub = sinon.stub(Annotation, 'isExpressionValid').returns(true);
 
-				var result = annotation.create('$bone!boneStr', 'boneBone', this.boneBone);
+				var result = annotation.createDependency('$bone!boneStr', 'boneBone', this.boneBone);
 				expect(result).to.be.ok();
 				expect(result).to.be.an('object');
 
@@ -179,7 +179,7 @@ define(['ioc/engine/annotation/annotation',
 				var annotation = new Annotation(this.boneObjBone);
 				this.isAnnotationStub = sinon.stub(Annotation, 'isExpressionValid').returns(false);
 
-				expect(annotation.create('boneStr', 'property', this.boneBone)).not.be.ok();
+				expect(annotation.createDependency('boneStr', 'property', this.boneBone)).not.be.ok();
 
 				this.retrieveStub.restore();
 				this.isAnnotationStub.restore();
@@ -188,7 +188,7 @@ define(['ioc/engine/annotation/annotation',
 			it('Should return null: context is not defined', function() {
 				this.retrieveStub = sinon.stub(Annotation.prototype, 'retrieve').returns(this.dependenciesFeed);
 				var annotation = new Annotation(this.boneObjBone);
-				expect(annotation.create('boneStr', 'property', null)).not.be.ok();
+				expect(annotation.createDependency('boneStr', 'property', null)).not.be.ok();
 				this.retrieveStub.restore();
 			});
 

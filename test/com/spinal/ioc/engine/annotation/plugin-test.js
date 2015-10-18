@@ -3,64 +3,67 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['ioc/engine/annotation/plugin',
-	'ioc/engine/helpers/injector'], function(Plugin, Injector) {
+	'ioc/engine/helpers/injector',
+	'specs/plugin.spec'], function(Plugin, Injector, PluginSpec) {
 
 	describe('com.spinal.ioc.engine.annotation.Plugin', function() {
 
 		before(function() {
 			this.plugin = null;
-			this.pluginHTML = {
-				html: {
-					account: '$bone!partials-account',
-					cart: 'partials/cart'
-				}
-			};
-			this.pluginTheme = {
-				theme: {
-					config: { basePath: 'themes' },
-					bootstrap: ['bootstrap/css/bootstrap.min.css', 'bootstrap/css/bootstrap-theme.min.css'],
-					custom: 'custom/silver.css'
-				}
-			};
-			this.htmlDependencies = [{
-				expression: '$bone!partials-account',
-				target: { account: '$bone!boneObj' },
-				property: 'account',
-				bone: {}
-			}];
 		});
 
 		after(function() {
-			delete this.plugins;
 			delete this.plugin;
 		});
 
 		describe('#new()', function() {
 
 			it('Should return an instance of a Plugin', function() {
-				var retrieveStub = sinon.stub(Plugin.prototype, 'retrieve').returns(this.htmlDependencies);
 
-				this.plugin = new Plugin(this.pluginHTML);
+				this.plugin = new Plugin(_.pick(PluginSpec.$plugins, 'html'));
 				expect(this.plugin).to.be.ok();
 				expect(this.plugin.toString()).to.be('[object Plugin]');
 				expect(this.plugin.getId()).to.be('html');
 				expect(this.plugin.getValue()).to.be.an('object');
-				expect(this.plugin.getInjector()).to.be.a(Injector);
-
-				retrieveStub.restore();
+				expect(this.plugin.getValue().account).to.be.ok();
+				expect(this.plugin.getValue().cart).to.be.ok();
+				expect(this.plugin.getInjector().getDependencies().size()).to.be(2);
 			});
 
 		});
 
-		describe('#retrieve()', function() {
+		describe('#create()', function() {
 
-			it('Should retrieve array of dependency object structure', function() {
-				expect(this.plugin.getInjector().getDependencies().size()).to.be(1);
+			it('Should instanciate a given plugin', function() {
+				var createStub = sinon.stub(this.plugin.getInjector(), 'create');
+
+				var result = this.plugin.create();
+				expect(result).to.be.a(Plugin);
+
+				this.plugin.getInjector().create.restore();
 			});
 
-			it('Should return an empty array of dependency object structures', function() {
-				var noDependenciesPlugin = new Plugin({ myplugin: { config: { path: 'path/to/config' } } });
-				expect(noDependenciesPlugin.getInjector().getDependencies().size()).to.be(0);
+		});
+
+		describe('#resolve()', function() {
+
+			it('Should resolve plugin dependencies', function() {
+				// Dependency resolution simulation
+				var createStub = sinon.stub(this.plugin.getInjector(), 'resolve', _.bind(function() {
+					var account = this.plugin.getDependencies().get(0),
+						cart = this.plugin.getDependencies().get(1);
+					account.getTarget()[account.getProperty()] = PluginSpec.account_html;
+					cart.getTarget()[cart.getProperty()] = PluginSpec.cart_html;
+				}, this));
+
+				var result = this.plugin.resolve();
+				expect(result).to.be.a(Plugin);
+				expect(result.getValue().account).to.be.a('object');
+				expect(result.getValue().account.path).to.be('tpls/account');
+				expect(result.getValue().cart).to.be.a('object');
+				expect(result.getValue().cart.path).to.be('tpls/cart');
+
+				this.plugin.getInjector().resolve.restore();
 			});
 
 		});
@@ -68,20 +71,27 @@ define(['ioc/engine/annotation/plugin',
 		describe('#run()', function() {
 
 			it('Should execute plugin runner', function() {
-				this.plugin._$created = { run: function() {} };
+				var runSpy = sinon.spy();
+				this.plugin._$created = { run: runSpy };
 				var isCreatedStub = sinon.stub(this.plugin, 'isCreated').returns(true);
-				var createdMock = sinon.mock(this.plugin._$created);
-				createdMock.expects('run').once();
 
 				expect(this.plugin.run()).to.be.ok();
+				expect(runSpy.calledOnce);
 
-				createdMock.verify();
 				delete this.plugin._$created;
-				isCreatedStub.restore();
+				this.plugin.isCreated.restore();
 			});
 
 			it('Should NOT execute a plugin runner if it\'s not instanciated', function() {
 				expect(this.plugin.run()).to.be.ok();
+			});
+
+		});
+
+		describe('#isModule()', function() {
+
+			it('Should return true (Plugin is always a module)', function() {
+				expect(this.plugin.isModule()).to.be(true);
 			});
 
 		});

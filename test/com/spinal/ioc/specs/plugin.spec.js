@@ -8,32 +8,40 @@ define([], function() {
 
 		$id: 'plugin',
 
-		templates_my: { path: 'tpls/my-tpl', lazyLoading: true },
-		templates_other: { path: 'tpls/other-tpl' },
+		account_html: { path: 'tpls/account', lazyload: true },
+		cart_html: { path: 'tpls/cart' },
 
-		theme_my: { url: 'skins/my.css', _default: true },
-		theme_other: { url: 'skins/other.css' },
+		minimal: { url: 'skins/minimal.css', default: true },
+		silver: { url: 'skins/silver.css' },
 
 		container: {
 			$module: 'ui/container',
 			$params: { el: 'div.global' }
 		},
 
-		view: {
+		account: {
+			$module: 'ui/container',
+			$params: { id: 'account' }
+		},
+
+		cart: {
 			$module: 'ui/view',
-			$params: { id: 'child' }
+			$params: { id: 'cart' }
 		},
 
 		$actions: [
-			{ '$bone!container.add': ['$bone!view', { renderOnAdd: true }] }
+			{ '$bone!container.add': ['$bone!account'] },
+			{ '$bone!container.add': ['$bone!cart'] },
+			{ '$bone!container.render': [] }
 		],
 
 		$plugins: {
-			html: { my: '$bone!templates_my', other: '$bone!templates_other' },
+			html: { account: '$bone!account_html', cart: '$bone!cart_html' },
 			theme: {
-				config: { basePath: '/base/test/themes/', bootstrap: true },
-				my: '$bone!theme_my',
-				other: '$bone!theme_other'
+				config: { basePath: '/base/test/themes/' },
+				bootstrap: ['bootstrap/css/bootstrap.min.css', 'bootstrap/css/bootstrap-theme.min.css'],
+				minimal: '$bone!minimal',
+				silver: '$bone!silver'
 			}
 		}
 

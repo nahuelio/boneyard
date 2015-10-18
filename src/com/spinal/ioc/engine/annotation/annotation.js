@@ -137,13 +137,13 @@ define(['ioc/engine/helpers/injector',
 		/**
 		*	Default Dependency create strategy
 		*	@public
-		*	@method create
+		*	@method createDependency
 		*	@param expr {String} expression to be evaluated
 		*	@param key {String} context property key used to determine where to inject expression
 		*	@param context {Object} bone reference
 		*	@return Object
 		**/
-		create: function(expr, key, context) {
+		createDependency: function(expr, key, context) {
 			if(!Annotation.isExpressionValid(expr) || !this.isBone(expr) || !context) return null;
 			return { expression: expr, target: context, property: key, bone: this };
 		},
@@ -160,7 +160,7 @@ define(['ioc/engine/helpers/injector',
 			ctx = (ctx) ? ctx : this.getValue();
 			return _.compact(_.flatten(_.map(ctx, function(value, key, target) {
 				return ((ObjectUtil.isRealObject(value) || _.isArray(value)) && !ObjectUtil.isBackbone(value)) ?
-					this.retrieve(value) : this.create.apply(this, arguments);
+					this.retrieve(value) : this.createDependency.apply(this, arguments);
 			}, this)));
 		}
 

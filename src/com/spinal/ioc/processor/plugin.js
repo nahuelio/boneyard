@@ -2,18 +2,14 @@
 *	@module com.spinal.ioc.processor
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define(['ioc/context',
-		'ioc/processor/processor',
-		'ioc/engine/helpers/injector',
-		'util/exception/ioc/processor'], function(Context, Processor, Injector, ProcessorException) {
+define(['ioc/processor/processor'], function(Processor) {
 
 	/**
-	*	Defines a processor that acts as a wrapper to trigger plugins functionality
+	*	Class PluginProcessor
 	*	@namespace com.spinal.ioc.processor
 	*	@class com.spinal.ioc.processor.PluginProcessor
 	*	@extends com.spinal.ioc.processor.Processor
 	*
-	*	@requires com.spinal.ioc.Context
 	*	@requires com.spinal.ioc.processor.Processor
 	**/
 	var PluginProcessor = Spinal.namespace('com.spinal.ioc.processor.PluginProcessor', Processor.inherit({
@@ -43,56 +39,65 @@ define(['ioc/context',
 		*	@chainable
 		*	@method enqueue
 		*	@param plugin {Object} plugin metadata information
-		*	@return Object
+		*	@return com.spinal.ioc.processor.PluginProcessor
 		**/
 		enqueue: function(plugin) {
-			console.log(plugin);
-			var injector = new Injector(this, plugin), callback = _.bind(this.create, this, injector);
-			this.factory().push({ path: plugin.path, id: plugin.id, callback: callback });
-			return plugin;
+			this.getFactory().push({
+				path: (this.defaultPath + plugin.getId()),
+				callback: _.bind(this.onLoad, this, plugin)
+			});
+			return this;
 		},
 
 		/**
-		*	Function as partial that creates an instance of the module plugin by passing the parameters to
-		*	the constructor function (including params)
+		*	Default plugin load handler that creates an instance and triggers plugin execution.
 		*	@public
-		*	@method create
-		*	@throws {com.spinal.util.error.types.ProcessorException}
-		*	@param params {Object} plugin params
-		*	@param pluginName {String} plugin name to pass to the factory to create an instance
-		*	@return Object
+		*	@method onLoad
+		*	@param plugin {com.spinal.ioc.engine.annotation.Plugin} plugin annotation reference
+		*	@return com.spinal.ioc.processor.PluginProcessor
 		**/
-		create: function(injector, path) {
-			if(!injector || !path) throw new ProcessorException('CreateModuleException');
-			return this._engine.create(injector.inject());
+		onLoad: function(plugin) {
+			plugin.create().run();
+			return this;
 		},
 
 		/**
-		*	Process all plugins extracted from the root spec
+		*	Process all plugins available from the Engine
 		*	@public
+		*	@chainable
 		*	@method process
-		*	@param plugins {Object} plugins reference
-		*	@return Array
+		*	@param plugin {Object} plugins reference
+		*	@return com.spinal.ioc.processor.PluginProcessor
 		**/
-		process: function(plugins) {
-			return _.flatten(_.map(plugins, function(params, id) {
-				return this.enqueue(_.extend({ id : id }, params));
-			}, this));
+		process: function(plugin) {
+			return this.enqueue(plugin.resolve());
 		},
 
 		/**
 		*	Execute Processor
 		*	@public
+		*	@override
+		*	@chainable
 		*	@method execute
-		*	@return {com.spinal.ioc.processor.CreateProcessor}
+		*	@return com.spinal.ioc.engine.processor.PluginProcessor
 		**/
 		execute: function() {
-			var plugins = (this._engine.plugin()) ? this.process(this._engine.root[this._engine.__plugins]) : [];
-			this.factory().load(_.bind(function() {
-				delete this._engine.root[this._engine.__plugins];
-				this.complete(PluginProcessor.NAME, plugins);
-			}, this));
+			PluginProcessor.__super__.execute.call(this, this.getEngine().plugins.collection, this.process);
+			this.getFactory().load(_.bind(this.done, this, PluginProcessor.NAME));
 			return this;
+		},
+
+		/**
+		*	Default processor done handler
+		*	@public
+		*	@override
+		*	@chainable
+		*	@method done
+		*	@param type {String} Processor type
+		*	@return com.spinal.ioc.processor.PluginProcessor
+		**/
+		done: function(type) {
+			return PluginProcessor.__super__.done.call(this, type);
 		}
 
 	}, {

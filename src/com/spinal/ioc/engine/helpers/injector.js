@@ -51,14 +51,16 @@ define(['ioc/engine/helpers/dependency',
 		},
 
 		/**
-		*	Assings a module instance into the bone
+		*	Assings a module instance into the annotation
 		*	@public
 		*	@method create
+		*	@param path {String} annotation module path
+		*	@param params {Object} annotation module params
 		*	@return com.spinal.ioc.helpers.Injector
 		**/
-		create: function() {
-			var bone = this.get();
-			if(bone.isModule()) bone._$created = this.getFactory().create(bone.getPath(), bone.getParams());
+		create: function(path, params) {
+			var annotation = this.get();
+			if(annotation.isModule()) annotation._$created = this.getFactory().create(path, params);
 			return this;
 		},
 
