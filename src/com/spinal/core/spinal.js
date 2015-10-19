@@ -222,7 +222,7 @@ define(['libs/backbone'], function() {
 				_.each(members, function(m) {
 					if(!_.defined(this[m])) return;
 					t[m] = (_.isFunction(this[m])) ? _.bind(this[m], this) : this[m];
-			}, this);
+				}, this);
 				return this;
 			},
 

@@ -3,51 +3,51 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 *	@version 0.1.0
 **/
-define(['core/spinal',
-		'ioc/engine/engine',
-		'util/object'], function(Spinal, Engine, ObjectUtil) {
+define(['ioc/plugins/plugin',
+	'util/adt/collection',
+	'util/object'], function(IoCPlugin, Collection, ObjectUtil) {
 
 	/**
-	*	HTML IoC Plugin
-	*	Initial Implementation to manage templates loaded at runtime.
+	*	Class HTMLPlugin
 	*	@namespace com.spinal.ioc.plugins
 	*	@class com.spinal.ioc.plugins.HTMLPlugin
-	*	@extends com.spinal.core.Spinal.SpinalClass
+	*	@extends com.spinal.ioc.plugins.IoCPlugin
 	*
-	*	@requires com.spinal.ioc.engine.Engine
+	*	@requires com.spinal.ioc.plugins.IoCPlugin
+	*	@requires com.spinal.util.adt.Collection
 	*	@requires com.spinal.util.ObjectUtil
 	**/
-	var HTMLPlugin = Spinal.namespace('com.spinal.ioc.plugins.HTMLPlugin', Spinal.SpinalClass.inherit({
+	var HTMLPlugin = Spinal.namespace('com.spinal.ioc.plugins.HTMLPlugin', IoCPlugin.inherit({
 
 		/**
-		*	Engine reference
+		*	HTML packages Collection
 		*	@public
-		*	@property _engine
-		*	@type {com.spinal.ioc.Engine}
+		*	@property packages
+		*	@type com.spinal.util.adt.Collection
 		**/
-		_engine: null,
-
-		/**
-		*	Templates Config
-		*	@private
-		*	@property _config
-		*	@type Object
-		**/
-		_config: null,
+		packages: null,
 
 		/**
 		*	Initialize
 		*	@public
 		*	@chainable
 		*	@method initialize
-		*	@param config {Object} templates config referece
-		*	@param engine {com.spinal.ioc.Engine} engine reference
 		*	@return {com.spinal.ioc.plugins.HTMLPlugin}
 		**/
-		initialize: function(config, engine) {
-			this._engine = engine;
-			this._config = (!_.isEmpty(config)) ? config : {};
+		initialize: function() {
+			this.packages = new Collection();
 			return HTMLPlugin.__super__.initialize.apply(this, arguments);
+		},
+
+		/**
+		*	Parse Metadata Strategy handler
+		*	@public
+		*	@override
+		*	@method parse
+		*	@param attrs {Object} plugin attributes
+		**/
+		parse: function(attrs) {
+			// CONTINUE HERE... this.packages.set(, { silent: true });
 		},
 
 		/**

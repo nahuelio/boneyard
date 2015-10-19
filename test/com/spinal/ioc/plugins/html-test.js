@@ -18,6 +18,10 @@ define(['ioc/plugins/html'], function(HTMLPlugin) {
 
 		});
 
+		describe('#query', function() {
+
+		});
+
 	});
 
 });
