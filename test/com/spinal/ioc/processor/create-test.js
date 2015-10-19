@@ -314,7 +314,7 @@ define(['ioc/processor/create',
 
 		describe('#process()', function() {
 
-			it('Should enqueue a module bone', function() {
+			it('Should process a module bone', function() {
 				var enqueueStub = sinon.stub(this.create, 'enqueue')
 					.withArgs(this.bones[3])
 					.returns(this.create);

@@ -2,25 +2,53 @@
 *	com.spinal.ioc.processor.PluginProcessor Class Tests
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define(['ioc/context',
-		'ioc/processor/plugin'], function(Context, PluginProcessor) {
+define(['ioc/processor/plugin'], function(PluginProcessor) {
 
 	describe('com.spinal.ioc.processor.PluginProcessor', function() {
 
 		before(function() {
-			// TODO
+			this.processor = null;
 		});
 
 		after(function() {
-			// TODO
+			delete this.processor;
 		});
 
-		/**
-		*	PluginProcessor#new() test
-		**/
 		describe('#new()', function() {
 
-			it('Should Instanciate PluginProcessor Class', function() {
+			it('Should return an instance of PluginProcessor', function() {
+
+			});
+
+		});
+
+		describe('#enqueue', function() {
+
+			it('Should enqueue a plugin as a module inside the engine factory', function() {
+
+			});
+
+		});
+
+		describe('#process', function() {
+
+			it('Should process a plugin annotation', function() {
+
+			});
+
+		});
+
+		describe('#execute', function() {
+
+			it('Should trigger plugin processor execution', function() {
+
+			});
+
+		});
+
+		describe('#done', function() {
+
+			it('Should notify the engine that PluginProcessor complete the task', function() {
 
 			});
 
