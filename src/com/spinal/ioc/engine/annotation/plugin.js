@@ -29,10 +29,11 @@ define(['ioc/engine/annotation/annotation'], function(Annotation) {
 		*	Creates plugin instance via injector
 		*	@public
 		*	@method create
+		*	@param path {String} plugin module path
 		*	@return com.spinal.ioc.engine.annotation.Plugin
 		**/
-		create: function() {
-			this.getInjector().create();
+		create: function(path) {
+			this.getInjector().create(path, { engine: this.getEngine(), config: this.getValue() });
 			return this;
 		},
 

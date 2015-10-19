@@ -54,10 +54,11 @@ define(['ioc/processor/processor'], function(Processor) {
 		*	@public
 		*	@method onLoad
 		*	@param plugin {com.spinal.ioc.engine.annotation.Plugin} plugin annotation reference
+		*	@param path {String} plugin module path
 		*	@return com.spinal.ioc.processor.PluginProcessor
 		**/
-		onLoad: function(plugin) {
-			plugin.create().run();
+		onLoad: function(plugin, path) {
+			plugin.create(path).run();
 			return this;
 		},
 

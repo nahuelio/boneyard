@@ -8,12 +8,15 @@ define([], function() {
 
 		$id: 'plugin',
 
-		account_html: { path: 'tpls/account', lazyload: true },
-		cart_html: { path: 'tpls/cart' },
+		// Template Paths
+		account_html: 'html/account',
+		cart_html: 'html/cart',
 
-		minimal: { url: 'skins/minimal.css', default: true },
-		silver: { url: 'skins/silver.css' },
+		// Theme Paths
+		spinal_theme: 'com/spinal/ioc/themes/spinal.css',
+		silver_theme: 'com/spinal/ioc/themes/silver.css',
 
+		// Some Bones
 		container: {
 			$module: 'ui/container',
 			$params: { el: 'div.global' }
@@ -36,13 +39,19 @@ define([], function() {
 		],
 
 		$plugins: {
-			html: { account: '$bone!account_html', cart: '$bone!cart_html' },
+
+			html: {
+				config: { basePath: '/base/test/com/spinal/ioc' },
+				account: { path: '$bone!account_html', lazyload: true },
+				cart: { path: '$bone!cart_html' }
+			},
+
 			theme: {
-				config: { basePath: '/base/test/themes/' },
-				bootstrap: ['bootstrap/css/bootstrap.min.css', 'bootstrap/css/bootstrap-theme.min.css'],
-				minimal: '$bone!minimal',
-				silver: '$bone!silver'
+				config: { basePath: '/base/test', bootstrap: true, defaultTheme: true },
+				spinal: { url: '$bone!spinal_theme', default: true },
+				silver: { url: '$bone!silver_theme' }
 			}
+
 		}
 
 	};

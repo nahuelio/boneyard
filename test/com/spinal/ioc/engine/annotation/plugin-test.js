@@ -59,9 +59,9 @@ define(['ioc/engine/annotation/plugin',
 				var result = this.plugin.resolve();
 				expect(result).to.be.a(Plugin);
 				expect(result.getValue().account).to.be.a('object');
-				expect(result.getValue().account.path).to.be('tpls/account');
+				expect(result.getValue().account.path).to.be('html/account');
 				expect(result.getValue().cart).to.be.a('object');
-				expect(result.getValue().cart.path).to.be('tpls/cart');
+				expect(result.getValue().cart.path).to.be('html/cart');
 
 				this.plugin.getInjector().resolve.restore();
 			});
