@@ -199,7 +199,7 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 		},
 
 		/**
-		*	Returns true if this collections contains any elements evaluated by predicate passed by parameter.
+		*	Returns true if this collection contains any elements evaluated by predicate passed by parameter.
 		*	@public
 		*	@method containsBy
 		*	@param predicate {Function} predicate function used for evaluation

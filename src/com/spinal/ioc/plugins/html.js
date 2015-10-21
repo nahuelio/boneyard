@@ -49,27 +49,54 @@ define(['ioc/plugins/plugin',
 		*	@return com.spinal.ioc.plugins.HTMLPlugin
 		**/
 		parse: function(attrs) {
-			this.packages.set(ObjectUtil.objToArr(attrs), { silent: true });
+			this.packages.set(_.map(attrs, function(package, name) {
+				return _.extend(package, { name: name });
+			}), { silent: true });
 			return HTMLPlugin.__super__.parse.apply(this, arguments);
 		},
 
 		/**
-		*	Validates list paths to decide whether, it's suitable to be enqueued or not.
+		*	Validates list of package names to decide whether, it's suitable to be enqueued or not.
 		*	Rules:
-		*		- Paths needs to be defined, be an array and all the elements must not be null or undefined.
-		*		- Paths should match packages registered on the Spec.
-		*		- Paths packages have not been loaded and registered before.
+		*		- Packages needs to be defined, be an array and all the elements must not be null or undefined.
+		*		- Packages should match packages names registered on the Spec.
+		*		- Packages that have not been loaded and registered before.
 		*	@public
 		*	@method validate
-		*	@param packages {Array} list of packages
+		*	@param packageNames {Array} list of package names
 		*	@return Boolean
 		**/
-		validate: function(paths) {
-			if(!_.defined(paths) || !_.isArray(paths) || !_.every(paths)) return false;
-			return _.every(paths, function(path) {
-				return (_.defined(this.packages.findWhere({ path: path })) &&
-					!this.getFactory().isRegistered(this.getConfig().basePath + path));
+		validate: function(packageNames) {
+			if(!_.defined(packageNames) || !_.isArray(packageNames) || !_.every(packageNames)) return false;
+			var out = _.every(packageNames, function(name) {
+				var package = this.getPackage(name);
+				if(!_.defined(package)) return false;
+				if(this.isRegistered(package)) return false;
+				return true;
 			}, this);
+			return out;
+		},
+
+		/**
+		*	Returns true if package exists given a package name, otherwise returns false
+		*	@public
+		*	@method getPackage
+		*	@param name {String} package name
+		*	@return Boolean
+		**/
+		getPackage: function(name) {
+			return this.packages.find(function(package) { return (package.name === name); }, this);
+		},
+
+		/**
+		*	Returns true if package is registered already given a package, otherwise returns false
+		*	@public
+		*	@method isRegistered
+		*	@param package {String} package reference
+		*	@return Boolean
+		**/
+		isRegistered: function(package) {
+			return this.getFactory().isRegistered(this.getConfig().basePath + package.path)
 		},
 
 		/**
@@ -80,9 +107,7 @@ define(['ioc/plugins/plugin',
 		*	@return Array
 		**/
 		getLazyPackages: function() {
-			return this.packages.filter(function(package) {
-				return (_.defined(package.lazyload) && package.lazyload);
-			});
+			return _.compact(this.packages.map(function(package) { return package.lazyload ? package.name : null; }));
 		},
 
 		/**
@@ -97,15 +122,15 @@ define(['ioc/plugins/plugin',
 		},
 
 		/**
-		*	Parses and build package metadata information given a path for factory enqueuing
+		*	Parses and build package metadata information given a package name for factory enqueuing
 		*	@public
-		*	@method parsePath
-		*	@param path {Object} package path
+		*	@method parsePackage
+		*	@param name {Object} package name
 		*	@return Object
 		**/
-		parsePath: function(path) {
-			var package = this.packages.findWhere({ path: path });
-			return { path: this.getPackageFullPath(path), callback: _.bind(this.onLoad, this, package) };
+		parsePackage: function(name) {
+			var package = this.getPackage(name);
+			return { path: this.getPackageFullPath(package), callback: _.bind(this.onLoad, this, package) };
 		},
 
 		/**
@@ -115,20 +140,20 @@ define(['ioc/plugins/plugin',
 		*	@return com.spinal.ioc.plugins.HTMLPlugin
 		**/
 		lazy: function() {
-			return this.load(_.pluck(this.getLazyPackages(), 'path'));
+			return this.load(this.getLazyPackages());
 		},
 
 		/**
 		*	Load templates using require strategy
 		*	@public
 		*	@method load
-		*	@param [paths] {Array} array of packages to load
+		*	@param [packageNames] {Array} array of package names to load
 		*	@param [callback] optional callback
 		*	@return com.spinal.io.plugins.HTMLPlugin
 		**/
-		load: function(paths, callback) {
-			if(!this.validate(paths)) return this;
-			this.getFactory().set(_.map(paths, this.parsePath)).load(_.bind(this.onLoadComplete, this, callback));
+		load: function(packageNames, callback) {
+			if(!this.validate(packageNames)) return this;
+			this.getFactory().set(_.map(packageNames, this.parsePackage)).load(_.bind(this.onLoadComplete, this, callback));
 			return this;
 		},
 
@@ -143,12 +168,9 @@ define(['ioc/plugins/plugin',
 		**/
 		onLoad: function(package, fullpath, content) {
 			var ns = package.path.replace('/', '.');
-			// FIXME: Review this
 			console.log(arguments.length);
-			console.log(package);
-			console.log(fullpath);
-			console.log(content);
-			return Spinal.namespace('html.' + ns, content);
+			//Spinal.namespace('html.' + ns, content);
+			return this;
 		},
 
 		/**
