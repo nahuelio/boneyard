@@ -150,7 +150,7 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 		*	@public
 		*	@method each
 		*	@param func {Function} predicate function used to iterate over the elements.
-		*	@return Function
+		*	@return Array
 		**/
 		each: function(func) {
 			var args = Array.prototype.slice.call(arguments);
@@ -163,7 +163,7 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 		*	@public
 		*	@method filter
 		*	@param func {Function} predicate function used to iterate over the elements.
-		*	@return Function
+		*	@return Array
 		**/
 		filter: function(func) {
 			var args = Array.prototype.slice.call(arguments);
@@ -182,6 +182,20 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 			var args = Array.prototype.slice.call(arguments);
 			args.unshift(this.collection);
 			return _.map.apply(this, args);
+		},
+
+		/**
+		*	Looks through the list and returns the first value that matches
+		*	all of the key-value pairs listed in properties.
+		*	@public
+		*	@method findWhere
+		*	@param element {Object} key-value pair object to evaluate
+		*	@return Object
+		**/
+		findWhere: function(element) {
+			var args = Array.prototype.slice.call(arguments);
+			args.unshift(this.collection);
+			return _.findWhere.apply(this, args);
 		},
 
 		/**

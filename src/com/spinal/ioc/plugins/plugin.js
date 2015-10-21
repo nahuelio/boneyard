@@ -49,7 +49,7 @@ define(['core/spinal',
 			this.valid(attrs);
 			this._engine = attrs.engine;
 			this._config = ObjectUtil.search('config.config', attrs);
-			this.parse(attrs);
+			this.parse(_.omit(attrs.config, 'config'));
 			return IoCPlugin.__super__.initialize.apply(this, arguments);
 		},
 
@@ -74,6 +74,16 @@ define(['core/spinal',
 		},
 
 		/**
+		*	Retrieves Engine's Factory reference
+		*	@public
+		*	@method getFactory
+		*	@return com.spinal.util.factories.AsyncFactory
+		**/
+		getFactory: function() {
+			return this.getEngine().getFactory();
+		},
+
+		/**
 		*	Validates constructor parameters
 		*	@public
 		*	@throws Error
@@ -92,8 +102,21 @@ define(['core/spinal',
 		*	@public
 		*	@method parse
 		*	@param attrs {Object} plugin attributes
+		*	@return com.spinal.ioc.plugins.IoCPlugin
 		**/
-		parse: function(attrs) {},
+		parse: function(attrs) {
+			return this;
+		},
+
+		/**
+		*	Default Plugin execution
+		*	@public
+		*	@method run
+		*	@return com.spinal.ioc.plugins.IoCPlugin
+		**/
+		run: function() {
+			return this;
+		},
 
 		/**
 		*	Exposes a given list of methods to the Spinal core by this plugin

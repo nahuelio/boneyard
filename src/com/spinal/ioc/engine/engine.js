@@ -193,7 +193,7 @@ define(['ioc/engine/helpers/spec',
 			var detected = ObjectUtil.objToArr(Plugin.only(spec));
 			if(detected.length > 0) {
 				this.plugins.set(detected);
-				this.trigger(Engine.EVENTS.plugins, detected);
+				this.trigger(Engine.EVENTS.plugin, detected);
 			}
 			return spec;
 		},
@@ -348,6 +348,11 @@ define(['ioc/engine/helpers/spec',
 			*	@event plugin
 			**/
 			plugin: 'com:spinal:ioc:engine:plugin',
+
+			/**
+			*	@event pluginAction
+			**/
+			pluginAction: 'com:spinal:ioc:engine:plugin:action',
 
 			/**
 			*	@event action

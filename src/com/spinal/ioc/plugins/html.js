@@ -4,8 +4,9 @@
 *	@version 0.1.0
 **/
 define(['ioc/plugins/plugin',
+	'ioc/engine/engine',
 	'util/adt/collection',
-	'util/object'], function(IoCPlugin, Collection, ObjectUtil) {
+	'util/object'], function(IoCPlugin, Engine, Collection, ObjectUtil) {
 
 	/**
 	*	Class HTMLPlugin
@@ -32,7 +33,7 @@ define(['ioc/plugins/plugin',
 		*	@public
 		*	@chainable
 		*	@method initialize
-		*	@return {com.spinal.ioc.plugins.HTMLPlugin}
+		*	@return com.spinal.ioc.plugins.HTMLPlugin
 		**/
 		initialize: function() {
 			this.packages = new Collection();
@@ -45,84 +46,142 @@ define(['ioc/plugins/plugin',
 		*	@override
 		*	@method parse
 		*	@param attrs {Object} plugin attributes
+		*	@return com.spinal.ioc.plugins.HTMLPlugin
 		**/
 		parse: function(attrs) {
-			// CONTINUE HERE... this.packages.set(, { silent: true });
+			this.packages.set(ObjectUtil.objToArr(attrs), { silent: true });
+			return HTMLPlugin.__super__.parse.apply(this, arguments);
 		},
 
 		/**
-		*	Query the list of packages using a query (dot notation) to get the template.
-		*	@private
-		*	@method _query
-		*	@param query {String} query in dot notation
+		*	Validates list paths to decide whether, it's suitable to be enqueued or not.
+		*	Rules:
+		*		- Paths needs to be defined, be an array and all the elements must not be null or undefined.
+		*		- Paths should match packages registered on the Spec.
+		*		- Paths packages have not been loaded and registered before.
+		*	@public
+		*	@method validate
+		*	@param packages {Array} list of packages
+		*	@return Boolean
+		**/
+		validate: function(paths) {
+			if(!_.defined(paths) || !_.isArray(paths) || !_.every(paths)) return false;
+			return _.every(paths, function(path) {
+				return (_.defined(this.packages.findWhere({ path: path })) &&
+					!this.getFactory().isRegistered(this.getConfig().basePath + path));
+			}, this);
+		},
+
+		/**
+		*	Retrieves Packages marked as for lazy loading.
+		*	Packages will be loaded automatically when plugin runs first time.
+		*	@public
+		*	@method getLazyPackages
+		*	@return Array
+		**/
+		getLazyPackages: function() {
+			return this.packages.filter(function(package) {
+				return (_.defined(package.lazyload) && package.lazyload);
+			});
+		},
+
+		/**
+		*	Retrieves Package full path to the package module
+		*	@public
+		*	@method getPackageFullPath
+		*	@param package {Object} package reference
 		*	@return String
 		**/
-		_query: function(query) {
-			return ObjectUtil.search(query, Spinal.html);
+		getPackageFullPath: function(package) {
+			return this.getConfig().basePath + package.path;
 		},
 
 		/**
-		*	Perform a lazy loading once the IoC Context is initialized for those template packages
-		*	flagged with the 'lazyloading' property set to true and for those that were not loaded.
-		*	@private
-		*	@method _lazy
-		*	@return {com.spinal.ioc.plugins.HTMLPlugin}
+		*	Parses and build package metadata information given a path for factory enqueuing
+		*	@public
+		*	@method parsePath
+		*	@param path {Object} package path
+		*	@return Object
 		**/
-		_lazy: function() {
-			return this._load(_.pick(this._config, function(v) { return (v.lazyLoading && !v._loaded); }));
+		parsePath: function(path) {
+			var package = this.packages.findWhere({ path: path });
+			return { path: this.getPackageFullPath(path), callback: _.bind(this.onLoad, this, package) };
+		},
+
+		/**
+		*	Loads lazy load on packages flagged to be loaded once the plugin runs.
+		*	@public
+		*	@method lazy
+		*	@return com.spinal.ioc.plugins.HTMLPlugin
+		**/
+		lazy: function() {
+			return this.load(_.pluck(this.getLazyPackages(), 'path'));
 		},
 
 		/**
 		*	Load templates using require strategy
-		*	@private
-		*	@method _load
-		*	@param tpls {Array} array of templates
+		*	@public
+		*	@method load
+		*	@param [paths] {Array} array of packages to load
 		*	@param [callback] optional callback
-		*	@return {com.spinal.io.plugins.HTMLPlugin}
+		*	@return com.spinal.io.plugins.HTMLPlugin
 		**/
-		_load: function(tpls, callback) {
-			require(_.pluck(tpls, 'path'), _.bind(this._onTemplatesLoaded, this, _.values(tpls), callback));
+		load: function(paths, callback) {
+			if(!this.validate(paths)) return this;
+			this.getFactory().set(_.map(paths, this.parsePath)).load(_.bind(this.onLoadComplete, this, callback));
 			return this;
 		},
 
 		/**
-		*	Templates Load Handler
-		*	@private
-		*	@method _onTemplatesLoaded
-		*	@param tpls {Array} list of templates loaded
-		*	@param [callback] optional callback
-		*	@return {com.spinal.ioc.plugins.HTMLPlugin}
+		*	Default individual package load handler
+		*	@public
+		*	@method onLoad
+		*	@param package {Object} package reference
+		*	@param fullpath {String} loaded package fullpath from factory
+		*	@param content {Object} content loaded
+		*	@return com.spinal.ioc.plugins.HTMLPlugin
 		**/
-		_onTemplatesLoaded: function(tpls, callback) {
-			_.each(tpls, function(v) { v._loaded = true; });
-			this._engine.trigger(Engine.EVENTS.plugin, callback, tpls);
+		onLoad: function(package, fullpath, content) {
+			var ns = package.path.replace('/', '.');
+			return Spinal.namespace('html.' + ns, this.resolve(content));
+		},
+
+		/**
+		*	Default Content resolve strategy will evaluate content type to be registered accordingly.
+		*	@public
+		*	@method resolve
+		*	@param content {Object} content loaded
+		*	@return Object
+		**/
+		resolve: function(content) {
+			// TODO: Figure out template pre-compilation content
+		},
+
+		/**
+		*	Default Load Complete Handler
+		*	@public
+		*	@method onLoad
+		*	@param [callback] {Function} optional callback
+		*	@return com.spinal.ioc.plugins.HTMLPlugin
+		**/
+		onLoadComplete: function(callback) {
+			var packages = _.toArray(arguments).slice(1);
+			if(callback && _.isFunction(callback)) callback(packages);
+			this.getEngine().trigger(Engine.EVENTS.pluginAction, HTMLPlugin.EVENTS.load, packages);
 			return this;
 		},
 
 		/**
-		*	Proxified Checks if a template package is already loaded
+		*	Query the list of packages using a query (dot notation) to get the template.
 		*	@public
-		*	@method isTemplateLoaded
-		*	@param templatePackageName {String} template package name
-		*	@return Boolean
+		*	@method query
+		*	@param query {String} query in dot notation
+		*	@param params {Object} optional parameters to pass to the template
+		*	@return String
 		**/
-		isTemplateLoaded: function(pkgName) {
-			return (_.has(this._config, pkgName) && this._config[pkgName]._loaded);
-		},
-
-		/**
-		*	Proxified Load Template module using requirejs strategy to be injected as part of
-		*	the current context.
-		*	@public
-		*	@method loadTemplate
-		*	@param pkgName {String} template package name
-		*	@param [callback] {Function} callback function
-		*	@return {com.spinal.ioc.plugins.HTMLPlugin}
-		**/
-		loadTemplate: function(pkgName, callback) {
-			if(!pkgName || !_.isString(pkgName)) return this;
-			var pkg = _.pick(this._config, function(v, k) { return (k === pkgName && !v._loaded) ? v : null; });
-			return (pkg) ? this._load(pkg, callback) : this;
+		query: function(query, params) {
+			if(!query || query === '') return '';
+			return ObjectUtil.search(query, Spinal.html);
 		},
 
 		/**
@@ -131,28 +190,26 @@ define(['ioc/plugins/plugin',
 		*	to the existing compiled template function. If the template function is not found
 		*	returns an empty string
 		*	@public
-		*	@method tpl
-		*	@param route {String} route using dot notation format
-		*	@param [params] {Object} parameters to pass to the template
+		*	@method html
+		*	@param route {String} route using dot notation format to the template
+		*	@param [params] {Object} optional parameters to pass to the template
 		*	@return String
 		**/
-		tpl: function(route, params) {
+		html: function(route, params) {
 			params || (params = {});
-			if(!route || route === '') return '';
-			var tpl = (tpl = this._query(route)) ? (_.isString(tpl)) ? _.template(unescape(tpl)) : tpl : null;
-			return ((tpl) ? tpl(params) : '').replace(/\n+/g, '').replace(/\t+/g, '');
+			return this.query(route, params).replace(/\n+/g, '').replace(/\t+/g, '');
 		},
 
 		/**
-		*	Plugin execution
+		*	Plugin main exection handler
 		*	@public
 		*	@chainable
 		*	@method execute
-		*	@return {com.spinal.ioc.plugins.HTMLPlugin}
+		*	@return com.spinal.ioc.plugins.HTMLPlugin
 		**/
-		execute: function() {
-			this.proxify(Spinal, 'loadTemplate', 'isTemplateLoaded', 'tpl');
-			return this._lazy();
+		run: function() {
+			this.proxifyToCore('load', 'html').lazy();
+			return HTMLPlugin.__super__.run.apply(this, arguments);
 		}
 
 	}, {
@@ -162,7 +219,19 @@ define(['ioc/plugins/plugin',
 		*	@property NAME
 		*	@type String
 		**/
-		NAME: 'HTMLPlugin'
+		NAME: 'HTMLPlugin',
+
+		/**
+		*	@static
+		*	@property EVENTS
+		*	@type Object
+		**/
+		EVENTS: {
+			/**
+			*	@event load
+			**/
+			load: 'com:spinal:ioc:engine:plugin:html:load'
+		}
 
 	}));
 

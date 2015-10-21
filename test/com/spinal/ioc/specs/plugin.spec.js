@@ -41,6 +41,7 @@ define([], function() {
 		$plugins: {
 
 			html: {
+				// require-text plugin: 'text!my/base/path' test this case.
 				config: { basePath: '/base/test/com/spinal/ioc' },
 				account: { path: '$bone!account_html', lazyload: true },
 				cart: { path: '$bone!cart_html' }
