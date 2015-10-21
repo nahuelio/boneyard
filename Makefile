@@ -19,6 +19,7 @@ clean-build:
 ## Dependencies
 
 install-dependencies:
+	@rm -fr src/libs
 	@bower install
 	@node ./tools/spinal/build -m libs
 

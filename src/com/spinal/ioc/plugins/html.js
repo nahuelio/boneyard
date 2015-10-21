@@ -143,18 +143,12 @@ define(['ioc/plugins/plugin',
 		**/
 		onLoad: function(package, fullpath, content) {
 			var ns = package.path.replace('/', '.');
-			return Spinal.namespace('html.' + ns, this.resolve(content));
-		},
-
-		/**
-		*	Default Content resolve strategy will evaluate content type to be registered accordingly.
-		*	@public
-		*	@method resolve
-		*	@param content {Object} content loaded
-		*	@return Object
-		**/
-		resolve: function(content) {
-			// TODO: Figure out template pre-compilation content
+			// FIXME: Review this
+			console.log(arguments.length);
+			console.log(package);
+			console.log(fullpath);
+			console.log(content);
+			return Spinal.namespace('html.' + ns, content);
 		},
 
 		/**

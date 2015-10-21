@@ -4,6 +4,6 @@
 **/
 define(['libs/jquery',
 		'libs/bootstrap',
-		'libs/modernizr',
 		'libs/underscore',
-		'libs/backbone'], function() { });
+		'libs/backbone',
+		'libs/text'], function() { });

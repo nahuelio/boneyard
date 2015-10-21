@@ -15,9 +15,9 @@ requirejs.config({
 	},
 
 	shim: {
-		'libs/bootstrap': ['libs/jquery', 'libs/modernizr'],
+		'libs/bootstrap': ['libs/jquery'],
 		'libs/underscore': ['libs/bootstrap'],
-		'libs/backbone': ['libs/underscore']
+		'libs/backbone': ['libs/underscore', 'libs/text']
 	}
 
 });

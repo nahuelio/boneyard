@@ -9,8 +9,8 @@ define([], function() {
 		$id: 'plugin',
 
 		// Template Paths
-		account_html: 'html/account',
-		cart_html: 'html/cart',
+		account_html: 'html/account.json',
+		cart_html: 'html/cart.json',
 
 		// Theme Paths
 		spinal_theme: 'com/spinal/ioc/themes/spinal.css',
@@ -42,7 +42,7 @@ define([], function() {
 
 			html: {
 				// require-text plugin: 'text!my/base/path' test this case.
-				config: { basePath: '/base/test/com/spinal/ioc' },
+				config: { basePath: 'text!base/test/com/spinal/ioc' },
 				account: { path: '$bone!account_html', lazyload: true },
 				cart: { path: '$bone!cart_html' }
 			},
