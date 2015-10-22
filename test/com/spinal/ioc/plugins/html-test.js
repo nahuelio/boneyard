@@ -7,7 +7,7 @@ define(['ioc/plugins/html',
 	'util/adt/collection',
 	'specs/plugin.spec'], function(HTMLPlugin, Context, Collection, PluginSpec) {
 
-	describe.only('com.spinal.ioc.plugins.HTMLPlugin', function() {
+	describe('com.spinal.ioc.plugins.HTMLPlugin', function() {
 
 		before(function() {
 			this.plugin = null;
@@ -23,7 +23,7 @@ define(['ioc/plugins/html',
 				this.plugin = new HTMLPlugin({ engine: Context.engine, config: PluginSpec.$plugins.html });
 				expect(this.plugin).to.be.a(HTMLPlugin);
 				expect(this.plugin.packages).to.be.a(Collection);
-				expect(this.plugin.packages.size()).to.be(2);
+				expect(this.plugin.packages.size()).to.be(3);
 			});
 
 			it('Should throw an error: Engine is not specified or no constructor arguments are passed', function() {
@@ -83,6 +83,7 @@ define(['ioc/plugins/html',
 				expect(result).to.be.a('array');
 				expect(result).to.have.length(1);
 				expect(result[0]).to.be.a('string');
+				expect(result[0]).to.be('account');
 			});
 
 		});
@@ -124,25 +125,92 @@ define(['ioc/plugins/html',
 
 		describe('#load()', function() {
 
-		});
+			it('Should load a list of valid packages', function(done) {
+				var basePath = this.plugin.getConfig().basePath;
+				var getPackageFullPathStub = sinon.stub(this.plugin, 'getPackageFullPath')
+					.onFirstCall().returns(basePath + '/html/cart.json')
+					.onSecondCall().returns(basePath + '/html/checkout.json');
 
-		describe('#onLoad()', function() {
+				var result = this.plugin.load(['cart', 'checkout'], _.bind(function(packages) {
+					expect(packages).to.be.an('array');
+					expect(packages).to.have.length(2);
+					expect(Spinal.html.checkout.payment).to.be.ok();
+					expect(Spinal.html.cart.cartitem).to.be.a('string');
+					done();
+				}, this));
 
-		});
+				expect(result).to.be.a(HTMLPlugin);
+				this.plugin.getPackageFullPath.restore();
+			});
 
-		describe('#onLoadComplete()', function() {
+			it('Should load a list of valid packages (with no callback)', function(done) {
+				var basePath = this.plugin.getConfig().basePath;
+				var pluginActionEvent = Context.engine.constructor.EVENTS.pluginAction;
+				var getPackageFullPathStub = sinon.stub(this.plugin, 'getPackageFullPath')
+					.returns(basePath + '/html/account.json');
+
+				this.plugin.getEngine().on(pluginActionEvent, _.bind(function() {
+					this.plugin.getEngine().off(pluginActionEvent);
+					done();
+				}, this));
+
+				var result = this.plugin.load(['account']);
+				expect(result).to.be.a(HTMLPlugin);
+			});
+
+			it('Should not load packages (some are invalid)', function() {
+				expect(this.plugin.load(['non-existent', 'checkout'])).to.be.a(HTMLPlugin);
+			});
 
 		});
 
 		describe('#query()', function() {
 
+			it('Should return a template', function() {
+				expect(this.plugin.query('cart.cartitem')).to.be.a('string');
+			});
+
+			it('Should return null: template not found', function() {
+				expect(this.plugin.query('cart.nonExistent')).not.be.ok();
+			});
+
+			it('Should return null: query not specified', function() {
+				expect(this.plugin.query()).not.be.ok();
+			});
+
 		});
 
 		describe('#html()', function() {
 
+			it('Should outputs the result of projecting parameters into a given template', function() {
+				var result = this.plugin.html('cart.cartitem', { cls: 'mycartitem', name: '1' });
+				expect(result).to.be.a('string');
+				expect($(result).hasClass('mycartitem')).to.be(true);
+			});
+
+			it('Should outputs the template (without parameter)', function() {
+				var result = this.plugin.html('checkout.payment.creditcard');
+				expect(result).to.be.a('string');
+				expect($(result).hasClass('creditcard')).to.be(true);
+			});
+
+			it('Should return an empty string: template not found', function() {
+				var result = this.plugin.html('im.not.exists');
+				expect(result).to.be.a('string');
+				expect(result).to.be.empty();
+			});
+
 		});
 
 		describe('#run()', function() {
+
+			it('Should executes plugin logic', function() {
+				var lazyStub = sinon.stub(this.plugin, 'lazy').returns(this.plugin);
+				expect(this.plugin.run()).to.be.a(HTMLPlugin);
+				expect(Spinal.load).to.be.a('function');
+				expect(Spinal.html).to.be.a('function');
+				this.plugin.lazy.restore();
+			});
 
 		});
 

@@ -23,6 +23,7 @@ require.config({
     paths: {
         /** Rebase to point to specs folder **/
         'libs': 'src/libs',
+        'text': 'src/libs/text',
         'core': 'src/com/spinal/core',
         'ioc': 'src/com/spinal/ioc',
         'ui': 'src/com/spinal/ui',
@@ -30,7 +31,6 @@ require.config({
 
         /** Configurable Resources by end-developer **/
         'specs': 'test/com/spinal/ioc/specs',
-        'tpls': 'test/com/spinal/ioc/tpls',
 
         /** Hack Backbone requirejs **/
         'underscore': 'src/libs/underscore',

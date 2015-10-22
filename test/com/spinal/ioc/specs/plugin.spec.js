@@ -42,9 +42,10 @@ define([], function() {
 
 			html: {
 				// require-text plugin: 'text!my/base/path' test this case.
-				config: { basePath: 'text!base/test/com/spinal/ioc' },
+				config: { basePath: 'text!/base/test/com/spinal/ioc' },
 				account: { path: '$bone!account_html', lazyload: true },
-				cart: { path: '$bone!cart_html' }
+				cart: { path: '$bone!cart_html' },
+				checkout: { path: 'html/checkout.json' }
 			},
 
 			theme: {

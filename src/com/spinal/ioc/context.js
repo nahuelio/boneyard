@@ -26,6 +26,7 @@ define(['ioc/engine/engine'], function(Engine) {
 			this.listenTo(this.getEngine(), Engine.EVENTS.ready, this.onStart);
 			this.listenTo(this.getEngine(), Engine.EVENTS.wire, this.onWire);
 			this.listenTo(this.getEngine(), Engine.EVENTS.unwire, this.onUnwire);
+			this.listenTo(this.getEngine(), Engine.EVENTS.pluginAction, this.onPluginAction);
 			return Context.__super__.initialize.apply(this, arguments);
 		},
 
@@ -112,7 +113,19 @@ define(['ioc/engine/engine'], function(Engine) {
 		**/
 		onUnwire: function(spec) {
 			return this.trigger(Context.EVENTS.complete, this, Engine.EVENTS.unwire, spec);
-		}
+		},
+
+		/**
+		*	Default Plugin Action handler
+		*	@public
+		*	@method onPluginAction
+		*	@return com.spinal.ioc.Context
+		**/
+		onPluginAction: function() {
+			var args = _.toArray(arguments);
+			args.unshift(Context.EVENTS.plugin);
+			return this.trigger.apply(this, args);
+		},
 
 	}, {
 
@@ -137,7 +150,12 @@ define(['ioc/engine/engine'], function(Engine) {
 			/**
 			*	@event complete
 			**/
-			complete: 'com:spinal:ioc:context:complete'
+			complete: 'com:spinal:ioc:context:complete',
+
+			/**
+			*	@event plugin
+			**/
+			plugin: 'com:spinal:ioc:context:plugin'
 		},
 
 		/**

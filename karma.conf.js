@@ -27,7 +27,8 @@ module.exports = function(config) {
             { pattern: 'node_modules/sinon/pkg/**/*.js', included: false},
             { pattern: 'src/**/*.js', included: false },
             { pattern: 'test/**/*.js', included: false },
-            { pattern: 'test/**/*.css', included: false }
+            { pattern: 'test/**/*.css', included: false },
+            { pattern: 'test/**/*.json', included: false }
         ],
 
 

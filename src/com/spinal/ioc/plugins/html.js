@@ -153,7 +153,8 @@ define(['ioc/plugins/plugin',
 		**/
 		load: function(packageNames, callback) {
 			if(!this.validate(packageNames)) return this;
-			this.getFactory().set(_.map(packageNames, this.parsePackage)).load(_.bind(this.onLoadComplete, this, callback));
+			this.getFactory().set(_.map(packageNames, this.parsePackage, this))
+				.load(_.bind(this.onLoadComplete, this, callback, packageNames));
 			return this;
 		},
 
@@ -167,9 +168,7 @@ define(['ioc/plugins/plugin',
 		*	@return com.spinal.ioc.plugins.HTMLPlugin
 		**/
 		onLoad: function(package, fullpath, content) {
-			var ns = package.path.replace('/', '.');
-			console.log(arguments.length);
-			//Spinal.namespace('html.' + ns, content);
+			Spinal.namespace('html.' + package.name, JSON.parse(content));
 			return this;
 		},
 
@@ -180,8 +179,7 @@ define(['ioc/plugins/plugin',
 		*	@param [callback] {Function} optional callback
 		*	@return com.spinal.ioc.plugins.HTMLPlugin
 		**/
-		onLoadComplete: function(callback) {
-			var packages = _.toArray(arguments).slice(1);
+		onLoadComplete: function(callback, packages) {
 			if(callback && _.isFunction(callback)) callback(packages);
 			this.getEngine().trigger(Engine.EVENTS.pluginAction, HTMLPlugin.EVENTS.load, packages);
 			return this;
@@ -192,28 +190,27 @@ define(['ioc/plugins/plugin',
 		*	@public
 		*	@method query
 		*	@param query {String} query in dot notation
-		*	@param params {Object} optional parameters to pass to the template
 		*	@return String
 		**/
-		query: function(query, params) {
-			if(!query || query === '') return '';
+		query: function(query) {
+			if(!query || query === '') return null;
 			return ObjectUtil.search(query, Spinal.html);
 		},
 
 		/**
-		*	Proxified Template function that performs a look up over all the template packages
-		*	using the route passed as parameter (in dot notation format) and pass the additional params
-		*	to the existing compiled template function. If the template function is not found
-		*	returns an empty string
+		*	Performs a look up over all the template packages by using a given query (in dot notation format)
+		*	and returns the result of projecting optional parameters into the template found.
+		*	If the template is not found, this method will returns an empty string.
 		*	@public
 		*	@method html
-		*	@param route {String} route using dot notation format to the template
+		*	@param query {String} query using dot notation format for template look up
 		*	@param [params] {Object} optional parameters to pass to the template
 		*	@return String
 		**/
-		html: function(route, params) {
+		html: function(query, params) {
 			params || (params = {});
-			return this.query(route, params).replace(/\n+/g, '').replace(/\t+/g, '');
+			if(!(tpl = this.query(query))) return '';
+			return _.template(tpl)(params).replace(/\n+/g, '').replace(/\t+/g, '');
 		},
 
 		/**

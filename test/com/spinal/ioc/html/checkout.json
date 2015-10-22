@@ -1,0 +1,8 @@
+{
+	"payment": {
+		"creditcard": "<div class='creditcard'><h3>CreditCard</h3></div>"
+	},
+	"information": {
+		"address": "<address>Some content</address>"
+	}
+}
