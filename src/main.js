@@ -8,6 +8,7 @@ requirejs.config({
 
 	paths: {
 		'libs': 'libs',
+		'text': 'libs/text',
 		'core': 'com/spinal/core',
 		'ioc': 'com/spinal/ioc',
 		'ui': 'com/spinal/ui',
@@ -17,7 +18,7 @@ requirejs.config({
 	shim: {
 		'libs/bootstrap': ['libs/jquery'],
 		'libs/underscore': ['libs/bootstrap'],
-		'libs/backbone': ['libs/underscore', 'libs/text']
+		'libs/backbone': ['libs/underscore']
 	}
 
 });
