@@ -8,15 +8,12 @@ define([], function() {
 
 		$id: 'plugin',
 
-		// Template Paths
 		account_html: 'html/account.json',
 		cart_html: 'html/cart.json',
 
-		// Theme Paths
 		spinal_theme: 'com/spinal/ioc/themes/spinal.css',
 		silver_theme: 'com/spinal/ioc/themes/silver.css',
 
-		// Some Bones
 		container: {
 			$module: 'ui/container',
 			$params: { el: 'div.global' }
@@ -41,7 +38,6 @@ define([], function() {
 		$plugins: {
 
 			html: {
-				// require-text plugin: 'text!my/base/path' test this case.
 				config: { basePath: 'text!/base/test/com/spinal/ioc' },
 				account: { path: '$bone!account_html', lazyload: true },
 				cart: { path: '$bone!cart_html' },
@@ -50,8 +46,8 @@ define([], function() {
 
 			theme: {
 				config: { basePath: '/base/test', bootstrap: true, defaultTheme: true },
-				spinal: { url: '$bone!spinal_theme', default: true },
-				silver: { url: '$bone!silver_theme' }
+				spinal: { path: '$bone!spinal_theme', default: true },
+				silver: { path: '$bone!silver_theme' }
 			}
 
 		}

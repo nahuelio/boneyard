@@ -31,7 +31,6 @@ define(['ioc/plugins/plugin',
 		/**
 		*	Initialize
 		*	@public
-		*	@chainable
 		*	@method initialize
 		*	@return com.spinal.ioc.plugins.HTMLPlugin
 		**/
@@ -44,6 +43,7 @@ define(['ioc/plugins/plugin',
 		*	Parse Metadata Strategy handler
 		*	@public
 		*	@override
+		*	@chainable
 		*	@method parse
 		*	@param attrs {Object} plugin attributes
 		*	@return com.spinal.ioc.plugins.HTMLPlugin
@@ -136,6 +136,7 @@ define(['ioc/plugins/plugin',
 		/**
 		*	Loads lazy load on packages flagged to be loaded once the plugin runs.
 		*	@public
+		*	@chainable
 		*	@method lazy
 		*	@return com.spinal.ioc.plugins.HTMLPlugin
 		**/
@@ -146,6 +147,7 @@ define(['ioc/plugins/plugin',
 		/**
 		*	Load templates using require strategy
 		*	@public
+		*	@chainable
 		*	@method load
 		*	@param [packageNames] {Array} array of package names to load
 		*	@param [callback] optional callback
@@ -217,7 +219,7 @@ define(['ioc/plugins/plugin',
 		*	Plugin main exection handler
 		*	@public
 		*	@chainable
-		*	@method execute
+		*	@method run
 		*	@return com.spinal.ioc.plugins.HTMLPlugin
 		**/
 		run: function() {

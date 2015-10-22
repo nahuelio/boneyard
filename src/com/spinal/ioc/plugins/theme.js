@@ -1,71 +1,47 @@
 /**
 *	@module com.spinal.ioc.plugins
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
-*	@version 0.0.1
+*	@version 0.1.0
 **/
-define(['ioc/engine/engine',
-		'util/adt/collection'], function(Engine, Collection) {
+define(['ioc/plugins/plugin',
+	'util/adt/collection'], function(IoCPlugin, Collection) {
 
 	/**
-	*	Theme IoC Plugin
+	*	Class ThemePlugin
 	*	@namespace com.spinal.ioc.plugins
 	*	@class com.spinal.ioc.plugins.ThemePlugin
-	*	@extends com.spinal.core.Spinal.SpinalClass
+	*	@extends com.spinal.ioc.plugins.IoCPlugin
 	*
-	*	@requires com.spinal.ioc.engine.Engine
+	*	@requires com.spinal.ioc.plugins.IoCPlugin
 	*	@requires com.spinal.util.adt.Collection
 	**/
-	var ThemePlugin = Spinal.namespace('com.spinal.ioc.plugins.ThemePlugin', Spinal.SpinalClass.inherit({
+	var ThemePlugin = Spinal.namespace('com.spinal.ioc.plugins.ThemePlugin', IoCPlugin.inherit({
 
 		/**
-		*	Skins
+		*	Themes Collection
 		*	@public
 		*	@property themes
-		*	@type Object
+		*	@type com.spinal.util.adt.Collection
 		**/
 		themes: null,
 
 		/**
-		*	General Settings for Theme management
-		*	@public
-		*	@property _config
-		*	@type Object
-		**/
-		_config: null,
-
-		/**
-		*	Engine reference
-		*	@public
-		*	@property _engine
-		*	@type {com.spinal.ioc.Engine}
-		**/
-		_engine: null,
-
-		/**
 		*	Header HTML element
-		*	@private
-		*	@property _$header
+		*	@public
+		*	@property $header
 		*	@type Object
 		**/
-		_$header: null,
-
-		/**
-		*	Link Template
-		*	@private
-		*	@property _link
-		*	@type Function
-		**/
-		_link: _.template('<link rel="stylesheet" href="<%= href %>" theme="<%= theme %>" />'),
+		$header: null,
 
 		/**
 		*	Boostrap Files
-		*	@private
-		*	@property _bootstrap
+		*	@public
+		*	@property bootstrap
 		*	@type String
 		**/
-		_bootstrap: {
-			core: 'bootstrap/css/bootstrap.min.css',
-			theme: 'bootstrap/css/bootstrap-theme.min.css'
+		bootstrap: {
+			core: { name: 'bootstrap-core', path: 'bootstrap/css/bootstrap.min.css' },
+			theme: { name: 'bootstrap-theme', path: 'bootstrap/css/bootstrap-theme.min.css' }
 		},
 
 		/**
@@ -73,78 +49,30 @@ define(['ioc/engine/engine',
 		*	@public
 		*	@chainable
 		*	@method initialize
-		*	@param setup {Object} setup
-		*	@param engine {com.spinal.ioc.Engine} engine reference
-		*	@return {com.spinal.ioc.plugins.ThemePlugin}
+		*	@return com.spinal.ioc.plugins.ThemePlugin
 		**/
-		initialize: function(setup, engine) {
-			if(!setup || !setup.config || !setup.config.basePath) throw new PluginException('ConfigNotSpecified');
-			this.themes = _.omit(setup, 'config');
-			this._config = setup.config;
-			this._engine = engine;
+		initialize: function() {
+			this.themes = new Collection();
 			this._$header = $('head');
-			this._useDefault();
 			return ThemePlugin.__super__.initialize.apply(this, arguments);
 		},
 
 		/**
-		*	Check if option to use Default Bootstrap Theme is set to true and will inject the css accordingly
-		*	@private
-		*	@method _useDefault
-		*	@return {com.spinal.ioc.plugins.ThemePlugin}
-		**/
-		_useDefault: function() {
-			if(this._config.bootstrap) {
-				var links = this._link({ theme: 'bootstrap', href: this._resolveURI({ path: this._bootstrap.core }) }) +
-					this._link({ theme: 'bootstrap-theme', href: this._resolveURI({ path: this._bootstrap.theme }) });
-				this._$header.append(links);
-			}
-			return this;
-		},
-
-		/**
-		*	Resolve Theme Path
-		*	@private
-		*	@method _resolveURI
-		*	@param config {Object} theme config reference
-		*	@return String
-		**/
-		_resolveURI: function(config) {
-			if(config.url) return config.url;
-			return requirejs.toUrl(this._config.basePath + config.path);
-		},
-
-		/**
-		*	Find a theme by name passed by parameter, it the theme is not found the function returns null.
+		*	Parse Metadata Strategy handler
 		*	@public
-		*	@method findTheme
-		*	@param themeName {String} theme name
-		*	@return Object
+		*	@override
+		*	@chainable
+		*	@method parse
+		*	@param attrs {Object} plugin attributes
+		*	@return com.spinal.ioc.plugins.ThemePlugin
 		**/
-		findTheme: function(themeName) {
-			var config = _.find(this.themes, function(theme, name) {
-				return ((!themeName && theme._default && (themeName = name)) || (themeName === name));
-			});
-			return (config) ? { name: themeName, config: config } : this.currentTheme();
+		parse: function(attrs) {
+			this.themes.set(_.map(attrs, function(t, name) { return _.extend(t, { name: name }); }), { silent: true });
+			return ThemePlugin.__super__.parse.apply(this, arguments);
 		},
 
 		/**
-		*	Process Plugin implementation
-		*	@public
-		*	@method process
-		*	@param themeName {String} Theme name
-		*	@return {com.spinal.ioc.plugins.ThemePlugin}
-		**/
-		process: function() {
-			var theme = this.currentTheme();
-			if(!theme) return this;
-			this.resetTheme(true);
-			this._$header.append(this._link({ theme: theme.name, href: this._resolveURI(theme.config) }));
-			return this;
-		},
-
-		/**
-		*	Delegated Method to Spinal that retrieves the current theme
+		*	Retrieves current theme
 		*	@public
 		*	@method current
 		*	@return Object
@@ -154,47 +82,117 @@ define(['ioc/engine/engine',
 		},
 
 		/**
-		*	Delegated Method to Spinal that changes the current theme
+		*	Applies Bootstrap core and optionally bootstrap default theme if specified in the Plugin's configuration
+		*	@public
+		*	@chainable
+		*	@method useBootstrap
+		*	@return com.spinal.ioc.plugins.ThemePlugin
+		**/
+		useBootstrap: function() {
+			if(this.getConfig().bootstrap) this.applyTheme(this.bootstrap.core);
+			if(this.getConfig().defaultTheme) this.applyTheme(this.bootstrap.theme);
+			return this;
+		},
+
+		/**
+		*	Performs a look up over the themes and applies first theme found with default option to true.
+		*	@public
+		*	@chainable
+		*	@method useDefault
+		*	@return com.spinal.ioc.plugins.ThemePlugin
+		**/
+		useDefault: function() {
+			var theme = this.themes.find(function() { return theme.default; });
+			return this.changeTheme(theme.name);
+		},
+
+		/**
+		*	Validates a given theme to determine if it can be applied
+		*	@public
+		*	@method validate
+		*	@param theme {String} theme name
+		*	@return Boolean
+		**/
+		validate: function(name) {
+			if(!_.isString(name)) return false;
+			if(!(theme = this.getTheme(name))) return false;
+			if(this.theme && this.theme.name === name) return false;
+			return true;
+		},
+
+		/**
+		*	Applies theme to the current Context
+		*	@public
+		*	@chainable
+		*	@method applyTheme
+		*	@param theme {Object} theme reference
+		*	@return
+		**/
+		applyTheme: function(theme) {
+			this.$header.append(ThemePlugin.LINK({ theme: theme.name, href: this.resolveURI(theme.path) }));
+			return this;
+		},
+
+		/**
+		*	Removes current theme applied
+		*	@public
+		*	@chainable
+		*	@method removeTheme
+		*	@return com.spinal.ioc.plugins.ThemePlugin
+		**/
+		removeTheme: function() {
+			this._$header.children('link[theme][theme!="bootstrap-core"][theme!="bootstrap-theme"]').remove();
+			return this;
+		},
+
+		/**
+		*	Resolve Theme URI
+		*	@public
+		*	@method resolveURI
+		*	@param path {Object} theme path
+		*	@return String
+		**/
+		resolveURI: function(path) {
+			return requirejs.toUrl(this.getConfig().basePath + path);
+		},
+
+		/**
+		*	Retrieves a theme registered in this plugin. If not found it will return null.
+		*	@public
+		*	@method getTheme
+		*	@param name {String} theme name
+		*	@return Object
+		**/
+		getTheme: function(name) {
+			return this.themes.find(function() { return (theme.name === name); });
+		},
+
+		/**
+		*	Resets current theme and applies a given theme.
 		*	@public
 		*	@chainable
 		*	@method changeTheme
-		*	@param [themeName] {String} theme name
-		*	@return {com.spinal.ioc.plugins.ThemePlugin}
+		*	@param name {String} theme name
+		*	@return com.spinal.ioc.plugins.ThemePlugin
 		**/
-		changeTheme: function(themeName) {
-			this.theme = this.findTheme(themeName);
-			return this.process();
-		},
-
-		/**
-		*	Delegated Method to Spinal that resets the current theme.
-		*	@public
-		*	@chainable
-		*	@method resetTheme
-		*	@param [removeOnly] {Boolean} clean themes only
-		*	@return {com.spinal.ioc.plugins.ThemePlugin}
-		**/
-		resetTheme: function(removeOnly) {
-			var rmvEval = 'link[theme][theme!="bootstrap"][theme!="bootstrap-theme"]';
-			var $existing = this._$header.children(rmvEval);
-			if($existing.length > 0) $existing.remove();
-			if(!removeOnly) this.theme = null;
+		changeTheme: function(name) {
+			name || (name = '');
+			if(!this.validate(theme)) return this;
+			this.theme = this.getTheme(name);
+			this.removeTheme().applyTheme(this.theme);
 			return this;
 		},
 
 		/**
-		*	Plugin execution
+		*	Plugin main exection handler
 		*	@public
 		*	@chainable
-		*	@method execute
-		*	@return {com.spinal.ioc.plugins.ThemePlugin}
+		*	@method run
+		*	@return com.spinal.ioc.plugins.ThemePlugin
 		**/
-		execute: function() {
-			if(!_.isEmpty(this.themes)) {
-				this.changeTheme();
-				this.proxify(Spinal, 'changeTheme', 'currentTheme', 'resetTheme');
-			}
-			return this;
+		run: function() {
+			this.proxifyToCore('changeTheme', 'removeTheme', 'currentTheme').useBootstrap().useDefault();
+			return ThemePlugin.__super__.run.apply(this, arguments);
 		}
 
 	}, {
@@ -204,7 +202,15 @@ define(['ioc/engine/engine',
 		*	@property NAME
 		*	@type String
 		**/
-		NAME: 'ThemePlugin'
+		NAME: 'ThemePlugin',
+
+		/**
+		*	Link Template
+		*	@static
+		*	@property LINK
+		*	@type Function
+		**/
+		LINK: _.template('<link rel="stylesheet" href="<%= href %>" theme="<%= theme %>" />')
 
 	}));
 
