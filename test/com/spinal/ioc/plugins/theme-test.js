@@ -96,55 +96,171 @@ define(['ioc/plugins/theme',
 
 		describe('#useDefault()', function() {
 
-			it('Should inject theme flagged as default');
+			it('Should inject theme flagged as default', function() {
+				var changeThemeStub = sinon.stub(this.plugin, 'changeTheme')
+					.withArgs('spinal')
+					.returns(this.plugin);
+
+				var result = this.plugin.useDefault();
+				expect(result).to.be.a(ThemePlugin);
+
+				this.plugin.changeTheme.restore();
+			});
 
 		});
 
 		describe('#validate()', function() {
 
-			it('Should return false: theme name is not a String');
+			it('Should return false: theme name is not a String', function() {
+				expect(this.plugin.validate({})).to.be(false);
+			});
 
-			it('Should return false: theme is not registered');
+			it('Should return false: theme is not registered', function() {
+				expect(this.plugin.validate('noExistent')).to.be(false);
+			});
 
-			it('Should return false: current theme is the same as the one being validated');
+			it('Should return false: current theme is the same as the one being validated', function() {
+				this.plugin.theme = this.plugin.themes.get(0);
+				expect(this.plugin.validate('spinal')).to.be(false);
+				delete this.plugin.theme;
+			});
+
+			it('Should return true: valid theme given a name', function() {
+				expect(this.plugin.validate('silver')).to.be(true);
+			});
 
 		});
 
 		describe('#applyTheme()', function() {
 
-			it('Should inject a given theme');
+			it('Should inject a given theme', function() {
+				expect(this.plugin.applyTheme(this.plugin.getTheme('silver'))).to.be.a(ThemePlugin);
+				expect(this.plugin.$header.find('link[theme="silver"]').length).to.be(1);
+				this.plugin.$header.find('link[theme="silver"]').remove();
+			});
 
 		});
 
 		describe('#removeTheme()', function() {
 
-			it('Should remove all themes except for bootstrap core and theme');
+			it('Should remove all themes except for bootstrap core and theme', function() {
+				// Simulation Setup
+
+				// Bootstrap Added
+				this.plugin.useBootstrap();
+				expect(this.plugin.$header.find('link[theme="bootstrap-core"]').length).to.be(1);
+				expect(this.plugin.$header.find('link[theme="bootstrap-theme"]').length).to.be(1);
+
+				// Silver Theme
+				this.plugin.applyTheme(this.plugin.getTheme('silver'));
+				expect(this.plugin.$header.find('link[theme="silver"]').length).to.be(1);
+
+				expect(this.plugin.removeTheme()).to.be.a(ThemePlugin);
+				expect(this.plugin.$header.find('link[theme="silver"]').length).to.be(0);
+				expect(this.plugin.$header.find('link[theme="bootstrap-core"]').length).to.be(1);
+				expect(this.plugin.$header.find('link[theme="bootstrap-theme"]').length).to.be(1);
+				this.plugin.$header.find('link[theme="bootstrap-core"]').remove();
+				this.plugin.$header.find('link[theme="bootstrap-theme"]').remove();
+			});
 
 		});
 
 		describe('#resolveURI()', function() {
 
-			it('Should resolve theme URI for a given theme path');
+			it('Should resolve theme URI for a given theme path', function() {
+				var theme = this.plugin.themes.get(0);
+				var result = this.plugin.resolveURI(theme.path);
+				expect(result).to.be.a('string');
+				expect(result).to.be('/base/test/com/spinal/ioc/themes/spinal.css');
+			});
 
 		});
 
 		describe('#getTheme()', function() {
 
-			it('Should retrieve a theme object registered given a theme name');
+			it('Should retrieve a theme object registered given a theme name', function() {
+				var result = this.plugin.getTheme('silver');
+				expect(result).to.be.a('object');
+				expect(result.path).to.be.a('string');
+				expect(result.name).to.be.a('string');
+			});
 
-			it('Should NOT retrieve a theme object registered given a theme name');
+			it('Should NOT retrieve a theme object registered given a theme name', function() {
+				var result = this.plugin.getTheme('cooper');
+				expect(result).not.be.ok();
+			});
 
 		});
 
 		describe('#changeTheme()', function() {
 
-			it('Should change the current theme with another one given a theme name');
+			it('Should change the current theme with another one given a theme name', function() {
+				// Simulation Setup: Bootstrap Added
+				this.plugin.useBootstrap();
+
+				// Change Theme 1st time
+				var result = this.plugin.changeTheme('silver');
+				expect(result).to.be.a(ThemePlugin);
+				expect(result.theme.name).to.be('silver');
+				expect(this.plugin.$header.find('link[theme="bootstrap-core"]').length).to.be(1);
+				expect(this.plugin.$header.find('link[theme="bootstrap-theme"]').length).to.be(1);
+				expect(this.plugin.$header.find('link[theme="silver"]').length).to.be(1);
+
+				// Change Theme 2nd time
+				result = this.plugin.changeTheme('spinal');
+				expect(result).to.be.a(ThemePlugin);
+				expect(result.theme.name).to.be('spinal');
+				expect(this.plugin.$header.find('link[theme="bootstrap-core"]').length).to.be(1);
+				expect(this.plugin.$header.find('link[theme="bootstrap-theme"]').length).to.be(1);
+				expect(this.plugin.$header.find('link[theme="silver"]').length).to.be(0);
+				expect(this.plugin.$header.find('link[theme="spinal"]').length).to.be(1);
+
+				// Clean up
+				this.plugin.$header.find('link[theme="bootstrap-core"]').remove();
+				this.plugin.$header.find('link[theme="bootstrap-theme"]').remove();
+				this.plugin.$header.find('link[theme="spinal"]').remove();
+				this.plugin.theme = null;
+			});
+
+			it('Should NOT change the current theme: name was not defined', function() {
+				// Simulation Setup: Bootstrap Added
+				this.plugin.useBootstrap();
+				// With 1 already applied
+				this.plugin.changeTheme('silver');
+
+				var result = this.plugin.changeTheme();
+				expect(result).to.be.a(ThemePlugin);
+				expect(result.theme.name).to.be('silver');
+				expect(this.plugin.$header.find('link[theme="silver"]').length).to.be(1);
+
+				// Clean up
+				this.plugin.$header.find('link[theme="bootstrap-core"]').remove();
+				this.plugin.$header.find('link[theme="bootstrap-theme"]').remove();
+				this.plugin.$header.find('link[theme="silver"]').remove();
+				this.plugin.theme = null;
+			});
 
 		});
 
 		describe('#run()', function() {
 
-			it('Should executes plugin logic');
+			it('Should executes plugin logic', function() {
+				var result = this.plugin.run();
+				expect(result).to.be.a(ThemePlugin);
+				// List of functions should be proxified Spinal core
+				expect(Spinal.changeTheme).to.be.a('function');
+				expect(Spinal.removeTheme).to.be.a('function');
+				expect(Spinal.currentTheme).to.be.a('function');
+
+				// Default should be applied
+				expect(result.currentTheme()).to.be.a('object');
+				expect(result.currentTheme().name).to.be('spinal');
+				expect(this.plugin.$header.find('link[theme="spinal"]').length).to.be(1);
+
+				// Bootstrap should be on (core and theme)
+				expect(this.plugin.$header.find('link[theme="bootstrap-core"]').length).to.be(1);
+				expect(this.plugin.$header.find('link[theme="bootstrap-theme"]').length).to.be(1);
+			});
 
 		});
 

@@ -110,7 +110,7 @@ define(['ioc/plugins/plugin',
 		*	@return com.spinal.ioc.plugins.ThemePlugin
 		**/
 		useDefault: function() {
-			var theme = this.themes.find(function() { return theme.default; });
+			var theme = this.themes.find(function(theme) { return theme.default; });
 			return this.changeTheme(theme.name);
 		},
 
@@ -123,7 +123,7 @@ define(['ioc/plugins/plugin',
 		**/
 		validate: function(name) {
 			if(!_.isString(name)) return false;
-			if(!(theme = this.getTheme(name))) return false;
+			if(!this.getTheme(name)) return false;
 			if(this.theme && this.theme.name === name) return false;
 			return true;
 		},
@@ -161,7 +161,8 @@ define(['ioc/plugins/plugin',
 		*	@return String
 		**/
 		resolveURI: function(path) {
-			return requirejs.toUrl(this.getConfig().basePath + path);
+			var paths = _.compact(this.getConfig().basePath.split('/').concat(path.split('/')));
+			return requirejs.toUrl(paths.join('/'));
 		},
 
 		/**
@@ -172,7 +173,7 @@ define(['ioc/plugins/plugin',
 		*	@return Object
 		**/
 		getTheme: function(name) {
-			return this.themes.find(function() { return (theme.name === name); });
+			return this.themes.find(function(theme) { return (theme.name === name); });
 		},
 
 		/**
@@ -185,7 +186,7 @@ define(['ioc/plugins/plugin',
 		**/
 		changeTheme: function(name) {
 			name || (name = '');
-			if(!this.validate(theme)) return this;
+			if(!this.validate(name)) return this;
 			this.theme = this.getTheme(name);
 			this.removeTheme().applyTheme(this.theme);
 			return this;

@@ -45,8 +45,8 @@ define([], function() {
 			},
 
 			theme: {
-				config: { basePath: '/base/test', bootstrap: true, defaultTheme: true },
-				spinal: { path: '$bone!spinal_theme', default: true },
+				config: { basePath: 'test', bootstrap: true, defaultTheme: true },
+				spinal: { path: 'com/spinal/ioc/themes/spinal.css', default: true },
 				silver: { path: '$bone!silver_theme' }
 			}
 
