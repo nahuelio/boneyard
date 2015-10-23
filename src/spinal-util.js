@@ -4,7 +4,6 @@
 **/
 define(['util/string',
 		'util/object',
-		'util/schema',
 		'util/http/ajax-http',
 		'util/factories/factory',
 		'util/factories/async-factory',

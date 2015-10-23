@@ -5,7 +5,7 @@
 define(['util/factories/factory',
 		'util/exception/factory',
 		'ui/view',
-		'util/schema'], function(Factory, FactoryException, View, Model) {
+		'ui/container'], function(Factory, FactoryException, View, Container) {
 
 	describe('com.spinal.util.factories.Factory', function() {
 
@@ -28,7 +28,7 @@ define(['util/factories/factory',
 		describe('#_construct()', function() {
 
 			it('Should use a pseudo constructor that accept an array as arguments and creates the object', function() {
-				var view = this.factory._construct(View, [{ id: 'view1', model: new Model() }]);
+				var view = this.factory._construct(View, [{ id: 'view1', model: new Backbone.Model() }]);
 				expect(view).to.be.ok();
 				expect(view).to.be.an(View);
 			});
@@ -42,14 +42,14 @@ define(['util/factories/factory',
 
 			it('Should register a new constructor function in the factory (with and without extra options)', function() {
 				var viewConstructor = this.factory.register('ui/view', View);
-				var modelConstructor = this.factory.register('util/schema', Model, { extra: 'extra' });
+				var modelConstructor = this.factory.register('ui/container', Container, { interface: View });
 				expect(viewConstructor).to.be.ok();
 				expect(this.factory.factories.size()).to.be.ok(2);
-				expect(new viewConstructor({ id: 'view1'})).to.be.an(View);
-				var result = this.factory.getFactory('util/schema');
+				expect(new viewConstructor({ id: 'view1' })).to.be.an(View);
+				var result = this.factory.getFactory('ui/container');
 				expect(result.options).to.be.ok();
 				expect(result.options).to.have.length(1);
-				expect(result.options[0].extra).to.be('extra');
+				expect(result.options[0].interface).to.be(View);
 			});
 
 			it('Should NOT register an existing factory constructor function, it should return the existing one', function() {
@@ -74,11 +74,11 @@ define(['util/factories/factory',
 		describe('#getFactory()', function() {
 
 			it('Should return the Constructor function retrieved by factory id', function() {
-				var modelfactory = this.factory.getFactory('util/schema');
+				var modelfactory = this.factory.getFactory('ui/container');
 				expect(modelfactory).to.be.ok();
 				expect(modelfactory.path).to.be.ok();
 				expect(modelfactory.factory).to.be.ok();
-				expect(modelfactory.path).to.be.equal('util/schema');
+				expect(modelfactory.path).to.be.equal('ui/container');
 				expect(modelfactory.factory).to.be.a(Function);
 			});
 
@@ -89,13 +89,10 @@ define(['util/factories/factory',
 
 		});
 
-		/**
-		*	Factory#isRegistred() test
-		**/
 		describe('#isRegistered()', function() {
 
 			it('Should return true for registered factory', function() {
-				var registered = this.factory.isRegistered('util/schema');
+				var registered = this.factory.isRegistered('ui/container');
 				expect(registered).to.be.equal(true);
 				var notRegistered = this.factory.isRegistered('Non-Existent');
 				expect(notRegistered).to.be.equal(false);
@@ -103,23 +100,20 @@ define(['util/factories/factory',
 
 		});
 
-		/**
-		*	Factory#create() test
-		**/
 		describe('#create()', function() {
 
 			it('Should instanciate an object from the factory constructor function with arguments inline', function() {
-				var model = this.factory.create('util/schema', { prop: 'myprop'});
-				expect(model).to.be.ok();
-				expect(model).to.be.an(Model);
-				expect(model.get('prop')).to.be.equal('myprop');
+				var container = this.factory.create('ui/container', { id: 'myid' });
+				expect(container).to.be.ok();
+				expect(container).to.be.an(Container);
+				expect(container.id).to.be.equal('myid');
 			});
 
-			it('Should instanciate an object from the factory constructor function with argumnets stored as options', function() {
-				var model = this.factory.create('util/schema');
-				expect(model).to.be.ok();
-				expect(model).to.be.an(Model);
-				expect(model.get('extra')).to.be.equal('extra');
+			it('Should instanciate an object from the factory constructor function with arguments stored as options', function() {
+				var container = this.factory.create('ui/container');
+				expect(container).to.be.ok();
+				expect(container).to.be.an(Container);
+				expect(container.views._interface).to.be.equal(View);
 			});
 
 			it('Should throw an Exception: Factory Constructor function was not registered', function() {
@@ -133,9 +127,6 @@ define(['util/factories/factory',
 
 		});
 
-		/**
-		*	Factory#unregister() test
-		**/
 		describe('#unregister()', function() {
 
 			it('Should unregister an existing constructor function previously registered in the factory', function() {

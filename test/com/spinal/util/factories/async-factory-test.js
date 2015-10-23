@@ -4,8 +4,7 @@
 **/
 define(['util/factories/async-factory',
 		'util/exception/factory',
-		'ui/view',
-		'util/schema'], function(AsyncFactory, FactoryException, View, Model) {
+		'ui/view'], function(AsyncFactory, FactoryException, View) {
 
 	describe('com.spinal.util.factories.AsyncFactory', function() {
 
@@ -142,7 +141,7 @@ define(['util/factories/async-factory',
 				}, this);
 				// Add one more but with callback
 				this.asyncFactory.push({ path: 'ui/view', callback: mycallback })
-					.push({ path: 'util/schema' });
+					.push({ path: 'specs/ioc.spec' });
 				// Events Set Up
 				this.asyncFactory.off().on(AsyncFactory.EVENTS.prepared, _.bind(function(resources) {
 					expect(resources).to.be.ok();
