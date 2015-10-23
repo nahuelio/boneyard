@@ -118,7 +118,7 @@ define(['ioc/plugins/plugin',
 		*	@return String
 		**/
 		getPackageFullPath: function(package) {
-			return this.getConfig().basePath + package.path;
+			return this.resolveURI(package.path);
 		},
 
 		/**
@@ -170,7 +170,7 @@ define(['ioc/plugins/plugin',
 		*	@return com.spinal.ioc.plugins.HTMLPlugin
 		**/
 		onLoad: function(package, fullpath, content) {
-			Spinal.namespace('html.' + package.name, JSON.parse(content));
+			Spinal.namespace('__html__.' + package.name, JSON.parse(content));
 			return this;
 		},
 
@@ -183,7 +183,7 @@ define(['ioc/plugins/plugin',
 		**/
 		onLoadComplete: function(callback, packages) {
 			if(callback && _.isFunction(callback)) callback(packages);
-			this.getEngine().trigger(Engine.EVENTS.pluginAction, HTMLPlugin.EVENTS.load, packages);
+			this.getEngine().trigger(Engine.EVENTS.plugin, HTMLPlugin.EVENTS.load, packages);
 			return this;
 		},
 
@@ -196,7 +196,7 @@ define(['ioc/plugins/plugin',
 		**/
 		query: function(query) {
 			if(!query || query === '') return null;
-			return ObjectUtil.search(query, Spinal.html);
+			return ObjectUtil.search(query, Spinal.__html__);
 		},
 
 		/**
@@ -251,7 +251,7 @@ define(['ioc/plugins/plugin',
 	}));
 
 	// Generic HTML Template
-	Spinal.namespace('html.tag', ('<<%= obj.tagName %>' +
+	Spinal.namespace('__html__.tag', ('<<%= obj.tagName %>' +
 		'<%= (obj.id) ? " id=\\"" + obj.id + "\\"" : "" %>' +
 		'<%= (obj.cls) ? " class=\\"" + obj.cls + "\\"" : "" %>' +
 		'<% if(obj.attrs) { for(var p in obj.attrs) { %>' +

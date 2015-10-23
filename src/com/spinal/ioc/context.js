@@ -26,7 +26,7 @@ define(['ioc/engine/engine'], function(Engine) {
 			this.listenTo(this.getEngine(), Engine.EVENTS.ready, this.onStart);
 			this.listenTo(this.getEngine(), Engine.EVENTS.wire, this.onWire);
 			this.listenTo(this.getEngine(), Engine.EVENTS.unwire, this.onUnwire);
-			this.listenTo(this.getEngine(), Engine.EVENTS.pluginAction, this.onPluginAction);
+			this.listenTo(this.getEngine(), Engine.EVENTS.plugin, this.onPlugin);
 			return Context.__super__.initialize.apply(this, arguments);
 		},
 
@@ -116,16 +116,16 @@ define(['ioc/engine/engine'], function(Engine) {
 		},
 
 		/**
-		*	Default Plugin Action handler
+		*	Default plugin handler
 		*	@public
-		*	@method onPluginAction
+		*	@method onPlugin
 		*	@return com.spinal.ioc.Context
 		**/
-		onPluginAction: function() {
+		onPlugin: function() {
 			var args = _.toArray(arguments);
-			args.unshift(Context.EVENTS.plugin);
+			args.unshift(Context.EVENTS.plugin, this);
 			return this.trigger.apply(this, args);
-		},
+		}
 
 	}, {
 

@@ -154,18 +154,6 @@ define(['ioc/plugins/plugin',
 		},
 
 		/**
-		*	Resolve Theme URI
-		*	@public
-		*	@method resolveURI
-		*	@param path {Object} theme path
-		*	@return String
-		**/
-		resolveURI: function(path) {
-			var paths = _.compact(this.getConfig().basePath.split('/').concat(path.split('/')));
-			return requirejs.toUrl(paths.join('/'));
-		},
-
-		/**
 		*	Retrieves a theme registered in this plugin. If not found it will return null.
 		*	@public
 		*	@method getTheme

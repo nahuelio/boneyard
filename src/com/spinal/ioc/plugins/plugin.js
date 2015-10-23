@@ -98,6 +98,22 @@ define(['core/spinal',
 		},
 
 		/**
+		*	Resolve Theme URI
+		*	@public
+		*	@method resolveURI
+		*	@param path {Object} theme path
+		*	@return String
+		**/
+		resolveURI: function(path) {
+			var paths = _.compact(this.getConfig().basePath.split('/').concat(path.split('/'))).join('/');
+			if(paths.indexOf('!') !== -1) {
+				paths = paths.split('!');
+				return paths[0] + '!' + requirejs.toUrl(paths[1]);
+			}
+			return requirejs.toUrl(paths);
+		},
+
+		/**
 		*	Default metadata parse Strategy
 		*	@public
 		*	@method parse

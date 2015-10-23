@@ -81,7 +81,7 @@ define(['ioc/plugins/html',
 			it('Should return an array with packages flagged for lazy loading.', function() {
 				var result = this.plugin.getLazyPackages();
 				expect(result).to.be.a('array');
-				expect(result).to.have.length(1);
+				expect(result).to.have.length(2);
 				expect(result[0]).to.be.a('string');
 				expect(result[0]).to.be('account');
 			});
@@ -91,10 +91,9 @@ define(['ioc/plugins/html',
 		describe('#getPackageFullPath()', function() {
 
 			it('Should return package full path to the file', function() {
-				var givenPackage = this.plugin.getPackage('cart');
-				var result = this.plugin.getPackageFullPath(givenPackage);
+				var result = this.plugin.getPackageFullPath(this.plugin.getPackage('cart'));
 				expect(result).to.be.a('string');
-				expect(result).to.be(this.plugin.getConfig().basePath + givenPackage.path);
+				expect(result).to.be('text!/base/test/com/spinal/ioc/html/cart.json');
 			});
 
 		});
@@ -102,10 +101,9 @@ define(['ioc/plugins/html',
 		describe('#parsePackage()', function() {
 
 			it('Should return package suitable for factory enqueueing', function() {
-				var givenPackage = this.plugin.getPackage('cart');
 				var result = this.plugin.parsePackage('cart');
 				expect(result).to.be.a('object');
-				expect(result.path).to.be(this.plugin.getConfig().basePath + givenPackage.path);
+				expect(result.path).to.be('text!/base/test/com/spinal/ioc/html/cart.json');
 				expect(result.callback).to.be.a('function');
 			});
 
@@ -115,7 +113,7 @@ define(['ioc/plugins/html',
 
 			it('Should fire plugin load method with packages flagged for lazy loading', function() {
 				var loadStub = sinon.stub(this.plugin, 'load')
-					.withArgs(['account'])
+					.withArgs(['account', 'cart'])
 					.returns(this.plugin);
 				expect(this.plugin.lazy()).to.be.a(HTMLPlugin);
 				this.plugin.load.restore();
@@ -126,16 +124,14 @@ define(['ioc/plugins/html',
 		describe('#load()', function() {
 
 			it('Should load a list of valid packages', function(done) {
-				var basePath = this.plugin.getConfig().basePath;
 				var getPackageFullPathStub = sinon.stub(this.plugin, 'getPackageFullPath')
-					.onFirstCall().returns(basePath + '/html/cart.json')
-					.onSecondCall().returns(basePath + '/html/checkout.json');
+					.returns('text!/base/test/com/spinal/ioc/html/checkout.json');
 
-				var result = this.plugin.load(['cart', 'checkout'], _.bind(function(packages) {
+				var result = this.plugin.load(['checkout'], _.bind(function(packages) {
 					expect(packages).to.be.an('array');
-					expect(packages).to.have.length(2);
-					expect(Spinal.html.checkout.payment).to.be.ok();
-					expect(Spinal.html.cart.cartitem).to.be.a('string');
+					expect(packages).to.have.length(1);
+					expect(Spinal.__html__.checkout.payment).to.be.ok();
+					expect(Spinal.__html__.checkout.payment.creditcard).to.be.a('string');
 					done();
 				}, this));
 
@@ -145,16 +141,13 @@ define(['ioc/plugins/html',
 
 			it('Should load a list of valid packages (with no callback)', function(done) {
 				var basePath = this.plugin.getConfig().basePath;
-				var pluginActionEvent = Context.engine.constructor.EVENTS.pluginAction;
+				var pluginEvent = Context.engine.constructor.EVENTS.plugin;
 				var getPackageFullPathStub = sinon.stub(this.plugin, 'getPackageFullPath')
-					.returns(basePath + '/html/account.json');
+					.returns('text!/base/test/com/spinal/ioc/html/checkout.json');
 
-				this.plugin.getEngine().on(pluginActionEvent, _.bind(function() {
-					this.plugin.getEngine().off(pluginActionEvent);
-					done();
-				}, this));
+				this.plugin.getEngine().on(pluginEvent, _.bind(function() { done(); }, this));
 
-				var result = this.plugin.load(['account']);
+				var result = this.plugin.load(['checkout']);
 				expect(result).to.be.a(HTMLPlugin);
 			});
 
@@ -183,9 +176,9 @@ define(['ioc/plugins/html',
 		describe('#html()', function() {
 
 			it('Should outputs the result of projecting parameters into a given template', function() {
-				var result = this.plugin.html('cart.cartitem', { cls: 'mycartitem', name: '1' });
+				var result = this.plugin.html('checkout.information.address', { address: 'myaddress' });
 				expect(result).to.be.a('string');
-				expect($(result).hasClass('mycartitem')).to.be(true);
+				expect($(result).text()).to.be('myaddress');
 			});
 
 			it('Should outputs the template (without parameter)', function() {

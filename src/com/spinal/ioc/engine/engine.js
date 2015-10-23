@@ -191,10 +191,7 @@ define(['ioc/engine/helpers/spec',
 		**/
 		extractPlugins: function(spec) {
 			var detected = ObjectUtil.objToArr(Plugin.only(spec));
-			if(detected.length > 0) {
-				this.plugins.set(detected);
-				this.trigger(Engine.EVENTS.plugin, detected);
-			}
+			if(detected.length > 0) this.plugins.set(detected);
 			return spec;
 		},
 
@@ -221,7 +218,8 @@ define(['ioc/engine/helpers/spec',
 		**/
 		addSpec: function(spec, ctx) {
 			if(this.specs.containsBy(this.exists, spec)) return [];
-			var sp = this.extractPlugins(this.specs.add(spec, { silent: true })), ctx = (ctx) ? ctx : [];
+			this.extractPlugins(spec);
+			var sp = this.specs.add(spec, { silent: true }), ctx = (ctx) ? ctx : [];
 			ctx.push(sp);
 			if(sp.hasSpecs()) _.flatten(_.map(sp.getSpecs(), function(psp) { return this.addSpec(psp, ctx); }, this));
 			return ctx;
@@ -350,11 +348,6 @@ define(['ioc/engine/helpers/spec',
 			plugin: 'com:spinal:ioc:engine:plugin',
 
 			/**
-			*	@event pluginAction
-			**/
-			pluginAction: 'com:spinal:ioc:engine:plugin:action',
-
-			/**
 			*	@event action
 			**/
 			action: 'com:spinal:ioc:engine:action'
@@ -367,8 +360,8 @@ define(['ioc/engine/helpers/spec',
 		**/
 		PROCESSORS: [
 			{ path: 'ioc/processor/create' },
-			{ path: 'ioc/processor/action' }
-			//{ path: 'ioc/processor/plugin' }
+			{ path: 'ioc/processor/action' },
+			{ path: 'ioc/processor/plugin' }
 		]
 
 	}));

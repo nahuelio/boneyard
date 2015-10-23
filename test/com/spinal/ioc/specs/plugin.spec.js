@@ -38,9 +38,9 @@ define([], function() {
 		$plugins: {
 
 			html: {
-				config: { basePath: 'text!/base/test/com/spinal/ioc' },
+				config: { basePath: 'text!test/com/spinal/ioc' },
 				account: { path: '$bone!account_html', lazyload: true },
-				cart: { path: '$bone!cart_html' },
+				cart: { path: '$bone!cart_html', lazyload: true },
 				checkout: { path: 'html/checkout.json' }
 			},
 
