@@ -68,7 +68,7 @@ define(['ioc/processor/processor',
 		**/
 		tsort: function() {
 			this.graph.reset();
-			this.getEngine().allBones().forEach(_.bind(this.dependencies, this));
+			this.bones().forEach(_.bind(this.dependencies, this));
 			return this.graph.sort();
 		},
 
@@ -101,13 +101,23 @@ define(['ioc/processor/processor',
 		},
 
 		/**
+		*	Retrieves a list of bone annotations that have not been resolved
+		*	@public
+		*	@method bones
+		*	@return Array
+		**/
+		bones: function() {
+			return _.filter(this.getEngine().allBones(), function(bone) { return !bone.isCreated(); });
+		},
+
+		/**
 		*	Execute Processor
 		*	@public
 		*	@method execute
 		*	@return com.spinal.ioc.processor.CreateProcessor
 		**/
 		execute: function() {
-			CreateProcessor.__super__.execute.call(this, this.getEngine().allBones(), this.process);
+			CreateProcessor.__super__.execute.call(this, this.bones(), this.process);
 			this.getFactory().load(_.bind(this.done, this, CreateProcessor.NAME));
 			return this;
 		},

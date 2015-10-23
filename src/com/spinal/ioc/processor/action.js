@@ -50,6 +50,16 @@ define(['ioc/processor/processor'], function(Processor) {
 		},
 
 		/**
+		*	Retrieves a list of action annotations that have not been executed
+		*	@public
+		*	@method actions
+		*	@return Array
+		**/
+		actions: function() {
+			return _.filter(this.getEngine().allActions(), function(action) { return !action.isExecuted(); });
+		},
+
+		/**
 		*	Iterates over list of bone annotations and excecutes the predicate function on each one
 		*	@public
 		*	@method execute
@@ -58,7 +68,7 @@ define(['ioc/processor/processor'], function(Processor) {
 		*	@return Array
 		**/
 		execute: function() {
-			var actions = this.getEngine().allActions().sort(this.sort);
+			var actions = this.actions().sort(this.sort);
 			ActionProcessor.__super__.execute.call(this, actions, this.process);
 			return ActionProcessor.__super__.done.apply(this, [ActionProcessor.NAME]);
 		},

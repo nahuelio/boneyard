@@ -16,7 +16,7 @@ define([], function() {
 
 		container: {
 			$module: 'ui/container',
-			$params: { el: 'div.global' }
+			$params: { id: 'mycontainer' }
 		},
 
 		account: {
@@ -30,6 +30,7 @@ define([], function() {
 		},
 
 		$actions: [
+			{ '$bone!global.add': ['$bone!container'] },
 			{ '$bone!container.add': ['$bone!account'] },
 			{ '$bone!container.add': ['$bone!cart'] },
 			{ '$bone!container.render': [] }

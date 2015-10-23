@@ -34,6 +34,7 @@ define(['ioc/context',
 					var simple = this.context.bone('simple').bone();
 					var model = this.context.bone('model').bone();
 
+					expect(globalView.views.size()).to.be(3);
 					expect(content.get(0)).to.be.a(View);
 					expect(content.get(0).id).to.be(simple.id);
 					expect(holder.subcontent).to.be.a(View);
@@ -41,12 +42,12 @@ define(['ioc/context',
 
 					simple.on(View.EVENTS.update, _.bind(function(view) {
 						expect(view.model.get('prop')).to.be('Hello IoC!');
+						this.context.off(Context.EVENTS.complete);
 						done();
 					}, this));
 
 					model.set('prop', 'Hello IoC!');
 				}, this));
-
 				this.context.wire(IocSpec);
 			});
 
@@ -61,10 +62,12 @@ define(['ioc/context',
 						expect(ctx).to.be.a(Context);
 
 						// Modules cases
+						var globalView = ctx.bone('global').bone();
 						var account = ctx.bone('account').bone();
 						var cart = ctx.bone('cart').bone();
 						expect(account).to.be.a(Container);
 						expect(cart).to.be.a(View);
+						expect(globalView.views.size()).to.be(4);
 
 						// Plugins
 						expect(ctx.getEngine().plugins.size()).to.be(2);

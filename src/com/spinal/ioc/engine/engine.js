@@ -218,8 +218,7 @@ define(['ioc/engine/helpers/spec',
 		**/
 		addSpec: function(spec, ctx) {
 			if(this.specs.containsBy(this.exists, spec)) return [];
-			this.extractPlugins(spec);
-			var sp = this.specs.add(spec, { silent: true }), ctx = (ctx) ? ctx : [];
+			var sp = this.specs.add(this.extractPlugins(spec), { silent: true }), ctx = (ctx) ? ctx : [];
 			ctx.push(sp);
 			if(sp.hasSpecs()) _.flatten(_.map(sp.getSpecs(), function(psp) { return this.addSpec(psp, ctx); }, this));
 			return ctx;

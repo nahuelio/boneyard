@@ -6,7 +6,7 @@ define(['specs/main.spec'], function(MainSpec) {
 
 	return {
 
-		$id: 'simple',
+		$id: 'ioc',
 		$specs: [MainSpec],
 
 		b: true,

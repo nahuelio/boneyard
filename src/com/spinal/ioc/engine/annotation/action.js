@@ -95,7 +95,18 @@ define(['ioc/engine/annotation/annotation',
 		**/
 		execute: function() {
 			if(this.getContext()) this.getId().apply(this.getContext(), this.parameters());
+			this.executed = true;
 			return this;
+		},
+
+		/**
+		*	Returns true if the action was executed, otherwise returns false
+		*	@public
+		*	@method isExecuted
+		*	@return Boolean
+		**/
+		isExecuted: function() {
+			return (_.defined(this.executed) && this.executed);
 		}
 
 	}, {
