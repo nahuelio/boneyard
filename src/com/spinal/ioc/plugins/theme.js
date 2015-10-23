@@ -26,6 +26,14 @@ define(['ioc/plugins/plugin',
 		themes: null,
 
 		/**
+		*	Current Theme
+		*	@public
+		*	@property theme
+		*	@type Object
+		**/
+		theme: null,
+
+		/**
 		*	Header HTML element
 		*	@public
 		*	@property $header
@@ -53,7 +61,7 @@ define(['ioc/plugins/plugin',
 		**/
 		initialize: function() {
 			this.themes = new Collection();
-			this._$header = $('head');
+			this.$header = $('head');
 			return ThemePlugin.__super__.initialize.apply(this, arguments);
 		},
 
@@ -90,7 +98,7 @@ define(['ioc/plugins/plugin',
 		**/
 		useBootstrap: function() {
 			if(this.getConfig().bootstrap) this.applyTheme(this.bootstrap.core);
-			if(this.getConfig().defaultTheme) this.applyTheme(this.bootstrap.theme);
+			if(this.getConfig().bootstrap && this.getConfig().defaultTheme) this.applyTheme(this.bootstrap.theme);
 			return this;
 		},
 
@@ -141,7 +149,7 @@ define(['ioc/plugins/plugin',
 		*	@return com.spinal.ioc.plugins.ThemePlugin
 		**/
 		removeTheme: function() {
-			this._$header.children('link[theme][theme!="bootstrap-core"][theme!="bootstrap-theme"]').remove();
+			this.$header.children('link[theme][theme!="bootstrap-core"][theme!="bootstrap-theme"]').remove();
 			return this;
 		},
 
