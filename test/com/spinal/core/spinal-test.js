@@ -18,10 +18,8 @@ define(['core/spinal',], function(Spinal) {
 			this.df = { _string: 'test', _function: function() { return { _string: this._string }; } };
 		});
 
-		/**
-		*	Creates Namespaces
-		**/
 		describe('#namespace()', function() {
+
 			it('Should namespace a class definition', function() {
 				Spinal.namespace('com.spinal.ui.View', function() {});
 				expect(Spinal.com).to.be.ok();
@@ -29,6 +27,30 @@ define(['core/spinal',], function(Spinal) {
 				expect(Spinal.com.spinal.ui).to.be.ok();
 				expect(Spinal.com.spinal.ui.View).to.be.ok();
 			});
+
+			it('Should throw an Error: path is not defined, path is not a string, constructor undefined', function() {
+				// Path not defined
+				expect(function() {
+					Spinal.namespace();
+				}).to.throwException(function(e) {
+					expect(e.message).to.be('Spinal.namespace requires a namespace (in dot notation) and a function (or object)');
+				});
+
+				// Path not a String
+				expect(function() {
+					Spinal.namespace(true);
+				}).to.throwException(function(e) {
+					expect(e.message).to.be('Spinal.namespace requires a namespace (in dot notation) and a function (or object)');
+				});
+
+				// Constructor not defined
+				expect(function() {
+					Spinal.namespace('com.spinal.mynamespace');
+				}).to.throwException(function(e) {
+					expect(e.message).to.be('Spinal.namespace requires a namespace (in dot notation) and a function (or object)');
+				});
+			});
+
 		});
 
 		/**

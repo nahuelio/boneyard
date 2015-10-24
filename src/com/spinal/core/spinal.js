@@ -42,18 +42,7 @@ define(['libs/backbone'], function() {
 				obj = part; name = parts[i];
 				part = (part[name]) ? part[name] : (part[name] = {});
 			}
-			return (constructor) ? (obj[name] = constructor) : part;
-		};
-
-		/**
-		*	Validate if obj is an instance of the Browser's Windows Object.
-		*	@private
-		*	@method _isWindow
-		*	@param obj {Object} object to evaluate
-		*	@return Boolean
-		**/
-		var _isWindow = function(obj) {
-			return obj && obj.document && obj.location && obj.alert && obj.setInterval;
+			return (obj[name] = constructor);
 		};
 
 		/**
@@ -85,7 +74,6 @@ define(['libs/backbone'], function() {
 		*	@return Object
 		**/
 		var _deepCopy = function (source, destination, existing) {
-			if (_isWindow(source)) throw new Error("Making copies of Window or Scope instances is not supported.");
 			if(!destination) {
 				destination = source;
 				if(source) {
@@ -188,21 +176,6 @@ define(['libs/backbone'], function() {
 			*	@return {com.spinal.core.SpinalClass}
 			**/
 			initialize: function() { return this; },
-
-			/**
-			*	Invoke a method of this class specified by 'methodName' and pass each
-			*	individual object in the array specified by args as an argument.
-			*	This method will return an array of objects as a result of any method call.
-			*	@public
-			*	@method invoke
-			*	@param methodName {String} method name of this class
-			*	@param args {Array} array of elements to be passed to the method
-			*	@return Array
-			**/
-			invoke: function(methodName, args) {
-				if(!methodName || !args || !_.isString(methodName) || !_.isArray(args)) return [];
-				return _.map(args, function(v) { return (this[methodName]) ? this[methodName](v) : null; }, this);
-			},
 
 			/**
 			*	Proxifies the list of instance methods/properties into the target specified in the first parameter.
