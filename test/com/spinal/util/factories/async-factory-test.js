@@ -19,6 +19,16 @@ define(['util/factories/async-factory',
 
 		});
 
+		describe('#reset()', function() {
+
+			it('Should reset the resource stack', function() {
+				var result = this.asyncFactory.reset();
+				expect(result).to.be.a(AsyncFactory);
+				expect(this.asyncFactory.resources.size()).to.be(0);
+			});
+
+		});
+
 		describe('#set()', function() {
 
 			it('Should return false if parameter is not defined or is not an array', function() {
@@ -62,7 +72,7 @@ define(['util/factories/async-factory',
 
 		});
 
-		describe('#findByPath', function() {
+		describe('#findByPath()', function() {
 
 			it('Should retrieve an existing resource by path', function() {
 				var resource = this.asyncFactory.findByPath('specs/ioc.spec');
@@ -78,7 +88,7 @@ define(['util/factories/async-factory',
 
 		});
 
-		describe('#findPosBy', function() {
+		describe('#findPosBy()', function() {
 
 			it('Should retrieve the position (0-based) of an existing resource inside the factory resource collection', function() {
 				var resourcePos = this.asyncFactory.findPosBy(function(resource) { return (resource.path === 'specs/plugin.spec') });
@@ -88,22 +98,6 @@ define(['util/factories/async-factory',
 			it('Should NOT retrieve the position (0-based) if a resource if it doesn\' exists', function() {
 				var resourcePos = this.asyncFactory.findPosBy(function(resource) { return (resource.path === 'non-existent'); });
 				expect(resourcePos).to.be.equal(-1);
-			});
-
-		});
-
-		describe('#exists', function() {
-
-			it('Should return true on a resource that exists in the stack', function() {
-				var resourceExists = this.asyncFactory.exists('specs/ioc.spec');
-				expect(resourceExists).to.be.a('boolean');
-				expect(resourceExists).to.be(true);
-			});
-
-			it('Should return false on a resource that doesn\'t exists in the stack', function() {
-				var resourceExists = this.asyncFactory.exists('non-existent');
-				expect(resourceExists).to.be.a('boolean');
-				expect(resourceExists).to.be(false);
 			});
 
 		});
@@ -127,10 +121,39 @@ define(['util/factories/async-factory',
 
 		});
 
+		describe('#exists()', function() {
+
+			it('Should return true on a resource that exists in the stack', function() {
+				var resourceExists = this.asyncFactory.exists('specs/ioc.spec');
+				expect(resourceExists).to.be.a('boolean');
+				expect(resourceExists).to.be(true);
+			});
+
+			it('Should return false on a resource that doesn\'t exists in the stack', function() {
+				var resourceExists = this.asyncFactory.exists('non-existent');
+				expect(resourceExists).to.be.a('boolean');
+				expect(resourceExists).to.be(false);
+			});
+
+		});
+
+		describe('#swap()', function() {
+
+			it('Should swap resource positions', function() {
+				this.asyncFactory.push({ path: 'specs/plugin.spec' });
+				var result = this.asyncFactory.swap(function(a, b) {
+					return (a.path === 'specs/ioc.spec') ? -1 : 0;
+				});
+				expect(result).to.be.a(AsyncFactory);
+				expect(result.resources.get(0).path).to.be('specs/plugin.spec');
+			});
+
+		});
+
 		describe('#load()', function() {
 
 			it('Should load the resources that are currently in the factory stack', function(done) {
-				this.asyncFactory.resources.reset();
+				this.asyncFactory.reset();
 				// mycallback
 				var mycallback = _.bind(function(path, resource) {
 					expect(path).to.be.ok();
@@ -170,6 +193,13 @@ define(['util/factories/async-factory',
 						done();
 					}, this));
 				}, this));
+			});
+
+			it('Should load resources without callback and not firing event (silent mode)', function() {
+				delete this.asyncFactory;
+				this.asyncFactory = new AsyncFactory();
+				this.asyncFactory.push({ path: 'ui/view' });
+				this.asyncFactory.load(null, { silent: true });
 			});
 
 			it('Should Failed to load unexisting resources on the factory stack', function(done) {

@@ -33,6 +33,10 @@ define(['util/factories/factory',
 				expect(view).to.be.an(View);
 			});
 
+			it('Should NOT use the pseudo constructor: factory passed as argument is not a constructor function', function() {
+				expect(this.factory._construct('nonAFunction')).to.be('nonAFunction');
+			});
+
 		});
 
 		/**

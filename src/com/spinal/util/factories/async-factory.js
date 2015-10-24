@@ -106,19 +106,6 @@ define(['core/spinal',
 		},
 
 		/**
-		*	Filter outs a list of resources position (0-index based) from the factory stack by predicate
-		*	@public
-		*	@method findPositionsBy
-		*	@param predicate {Function} predicate function used for evaluation
-		*	@return Array
-		**/
-		findPositionsBy: function(predicate) {
-			return _.compact(this.resources.findBy(function(resource, ix) {
-				return predicate(resource, ix) ? ix : null;
-			}));
-		},
-
-		/**
 		*	Inserts a resource into the factory resource collection if the resource doesn't exists
 		*	@public
 		*	@chainable
