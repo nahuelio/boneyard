@@ -202,6 +202,18 @@ define(['core/spinal',
 
         });
 
+        describe('#filter()', function() {
+
+            it('Should filter out objects given a predicate function', function() {
+                this.testSimple.reset().addAll([{ id: 1, name: 'bob' }, { id: 2, name: 'matt' }, { id: 3, name: 'pato' }]);
+                var result = this.testSimple.filter(function(o) { return (o.name.indexOf('o') !== -1); });
+                expect(result).to.be.a('array');
+                expect(result).to.have.length(2);
+                expect(result[1].name).to.be('pato');
+            });
+
+        });
+
         describe('#map()', function() {
 
             it('Should produce a new array of values by mapping values through a transformation function', function() {
@@ -222,6 +234,17 @@ define(['core/spinal',
                 expect(transformed).to.be.ok();
                 expect(transformed.length).to.be.equal(2);
                 expect(transformed[0]).to.be.equal('foo');
+            });
+
+        });
+
+        describe('#findWhere()', function() {
+
+            it('Should return an object that match all properties specified in a given object', function() {
+                this.testSimple.reset().addAll([{ id: 1, name: 'bob' }, { id: 2, name: 'matt' }]);
+                var result = this.testSimple.findWhere({ name: 'matt' });
+                expect(result).to.be.a('object');
+                expect(result.id).to.be(2);
             });
 
         });
@@ -610,6 +633,7 @@ define(['core/spinal',
                 this.testSimple.reset().addAll(['z', 'a', 'd', 'w']);
                 expect(this.testSimple.swap()).to.be.ok();
                 expect(this.testSimple.swap('non-a-function')).to.be.ok();
+                expect(this.testSimple.swap(function(e, i) { return null; })).to.be.ok();
             });
 
         });
