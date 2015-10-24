@@ -33,7 +33,7 @@ define([], function() {
 			$params: { text: 'Danger', type: 'btn-danger', attrs: { style: 'margin: 0 5px;' } }
 		},
 
-		$ready: [{
+		$actions: [{
 			'$bone!cbutton.addAll': [[
 				'$bone!btn_simple',
 				'$bone!btn_primary',

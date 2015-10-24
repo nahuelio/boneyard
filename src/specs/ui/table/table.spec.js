@@ -53,7 +53,7 @@ define([], function() {
 			}
 		},
 
-		$ready: [{
+		$actions: [{
 			'$bone!ctable.addAll': [[
 				'$bone!table_p_s',
 				'$bone!table_simple',

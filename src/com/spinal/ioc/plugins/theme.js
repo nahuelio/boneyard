@@ -111,7 +111,7 @@ define(['ioc/plugins/plugin',
 		**/
 		useDefault: function() {
 			var theme = this.themes.find(function(theme) { return theme.default; });
-			return this.changeTheme(theme.name);
+			return (theme) ? this.changeTheme(theme.name) : this;
 		},
 
 		/**

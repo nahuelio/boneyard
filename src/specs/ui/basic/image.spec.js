@@ -30,7 +30,7 @@ define([], function() {
 			$params: { src: '$bone!svg_image', attrs: { width: 140, style: 'display: block; margin: 10px 0;' } }
 		},
 
-		$ready: [{
+		$actions: [{
 			'$bone!cimage.addAll': [[
 				'$bone!i_simple',
 				'$bone!i_ph_rounded',

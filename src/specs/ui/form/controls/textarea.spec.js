@@ -13,7 +13,7 @@ define([], function() {
 			$params: { name: 'textarea', placeholder: 'Default Text' }
 		},
 
-		$ready: [{
+		$actions: [{
 			'$bone!ctextarea.addAll': [[
 				'$bone!textarea'
 			], { renderOnAdd: true }],

@@ -22,7 +22,7 @@ define(['specs/ui/list/list.spec'], function(ListSpec) {
 			$params: { id: 'list', title: 'List' }
 		},
 
-		$ready: [{
+		$actions: [{
 			'$bone!global.addAll': [[
 				'$bone!list_header',
 				'$bone!clist'

@@ -23,7 +23,7 @@ define([], function() {
 			$params: { name: 'fs_input', placeholder: 'Input wrapped in Fieldset' }
 		},
 
-		$ready: [{
+		$actions: [{
 			'$bone!fs_simple.addAll': [[
 				'$bone!fs_label',
 				'$bone!fs_input'

@@ -14,7 +14,7 @@ define(['specs/ui/basic.spec',
 
 		$id: 'ui',
 
-		$specs: [BasicSpec, FormSpec, ListSpec, TableSpec, MiscSpec],
+		$specs: [BasicSpec, ListSpec, TableSpec, MiscSpec],
 
 		main: {
 			$module: 'ui/container',
@@ -31,17 +31,16 @@ define(['specs/ui/basic.spec',
 			$params: { id: 'menu', cls: 'container col-md-2 visible-md visible-lg' }
 		},
 
-		$ready: [{
-			'$bone!main.addAll': [[
-				'$bone!global',
-				'$bone!menu'
-			], { renderOnAdd: true }]
-		}],
+		$actions: [
+			{ '$bone!main.addAll': [['$bone!global', '$bone!menu'], { renderOnAdd: true }] }
+		],
 
 		$plugins: {
-			html: {},
+			html: {
+				config: { basePath: 'text!templates' }
+			},
 			theme: {
-				config: { basePath: 'themes/', bootstrap: true }
+				config: { basePath: 'themes', bootstrap: true }
 			}
 		}
 

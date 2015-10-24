@@ -25,7 +25,7 @@ define(['specs/ui/form/form.simple.spec',
 			$params: { id: 'form', title: 'Form' }
 		},
 
-		$ready: [{
+		$actions: [{
 			'$bone!global.addAll': [[
 				'$bone!form_header',
 				'$bone!cform'

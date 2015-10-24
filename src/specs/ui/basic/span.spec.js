@@ -18,7 +18,7 @@ define([], function() {
 			$params: { content: 'Simple Span Text content' }
 		},
 
-		$ready: [{
+		$actions: [{
 			'$bone!cspan.addAll': [[
 				'$bone!s_glyph',
 				'$bone!s_simple'

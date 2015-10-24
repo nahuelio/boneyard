@@ -13,7 +13,7 @@ define([], function() {
 			$params: { content: 'This is a link', href: 'http://localhost:9393/index.html' }
 		},
 
-		$ready: [{
+		$actions: [{
 			'$bone!clink.addAll': [[
 			'$bone!l_simple'
 			], { renderOnAdd: true }]

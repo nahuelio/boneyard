@@ -13,7 +13,7 @@ define([], function() {
 			$params: { content: 'Label Text', afor: 'label-for' }
 		},
 
-		$ready: [{
+		$actions: [{
 			'$bone!clabel.addAll': [[
 				'$bone!lbl_simple'
 			], { renderOnAdd: true }]

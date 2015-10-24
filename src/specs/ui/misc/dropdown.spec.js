@@ -61,7 +61,7 @@ define(['ui/basic/image'], function(Image) {
 			$params: { text: 'Advanced', collection: '$bone!dropdown_items_advanced', type: Image }
 		},
 
-		$ready: [
+		$actions: [
 			{ '$bone!cdropdown.addAll': [[
 				'$bone!dropdown_p_s',
 				'$bone!dropdown_simple',

@@ -181,6 +181,6 @@ define(['ioc/engine/engine'], function(Engine) {
 	**/
 	Context.engine = new Engine();
 
-	return Context;
+	return Context.LazyLoad();
 
 });

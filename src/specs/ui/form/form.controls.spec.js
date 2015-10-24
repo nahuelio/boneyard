@@ -47,7 +47,7 @@ define(['specs/ui/form/controls/button.spec',
 			$params: { id: 'select', title: 'HTML Select' }
 		},
 
-		$ready: [{
+		$actions: [{
 			'$bone!global.addAll': [[
 				'$bone!form_controls_header',
 				'$bone!cfieldset',

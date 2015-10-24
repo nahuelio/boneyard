@@ -33,7 +33,7 @@ define([], function() {
 			$params: { content: 'Header h5', heading: '5' }
 		},
 
-		$ready: [{
+		$actions: [{
 			'$bone!cheader.addAll': [[
 				'$bone!h_1',
 				'$bone!h_2',

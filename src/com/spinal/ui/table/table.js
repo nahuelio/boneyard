@@ -95,7 +95,7 @@ define(['ui/container',
 		*	@return String
 		**/
 		_create: function(type) {
-			return Spinal.tpl('tag', { tagName: type, cls: ('ui-table-' + type) });
+			return Spinal.html('tag', { tagName: type, cls: ('ui-table-' + type) });
 		},
 
 		/**

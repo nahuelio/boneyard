@@ -66,7 +66,7 @@ define(['ui/basic/image'], function(Image) {
 			$params: { cls: 'list-group', collection: '$bone!list_items_advanced', type: Image }
 		},
 
-		$ready: [{
+		$actions: [{
 			'$bone!clist.addAll': [[
 				'$bone!list_p_s',
 				'$bone!list_simple',

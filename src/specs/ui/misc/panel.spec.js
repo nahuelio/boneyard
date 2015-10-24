@@ -43,7 +43,7 @@ define([], function() {
 			$params: { title: 'Danger Panel', type: 'panel-danger' }
 		},
 
-		$ready: [{
+		$actions: [{
 			'$bone!cpanel.addAll': [[
 				'$bone!panel_simple',
 				'$bone!panel_primary',

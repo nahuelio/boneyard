@@ -358,9 +358,9 @@ define(['ioc/engine/helpers/spec',
 		*	@type Array
 		**/
 		PROCESSORS: [
+			{ path: 'ioc/processor/plugin' },
 			{ path: 'ioc/processor/create' },
-			{ path: 'ioc/processor/action' },
-			{ path: 'ioc/processor/plugin' }
+			{ path: 'ioc/processor/action' }
 		]
 
 	}));

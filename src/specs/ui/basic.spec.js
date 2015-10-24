@@ -53,7 +53,7 @@ define(['specs/ui/basic/paragraph.spec',
 			$params: { id: 'image', title: 'Images' }
 		},
 
-		$ready: [{
+		$actions: [{
 			'$bone!global.addAll': [[
 				'$bone!basic_header',
 				'$bone!cparagraph',

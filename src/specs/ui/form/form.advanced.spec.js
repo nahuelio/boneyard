@@ -15,21 +15,21 @@ define([], function() {
 			{ password: '' }
 		]),
 
-		form_advanced_mapper: {
-			$module: 'ui/form/mapper/form-mapper'
-		},
+		// form_advanced_mapper: {
+		// 	$module: 'ui/form/mapper/form-mapper'
+		// },
 
 		form_advanced: {
 			$module: 'ui/form/form',
 			$params: {
 				name: 'form_advanced',
 				action: 'http:/localhost:9393/',
-				collection: '$bone!form_advanced_collection',
-				mapper: '$bone!form_advanced_mapper'
+				collection: '$bone!form_advanced_collection'
+				//mapper: '$bone!form_advanced_mapper'
 			}
 		},
 
-		$ready: [{
+		$actions: [{
 			'$bone!cform.addAll': [[
 				'$bone!form_l_a',
 				'$bone!form_advanced'

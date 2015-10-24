@@ -41,7 +41,7 @@ define(['specs/ui/misc/panel.spec',
 			$params: { id: 'autocomplete', title: 'Autocomplete' }
 		},
 
-		$ready: [{
+		$actions: [{
 			'$bone!global.addAll': [[
 				'$bone!misc_header',
 				'$bone!cpanel',
