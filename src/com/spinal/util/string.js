@@ -59,9 +59,10 @@ define(['core/spinal',
 		**/
 		createQueryString: function(o, noQMark, separator) {
 			var pairs = [], i, len;
-			_.each(o, function(k, v) {
+			_.each(o, function(v, k) {
 				if(_.isArray(v)) {
-					for (i = 0, len = v.length; i < len; i++) pairs.push(k + '=' + encodeURIComponent(decodeURIComponent(v[i])));
+					for(i = 0, len = v.length; i < len; i++)
+						pairs.push(k + '=' + encodeURIComponent(decodeURIComponent(v[i])));
 				} else {
 					pairs.push(k + '=' + encodeURIComponent(decodeURIComponent(v)));
 				}
@@ -98,30 +99,6 @@ define(['core/spinal',
 			var o = _.clone(props);
 			_.each(props, function(v, k) { o['_' + k] = v; delete o[k]; });
 			return o;
-		},
-
-		/**
-		*	Escapes Regular expression from value passed by parameter
-		*	@static
-		*	@method escapeRegex
-		*	@param value {String} string to evaluate
-		*	@return String;
-		**/
-		escapeRegex: function(value) {
-			if(!_.isString(value)) return '';
-			return value.replace( /[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&" );
-		},
-
-		/**
-		*	Capitalize first letter given an string
-		*	@public
-		*	@method capitalize
-		*	@param str {String} string to capitalize
-		*	@return String
-		**/
-		capitalize: function(str) {
-			if(!str) return null;
-    		return str.charAt(0).toUpperCase() + str.slice(1);
 		}
 
 	}));

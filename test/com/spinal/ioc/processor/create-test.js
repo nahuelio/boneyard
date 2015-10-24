@@ -258,11 +258,8 @@ define(['ioc/processor/create',
 				var dependenciesResult = ['subcontent', 'advanced'];
 				var dependenciesStub = sinon.stub(this.create, 'dependencies').returns(dependenciesResult);
 				var graphSortStub = sinon.stub(this.create.graph, 'sort').returns(dependenciesResult.reverse());
+				var createBonesStub = sinon.stub(this.create, 'bones').returns(this.bones);
 
-				this.engineMock
-					.expects('allBones')
-					.once()
-					.returns(this.bones);
 				bonesMock
 					.expects('forEach')
 					.once()
@@ -273,11 +270,11 @@ define(['ioc/processor/create',
 				expect(result).to.have.length(2);
 				expect(result[0]).to.be('advanced');
 
-				this.engineMock.verify();
 				bonesMock.verify();
 
 				this.create.dependencies.restore();
 				this.create.graph.sort.restore();
+				this.create.bones.restore();
 				bonesMock.restore();
 			});
 
@@ -344,6 +341,33 @@ define(['ioc/processor/create',
 
 				this.holderMock.verify();
 				contentInjector.resolve.restore();
+			});
+
+		});
+
+		describe('#bones', function() {
+
+			it('Should filter bones that have not been resolved', function() {
+				this.engineMock
+					.expects('allBones')
+					.once()
+					.returns(this.bones);
+				this.advancedMock
+					.expects('isCreated')
+					.once()
+					.returns(true);
+				this.simpleMock
+					.expects('isCreated')
+					.once()
+					.returns(true);
+
+				var result = this.create.bones();
+				expect(result).to.be.an('array');
+				expect(result).to.have.length(3);
+
+				this.engineMock.verify();
+				this.advancedMock.verify();
+				this.simpleMock.verify();
 			});
 
 		});

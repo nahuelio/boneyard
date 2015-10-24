@@ -2,9 +2,22 @@
 *	com.spinal.util.ObjectUtil Class Tests
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define(['util/object'], function(ObjectUtil) {
+define(['util/object',
+	'util/exception/exception'], function(ObjectUtil, SpinalException) {
 
 	describe('com.spinal.util.ObjectUtil', function() {
+
+		describe('#new()', function() {
+
+			it('Should throw an error: Static Class', function() {
+				expect(function() {
+					new ObjectUtil();
+				}).to.throwException(function(e) {
+					expect(e.message).to.be(SpinalException.TYPES.StaticClass());
+				});
+			});
+
+		});
 
 		describe('static#search()', function() {
 

@@ -28,6 +28,28 @@ define(['util/string',
 
 		});
 
+		describe('static#createQueryString()', function() {
+
+			it('Should return querystring based on a given object (key-value pairs)', function() {
+				var toQuery = { a: 1, b: 'hello', c: true, arr: [1,2,3] };
+				var result = StringUtil.createQueryString(toQuery);
+				expect(result).to.be('?a=1&b=hello&c=true&arr=1&arr=2&arr=3');
+			});
+
+			it('Should return querystring without question mark prefix', function() {
+				var toQuery = { a: 1, b: 'hello', c: true, arr: [1,2,3] };
+				var result = StringUtil.createQueryString(toQuery, true);
+				expect(result).to.be('a=1&b=hello&c=true&arr=1&arr=2&arr=3');
+			});
+
+			it('Should return querystring without question mark prefix and with custom separator', function() {
+				var toQuery = { a: 1, b: 'hello', c: true, arr: [1,2,3] };
+				var result = StringUtil.createQueryString(toQuery, true, '-');
+				expect(result).to.be('a=1-b=hello-c=true-arr=1-arr=2-arr=3');
+			});
+
+		});
+
 		describe('static#strToJSON()', function() {
 
 			it('Should return an object based on a String expression in dot notation', function() {
@@ -41,6 +63,19 @@ define(['util/string',
 			it('Should NOT return an object based on a String expression in dot notation', function() {
 				expect(StringUtil.strToJSON()).to.be.empty();
 				expect(StringUtil.strToJSON(function() {})).to.be.empty();
+			});
+
+		});
+
+		describe('static#toPrivate()', function() {
+
+			it('description', function() {
+				var result = StringUtil.toPrivate({ 'propA': 1, 'propB': true });
+				expect(result).to.be.a('object');
+				expect(result.propA).not.be.ok();
+				expect(result._propA).to.be.a('number');
+				expect(result.propB).not.be.ok();
+				expect(result._propB).to.be.a('boolean');
 			});
 
 		});
