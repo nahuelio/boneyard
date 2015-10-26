@@ -50,6 +50,7 @@ define(['core/spinal',
 			this._engine = attrs.engine;
 			this._config = ObjectUtil.search('config.config', attrs);
 			this.parse(_.omit(attrs.config, 'config'));
+			this.executed = false;
 			return IoCPlugin.__super__.initialize.apply(this, arguments);
 		},
 
@@ -145,6 +146,17 @@ define(['core/spinal',
 			var args = _.toArray(arguments);
 			args.unshift(Spinal);
 			return this.proxify.apply(this, args);
+		},
+
+		/**
+		*	Default Plugin complete handler will fire an event to notify Engine to continue his execution
+		*	@public
+		*	@method done
+		*	@return com.spinal.ioc.plugins.plugin
+		**/
+		done: function() {
+			this.executed = true;
+			return this.trigger(IoCPlugin.EVENTS.done, this);
 		}
 
 	}, {
@@ -154,7 +166,19 @@ define(['core/spinal',
 		*	@property NAME
 		*	@type String
 		**/
-		NAME: 'IoCPlugin'
+		NAME: 'IoCPlugin',
+
+		/**
+		*	@static
+		*	@property EVENTS
+		*	@type Object
+		**/
+		EVENTS: {
+			/**
+			*	@event done
+			**/
+			done: 'com:spinal:ioc:plugins:plugin:done'
+		}
 
 	}));
 

@@ -42,7 +42,8 @@ define([], function() {
 				config: { basePath: 'text!test/com/spinal/ioc' },
 				account: { path: '$bone!account_html', lazyload: true },
 				cart: { path: '$bone!cart_html', lazyload: true },
-				checkout: { path: 'html/checkout.json' }
+				checkout: { path: 'html/checkout.json' },
+				product: { path: 'html/product.json' }
 			},
 
 			theme: {

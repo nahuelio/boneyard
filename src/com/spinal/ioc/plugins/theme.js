@@ -189,7 +189,7 @@ define(['ioc/plugins/plugin',
 		**/
 		run: function() {
 			this.proxifyToCore('changeTheme', 'removeTheme', 'currentTheme').useBootstrap().useDefault();
-			return ThemePlugin.__super__.run.apply(this, arguments);
+			return ThemePlugin.__super__.run.apply(this, arguments).done();
 		}
 
 	}, {

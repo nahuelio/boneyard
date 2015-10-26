@@ -67,7 +67,8 @@ define(['ioc/plugins/plugin',
 		*	@return Boolean
 		**/
 		validate: function(packageNames) {
-			if(!_.defined(packageNames) || !_.isArray(packageNames) || !_.every(packageNames)) return false;
+			if(!_.defined(packageNames) || !_.isArray(packageNames) ||
+				(packageNames.length === 0) || !_.every(packageNames)) return false;
 			var out = _.every(packageNames, function(name) {
 				var package = this.getPackage(name);
 				if(!_.defined(package)) return false;
@@ -141,7 +142,8 @@ define(['ioc/plugins/plugin',
 		*	@return com.spinal.ioc.plugins.HTMLPlugin
 		**/
 		lazy: function() {
-			return this.load(this.getLazyPackages());
+			var lazyPackages = this.getLazyPackages();
+			return (lazyPackages.length > 0) ? this.load(lazyPackages, _.bind(this.done, this)) : this.done();
 		},
 
 		/**
@@ -150,7 +152,7 @@ define(['ioc/plugins/plugin',
 		*	@chainable
 		*	@method load
 		*	@param [packageNames] {Array} array of package names to load
-		*	@param [callback] optional callback
+		*	@param [callback] {Function} optional callback
 		*	@return com.spinal.io.plugins.HTMLPlugin
 		**/
 		load: function(packageNames, callback) {
@@ -182,8 +184,8 @@ define(['ioc/plugins/plugin',
 		*	@return com.spinal.ioc.plugins.HTMLPlugin
 		**/
 		onLoadComplete: function(callback, packages) {
-			if(callback && _.isFunction(callback)) callback(packages);
 			this.getEngine().trigger(Engine.EVENTS.plugin, HTMLPlugin.EVENTS.load, packages);
+			if(callback && _.isFunction(callback)) callback(packages);
 			return this;
 		},
 

@@ -131,10 +131,12 @@ define(['ioc/processor/plugin',
 
 		describe('#execute()', function() {
 
-			it('Should trigger plugin processor execution', function() {
+			it('Should trigger plugin processor execution over a list of plugins', function() {
+				var pluginsStub = sinon.stub(this.processor, 'plugins')
+					.returns([this.pluginA, this.pluginB]);
 				var superExecuteStub = sinon.stub(PluginProcessor.__super__, 'execute')
 					.withArgs(sinon.match.array, this.processor.process)
-					.returns([]);
+					.returns([this.pluginA, this.pluginB]);
 
 				this.engineMock
 					.expects('getFactory')
@@ -142,7 +144,6 @@ define(['ioc/processor/plugin',
 					.returns(this.factory);
 				this.factoryMock
 					.expects('load')
-					.withArgs(sinon.match.func)
 					.once()
 					.calledAfter(this.engineMock);
 
@@ -151,6 +152,7 @@ define(['ioc/processor/plugin',
 
 				this.engineMock.verify();
 				this.factoryMock.verify();
+				this.processor.plugins.restore();
 				PluginProcessor.__super__.execute.restore();
 			});
 

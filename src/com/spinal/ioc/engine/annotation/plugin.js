@@ -30,11 +30,11 @@ define(['ioc/engine/annotation/annotation'], function(Annotation) {
 		*	@public
 		*	@method create
 		*	@param path {String} plugin module path
-		*	@return com.spinal.ioc.engine.annotation.Plugin
+		*	@return com.spinal.ioc.plugins.Plugin
 		**/
 		create: function(path) {
 			this.getInjector().create(path, { engine: this.getEngine(), config: this.getValue() });
-			return this;
+			return this.plugin();
 		},
 
 		/**
@@ -49,13 +49,23 @@ define(['ioc/engine/annotation/annotation'], function(Annotation) {
 		},
 
 		/**
+		*	Retrieves plugin instance if it was created, otherwise returns null
+		*	@public
+		*	@method plugin
+		*	@return com.spinal.ioc.plugins.Plugin
+		**/
+		plugin: function() {
+			return this.isCreated() ? this._$created : null;
+		},
+
+		/**
 		*	Default Plugin Execution strategy
 		*	@public
 		*	@method run
 		*	@return com.spinal.ioc.engine.annotation.Plugin
 		**/
 		run: function() {
-			if(this.isCreated()) this._$created.run();
+			if(this.plugin()) this.plugin().run();
 			return this;
 		},
 
@@ -77,6 +87,16 @@ define(['ioc/engine/annotation/annotation'], function(Annotation) {
 		**/
 		isCreated: function() {
 			return _.defined(this._$created);
+		},
+
+		/**
+		*	Returns true if the plugin was executed, otherwise returns false
+		*	@public
+		*	@method isExecuted
+		*	@return Boolean
+		**/
+		isExecuted: function() {
+			return (_.defined(this.plugin()) && this.plugin().executed);
 		}
 
 	}, {

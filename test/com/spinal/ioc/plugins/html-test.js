@@ -23,7 +23,7 @@ define(['ioc/plugins/html',
 				this.plugin = new HTMLPlugin({ engine: Context.engine, config: PluginSpec.$plugins.html });
 				expect(this.plugin).to.be.a(HTMLPlugin);
 				expect(this.plugin.packages).to.be.a(Collection);
-				expect(this.plugin.packages.size()).to.be(3);
+				expect(this.plugin.packages.size()).to.be(4);
 			});
 
 			it('Should throw an error: Engine is not specified or no constructor arguments are passed', function() {
@@ -91,7 +91,7 @@ define(['ioc/plugins/html',
 		describe('#getPackageFullPath()', function() {
 
 			it('Should return package full path to the file', function() {
-				var result = this.plugin.getPackageFullPath(this.plugin.getPackage('cart'));
+				var result = this.plugin.getPackageFullPath({ path: 'html/cart.json' });
 				expect(result).to.be.a('string');
 				expect(result).to.be('text!/base/test/com/spinal/ioc/html/cart.json');
 			});
@@ -101,10 +101,15 @@ define(['ioc/plugins/html',
 		describe('#parsePackage()', function() {
 
 			it('Should return package suitable for factory enqueueing', function() {
+				var getPackageStub = sinon.stub(this.plugin, 'getPackage')
+					.withArgs('cart')
+					.returns({ name: 'cart', path: 'html/cart.json' });
 				var result = this.plugin.parsePackage('cart');
 				expect(result).to.be.a('object');
 				expect(result.path).to.be('text!/base/test/com/spinal/ioc/html/cart.json');
 				expect(result.callback).to.be.a('function');
+
+				this.plugin.getPackage.restore();
 			});
 
 		});
@@ -117,6 +122,21 @@ define(['ioc/plugins/html',
 					.returns(this.plugin);
 				expect(this.plugin.lazy()).to.be.a(HTMLPlugin);
 				this.plugin.load.restore();
+			});
+
+			it('Should not fire plugin load method with packages flagged for lazy loading (no packages flagged)', function() {
+				var loadStub = sinon.stub(this.plugin, 'load')
+					.withArgs([])
+					.returns(this.plugin);
+				var getLazyPackagesStub = sinon.stub(this.plugin, 'getLazyPackages').returns([]);
+				var doneSpy = sinon.spy(this.plugin, 'done');
+
+				expect(this.plugin.lazy()).to.be.a(HTMLPlugin);
+				expect(doneSpy.called).to.be(true);
+
+				this.plugin.getLazyPackages.restore();
+				this.plugin.load.restore();
+				this.plugin.done.restore();
 			});
 
 		});
@@ -140,14 +160,13 @@ define(['ioc/plugins/html',
 			});
 
 			it('Should load a list of valid packages (with no callback)', function(done) {
-				var basePath = this.plugin.getConfig().basePath;
 				var pluginEvent = Context.engine.constructor.EVENTS.plugin;
 				var getPackageFullPathStub = sinon.stub(this.plugin, 'getPackageFullPath')
-					.returns('text!/base/test/com/spinal/ioc/html/checkout.json');
+					.returns('text!/base/test/com/spinal/ioc/html/product.json');
 
 				this.plugin.getEngine().on(pluginEvent, _.bind(function() { done(); }, this));
 
-				var result = this.plugin.load(['checkout']);
+				var result = this.plugin.load(['product']);
 				expect(result).to.be.a(HTMLPlugin);
 			});
 

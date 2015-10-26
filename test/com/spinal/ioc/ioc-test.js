@@ -56,6 +56,13 @@ define(['ioc/context',
 		describe('Plugin Spec', function() {
 
 			it('Should wire and setup plugins from Spec', function(done) {
+				this.context.on(Context.EVENTS.plugin, _.bind(function(ctx, type, packages) {
+					expect(ctx).to.be.a(Context);
+					expect(packages).to.be.an('array');
+					expect(packages).to.have.length(2);
+					ctx.off(Context.EVENTS.plugin);
+				}, this));
+
 				this.context.wire(PluginSpec, _.bind(function(ctx) {
 					expect(ctx).to.be.a(Context);
 

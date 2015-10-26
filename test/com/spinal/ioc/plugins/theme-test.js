@@ -107,6 +107,18 @@ define(['ioc/plugins/theme',
 				this.plugin.changeTheme.restore();
 			});
 
+			it('Should NOT inject theme flagged as default (no package flagged as default)', function() {
+				var themesFindStub = sinon.stub(this.plugin.themes, 'find').returns(null);
+				var changeThemeSpy = sinon.spy(this.plugin, 'changeTheme');
+
+				var result = this.plugin.useDefault();
+				expect(result).to.be.a(ThemePlugin);
+				expect(changeThemeSpy.called).to.be(false);
+
+				this.plugin.themes.find.restore();
+				this.plugin.changeTheme.restore();
+			});
+
 		});
 
 		describe('#validate()', function() {

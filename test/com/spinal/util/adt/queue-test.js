@@ -6,9 +6,6 @@ define(['core/spinal', 'util/adt/queue'], function(Spinal, Queue) {
 
 	describe('com.spinal.util.adt.Queue', function() {
 
-		/**
-		*	Constructor test
-		**/
 		describe('#new()', function() {
 
 			it('Should return an com.spinal.util.adt.Queue Instance', function() {

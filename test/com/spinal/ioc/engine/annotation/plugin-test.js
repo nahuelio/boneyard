@@ -4,7 +4,9 @@
 **/
 define(['ioc/engine/annotation/plugin',
 	'ioc/engine/helpers/injector',
-	'specs/plugin.spec'], function(Plugin, Injector, PluginSpec) {
+	'ioc/plugins/plugin',
+	'ioc/context',
+	'specs/plugin.spec'], function(Plugin, Injector, IoCPlugin, Context, PluginSpec) {
 
 	describe('com.spinal.ioc.engine.annotation.Plugin', function() {
 
@@ -35,12 +37,15 @@ define(['ioc/engine/annotation/plugin',
 		describe('#create()', function() {
 
 			it('Should instanciate a given plugin', function() {
+				var genericPlugin = new IoCPlugin({ engine: Context.engine });
 				var createStub = sinon.stub(this.plugin.getInjector(), 'create');
+				var pluginStub = sinon.stub(this.plugin, 'plugin').returns(genericPlugin);
 
 				var result = this.plugin.create();
-				expect(result).to.be.a(Plugin);
+				expect(result).to.be.a(IoCPlugin);
 
 				this.plugin.getInjector().create.restore();
+				this.plugin.plugin.restore();
 			});
 
 		});
