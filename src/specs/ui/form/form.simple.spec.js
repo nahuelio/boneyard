@@ -54,12 +54,9 @@ define([], function() {
 			}
 		},
 
-		$actions: [{
-			'$bone!cform.addAll': [[
-				'$bone!form_l_s',
-				'$bone!form_simple'
-			], { renderOnAdd: true }]
-		}]
+		$actions: [
+			{ '$bone!cform.addAll': [['$bone!form_l_s', '$bone!form_simple']] }
+		]
 
 	};
 

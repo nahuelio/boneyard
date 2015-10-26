@@ -55,7 +55,7 @@ define(['ui/container', 'ui/list/list', 'ui/basic/link', 'util/string'], functio
 		*	@property _caret
 		*	@type String
 		**/
-		_caret: Spinal.tpl('tag', { tagName: 'span', cls: 'caret' }),
+		_caret: Spinal.html('tag', { tagName: 'span', cls: 'caret' }),
 
 		/**
 		*	Initialize
@@ -98,7 +98,7 @@ define(['ui/container', 'ui/list/list', 'ui/basic/link', 'util/string'], functio
 		*	@return String
 		**/
 		_setup: function() {
-			return Spinal.tpl('tag', {
+			return Spinal.html('tag', {
 				tagName: 'button', cls: 'btn btn-default dropdown-toggle',
 				attrs: { 'data-toggle': 'dropdown', 'aria-expanded': false }
 			});

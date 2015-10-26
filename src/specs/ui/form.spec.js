@@ -10,7 +10,7 @@ define(['specs/ui/form/form.simple.spec',
 
 		$id: 'ui-form',
 		//$specs: [FormSimpleSpec, FormAdvancedSpec, FormControlsSpec],
-		$specs: [FormSimpleSpec, FormControlsSpec],
+		$specs: [FormControlsSpec],
 
 		form_header: {
 			$module: 'ui/basic/header',

@@ -65,11 +65,11 @@ define(['ui/basic/image'], function(Image) {
 			$params: { collection: '$bone!advanced_source', type: Image }
 		},
 
-		$actions: [{
-			'$bone!auto_c_s.addAll': [['$bone!auto_p_s', '$bone!autocomplete_simple']],
-			'$bone!auto_c_a.addAll': [['$bone!auto_p_a', '$bone!autocomplete_advanced']],
-			'$bone!cautocomplete.addAll': [['$bone!auto_c_s', '$bone!auto_c_a'], { renderOnAdd: true }]
-		}]
+		$actions: [
+			{ '$bone!auto_c_s.addAll': [['$bone!auto_p_s', '$bone!autocomplete_simple']] },
+			{ '$bone!auto_c_a.addAll': [['$bone!auto_p_a', '$bone!autocomplete_advanced']] },
+			{ '$bone!cautocomplete.addAll': [['$bone!auto_c_s', '$bone!auto_c_a'], { renderOnAdd: true }] }
+		]
 
 	};
 

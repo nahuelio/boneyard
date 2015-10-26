@@ -14,7 +14,7 @@ define(['specs/ui/basic.spec',
 
 		$id: 'ui',
 
-		$specs: [BasicSpec, ListSpec, TableSpec, MiscSpec],
+		$specs: [BasicSpec, FormSpec, ListSpec, TableSpec, MiscSpec],
 
 		main: {
 			$module: 'ui/container',
@@ -32,7 +32,9 @@ define(['specs/ui/basic.spec',
 		},
 
 		$actions: [
-			{ '$bone!main.addAll': [['$bone!global', '$bone!menu'], { renderOnAdd: true }] }
+			{ '$bone!main.addAll': [['$bone!global', '$bone!menu']] },
+			{ '$bone!menu.render': [] },
+			{ '$bone!global.render': [] }
 		],
 
 		$plugins: {

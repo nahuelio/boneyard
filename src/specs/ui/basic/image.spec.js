@@ -30,17 +30,12 @@ define([], function() {
 			$params: { src: '$bone!svg_image', attrs: { width: 140, style: 'display: block; margin: 10px 0;' } }
 		},
 
-		$actions: [{
-			'$bone!cimage.addAll': [[
-				'$bone!i_simple',
-				'$bone!i_ph_rounded',
-				'$bone!i_ph_circled',
-				'$bone!i_ph_thumbnailed'
-			], { renderOnAdd: true }],
-			'$bone!i_ph_rounded.addClass': ['img-rounded'],
-			'$bone!i_ph_circled.addClass': ['img-circle'],
-			'$bone!i_ph_thumbnailed.addClass': ['img-thumbnail']
-		}]
+		$actions: [
+			{ '$bone!cimage.addAll': [['$bone!i_simple', '$bone!i_ph_rounded', '$bone!i_ph_circled', '$bone!i_ph_thumbnailed' ], { renderOnAdd: true }] },
+			{ '$bone!i_ph_rounded.addClass': ['img-rounded'] },
+			{ '$bone!i_ph_circled.addClass': ['img-circle'] },
+			{ '$bone!i_ph_thumbnailed.addClass': ['img-thumbnail'] }
+		]
 	};
 
 });

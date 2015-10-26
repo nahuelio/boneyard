@@ -42,7 +42,7 @@ define(['ioc/context',
 
 					simple.on(View.EVENTS.update, _.bind(function(view) {
 						expect(view.model.get('prop')).to.be('Hello IoC!');
-						this.context.off(Context.EVENTS.complete);
+						this.context.off();
 						done();
 					}, this));
 
@@ -57,39 +57,35 @@ define(['ioc/context',
 
 			it('Should wire and setup plugins from Spec', function(done) {
 				this.context.wire(PluginSpec, _.bind(function(ctx) {
+					expect(ctx).to.be.a(Context);
 
-					ctx.on(Context.EVENTS.plugin, _.bind(function(ctx, type, plugins) {
-						expect(ctx).to.be.a(Context);
+					// Modules cases
+					var globalView = ctx.bone('global').bone();
+					var account = ctx.bone('account').bone();
+					var cart = ctx.bone('cart').bone();
+					expect(account).to.be.a(Container);
+					expect(cart).to.be.a(View);
+					expect(globalView.views.size()).to.be(4);
 
-						// Modules cases
-						var globalView = ctx.bone('global').bone();
-						var account = ctx.bone('account').bone();
-						var cart = ctx.bone('cart').bone();
-						expect(account).to.be.a(Container);
-						expect(cart).to.be.a(View);
-						expect(globalView.views.size()).to.be(4);
+					// Plugins
+					expect(ctx.getEngine().plugins.size()).to.be(2);
+					expect(Spinal.load).to.be.a('function');
+					expect(Spinal.html).to.be.a('function');
+					expect(Spinal.changeTheme).to.be.a('function');
+					expect(Spinal.currentTheme).to.be.a('function');
 
-						// Plugins
-						expect(ctx.getEngine().plugins.size()).to.be(2);
-						expect(Spinal.load).to.be.a('function');
-						expect(Spinal.html).to.be.a('function');
-						expect(Spinal.changeTheme).to.be.a('function');
-						expect(Spinal.currentTheme).to.be.a('function');
+					// HTML
+					var template = Spinal.html('cart.cartitem', { cls: 'myitem', name: 1 });
+					expect(template).to.be.a('string');
+					expect($(template).text()).to.be('Cart Item 1');
 
-						// HTML
-						var template = Spinal.html('cart.cartitem', { cls: 'myitem', name: 1 });
-						expect(template).to.be.a('string');
-						expect($(template).text()).to.be('Cart Item 1');
+					// ThemePlugin
+					var theme = Spinal.currentTheme();
+					expect(theme).to.be.a('object');
+					expect(theme.name).to.be('spinal');
 
-						// ThemePlugin
-						var theme = Spinal.currentTheme();
-						expect(theme).to.be.a('object');
-						expect(theme.name).to.be('spinal');
-
-						ctx.off();
-						done();
-					}, this));
-
+					ctx.off();
+					done();
 				}, this));
 			});
 

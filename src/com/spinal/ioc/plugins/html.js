@@ -96,7 +96,7 @@ define(['ioc/plugins/plugin',
 		*	@return Boolean
 		**/
 		isRegistered: function(package) {
-			return this.getFactory().isRegistered(this.getConfig().basePath + package.path)
+			return this.getFactory().isRegistered(this.getPackageFullPath(package));
 		},
 
 		/**
@@ -155,8 +155,8 @@ define(['ioc/plugins/plugin',
 		**/
 		load: function(packageNames, callback) {
 			if(!this.validate(packageNames)) return this;
-			this.getFactory().set(_.map(packageNames, this.parsePackage, this))
-				.load(_.bind(this.onLoadComplete, this, callback, packageNames));
+			this.getFactory().set(_.map(packageNames, this.parsePackage, this));
+			this.getFactory().load(_.bind(this.onLoadComplete, this, callback, packageNames));
 			return this;
 		},
 

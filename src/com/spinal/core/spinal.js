@@ -178,6 +178,21 @@ define(['libs/backbone'], function() {
 			initialize: function() { return this; },
 
 			/**
+			*	Invoke a method of this class specified by 'methodName' and pass each
+			*	individual object in the array specified by args as an argument.
+			*	This method will return an array of objects as a result of any method call.
+			*	@public
+			*	@method invoke
+			*	@param methodName {String} method name of this class
+			*	@param args {Array} array of elements to be passed to the method
+			*	@return Array
+			**/
+			invoke: function(methodName, args) {
+				if(!methodName || !args || !_.isString(methodName) || !_.isArray(args)) return [];
+				return _.map(args, function(v) { return (this[methodName]) ? this[methodName](v) : null; }, this);
+			},
+
+			/**
 			*	Proxifies the list of instance methods/properties into the target specified in the first parameter.
 			*	<h5>Usages:</h5>
 			*		source.proxify(target, 'method1', 'property1', 'methodN');

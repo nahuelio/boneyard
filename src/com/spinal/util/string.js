@@ -88,6 +88,18 @@ define(['core/spinal',
 		},
 
 		/**
+		*	Escapes Regular expression from value passed by parameter
+		*	@static
+		*	@method escapeRegex
+		*	@param value {String} string to evaluate
+		*	@return String;
+		**/
+		escapeRegex: function(value) {
+			if(!_.isString(value)) return '';
+			return value.replace( /[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&" );
+		},
+
+		/**
 		*	Prefixes props keys in props input object with a '_' to match the private members convention
 		*	and returns the object
 		*	@static
