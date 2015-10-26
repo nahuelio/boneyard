@@ -9,27 +9,35 @@ define(['specs/ui/form/form.simple.spec',
 	return {
 
 		$id: 'ui-form',
-		//$specs: [FormSimpleSpec, FormAdvancedSpec, FormControlsSpec],
 		$specs: [FormControlsSpec],
 
-		form_header: {
+		form_controls_header: {
 			$module: 'ui/basic/header',
 			$params: {
-				content: 'Form <small><kbd>com.spinal.ui.form</kbd></small>',
+				content: 'Form Controls <small><kbd>com.spinal.ui.form.controls</kbd></small>',
 				heading: '2'
 			}
 		},
 
-		cform: {
-			$module: 'ui/misc/panel',
-			$params: { id: 'form', title: 'Form' }
+		form_header: {
+			$module: 'ui/basic/header',
+			$params: {
+				content: 'Form Controls <small><kbd>com.spinal.ui.form</kbd></small>',
+				heading: '2'
+			}
 		},
 
-		$actions: [{
-			'$bone!global.addAll': [[
-				'$bone!form_header',
-				'$bone!cform'
-			], { renderOnAdd: true }]
+		cform_controls: {
+			$module: 'ui/misc/panel',
+			$params: { id: 'form-simple', title: 'Form Controls' }
+		},
+
+		$actions: [
+			{ '$bone!global.addAll': [[
+				'$bone!form_controls_header',
+				'$bone!cform_controls',
+				'$bone!form_header'
+			]]
 		}]
 
 	};

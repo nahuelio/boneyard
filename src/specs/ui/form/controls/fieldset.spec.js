@@ -26,7 +26,7 @@ define([], function() {
 		$actions: [
 			{ '$bone!fs_simple.addAll': [['$bone!fs_label', '$bone!fs_input']] },
 			{ '$bone!fs_simple.addClass': ['form-group'] },
-			{ '$bone!cfieldset.add': ['$bone!fs_simple', { renderOnAdd: true }] }
+			{ '$bone!cfieldset.add': ['$bone!fs_simple'] }
 		]
 
 	};

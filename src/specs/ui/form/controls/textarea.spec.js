@@ -14,7 +14,7 @@ define([], function() {
 		},
 
 		$actions: [
-			{ '$bone!ctextarea.addAll': [['$bone!textarea'], { renderOnAdd: true }] },
+			{ '$bone!ctextarea.addAll': [['$bone!textarea']] },
 			{ '$bone!textarea.addClass': ['form-control'] }
 		]
 

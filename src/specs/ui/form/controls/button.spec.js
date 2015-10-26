@@ -40,7 +40,7 @@ define([], function() {
 				'$bone!btn_info',
 				'$bone!btn_warning',
 				'$bone!btn_danger'
-			], { renderOnAdd: true }]
+			]]
 		}]
 
 	};

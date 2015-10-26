@@ -48,7 +48,7 @@ define([], function() {
 			{ '$bone!c_checkbox.addAll': [['$bone!input_p_c', '$bone!checkbox']] },
 			{ '$bone!c_radio.addAll': [['$bone!input_p_r', '$bone!radio']] },
 			{ '$bone!c_password.addAll': [['$bone!input_p_p', '$bone!password']] },
-			{ '$bone!cinput.addAll': [['$bone!c_default', '$bone!c_checkbox', '$bone!c_radio', '$bone!c_password', '$bone!hidden'], { renderOnAdd: true }] }
+			{ '$bone!cinput.addAll': [['$bone!c_default', '$bone!c_checkbox', '$bone!c_radio', '$bone!c_password', '$bone!hidden']] }
 		]
 
 	};

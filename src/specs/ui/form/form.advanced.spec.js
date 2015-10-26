@@ -33,7 +33,7 @@ define([], function() {
 			'$bone!cform.addAll': [[
 				'$bone!form_l_a',
 				'$bone!form_advanced'
-			], { renderOnAdd: true }]
+			]]
 		}]
 
 	};
