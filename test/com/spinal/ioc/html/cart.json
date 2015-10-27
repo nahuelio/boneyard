@@ -1,0 +1,4 @@
+{
+	"cart": "<ul class='cart <%= (obj.cls) ? obj.cls : 'default' %>'><%= items %></ul>",
+	"cartitem": "<li class='cart-item <%= (obj.cls) ? obj.cls : 'default' %>'><p>Cart Item <%= name %></p></li>"
+}

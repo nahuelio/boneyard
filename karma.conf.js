@@ -21,13 +21,14 @@ module.exports = function(config) {
         // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
         frameworks: ['mocha', 'expect', 'requirejs'],
 
-
         // list of files / patterns to load in the browser
         files: [
             'test/test-main.js',
+            { pattern: 'node_modules/sinon/pkg/**/*.js', included: false},
             { pattern: 'src/**/*.js', included: false },
             { pattern: 'test/**/*.js', included: false },
-            { pattern: 'test/**/*.css', included: false }
+            { pattern: 'test/**/*.css', included: false },
+            { pattern: 'test/**/*.json', included: false }
         ],
 
 
@@ -37,13 +38,14 @@ module.exports = function(config) {
         // preprocess matching files before serving them to the browser
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: {
-            'src/*/!(libs)/**/*.js': ['coverage']
+            'src/*/!(libs)/**/*.js': ['coverage'],
+            '!node_modules/sinon/pkg/**/*.*': ['coverage']
         },
 
         // test results reporter to use
         // possible values: 'dots', 'progress'
         // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-        reporters: ['spec', 'html', 'coverage'],
+        reporters: ['nyan', 'html', 'coverage'],
 
         htmlReporter: {
             outputFile: 'coverage/unit-test-results.html'
@@ -65,7 +67,7 @@ module.exports = function(config) {
 
         // level of logging
         // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
-        logLevel: config.LOG_INFO,
+        logLevel: config.LOG_ERROR,
 
 
         // enable / disable watching file and executing tests whenever any file changes

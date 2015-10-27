@@ -18,13 +18,10 @@ define([], function() {
 			$params: { content: 'Simple Span Text content' }
 		},
 
-		$ready: [{
-			'$bone!cspan.addAll': [[
-				'$bone!s_glyph',
-				'$bone!s_simple'
-			], { renderOnAdd: true }],
-			'$bone!s_glyph.addClass': ['glyphicon glyphicon-search']
-		}]
+		$actions: [
+			{ '$bone!cspan.addAll': [['$bone!s_glyph', '$bone!s_simple']] },
+			{ '$bone!s_glyph.addClass': ['glyphicon glyphicon-search'] }
+		]
 	};
 
 });

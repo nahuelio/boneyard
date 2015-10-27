@@ -253,7 +253,7 @@ define(['core/spinal',
 		*	@return {com.spinal.ui.View}
 		**/
 		afterRender: function(opts) {
-			if(!opts.silent) this.trigger(View.EVENTS.render, { view: this });
+			if(!opts.silent) this.trigger(View.EVENTS.render, this);
 			return this.delegateEvents();
 		},
 
@@ -268,7 +268,7 @@ define(['core/spinal',
 		*	@return {com.spinal.ui.View}
 		**/
 		update: function(model, value, opts) {
-			if(!opts || !opts.silent) this.trigger(View.EVENTS.update, { view: this });
+			if(!opts || !opts.silent) this.trigger(View.EVENTS.update, this);
 			return this;
 		},
 
@@ -411,7 +411,7 @@ define(['core/spinal',
 		detach: function(opts) {
 			View.__super__.remove.apply(this, arguments);
 			if(!opts || !opts.silent) this.trigger(View.EVENTS.detach, { view: this });
-			return this;
+			return this.undelegateEvents();
 		},
 
 		/**

@@ -18,12 +18,9 @@ define([], function() {
 			$params: { content: '<strong>HTML Content</strong>' }
 		},
 
-		$ready: [{
-			'$bone!cparagraph.addAll': [[
-				'$bone!p_simple',
-				'$bone!p_html'
-			], { renderOnAdd: true }]
-		}]
+		$actions: [
+			{ '$bone!cparagraph.addAll': [['$bone!p_simple', '$bone!p_html']] }
+		]
 	};
 
 });

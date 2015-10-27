@@ -5,20 +5,12 @@
 define(['core/spinal'], function(Spinal) {
 
 	/**
-	*	Define a generic interface to communicate with a service in the cloud.
+	*	Defines a generic interface of an iterable collection of elements
 	*	@namespace com.spinal.util.adt
 	*	@class com.spinal.util.adt.Iterator
 	*	@extends com.spinal.core.SpinalClass
 	**/
 	var Iterator = Spinal.namespace('com.spinal.util.adt.Iterator', Spinal.SpinalClass.inherit({
-
-		/**
-		*	Internal Array
-		*	@public
-		*	@property collection
-		*	@type Array
-		**/
-		collection: null,
 
 		/**
 		*	Cursor that points to an index inside the collection.
@@ -37,7 +29,8 @@ define(['core/spinal'], function(Spinal) {
 		*	@return {com.spinal.util.adt.Iterator}
 		**/
 		initialize: function(initial) {
-			(initial) ? this.set(initial) : (this.collection = []);
+			initial || (initial = []);
+			this.collection = initial;
 			return Iterator.__super__.initialize.apply(this, arguments);
 		},
 
@@ -98,6 +91,26 @@ define(['core/spinal'], function(Spinal) {
 				this.trigger(Iterator.EVENTS.removed, { removed: removed, iterator: this });
 			}
 			return removed;
+		},
+
+		/**
+		*	Returns true if the iterator is empty.
+		*	@public
+		*	@method isEmpty
+		*	@return Boolean
+		**/
+		isEmpty: function() {
+			return (this.size() === 0);
+		},
+
+		/**
+		*	Returns the size of the iterator.
+		*	@public
+		*	@method size
+		*	@return Number
+		**/
+		size: function() {
+			return this.collection.length;
 		}
 
 	}, {

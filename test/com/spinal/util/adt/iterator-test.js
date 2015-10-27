@@ -26,6 +26,13 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 
 		describe('#set()', function() {
 
+			it('Should set a new iterator collection', function() {
+				this.testSimple = new Iterator();
+				var result = this.testSimple.set([1,2,3]);
+				expect(result).to.be.an(Iterator);
+				expect(result.size()).to.be(3);
+			});
+
 			it('Should throw an error: param to set is not an array', function() {
 				expect(_.bind(function() {
 					this.testSimple.set({ key: 'not allowed' });
@@ -94,6 +101,20 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 			it('Should NOT remove the element at the current internal cursor position', function() {
 				this.testSimple = new Iterator([]);
 				expect(this.testSimple.remove()).not.be.ok();
+			});
+
+		});
+
+		describe('#isEmpty()', function() {
+
+			it('Should return true, iterator is empty', function() {
+				this.testSimple = new Iterator([]);
+				expect(this.testSimple.isEmpty()).to.be(true);
+			});
+
+			it('Should return false, iterator is not empty', function() {
+				this.testSimple = new Iterator([1,2,3]);
+				expect(this.testSimple.isEmpty()).to.be(false);
 			});
 
 		});

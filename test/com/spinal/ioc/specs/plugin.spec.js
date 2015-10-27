@@ -8,30 +8,50 @@ define([], function() {
 
 		$id: 'plugin',
 
+		account_html: 'html/account.json',
+		cart_html: 'html/cart.json',
+
+		spinal_theme: 'com/spinal/ioc/themes/spinal.css',
+		silver_theme: 'com/spinal/ioc/themes/silver.css',
+
 		container: {
 			$module: 'ui/container',
-			$params: { el: 'div.global' }
+			$params: { id: 'mycontainer' }
 		},
 
-		view: {
+		account: {
+			$module: 'ui/container',
+			$params: { id: 'account' }
+		},
+
+		cart: {
 			$module: 'ui/view',
-			$params: { id: 'child' }
+			$params: { id: 'cart' }
 		},
 
-		$ready: [
-			{ '$bone!container.add': ['$bone!view', { renderOnAdd: true }] }
+		$actions: [
+			{ '$bone!global.add': ['$bone!container'] },
+			{ '$bone!container.add': ['$bone!account'] },
+			{ '$bone!container.add': ['$bone!cart'] },
+			{ '$bone!container.render': [] }
 		],
 
 		$plugins: {
+
 			html: {
-				my: { path: 'tpls/my-tpl', lazyLoading: true },
-				other: { path: 'tpls/other-tpl' }
+				config: { basePath: 'text!test/com/spinal/ioc' },
+				account: { path: '$bone!account_html', lazyload: true },
+				cart: { path: '$bone!cart_html', lazyload: true },
+				checkout: { path: 'html/checkout.json' },
+				product: { path: 'html/product.json' }
 			},
+
 			theme: {
-				config: { basePath: '/base/test/themes/', bootstrap: true },
-				my: { url: '/base/test/com/spinal/ioc/skins/my.css', _default: true },
-				yours: { url: '/base/test/com/spinal/ioc/skins/yours.css' }
+				config: { basePath: 'test', bootstrap: true, defaultTheme: true },
+				spinal: { path: 'com/spinal/ioc/themes/spinal.css', default: true },
+				silver: { path: '$bone!silver_theme' }
 			}
+
 		}
 
 	};

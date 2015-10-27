@@ -7,10 +7,8 @@ define({
 	$id: 'footer',
 
 	footer: {
-
 		$module: 'ui/container',
 		$params: { id: 'footer' }
-
 	}
 
 });

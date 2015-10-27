@@ -20,10 +20,10 @@ define([], function() {
 			}
 		},
 
-		$ready: [{
-			'$bone!cselect.add': ['$bone!sel_simple', { renderOnAdd: true }],
-			'$bone!sel_simple.addClass': ['form-control']
-		}]
+		$actions: [
+			{ '$bone!cselect.add': ['$bone!sel_simple'] },
+			{ '$bone!sel_simple.addClass': ['form-control'] }
+		]
 
 	};
 

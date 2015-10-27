@@ -9,20 +9,15 @@ define(['core/spinal',
 
 	describe('com.spinal.ui.View', function() {
 
-		before(function() {
-			$('body').append('<div class="global"></div>');
-		});
-
-		after(function() {
-			delete this.cglobal.detach();
-		});
-
 		beforeEach(function() {
+			$('div.global').remove();
+			$('body').append('<div class="global"></div>');
 			this.cglobal = new Container({ id: 'global', el: 'div.global', interface: View });
 		});
 
 		afterEach(function() {
 			this.cglobal.removeAll();
+			delete this.cglobal.detach();
 		});
 
 		describe('#new()', function() {
@@ -113,10 +108,10 @@ define(['core/spinal',
 			it('Should render a View instance', function() {
 				this.testView = { id: 'render-test' };
 				var view = this.cglobal.add(this.testView);
-				view.off().on(View.EVENTS.render, function(ev) {
-					expect(ev).to.be.ok();
-					expect(ev.view).to.be.ok();
-					expect(ev.view.$el.attr('class')).to.be.equal('ui-view');
+				view.off().on(View.EVENTS.render, function(view) {
+					expect(view).to.be.ok();
+					expect(view).to.be.a(View);
+					expect(view.$el.attr('class')).to.be.equal('ui-view');
 				});
 				var result = view.render();
 				expect(result).to.be.ok();
@@ -142,6 +137,8 @@ define(['core/spinal',
 				delete view;
 				delete view2;
 			});
+
+			// FIXME: Missing Method Types Support (append and prepend work, but prependTo, appendTo and HTML won't)!
 
 			it('Should render a View instance with template', function() {
 				this.testView = { template: '<input class="test" />' };
@@ -228,9 +225,9 @@ define(['core/spinal',
 			it('Should update the View and return the instance', function() {
 				this.testView = { id: 'test-update'};
 				var view = this.cglobal.add(this.testView);
-				view.off().on(View.EVENTS.update, function(ev) {
-					expect(ev).to.be.ok();
-					expect(ev.view).to.be.ok();
+				view.off().on(View.EVENTS.update, function(view) {
+					expect(view).to.be.ok();
+					expect(view).to.be.a(View);
 				});
 				var result = view.update();
 				expect(result).to.be.a(View);

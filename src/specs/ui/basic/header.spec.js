@@ -33,14 +33,14 @@ define([], function() {
 			$params: { content: 'Header h5', heading: '5' }
 		},
 
-		$ready: [{
+		$actions: [{
 			'$bone!cheader.addAll': [[
 				'$bone!h_1',
 				'$bone!h_2',
 				'$bone!h_3',
 				'$bone!h_4',
 				'$bone!h_5'
-			], { renderOnAdd: true }]
+			]]
 		}]
 	};
 

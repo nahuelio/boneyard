@@ -58,35 +58,39 @@ define(['core/spinal',
 		*	Returns a factory that has been registered with the id passed as parameter.
 		*	@public
 		*	@method GetFactory
-		*	@param id {String} Factory Id
+		*	@param path {String} Factory path
 		*	@return Object
 		**/
-		getFactory: function(id) {
-			return this.factories.find(function(f) { return (f.id === id); });
+		getFactory: function(path) {
+			return this.factories.find(_.bind(function(f) { return (f.path === path); }, this));
 		},
 
 		/**
 		*	Returns true if the factory is already registered, otherwise returns false.
 		*	@public
 		*	@method isRegistered
-		*	@param id {String} Factory Id
+		*	@param path {String} Factory path
 		*	@return Boolean
 		**/
-		isRegistered: function(id) {
-			return _.defined(this.getFactory(id));
+		isRegistered: function(path) {
+			return _.defined(this.getFactory(path));
 		},
 
 		/**
 		*	Register a new generic factoryObj as Factory
 		*	@public
 		*	@method Register
-		*	@param id {String} Factory Id
+		*	@param path {String} factory path
 		*	@param factory {Object} factoryObj
 		*	@return Function
 		**/
-		register: function(id, factory) {
-			if(!id || !factory) return null;
-			if(!this.getFactory(id)) this.factories.add({ id: id, factory: factory });
+		register: function(path, factory) {
+			if(!path || !factory) return null;
+			if(!this.getFactory(path)) this.factories.add({
+				path: path,
+				factory: factory,
+				options: Array.prototype.slice.call(arguments, 2)
+			});
 			return factory;
 		},
 
@@ -94,12 +98,13 @@ define(['core/spinal',
 		*	UnRegister a existing factory
 		*	@public
 		*	@method Unregister
-		*	@param id {String} Factory Id
+		*	@param path {String} Factory path
 		*	@return Object
 		**/
-		unregister: function(id) {
-			if(!id) return null;
-			if(this.getFactory(id)) return this.factories.removeBy(function(f) { return (f.id === id); })[0];
+		unregister: function(path) {
+			if(!path) return null;
+			return (this.getFactory(path)) ?
+				this.factories.removeBy(_.bind(function(f) { return (f.path === path); }, this))[0] : null;
 		},
 
 		/**
@@ -108,10 +113,12 @@ define(['core/spinal',
 		*	@method Create
 		*	@return Object
 		**/
-		create: function(id) {
-			var f = this.getFactory(id);
-			if(!f) throw new FactoryException('UnregisteredFactory', { id: id });
-			return this._construct(f.factory, Array.prototype.slice.call(arguments, 1));
+		create: function(path) {
+			var f = this.getFactory(path);
+			if(!f) throw new FactoryException('UnregisteredFactory', { path: path });
+			var args = Array.prototype.slice.call(arguments, 1);
+			args = (args && args.length > 0) ? args : f.options;
+			return this._construct(f.factory, args);
 		}
 
 	}, {

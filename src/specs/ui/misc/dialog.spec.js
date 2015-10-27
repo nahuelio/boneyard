@@ -47,7 +47,7 @@ define([], function() {
 			$params: { id: 'dialog_advanced', title: 'Advanced Dialog', closeIcon: false, footer: '$bone!dialog_default_buttons' }
 		},
 
-		$ready: [
+		$actions: [
 			{ '$bone!dialog_c_s.addAll': [['$bone!dialog_p_s', '$bone!dialog_b_s', '$bone!dialog_simple']] },
 			{ '$bone!dialog_c_a.addAll': [['$bone!dialog_p_a', '$bone!dialog_b_a', '$bone!dialog_advanced']] },
 			{ '$bone!dialog_simple.add': ['$bone!dialog_content_s'] },

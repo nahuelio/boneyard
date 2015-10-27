@@ -1,8 +1,6 @@
 /**
 *	SpinalJS Core Spec for UI Components (spinal-ui package)
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
-*	Dev Notes:
-*		- Create Theme Switcher / Draggable to change themes on components (Stretch Goal)
 */
 define(['specs/ui/basic.spec',
 	'specs/ui/form.spec',
@@ -18,7 +16,11 @@ define(['specs/ui/basic.spec',
 
 		main: {
 			$module: 'ui/container',
-			$params: { el: 'div#composer-main', cls: 'container-fluid' }
+			$params: {
+				el: 'div#composer-main',
+				cls: 'container-fluid',
+				views: ['$bone!global', '$bone!menu']
+			}
 		},
 
 		global: {
@@ -31,17 +33,17 @@ define(['specs/ui/basic.spec',
 			$params: { id: 'menu', cls: 'container col-md-2 visible-md visible-lg' }
 		},
 
-		$ready: [{
-			'$bone!main.addAll': [[
-				'$bone!global',
-				'$bone!menu'
-			], { renderOnAdd: true }]
-		}],
+		$actions: [
+			{ '$bone!global.render': [] },
+			{ '$bone!menu.render': [] }
+		],
 
 		$plugins: {
-			html: {},
+			html: {
+				config: { basePath: 'text!templates' }
+			},
 			theme: {
-				config: { basePath: 'themes/', bootstrap: true }
+				config: { basePath: 'themes', bootstrap: true }
 			}
 		}
 

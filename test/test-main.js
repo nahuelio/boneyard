@@ -23,6 +23,7 @@ require.config({
     paths: {
         /** Rebase to point to specs folder **/
         'libs': 'src/libs',
+        'text': 'src/libs/text',
         'core': 'src/com/spinal/core',
         'ioc': 'src/com/spinal/ioc',
         'ui': 'src/com/spinal/ui',
@@ -30,20 +31,22 @@ require.config({
 
         /** Configurable Resources by end-developer **/
         'specs': 'test/com/spinal/ioc/specs',
-        'tpls': 'test/com/spinal/ioc/tpls',
 
         /** Hack Backbone requirejs **/
         'underscore': 'src/libs/underscore',
-        'jquery': 'src/libs/jquery'
+        'jquery': 'src/libs/jquery',
+        'sinon': 'node_modules/sinon/pkg/sinon'
     },
 
     shim: {
-        'libs/bootstrap': ['jquery', 'libs/modernizr']
+        'libs/bootstrap': ['jquery', 'sinon']
     },
 
     // we have to kickoff jasmine, as it is asynchronous
     callback: function() {
         require.onError = function(err) { console.log(err) };
+        // Add an initial div element
+        $('body').append('<div class="global"></div>');
         window.__karma__.start();
     }
 });

@@ -59,9 +59,10 @@ define(['core/spinal',
 		**/
 		createQueryString: function(o, noQMark, separator) {
 			var pairs = [], i, len;
-			_.each(o, function(k, v) {
+			_.each(o, function(v, k) {
 				if(_.isArray(v)) {
-					for (i = 0, len = v.length; i < len; i++) pairs.push(k + '=' + encodeURIComponent(decodeURIComponent(v[i])));
+					for(i = 0, len = v.length; i < len; i++)
+						pairs.push(k + '=' + encodeURIComponent(decodeURIComponent(v[i])));
 				} else {
 					pairs.push(k + '=' + encodeURIComponent(decodeURIComponent(v)));
 				}
@@ -87,19 +88,6 @@ define(['core/spinal',
 		},
 
 		/**
-		*	Prefixes props keys in props input object with a '_' to match the private members convention
-		*	and returns the object
-		*	@static
-		*	@method toPrivate
-		*	@param props {Object} Object to convert keys from
-		*	@return Object
-		**/
-		toPrivate: function(props) {
-			_.each(props, function(v, k, o) { o['_' + k] = v; delete o[k]; });
-			return props;
-		},
-
-		/**
 		*	Escapes Regular expression from value passed by parameter
 		*	@static
 		*	@method escapeRegex
@@ -112,23 +100,17 @@ define(['core/spinal',
 		},
 
 		/**
-		*	Perform a query using a string (dot notation) on the obj passed as parameter.
-		*	If the input doesn't match, it returns null.
+		*	Prefixes props keys in props input object with a '_' to match the private members convention
+		*	and returns the object
 		*	@static
-		*	@method search
-		*	@param query {String} query in dot notation format
-		*	@param obj {Object} JSON object ref
+		*	@method toPrivate
+		*	@param props {Object} Object to convert keys from
 		*	@return Object
 		**/
-		search: function(query, obj) {
-			if(!query || !obj || query === '') return null;
-			if(_.isEmpty(obj)) return obj;
-			var q = query.split("."), o = obj;
-		    for (var i = 0; i < q.length; i++) {
-				if(!o[q[i]]) { o = ''; break; }
-				o = o[q[i]];
-			}
-		    return o;
+		toPrivate: function(props) {
+			var o = _.clone(props);
+			_.each(props, function(v, k) { o['_' + k] = v; delete o[k]; });
+			return o;
 		}
 
 	}));

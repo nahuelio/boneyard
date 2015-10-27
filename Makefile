@@ -2,15 +2,11 @@
 
 clean:
 	@echo "\nCleanning Environment..."
-	@make clean-coverage && make clean-benchmark && make clean-docs && make clean-build
+	@make clean-coverage && make clean-docs && make clean-build
 
 clean-coverage:
 	@echo "\nCleanning Coverage Reports..."
 	@rm -fr coverage
-
-clean-benchmark:
-	@echo "\nCleanning Benchmark..."
-	@rm -f benchmark/spinal-*.html
 
 clean-docs:
 	@echo "\nCleanning API Docs..."
@@ -23,6 +19,7 @@ clean-build:
 ## Dependencies
 
 install-dependencies:
+	@rm -fr src/libs
 	@bower install
 	@node ./tools/spinal/build -m libs
 
@@ -53,15 +50,10 @@ build:
 composer:
 	@node ./bin/composer -l
 
-## Benchmark
-
-benchmark:
-	@echo "\nBenchmark SpinalJS..."
-
 ## Spin Server
 
 run:
 	@echo "\nRunning server..."
 	@node run
 
-.PHONY: clean clean-coverage clean-benchmark clean-docs clean-build install-dependencies test doc build composer benchmark run
+.PHONY: clean clean-coverage clean-docs clean-build install-dependencies test doc build composer run

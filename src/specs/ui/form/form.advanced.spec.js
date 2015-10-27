@@ -10,9 +10,14 @@ define([], function() {
 
 		form_l_a: { $module: 'ui/basic/paragraph', $params: { content: '<code>Advanced Form</code>' } },
 
-		advanced_model: [{ id: 1 }, { id: 2 }],
+		form_advanced_collection: new Backbone.Collection([
+			{ login: 'username' },
+			{ password: '' }
+		]),
 
-		form_advanced_collection: new Backbone.Collection([]),
+		// form_advanced_mapper: {
+		// 	$module: 'ui/form/mapper/form-mapper'
+		// },
 
 		form_advanced: {
 			$module: 'ui/form/form',
@@ -20,16 +25,15 @@ define([], function() {
 				name: 'form_advanced',
 				action: 'http:/localhost:9393/',
 				collection: '$bone!form_advanced_collection'
+				//mapper: '$bone!form_advanced_mapper'
 			}
 		},
 
-		$ready: [{
+		$actions: [{
 			'$bone!cform.addAll': [[
 				'$bone!form_l_a',
 				'$bone!form_advanced'
-			], { renderOnAdd: true }]
-		}, {
-			'$bone!form_advanced_collection.reset': ['$bone!advanced_model']
+			]]
 		}]
 
 	};

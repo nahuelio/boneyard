@@ -150,12 +150,25 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 		*	@public
 		*	@method each
 		*	@param func {Function} predicate function used to iterate over the elements.
-		*	@return Function
+		*	@return Array
 		**/
 		each: function(func) {
 			var args = Array.prototype.slice.call(arguments);
 			args.unshift(this.collection);
 			return _.each.apply(this, args);
+		},
+
+		/**
+		*	Filter result by iterating over all the elements inside the collection given a predicate.
+		*	@public
+		*	@method filter
+		*	@param func {Function} predicate function used to iterate over the elements.
+		*	@return Array
+		**/
+		filter: function(func) {
+			var args = Array.prototype.slice.call(arguments);
+			args.unshift(this.collection);
+			return _.filter.apply(this, args);
 		},
 
 		/**
@@ -172,6 +185,38 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 		},
 
 		/**
+		*	Looks through the list and returns the first value that matches
+		*	all of the key-value pairs listed in properties.
+		*	@public
+		*	@method findWhere
+		*	@param element {Object} key-value pair object to evaluate
+		*	@return Object
+		**/
+		findWhere: function(element) {
+			var args = Array.prototype.slice.call(arguments);
+			args.unshift(this.collection);
+			return _.findWhere.apply(this, args);
+		},
+
+		/**
+		*	Returns true if this collection contains any elements evaluated by predicate passed by parameter.
+		*	@public
+		*	@method containsBy
+		*	@param predicate {Function} predicate function used for evaluation
+		*	@param element {Object} element to evaluate
+		*	@return Boolean
+		**/
+		containsBy: function(predicate, element) {
+			if(!element || !predicate || !_.isFunction(predicate)) return false;
+			var result = false, col = (this._interface && this._interface.prototype.toJSON) ?
+				this.invoke('toJSON') : this.collection;
+			for(var i = 0; i < col.length; i++) {
+				if(predicate(element, col[i])) { result = true; break; }
+			}
+			return result;
+		},
+
+		/**
 		*	Returns true if this collection contains the specified element.
 		*	@public
 		*	@method contains
@@ -179,11 +224,12 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 		*	@return Boolean
 		**/
 		contains: function(element) {
-			if(!this._valid(element)) return false;
+			if(!this._valid(element) || this.isEmpty()) return false;
 			var result = false, col = (this._interface && this._interface.prototype.toJSON) ?
 				this.invoke('toJSON') : this.collection;
-			for(var i = 0; i < col.length; i++)
+			for(var i = 0; i < col.length; i++) {
 				if(_.isEqual(col[i], element)) { result = true; break; }
+			}
 			return result;
 		},
 
@@ -296,7 +342,7 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 		**/
 		findBy: function(finder) {
 			for(var i = 0, found = []; i < this.size(); i++) {
-				if(finder(this.collection[i])) found.push(this.collection[i]);
+				if(finder(this.collection[i], i)) found.push(this.collection[i]);
 			}
 			return found;
 		},
@@ -311,7 +357,7 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 		**/
 		findPosBy: function(finder) {
 			for(var i = 0, ix = -1; i < this.size(); i++) {
-				if(finder(this.collection[i])) { ix = i; break; }
+				if(finder(this.collection[i], i)) { ix = i; break; }
 			}
 			return ix;
 		},
@@ -335,7 +381,6 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 		/**
 		*	Returns true if the collection is empty.
 		*	@public
-		*	@chainable
 		*	@method isEmpty
 		*	@return Boolean
 		**/
@@ -346,7 +391,6 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 		/**
 		*	Returns the size of the collection.
 		*	@public
-		*	@chainable
 		*	@method size
 		*	@return Number
 		**/

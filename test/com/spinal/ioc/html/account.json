@@ -1,0 +1,4 @@
+{
+	"basic": "<div class='<%= (obj.cls) ? obj.cls : 'default' %>'><p class='first-name'><%= firstname %></p><p class='last-name'><%= lastname %></p></div>",
+	"extended": "<div class='extended'>More Info</div>"
+}

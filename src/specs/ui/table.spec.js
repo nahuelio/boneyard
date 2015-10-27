@@ -22,7 +22,7 @@ define(['specs/ui/table/table.spec'], function(TableSpec) {
 			$params: { id: 'table', title: 'Table' }
 		},
 
-		$ready: [{
+		$actions: [{
 			'$bone!global.addAll': [[
 				'$bone!table_header',
 				'$bone!ctable'

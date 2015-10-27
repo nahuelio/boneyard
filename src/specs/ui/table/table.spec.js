@@ -53,18 +53,18 @@ define([], function() {
 			}
 		},
 
-		$ready: [{
-			'$bone!ctable.addAll': [[
+		$actions: [
+			{ '$bone!ctable.addAll': [[
 				'$bone!table_p_s',
 				'$bone!table_simple',
 				'$bone!table_p_ss',
 				'$bone!table_simple_striped',
 				'$bone!table_p_sh',
 				'$bone!table_simple_hover'
-			], { renderOnAdd: true }],
-			'$bone!table_simple_striped.addClass': ['table-striped'],
-			'$bone!table_simple_hover.addClass': ['table-striped table-hover']
-		}]
+			], { renderOnAdd: true }] },
+			{ '$bone!table_simple_striped.addClass': ['table-striped'] },
+			{ '$bone!table_simple_hover.addClass': ['table-striped table-hover'] }
+		]
 
 	};
 

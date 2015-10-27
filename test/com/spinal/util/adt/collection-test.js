@@ -8,9 +8,6 @@ define(['core/spinal',
 
     describe('com.spinal.util.adt.Collection', function() {
 
-    	/**
-    	*	Constructor test
-    	**/
     	describe('#new()', function() {
 
     		it('Should return a com.spinal.util.adt.Collection Instance', function() {
@@ -44,9 +41,6 @@ define(['core/spinal',
 
     	});
 
-    	/**
-    	*	Collection#_valid() test
-    	**/
     	describe('#_valid()', function() {
 
     		it('Should return false (element is undefined)', function() {
@@ -59,9 +53,6 @@ define(['core/spinal',
 
     	});
 
-    	/**
-    	*	Collection#set() test
-    	**/
     	describe('#set()', function() {
 
     		it('Should NOT set a new collection (Single Object)', function() {
@@ -93,9 +84,6 @@ define(['core/spinal',
 
     	});
 
-    	/**
-    	*	Collection#get() test
-    	**/
     	describe('#get()', function() {
 
     		it('Should return the element at specific index', function() {
@@ -110,9 +98,6 @@ define(['core/spinal',
 
     	});
 
-    	/**
-    	*	Collection#add() test
-    	**/
     	describe('#add()', function() {
 
     		it('Should add a new element', function() {
@@ -138,9 +123,6 @@ define(['core/spinal',
 
     	});
 
-    	/**
-    	*	Collection#addAll() test
-    	**/
     	describe('#addAll()', function() {
 
             it('Should add all the items (No Interface)', function() {
@@ -183,9 +165,6 @@ define(['core/spinal',
 
     	});
 
-        /**
-    	*	Collection#invoke() test
-    	**/
         describe('#invoke()', function() {
 
             it('Should invoke a method on each element inside the collection', function() {
@@ -203,9 +182,6 @@ define(['core/spinal',
 
         });
 
-        /**
-    	*	Collection#each() test
-    	**/
         describe('#each()', function() {
 
             it('Should iterate over all the elements inside the collection', function() {
@@ -226,9 +202,18 @@ define(['core/spinal',
 
         });
 
-        /**
-    	*	Collection#map() test
-    	**/
+        describe('#filter()', function() {
+
+            it('Should filter out objects given a predicate function', function() {
+                this.testSimple.reset().addAll([{ id: 1, name: 'bob' }, { id: 2, name: 'matt' }, { id: 3, name: 'pato' }]);
+                var result = this.testSimple.filter(function(o) { return (o.name.indexOf('o') !== -1); });
+                expect(result).to.be.a('array');
+                expect(result).to.have.length(2);
+                expect(result[1].name).to.be('pato');
+            });
+
+        });
+
         describe('#map()', function() {
 
             it('Should produce a new array of values by mapping values through a transformation function', function() {
@@ -253,9 +238,52 @@ define(['core/spinal',
 
         });
 
-    	/**
-    	*	Collection#contains() test
-    	**/
+        describe('#findWhere()', function() {
+
+            it('Should return an object that match all properties specified in a given object', function() {
+                this.testSimple.reset().addAll([{ id: 1, name: 'bob' }, { id: 2, name: 'matt' }]);
+                var result = this.testSimple.findWhere({ name: 'matt' });
+                expect(result).to.be.a('object');
+                expect(result.id).to.be(2);
+            });
+
+        });
+
+        describe('#containsBy()', function() {
+
+            it('Should return true/false if contains (or not) given a predicate (No interface)', function() {
+                this.testSimple.reset().addAll([{ name: 'foo' }, { name: 'bar' }, { name: 'zoo' }]);
+
+                var result = this.testSimple.containsBy(function(element, current) {
+                    return (element.name === current.name);
+                }, this.testSimple.get(1));
+                expect(result).to.be.equal(true);
+
+                result = this.testSimple.containsBy(function(element, current) {
+                    return (element.name === current.name);
+                }, { name: 'non-existent' });
+                expect(result).to.be.equal(false);
+
+                result = this.testSimple.containsBy();
+                expect(result).to.be.equal(false);
+            });
+
+            it('Should return true/false if contains (or not) given a predicate (With interface)', function() {
+                var collectionWithInterface = new Collection([{ name: 'foo' }, { name: 'bar' }], { interface: Backbone.Model });
+
+                var result = collectionWithInterface.containsBy(function(element, current) {
+                    return (element.name === current.name);
+                }, collectionWithInterface.get(0).toJSON());
+                expect(result).to.be.equal(true);
+
+                result = collectionWithInterface.containsBy(function(element, current) {
+                    return (element.name === current.name);
+                }, { name: 'baz' });
+                expect(result).to.be.equal(false);
+            });
+
+    	});
+
     	describe('#contains()', function() {
 
             it('Should return true/false if contains (or not) a element (No interface)', function() {
@@ -269,21 +297,15 @@ define(['core/spinal',
             });
 
             it('Should return true/false if contains (or not) a element (With interface)', function() {
-                this.testInterface.reset().addAll([
-                    { model: new Backbone.Model({ name: 'foo' }) },
-                    { model: new Backbone.Model({ name: 'bar' }) }
-                ]);
-                var result = this.testInterface.contains(this.testInterface.get(0));
+                var collectionWithInterface = new Collection([{ name: 'foo' }, { name: 'bar' }], { interface: Backbone.Model });
+                var result = collectionWithInterface.contains(collectionWithInterface.get(0).toJSON());
                 expect(result).to.be.equal(true);
-                result = this.testInterface.contains({ model: new Backbone.Model({ nonexistent: '1' }) });
+                result = collectionWithInterface.contains({ name: 'baz' });
                 expect(result).to.be.equal(false);
             });
 
     	});
 
-    	/**
-    	*	Collection#containsAll() test
-    	**/
     	describe('#containsAll()', function() {
 
             it('Should return true/false if contains (or not) a collection of elements (No Interface)', function() {
@@ -317,9 +339,6 @@ define(['core/spinal',
 
     	});
 
-    	/**
-    	*	Collection#iterator() test
-    	**/
     	describe('#iterator()', function() {
 
             it('Should return an Iterator Instance from a Collection', function() {
@@ -336,9 +355,6 @@ define(['core/spinal',
 
     	});
 
-    	/**
-    	*	Collection#remove() test
-    	**/
     	describe('#remove()', function() {
 
             it('Should remove an element from a collection (No Interface)', function() {
@@ -376,9 +392,6 @@ define(['core/spinal',
 
     	});
 
-    	/**
-    	*	Collection#removeBy() test
-    	**/
     	describe('#removeBy()', function() {
 
             it('Should remove element/s by a function predicate (No Interface)', function() {
@@ -431,9 +444,6 @@ define(['core/spinal',
 
     	});
 
-    	/**
-    	*	Collection#removeAll() test
-    	**/
     	describe('#removeAll()', function() {
 
             it('Should remove all the elements in the collection (No Interface)', function() {
@@ -484,9 +494,6 @@ define(['core/spinal',
 
     	});
 
-        /**
-    	*	Collection#find() test
-    	**/
     	describe('#find()', function() {
 
             it('Should find one element by a function predicate', function() {
@@ -516,9 +523,6 @@ define(['core/spinal',
 
         });
 
-    	/**
-    	*	Collection#findBy() test
-    	**/
     	describe('#findBy()', function() {
 
             it('Should find elements by a function predicate (No Interface)', function() {
@@ -551,9 +555,6 @@ define(['core/spinal',
 
     	});
 
-    	/**
-    		*	Collection#reset() test
-    		**/
     	describe('#reset()', function() {
 
             it('Should reset the Collection', function() {
@@ -565,9 +566,6 @@ define(['core/spinal',
 
     	});
 
-    	/**
-    	*	Collection#isEmpty() test
-    	**/
     	describe('#isEmpty()', function() {
 
             it('Should return true/false if the collection is empty or not', function() {
@@ -622,9 +620,6 @@ define(['core/spinal',
 
     	});
 
-        /**
-    	*	Collection#swap() test
-    	**/
         describe('#swap()', function() {
 
             it('Should swap 2 elements position inside the collection based on a comparator function', function() {
@@ -638,13 +633,11 @@ define(['core/spinal',
                 this.testSimple.reset().addAll(['z', 'a', 'd', 'w']);
                 expect(this.testSimple.swap()).to.be.ok();
                 expect(this.testSimple.swap('non-a-function')).to.be.ok();
+                expect(this.testSimple.swap(function(e, i) { return null; })).to.be.ok();
             });
 
         });
 
-    	/**
-    	*	Collection#toString() test
-    	**/
     	describe('#toString()', function() {
 
             it('Should return String representation of a Collection instance', function() {

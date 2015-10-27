@@ -42,18 +42,7 @@ define(['libs/backbone'], function() {
 				obj = part; name = parts[i];
 				part = (part[name]) ? part[name] : (part[name] = {});
 			}
-			return (constructor) ? (obj[name] = constructor) : part;
-		};
-
-		/**
-		*	Validate if obj is an instance of the Browser's Windows Object.
-		*	@private
-		*	@method _isWindow
-		*	@param obj {Object} object to evaluate
-		*	@return Boolean
-		**/
-		var _isWindow = function(obj) {
-			return obj && obj.document && obj.location && obj.alert && obj.setInterval;
+			return (obj[name] = constructor);
 		};
 
 		/**
@@ -85,7 +74,6 @@ define(['libs/backbone'], function() {
 		*	@return Object
 		**/
 		var _deepCopy = function (source, destination, existing) {
-			if (_isWindow(source)) throw new Error("Making copies of Window or Scope instances is not supported.");
 			if(!destination) {
 				destination = source;
 				if(source) {
@@ -219,7 +207,10 @@ define(['libs/backbone'], function() {
 			proxify: function(t) {
 				if(!t) return this;
 				var members = Array.prototype.slice.call(arguments, 1);
-				_.each(members, function(m) { t[m] = (_.isFunction(this[m])) ? _.bind(this[m], this) : this[m]; }, this);
+				_.each(members, function(m) {
+					if(!_.defined(this[m])) return;
+					t[m] = (_.isFunction(this[m])) ? _.bind(this[m], this) : this[m];
+				}, this);
 				return this;
 			},
 
@@ -230,7 +221,7 @@ define(['libs/backbone'], function() {
 			*	@return Object
 			**/
 			toJSON: function() {
-				return JSON.parse(JSON.stringify(_.omit(this, _.functions(this))));
+				return _.clone(_.omit(this, _.functions(this)));
 			},
 
 			/**

@@ -2,20 +2,21 @@
 *	@module com.spinal.ioc.processor
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define(['ioc/context',
-		'ioc/processor/bone',
-		'util/exception/processor'], function(Context, BoneProcessor, ProcessorException) {
+define(['ioc/processor/processor',
+	'ioc/plugins/plugin',
+	'util/adt/queue'], function(Processor, IoCPlugin, Queue) {
 
 	/**
-	*	Defines a processor that acts as a wrapper to trigger plugins functionality
+	*	Class PluginProcessor
 	*	@namespace com.spinal.ioc.processor
 	*	@class com.spinal.ioc.processor.PluginProcessor
-	*	@extends com.spinal.ioc.processor.BoneProcessor
+	*	@extends com.spinal.ioc.processor.Processor
 	*
-	*	@requires com.spinal.ioc.Context
-	*	@requires com.spinal.ioc.processor.BoneProcessor
+	*	@requires com.spinal.ioc.processor.Processor
+	*	@requires com.spinal.ioc.plugins.Plugin
+	*	@requires com.spinal.util.adt.Queue
 	**/
-	var PluginProcessor = Spinal.namespace('com.spinal.ioc.processor.PluginProcessor', BoneProcessor.inherit({
+	var PluginProcessor = Spinal.namespace('com.spinal.ioc.processor.PluginProcessor', Processor.inherit({
 
 		/**
 		*	Default plugins path processors
@@ -30,9 +31,10 @@ define(['ioc/context',
 		*	@public
 		*	@chainable
 		*	@method initialize
-		*	@return {com.spinal.ioc.processor.CreateProcessor}
+		*	@return com.spinal.ioc.processor.PluginProcessor
 		**/
 		initialize: function() {
+			this.execution = new Queue([], { capacity: 1 });
 			return PluginProcessor.__super__.initialize.apply(this, arguments);
 		},
 
@@ -40,57 +42,99 @@ define(['ioc/context',
 		*	Adds a new plugin module into the async factory stack
 		*	@private
 		*	@chainable
-		*	@method _enqueue
-		*	@param id {String} module id
-		*	@param success {Function} callback function to be executed once the module is loaded
-		*	@return Object
+		*	@method enqueue
+		*	@param plugin {Object} plugin metadata information
+		*	@return com.spinal.ioc.processor.PluginProcessor
 		**/
-		_enqueue: function(id, success) {
-			this._engine.factory.push({ id: id, path: (this.defaultPath + id), callback: success });
+		enqueue: function(plugin) {
+			this.getFactory().push({
+				path: (this.defaultPath + plugin.getId()),
+				callback: _.bind(this.onLoad, this, plugin)
+			});
 			return this;
 		},
 
 		/**
-		*	Function as partial that creates an instance of the module plugin by passing the parameters to
-		*	the constructor function (including params)
-		*	@private
-		*	@method _create
-		*	@throws {com.spinal.util.error.types.ProcessorException}
-		*	@param params {Object} plugin params
-		*	@param pluginName {String} plugin name to pass to the factory to create an instance
-		*	@return Object
+		*	Default plugin load handler that creates an instance and triggers plugin execution.
+		*	@public
+		*	@method onLoad
+		*	@param plugin {com.spinal.ioc.engine.annotation.Plugin} plugin annotation reference
+		*	@param path {String} plugin module path
+		*	@return com.spinal.ioc.processor.PluginProcessor
 		**/
-		_create: function(params, pluginName) {
-			return this._engine.factory.create(pluginName, ((params) ? params : {}), this._engine).execute();
+		onLoad: function(plugin, path) {
+			plugin.create(path).on(IoCPlugin.EVENTS.done, this.onPluginDone, this);
+			plugin.run();
+			return this;
 		},
 
 		/**
-		*	Process all plugins extracted from the root spec
+		*	Process all plugins available from the Engine
 		*	@public
+		*	@chainable
 		*	@method process
-		*	@param plugins {Object} plugins reference
+		*	@param plugin {Object} plugins reference
+		*	@return com.spinal.ioc.processor.PluginProcessor
+		**/
+		process: function(plugin) {
+			return this.enqueue(plugin.resolve());
+		},
+
+		/**
+		*	Retrieves a list of plugins annotations that have not been executed
+		*	@public
+		*	@method plugins
 		*	@return Array
 		**/
-		process: function(plugins) {
-			return _.map(plugins, function(params, id) {
-				this._enqueue(id, _.bind(_.partial(this._create, params), this));
-				return id;
-			}, this);
+		plugins: function() {
+			return this.getEngine().plugins.filter(function(plugin) { return !plugin.isExecuted(); });
 		},
 
 		/**
 		*	Execute Processor
 		*	@public
+		*	@override
+		*	@chainable
 		*	@method execute
-		*	@return {com.spinal.ioc.processor.CreateProcessor}
+		*	@return com.spinal.ioc.engine.processor.PluginProcessor
 		**/
 		execute: function() {
-			var plugins = (this._engine.plugin()) ? this.process(this._engine.root[this._engine.__plugins]) : [];
-			this._engine.factory.load(_.bind(function() {
-				delete this._engine.root[this._engine.__plugins];
-				this.trigger(PluginProcessor.EVENTS.processed, {  type: PluginProcessor.NAME, plugins: plugins });
-			}, this));
+			var plugins = this.plugins();
+			if(plugins.length > 0) {
+				this.execution.set(plugins, { capacity: plugins.length });
+				PluginProcessor.__super__.execute.call(this, plugins, this.process);
+				this.getFactory().load();
+			} else {
+				this.done(PluginProcessor.NAME);
+			}
 			return this;
+		},
+
+		/**
+		*	Default Plugin finish execution handler
+		*	@public
+		*	@method onPluginDone
+		*	@param plugin {com.spinal.ioc.plugins.Plugin} plugin reference
+		*	@return com.spinal.ioc.engine.processor.PluginProcessor
+		**/
+		onPluginDone: function(plugin) {
+			this.execution.poll();
+			plugin.off(IoCPlugin.EVENTS.done);
+			if(this.execution.isEmpty()) this.done(PluginProcessor.NAME);
+			return this;
+		},
+
+		/**
+		*	Default processor done handler
+		*	@public
+		*	@override
+		*	@chainable
+		*	@method done
+		*	@param type {String} Processor type
+		*	@return com.spinal.ioc.processor.PluginProcessor
+		**/
+		done: function(type) {
+			return PluginProcessor.__super__.done.call(this, type);
 		}
 
 	}, {

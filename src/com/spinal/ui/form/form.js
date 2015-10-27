@@ -3,8 +3,9 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['ui/container',
-	'util/factories/factory-mapper',
-	'util/string'], function(Container, FactoryMapper, StringUtil) {
+	'ui/form/mapper/form-mapper',
+	'util/exception/ui',
+	'util/string'], function(Container, FormMapper, UIException, StringUtil) {
 
 	/**
 	*	Form Class
@@ -13,7 +14,8 @@ define(['ui/container',
 	*	@extends com.spinal.ui.Container
 	*
 	*	@requires com.spinal.ui.Container
-	*	@requires com.spinal.util.factories.FactoryMapper
+	*	@requires com.spinal.ui.form.mapper.FormMapper
+	*	@requires com.spianl.util.exception.UIException
 	*	@requires com.spinal.util.StringUtil
 	**/
 	var UIForm = Spinal.namespace('com.spinal.ui.form.Form', Container.inherit({
@@ -123,19 +125,20 @@ define(['ui/container',
 		**/
 		initialize: function(opts) {
 			opts || (opts = {});
+			if(opts.mapper && !(opts.mapper instanceof FormMapper)) throw new UIException('InvalidMapperType');
 			_.extend(this, StringUtil.toPrivate(_.pick(opts, 'action', 'name', 'mapper', 'options', 'validator')));
 			UIForm.__super__.initialize.apply(this, arguments);
-			return this.mapper();
+			return (this._mapper || (this._mapper instanceof FormMapper)) ? this.mapper() : this;
 		},
 
 		/**
-		*	Retrieves data model set up for this form if available
-		*	@private
-		*	@method getModel
-		*	@return Array
+		*	Resolves and retrieves a json representation of the form model
+		*	@public
+		*	@method resolve
+		*	@return Object
 		**/
-		_resolveModel: function() {
-			return this.model ? [this.model.toJSON()] : this.collection ? this.collection.toJSON() : null;
+		resolve: function() {
+			return this.model ? this.model.toJSON() : this.collection ? this.collection.toJSON() : null;
 		},
 
 		/**
@@ -146,26 +149,38 @@ define(['ui/container',
 		*	@return com.spinal.ui.form.Form
 		**/
 		mapper: function() {
-			if(!this._mapper || !(this._mapper instanceof FactoryMapper)) return this;
-			this.render = _.wrap(this.render, _.bind(function(render) {
-				this._mapper.source(this.create, this._resolveModel()).load(render);
-			}, this));
+			this._mapper.defaults()
+				.source(_.bind(this.create, this), this.resolve())
+				.load(_.bind(this.update, this));
 			return this;
+		},
+
+		/**
+		*	Optionally wraps form's component inside a fieldset and optionally adds a label.
+		*	@public
+		*	@chainable
+		*	@method wrap
+		*	@param opts {Object} options
+		*	@return com.spinal.ui.form.Form
+		**/
+		wrap: function(opts) {
+			var container = (opts.fieldset) ? this.add(this._mapper.create('Fieldset', opts.fieldset)) : this;
+			if(opts.label) container.add(this._mapper.create('Label', opts.label));
+			return container;
 		},
 
 		/**
 		*	Default create handler that adds controls to this form
 		*	@public
 		*	@method create
-		*	@param parameters {Object} additional parameters
+		*	@param params {Object} additional parameters
 		*	@param id {String} factory id of the control
 		*	@param controls {Array} collection of factory ids
 		*	@return com.spinal.ui.form.Form
 		**/
-		create: function(parameters, id, factory) {
-			this.add(this._mapper.create(id, parameters));
-			// FIXME: How do I know it's the last one to call render only once?? Continue here...
-			return render();
+		create: function(params, id, factory) {
+			params.options || (params.options = {});
+			return this.wrap(params.options).add(this._mapper.create(id, _.omit(params.options)));
 		},
 
 		/**
@@ -206,7 +221,11 @@ define(['ui/container',
 		*	@return {com.spinal.ui.form.Form}
 		**/
 		update: function(model, value, opts) {
-			return UIForm.__super__.update.apply(this, arguments);
+			UIForm.__super__.update.apply(this, arguments);
+			// FIXME: Must be a different way, quick fix for Reverse the stack order!!
+			this.views.collection.reverse();
+			this.invoke('render', opts);
+			return this;
 		},
 
 		/**

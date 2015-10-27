@@ -49,7 +49,7 @@ define([], function() {
 			}
 		},
 
-		$ready: [{
+		$actions: [{
 			'$bone!menu.add': ['$bone!affix', { renderOnAdd: true }]
 		}]
 

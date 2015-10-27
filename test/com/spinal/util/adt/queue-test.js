@@ -6,9 +6,6 @@ define(['core/spinal', 'util/adt/queue'], function(Spinal, Queue) {
 
 	describe('com.spinal.util.adt.Queue', function() {
 
-		/**
-		*	Constructor test
-		**/
 		describe('#new()', function() {
 
 			it('Should return an com.spinal.util.adt.Queue Instance', function() {
@@ -46,6 +43,20 @@ define(['core/spinal', 'util/adt/queue'], function(Spinal, Queue) {
 				}).to.throwException(function(e) {
 					expect(e).to.be.a(Error);
 					expect(e.message).to.be.equal('Queue element\'s collection passed overflows the current capacity [1].');
+				});
+			});
+
+		});
+
+		describe('#set()', function() {
+
+			it('Should throw an Error: set new elements for the queue without capacity', function() {
+				expect(function() {
+					var testSet = new Queue([], { capacity: 1 });
+					testSet.set([1]);
+				}).to.throwException(function(e) {
+					expect(e).to.be.a(Error);
+					expect(e.message).to.be.equal('Queue requires a \'capacity\' property in order to be instanciate it.');
 				});
 			});
 

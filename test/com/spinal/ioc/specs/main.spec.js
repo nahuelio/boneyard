@@ -15,7 +15,7 @@ define(['specs/header.spec',
 
 		global: {
 			$module: 'ui/container',
-			$params: { el: 'div.global', css: '$bone!theme' }
+			$params: { el: 'div.global', cls: '$bone!theme' }
 		},
 
 		viewA: {
@@ -28,16 +28,13 @@ define(['specs/header.spec',
 			$params: { id: 'viewB' }
 		},
 
-		$ready: [
+		$actions: [
 			{ '$bone!global.add': ['$bone!header'] },
 			{ '$bone!global.add': ['$bone!footer'] },
-			{
-				'$bone!global.add': ['$bone!content'],
-				'$bone!global.update': [{ silent: true }]
-			},
-			{ '$bone!content.add': ['$bone!viewA', { renderOnAdd: true }] },
-			{ '$bone!content.add': ['$bone!viewB', { renderOnAdd: true }] },
-			{ '$bone!content.render': [] }
+			{ '$bone!global.add': ['$bone!content'] },
+			{ '$bone!content.add': ['$bone!viewA'] },
+			{ '$bone!content.add': ['$bone!viewB'] },
+			{ '$bone!global.render': [] }
 		]
 
 	};

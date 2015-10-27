@@ -42,7 +42,7 @@ define(['core/spinal',
 		*	@type Object
 		**/
 		TYPES: {
-			UnregisteredFactory: _.template('Factory <%= id %> not found. Unable to use factory method to instanciate class.')
+			UnregisteredFactory: _.template('Factory <%= path %> not found. Unable to use factory method to instanciate class.')
 		}
 
 	}));

@@ -7,9 +7,6 @@ define(['util/string',
 
 	describe('com.spinal.util.StringUtil', function() {
 
-		/**
-		*	StringUtil#new() test
-		**/
 		describe('#new()', function() {
 
 			it('Should NOT instanciate StringUtil Class (Static)', function() {
@@ -23,10 +20,7 @@ define(['util/string',
 
 		});
 
-		/**
-		*	StringUtil#new() test (Static)
-		**/
-		describe('(Static) #uuid()', function() {
+		describe('static#uuid()', function() {
 
 			it('Should generate a uuid string that match the standard', function() {
 				expect(StringUtil.uuid()).to.be.ok();
@@ -34,10 +28,29 @@ define(['util/string',
 
 		});
 
-		/**
-		*	StringUtil#strToJSON() test (Static)
-		**/
-		describe('(Static) #strToJSON()', function() {
+		describe('static#createQueryString()', function() {
+
+			it('Should return querystring based on a given object (key-value pairs)', function() {
+				var toQuery = { a: 1, b: 'hello', c: true, arr: [1,2,3] };
+				var result = StringUtil.createQueryString(toQuery);
+				expect(result).to.be('?a=1&b=hello&c=true&arr=1&arr=2&arr=3');
+			});
+
+			it('Should return querystring without question mark prefix', function() {
+				var toQuery = { a: 1, b: 'hello', c: true, arr: [1,2,3] };
+				var result = StringUtil.createQueryString(toQuery, true);
+				expect(result).to.be('a=1&b=hello&c=true&arr=1&arr=2&arr=3');
+			});
+
+			it('Should return querystring without question mark prefix and with custom separator', function() {
+				var toQuery = { a: 1, b: 'hello', c: true, arr: [1,2,3] };
+				var result = StringUtil.createQueryString(toQuery, true, '-');
+				expect(result).to.be('a=1-b=hello-c=true-arr=1-arr=2-arr=3');
+			});
+
+		});
+
+		describe('static#strToJSON()', function() {
 
 			it('Should return an object based on a String expression in dot notation', function() {
 				var o = StringUtil.strToJSON('query.to.obj');
@@ -54,20 +67,15 @@ define(['util/string',
 
 		});
 
-		/**
-		*	StringUtil#strToJSON() test (Static)
-		**/
-		describe('(Static) #search()', function() {
+		describe('static#toPrivate()', function() {
 
-			it('Should find an object value by using a query string in dot notation', function() {
-				var obj = { a: { b: { c: 'value_c' }, d: 'value_d' } };
-				expect(StringUtil.search('a.d', obj)).to.be.equal('value_d');
-			});
-
-			it('Should NOT find an object value by using a query string in dot notation', function() {
-				expect(StringUtil.search()).not.to.be.ok();
-				expect(StringUtil.search('')).not.to.be.ok();
-				expect(StringUtil.search('a.d', {})).to.be.empty();
+			it('description', function() {
+				var result = StringUtil.toPrivate({ 'propA': 1, 'propB': true });
+				expect(result).to.be.a('object');
+				expect(result.propA).not.be.ok();
+				expect(result._propA).to.be.a('number');
+				expect(result.propB).not.be.ok();
+				expect(result._propB).to.be.a('boolean');
 			});
 
 		});

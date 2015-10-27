@@ -9,7 +9,7 @@ define(['ui/basic/image'], function(Image) {
 		$id: 'ui-list-list',
 
 		list_p_s: { $module: 'ui/basic/paragraph', $params: { content: '<code>Simple Styling</code>' } },
-		list_p_a: { $module: 'ui/basic/paragraph', $params: { content: '<code>Advance Styling</code>' } },
+		list_p_a: { $module: 'ui/basic/paragraph', $params: { content: '<code>Advanced Styling</code>' } },
 
 		list_items_simple: new Backbone.Collection([
 			{
@@ -66,7 +66,7 @@ define(['ui/basic/image'], function(Image) {
 			$params: { cls: 'list-group', collection: '$bone!list_items_advanced', type: Image }
 		},
 
-		$ready: [{
+		$actions: [{
 			'$bone!clist.addAll': [[
 				'$bone!list_p_s',
 				'$bone!list_simple',
