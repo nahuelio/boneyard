@@ -8,8 +8,6 @@ define([], function() {
 
 		$id: 'ui-form-simple',
 
-		form_l_s: { $module: 'ui/basic/paragraph', $params: { content: '<code>Simple Form</code>' } },
-
 		form_simple_model: new Backbone.Model({
 			username: {
 				type: 'Input',
@@ -40,22 +38,17 @@ define([], function() {
 			}
 		}),
 
-		form_simple_mapper: {
-			$module: 'ui/form/mapper/form-mapper'
-		},
-
 		form_simple: {
 			$module: 'ui/form/form',
 			$params: {
 				name: 'form_simple',
 				action: 'http:/localhost:9393/',
-				model: '$bone!form_simple_model',
-				mapper: '$bone!form_simple_mapper'
+				model: '$bone!form_simple_model'
 			}
 		},
 
 		$actions: [
-			{ '$bone!cform.addAll': [['$bone!form_l_s', '$bone!form_simple']] }
+			{ '$bone!p_form_simple.addAll': [['$bone!form_simple']] }
 		]
 
 	};

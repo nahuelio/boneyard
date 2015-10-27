@@ -40,7 +40,7 @@ define([], function() {
 				'$bone!h_3',
 				'$bone!h_4',
 				'$bone!h_5'
-			], { renderOnAdd: true }]
+			]]
 		}]
 	};
 

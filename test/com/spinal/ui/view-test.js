@@ -9,20 +9,15 @@ define(['core/spinal',
 
 	describe('com.spinal.ui.View', function() {
 
-		before(function() {
-			$('body').append('<div class="global"></div>');
-		});
-
-		after(function() {
-			delete this.cglobal.detach();
-		});
-
 		beforeEach(function() {
+			$('div.global').remove();
+			$('body').append('<div class="global"></div>');
 			this.cglobal = new Container({ id: 'global', el: 'div.global', interface: View });
 		});
 
 		afterEach(function() {
 			this.cglobal.removeAll();
+			delete this.cglobal.detach();
 		});
 
 		describe('#new()', function() {

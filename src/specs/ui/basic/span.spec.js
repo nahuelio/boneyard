@@ -19,7 +19,7 @@ define([], function() {
 		},
 
 		$actions: [
-			{ '$bone!cspan.addAll': [['$bone!s_glyph', '$bone!s_simple' ], { renderOnAdd: true }] },
+			{ '$bone!cspan.addAll': [['$bone!s_glyph', '$bone!s_simple']] },
 			{ '$bone!s_glyph.addClass': ['glyphicon glyphicon-search'] }
 		]
 	};

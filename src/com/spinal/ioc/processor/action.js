@@ -34,7 +34,18 @@ define(['ioc/processor/processor'], function(Processor) {
 		*	@return Number
 		**/
 		sort: function(actionA, actionB) {
-			if(actionA.getId().indexOf('listenTo') !== -1 || actionB.getId().indexOf('listenTo') !== -1) return -1;
+			var aListenTo = actionA.getId().indexOf('listenTo');
+			var bListenTo = actionB.getId().indexOf('listenTo');
+
+			var aRender = actionA.getId().indexOf('render');
+			var bRender = actionB.getId().indexOf('render');
+
+			if(aListenTo < bListenTo) return -1;
+			if(aListenTo > bListenTo) return 1;
+
+			if(aRender < bRender) return -1;
+			if(aRender > bRender) return 1;
+
 			return 0;
 		},
 

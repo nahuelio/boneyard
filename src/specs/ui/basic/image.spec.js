@@ -31,7 +31,7 @@ define([], function() {
 		},
 
 		$actions: [
-			{ '$bone!cimage.addAll': [['$bone!i_simple', '$bone!i_ph_rounded', '$bone!i_ph_circled', '$bone!i_ph_thumbnailed' ], { renderOnAdd: true }] },
+			{ '$bone!cimage.addAll': [['$bone!i_simple', '$bone!i_ph_rounded', '$bone!i_ph_circled', '$bone!i_ph_thumbnailed' ]] },
 			{ '$bone!i_ph_rounded.addClass': ['img-rounded'] },
 			{ '$bone!i_ph_circled.addClass': ['img-circle'] },
 			{ '$bone!i_ph_thumbnailed.addClass': ['img-thumbnail'] }

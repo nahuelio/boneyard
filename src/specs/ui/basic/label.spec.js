@@ -14,9 +14,7 @@ define([], function() {
 		},
 
 		$actions: [{
-			'$bone!clabel.addAll': [[
-				'$bone!lbl_simple'
-			], { renderOnAdd: true }]
+			'$bone!clabel.addAll': [['$bone!lbl_simple']]
 		}]
 	};
 

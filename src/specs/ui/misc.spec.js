@@ -48,7 +48,7 @@ define(['specs/ui/misc/panel.spec',
 				'$bone!cdropdown',
 				'$bone!cdialog',
 				'$bone!cautocomplete'
-			], { renderOnAdd: true }]
+			]]
 		}]
 
 	};

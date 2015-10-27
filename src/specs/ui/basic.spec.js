@@ -62,7 +62,7 @@ define(['specs/ui/basic/paragraph.spec',
 				'$bone!clabel',
 				'$bone!cspan',
 				'$bone!cimage'
-			], { renderOnAdd: true }]
+			]]
 		}]
 
 	};
