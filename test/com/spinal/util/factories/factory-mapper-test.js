@@ -17,34 +17,52 @@ define(['util/factories/factory-mapper', 'ui/view'], function(FactoryMapper, Vie
 
 		beforeEach(function() {
 			if(this.factoryMapper) {
-				// By Type Spies
-				this.stringSpy = sinon.spy(this.factoryMapper, 'string');
-				this.numberSpy = sinon.spy(this.factoryMapper, 'number');
-				this.booleanSpy = sinon.spy(this.factoryMapper, 'boolean');
-				this.objectSpy = sinon.spy(this.factoryMapper, 'object');
-				this.arraySpy = sinon.spy(this.factoryMapper, 'array');
-				// By Key Spies
-				this.itemsSpy = sinon.spy();
-				this.addressesSpy = sinon.spy();
+				// By Type Stubs
+				this.stringStub = sinon.stub(this.factoryMapper, 'string');
+				this.numberStub = sinon.stub(this.factoryMapper, 'number');
+				this.booleanStub = sinon.stub(this.factoryMapper, 'boolean');
+				this.objectStub = sinon.stub(this.factoryMapper, 'object');
+				this.arrayStub = sinon.stub(this.factoryMapper, 'array');
+
+				// By Key Stubs
+				this.factoryMapper.items = function() {};
+				this.factoryMapper.addresses = function() {};
+
+				this.itemsStub = sinon.stub(this.factoryMapper, 'items');
+				this.addressesStub = sinon.stub(this.factoryMapper, 'addresses');
 			}
 		});
 
 		afterEach(function() {
-			if(this.stringSpy) {
-				this.factoryMapper.string.restore();
-				this.factoryMapper.number.restore();
-				this.factoryMapper.boolean.restore();
-				this.factoryMapper.object.restore();
-				this.factoryMapper.array.restore();
+			if(this.stringStub) {
+				if(this.factoryMapper.string.restore)
+					this.factoryMapper.string.restore();
 
-				delete this.stringSpy;
-				delete this.numberSpy;
-				delete this.booleanSpy;
-				delete this.objectSpy;
-				delete this.arraySpy;
+				if(this.factoryMapper.number.restore)
+					this.factoryMapper.number.restore();
 
-				delete this.itemsSpy;
-				delete this.addressesSpy;
+				if(this.factoryMapper.boolean.restore)
+					this.factoryMapper.boolean.restore();
+
+				if(this.factoryMapper.array.restore)
+					this.factoryMapper.array.restore();
+
+				if(this.factoryMapper.object.restore)
+					this.factoryMapper.object.restore();
+
+				delete this.stringStub;
+				delete this.numberStub;
+				delete this.booleanStub;
+				delete this.objectStub;
+				delete this.arrayStub;
+
+				this.factoryMapper.items.restore();
+				this.factoryMapper.addresses.restore();
+
+				delete this.itemsStub;
+				delete this.addressesStub;
+				delete this.factoryMapper.items;
+				delete this.factoryMapper.addresses;
 			}
 		});
 
@@ -88,30 +106,93 @@ define(['util/factories/factory-mapper', 'ui/view'], function(FactoryMapper, Vie
 
 		describe('#source', function() {
 
-			it('Should source the factory mapper by using "byType" strategy', function() {
+			it('Should source the factory mapper by using "byType" strategy (with callback)', function() {
+				var callback = function() {};
+
+				this.stringStub
+					.onFirstCall().returns({ key: 1, value: 'mapper' })
+					.onSecondCall().returns({ key: 'b', value: 'hello' })
+					.onThirdCall().returns({ key: 1, value: 'world' });
+
+				this.numberStub
+					.onFirstCall().returns({ key: 0, value: 1 })
+					.onSecondCall().returns({ key: 'a', value: 1 })
+					.onThirdCall().returns({ key: 0, value: 1 });
+
+				this.booleanStub
+					.onFirstCall().returns({ key: 2, value: true })
+					.onSecondCall().returns({ key: 2, value: false });
+
+				this.objectStub
+					.onFirstCall().returns({ key: 3, value: sinon.match.object })
+					.onSecondCall().returns({ key: 'c', value: sinon.match.object })
+					.onThirdCall().returns({ key: 3, value: sinon.match.object });
+
+				this.arrayStub
+					.onFirstCall().returns({ key: 'd', value: sinon.match.array })
+					.onSecondCall().returns({ key: 5, value: sinon.match.array });
+
+				var result = this.factoryMapper.source(this.sampleData, callback);
+				expect(result).to.be.a(FactoryMapper);
+			});
+
+			it('Should source the factory mapper by using "byType" strategy (with no callback)', function() {
+				this.stringStub
+					.onFirstCall().returns({ key: 1, value: 'mapper' })
+					.onSecondCall().returns({ key: 'b', value: 'hello' })
+					.onThirdCall().returns({ key: 1, value: 'world' });
+
+				this.numberStub
+					.onFirstCall().returns({ key: 0, value: 1 })
+					.onSecondCall().returns({ key: 'a', value: 1 })
+					.onThirdCall().returns({ key: 0, value: 1 });
+
+				this.booleanStub
+					.onFirstCall().returns({ key: 2, value: true })
+					.onSecondCall().returns({ key: 2, value: false });
+
+				// Needed one to pass the resource callback validation on AttachCallback test case
+				this.objectStub
+					.onFirstCall().returns({ path: 'path/to/my/module' })
+					.onSecondCall().returns({ key: 'c', value: sinon.match.object })
+					.onThirdCall().returns({ key: 3, value: sinon.match.object });
+
+				this.arrayStub
+					.onFirstCall().returns({ key: 'd', value: sinon.match.array })
+					.onSecondCall().returns({ key: 5, value: sinon.match.array });
+
 				var result = this.factoryMapper.source(this.sampleData);
 				expect(result).to.be.a(FactoryMapper);
-
-				expect(this.stringSpy.calledThrice).to.be(true);
-				expect(this.numberSpy.calledThrice).to.be(true);
-				expect(this.booleanSpy.calledTwice).to.be(true);
-				expect(this.objectSpy.calledThrice).to.be(true);
-				expect(this.arraySpy.calledTwice).to.be(true);
 			});
 
 			it('Should source the factory mapper by using "byKey" strategy', function() {
-				// Injecting ByKey strategies
-				this.factoryMapper.items = this.itemsSpy;
-				this.factoryMapper.addresses = this.addressesSpy;
+				this.factoryMapper.object.restore();
+				var callback = function() {};
 
-				var result = this.factoryMapper.source(this.sampleDataByKey);
+				this.itemsStub.returns({
+					path: 'my/awesome/itemList',
+					params: { model: new Backbone.Collection(this.sampleDataByKey[0].items) }
+				});
+
+				this.addressesStub.returns({
+					path: 'my/awesome/addressList',
+					params: { model: new Backbone.Collection(this.sampleDataByKey[1].addresses) }
+				});
+
+				var result = this.factoryMapper.source(this.sampleDataByKey, callback);
 				expect(result).to.be.a(FactoryMapper);
+			});
 
-				expect(this.itemsSpy.calledOnce).to.be(true);
-				expect(this.addressesSpy.calledOnce).to.be(true);
+			it('Should execute default strategies placeholders "byType"', function() {
+				// Release Stubs to run real strategies
+				this.factoryMapper.string.restore();
+				this.factoryMapper.number.restore();
+				this.factoryMapper.boolean.restore();
+				this.factoryMapper.object.restore();
+				this.factoryMapper.array.restore();
 
-				delete this.factoryMapper.items;
-				delete this.factoryMapper.addresses;
+				var result = this.factoryMapper.source(this.sampleData);
+				expect(result).to.be.a(FactoryMapper);
 			});
 
 		});

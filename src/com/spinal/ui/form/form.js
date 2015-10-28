@@ -121,14 +121,14 @@ define(['ui/container',
 		*	@public
 		*	@method initialize
 		*	@param options {Object} view options
-		*	@return {com.spinal.ui.form.Form}
+		*	@return com.spinal.ui.form.Form
 		**/
 		initialize: function(opts) {
 			opts || (opts = {});
 			if(opts.mapper && !(opts.mapper instanceof FormMapper)) throw new UIException('InvalidMapperType');
 			_.extend(this, StringUtil.toPrivate(_.pick(opts, 'action', 'name', 'mapper', 'options', 'validator')));
 			UIForm.__super__.initialize.apply(this, arguments);
-			return (this._mapper || (this._mapper instanceof FormMapper)) ? this.mapper() : this;
+			return (this._mapper) ? this.mapper() : this;
 		},
 
 		/**
@@ -149,24 +149,48 @@ define(['ui/container',
 		*	@return com.spinal.ui.form.Form
 		**/
 		mapper: function() {
-			this._mapper.defaults()
-				.source(_.bind(this.create, this), this.resolve())
+			this._mapper.source(this.resolve(), _.bind(this.create, this))
 				.load(_.bind(this.update, this));
 			return this;
 		},
 
 		/**
-		*	Optionally wraps form's component inside a fieldset and optionally adds a label.
+		*	Add a fieldset to this form and returns the reference
+		*	@public
+		*	@method fieldset
+		*	@param container {com.spinal.ui.Container} container reference in which the fieldset will be added
+		*	@param params {Object} fieldset parameters
+		*	@return com.spinal.ui.form.controls.Fieldset
+		**/
+		fieldset: function(container, params) {
+			return container.add(this._mapper.create('ui/form/controls/fieldset', params));
+		},
+
+		/**
+		*	Add a Label to this form and returns the reference
+		*	@method label
+		*	@param container {com.spinal.ui.Container} container reference in which the fieldset will be added
+		*	@param params {Object} label parameters
+		*	@return com.spinal.ui.basic.Label
+		**/
+		label: function(container, params) {
+			return container.add(this._mapper.create('ui/basic/label', params));
+		},
+
+		/**
+		*	Decorate component by wraping it in a fieldset and adding a label if these options are defined
+		*	otherwise, the decorator will return the current form reference.
 		*	@public
 		*	@chainable
 		*	@method wrap
 		*	@param opts {Object} options
-		*	@return com.spinal.ui.form.Form
+		*	@return com.spinal.ui.Container
 		**/
 		wrap: function(opts) {
-			var container = (opts.fieldset) ? this.add(this._mapper.create('Fieldset', opts.fieldset)) : this;
-			if(opts.label) container.add(this._mapper.create('Label', opts.label));
-			return container;
+			opts || (opts = {});
+			var ref = (opts.fieldset) ? this.fieldset(this, opts.fieldset) : this;
+			if(opts.label) this.label(ref, opts.label);
+			return ref;
 		},
 
 		/**
@@ -178,9 +202,9 @@ define(['ui/container',
 		*	@param controls {Array} collection of factory ids
 		*	@return com.spinal.ui.form.Form
 		**/
-		create: function(params, id, factory) {
-			params.options || (params.options = {});
-			return this.wrap(params.options).add(this._mapper.create(id, _.omit(params.options)));
+		create: function(params, path) {
+			params || (params = {});
+			return this.wrap(params.options).add(this._mapper.create(path, _.omit(params, 'options')));
 		},
 
 		/**
@@ -218,12 +242,10 @@ define(['ui/container',
 		*	@param model {Backbone.Model}
 		*	@param value {Object} value that has changed
 		*	@param [opts] {Object} additional options
-		*	@return {com.spinal.ui.form.Form}
+		*	@return com.spinal.ui.form.Form
 		**/
 		update: function(model, value, opts) {
 			UIForm.__super__.update.apply(this, arguments);
-			// FIXME: Must be a different way, quick fix for Reverse the stack order!!
-			this.views.collection.reverse();
 			this.invoke('render', opts);
 			return this;
 		},
@@ -234,7 +256,7 @@ define(['ui/container',
 		*	@chainable
 		*	@method name
 		*	@param name {String} form's name
-		*	@return {com.spinal.ui.form.Form}
+		*	@return com.spinal.ui.form.Form
 		**/
 		name: function(name) {
 			if(!_.defined(name)) return this._name;
@@ -248,7 +270,7 @@ define(['ui/container',
 		*	@chainable
 		*	@method action
 		*	@param action {String} form's action
-		*	@return {com.spinal.ui.form.Form}
+		*	@return com.spinal.ui.form.Form
 		**/
 		action: function(action) {
 			if(!_.defined(action)) return this._action;
@@ -262,7 +284,7 @@ define(['ui/container',
 		*	@chainable
 		*	@method validator
 		*	@param validator {com.spinal.util.Validator} form's validator
-		*	@return {com.spinal.ui.form.Form}
+		*	@return com.spinal.ui.form.Form
 		**/
 		validator: function(validator) {
 			if(!_.defined(validator)) return this._validator;
@@ -275,10 +297,9 @@ define(['ui/container',
 		*	@public
 		*	@overridable
 		*	@method submit
-		*	@return {com.spinal.ui.form.Form}
+		*	@return com.spinal.ui.form.Form
 		**/
 		submit: function() {
-			// TODO: Thoughts??
 			return this;
 		}
 
