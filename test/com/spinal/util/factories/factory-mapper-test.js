@@ -7,75 +7,111 @@ define(['util/factories/factory-mapper', 'ui/view'], function(FactoryMapper, Vie
 	describe('com.spinal.util.factories.FactoryMapper', function() {
 
 		before(function() {
-			this.sampleData = [1, 'mapper', true, { a: 1, b: 'hello', c: {}, d: [] }, [1, 'world', false, { a: 'value' }]];
+			this.factoryMapper = null;
+			this.sampleData = [1, 'mapper', true, { a: 1, b: 'hello', c: {}, d: [] }, undefined, [1, 'world', false, { a: null }]];
+			this.sampleDataByKey = [
+				{ items: ['Option 1', 'Option 2', 'Option 3'] },
+				{ addresses: [{ street: 'Street 1' }, { street: 'Street 2' }] }
+			];
 		});
 
-		/**
-		*	AsyncFactory#new() test
-		**/
-		describe('#constructor', function() {
+		beforeEach(function() {
+			if(this.factoryMapper) {
+				// By Type Spies
+				this.stringSpy = sinon.spy(this.factoryMapper, 'string');
+				this.numberSpy = sinon.spy(this.factoryMapper, 'number');
+				this.booleanSpy = sinon.spy(this.factoryMapper, 'boolean');
+				this.objectSpy = sinon.spy(this.factoryMapper, 'object');
+				this.arraySpy = sinon.spy(this.factoryMapper, 'array');
+				// By Key Spies
+				this.itemsSpy = sinon.spy();
+				this.addressesSpy = sinon.spy();
+			}
+		});
+
+		afterEach(function() {
+			if(this.stringSpy) {
+				this.factoryMapper.string.restore();
+				this.factoryMapper.number.restore();
+				this.factoryMapper.boolean.restore();
+				this.factoryMapper.object.restore();
+				this.factoryMapper.array.restore();
+
+				delete this.stringSpy;
+				delete this.numberSpy;
+				delete this.booleanSpy;
+				delete this.objectSpy;
+				delete this.arraySpy;
+
+				delete this.itemsSpy;
+				delete this.addressesSpy;
+			}
+		});
+
+		after(function() {
+			delete this.sampleDataByKey;
+			delete this.sampleData;
+			delete this.factoryMapper;
+		});
+
+		describe('#new()', function() {
 
 			it('Should return an instance of FactoryMapper', function() {
 				this.factoryMapper = new FactoryMapper();
-				expect(this.factoryMapper).to.be.ok();
+				expect(this.factoryMapper).to.be.a(FactoryMapper);
 			});
 
 		});
 
-		/**
-		*	AsyncFactory#_validate() test
-		**/
-		describe('#_validate', function() {
+		describe('#isValid()', function() {
 
 			it('Should return true while validating key, value and callback params', function() {
-				var result = this.factoryMapper._validate('key', 'value', function() {});
+				var result = this.factoryMapper.isValid('key', 'value');
 				expect(result).to.be(true);
 			});
 
-			it('Should return false while validating key, value and callback params', function() {
+			it('Should return false while validating key, value', function() {
 				// No parameters passed
-				var result = this.factoryMapper._validate();
+				var result = this.factoryMapper.isValid();
 				expect(result).to.be(false);
 
 				// Key defined and value not defined
-				result = this.factoryMapper._validate('key');
-				expect(result).to.be(false);
-
-				// Key defined, value defined and callback undefined
-				result = this.factoryMapper._validate('key', 'value');
+				result = this.factoryMapper.isValid('key');
 				expect(result).to.be(false);
 
 				// Key defined, value defined but key is an empty string
-				result = this.factoryMapper._validate('', 'value');
-				expect(result).to.be(false);
-
-				// Key defined, value defined and callback defined but not a function
-				result = this.factoryMapper._validate('key', 'value', 'callback');
+				result = this.factoryMapper.isValid('value', '');
 				expect(result).to.be(false);
 			});
 
 		});
 
-		/**
-		*	AsyncFactory#source() test
-		**/
 		describe('#source', function() {
 
-			it('Should source the mapper with a collection of objects', function(done) {
-				this.factoryMapper.source(_.bind(function(params, id, factory) {
-					expect(params).to.be.ok();
-					expect(id).to.be.ok();
-					expect(factory).to.be.ok();
+			it('Should source the factory mapper by using "byType" strategy', function() {
+				var result = this.factoryMapper.source(this.sampleData);
+				expect(result).to.be.a(FactoryMapper);
 
-					expect(params.value).not.to.be(undefined);
-					expect(id).to.be.a('string');
-					expect(factory).to.be.a('function');
+				expect(this.stringSpy.calledThrice).to.be(true);
+				expect(this.numberSpy.calledThrice).to.be(true);
+				expect(this.booleanSpy.calledTwice).to.be(true);
+				expect(this.objectSpy.calledThrice).to.be(true);
+				expect(this.arraySpy.calledTwice).to.be(true);
+			});
 
-					expect(this.factoryMapper.isRegistered(id)).to.be(true);
-					var instance = this.factoryMapper.create(id, params);
-					expect(instance).to.be.ok();
-					expect(instance).to.be.a(View);
-				}, this), this.sampleData).load(_.bind(function() { done(); }, this));
+			it('Should source the factory mapper by using "byKey" strategy', function() {
+				// Injecting ByKey strategies
+				this.factoryMapper.items = this.itemsSpy;
+				this.factoryMapper.addresses = this.addressesSpy;
+
+				var result = this.factoryMapper.source(this.sampleDataByKey);
+				expect(result).to.be.a(FactoryMapper);
+
+				expect(this.itemsSpy.calledOnce).to.be(true);
+				expect(this.addressesSpy.calledOnce).to.be(true);
+
+				delete this.factoryMapper.items;
+				delete this.factoryMapper.addresses;
 			});
 
 		});

@@ -56,6 +56,18 @@ define(['core/spinal',
 		},
 
 		/**
+		*	Returns true if the resource meet minimum conditions to be added into this factory stack
+		*	@public
+		*	@method valid
+		*	@param [resource] {Object} resource reference
+		*	@return Boolean
+		**/
+		valid: function(resource) {
+			if(!_.defined(resource) || !resource.path) return false;
+			return true;
+		},
+
+		/**
 		*	Reset factory stack
 		*	@public
 		*	@method reset
@@ -78,7 +90,7 @@ define(['core/spinal',
 		*	@return com.spinal.util.factories.AsyncFactory
 		**/
 		set: function(arr) {
-			if(!arr || !_.isArray(arr)) return false;
+			if(!arr || !_.isArray(arr) || !_.every(this.invoke('valid', arr))) return this;
 			this.resources.set(arr);
 			return this;
 		},
@@ -114,7 +126,7 @@ define(['core/spinal',
 		*	@return com.spinal.util.factories.AsyncFactory
 		**/
 		push: function(resource) {
-			if(!resource || !resource.path) return this;
+			if(!this.valid(resource)) return this;
 			this.resources.push(resource);
 			return this;
 		},

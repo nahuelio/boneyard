@@ -33,10 +33,12 @@ define(['util/factories/async-factory',
 
 			it('Should return false if parameter is not defined or is not an array', function() {
 				var result = this.asyncFactory.set();
-				expect(result).to.be(false);
+				expect(result).to.be.a(AsyncFactory);
+				expect(result.resources.size()).to.be(0);
 
 				result = this.asyncFactory.set({});
-				expect(result).to.be(false);
+				expect(result).to.be.a(AsyncFactory);
+				expect(result.resources.size()).to.be(0);
 			});
 
 		});
@@ -214,9 +216,13 @@ define(['util/factories/async-factory',
 			});
 
 			it('Should NOT load resources when stack is empty', function() {
+				// Without callback
 				this.asyncFactory.off();
 				this.asyncFactory.resources.reset();
 				this.asyncFactory.load(null);
+
+				// With callback
+				this.asyncFactory.load(_.bind(function() {}, this));
 			});
 
 			it('Should load resources but no callback specified and no events (silent "on")', function() {

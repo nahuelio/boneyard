@@ -18,12 +18,11 @@ define(['util/factories/factory-mapper'], function(FactoryMapper) {
 		*	@override
 		*	@chainable
 		*	@method defaults
-		*	@param [callback] {Function} optional callback for defaults
 		*	@return com.spinal.ui.form.mapper.FactoryMapper
 		**/
-		defaults: function(callback) {
-			this.push({ id: 'Fieldset', path: 'ui/form/controls/fieldset' }, callback);
-			this.push({ id: 'Label', path: 'ui/basic/label' }, callback);
+		defaults: function() {
+			this.push({ path: 'ui/form/controls/fieldset' })
+				.push({ path: 'ui/basic/label' });
 			return this;
 		},
 
@@ -33,17 +32,15 @@ define(['util/factories/factory-mapper'], function(FactoryMapper) {
 		*	@override
 		*	@chainable
 		*	@method string
-		*	@param key {String} model's key reference
-		*	@param value {Object} model's value reference
-		*	@param callback {Function} function to be called on every dependency instance resolution
-		*	@return com.spinal.ui.form.mapper.FactoryMapper
+		*	@param key {String} model key reference
+		*	@param value {Object} model value reference
+		*	@return Object
 		**/
-		string: function(key, value, callback) {
-			return this.push({
-				id: 'Input',
+		string: function(key, value) {
+			return {
 				path: 'ui/form/controls/input',
 				params: { autoId: true, name: key, value: value }
-			});
+			};
 		},
 
 		/**
@@ -52,17 +49,15 @@ define(['util/factories/factory-mapper'], function(FactoryMapper) {
 		*	@override
 		*	@chainable
 		*	@method number
-		*	@param key {String} model's key reference
-		*	@param value {Object} model's value reference
-		*	@param callback {Function} function to be called on every dependency instance resolution
+		*	@param key {String} model key reference
+		*	@param value {Object} model value reference
 		*	@return com.spinal.ui.form.mapper.FactoryMapper
 		**/
-		number: function(key, value, callback) {
-			return this.push({
-				id: 'Input',
+		number: function(key, value) {
+			return {
 				path: 'ui/form/controls/input',
 				params: { type: 'number', name: key, autoId: true, value: value }
-			}, callback);
+			};
 		},
 
 		/**
@@ -71,17 +66,15 @@ define(['util/factories/factory-mapper'], function(FactoryMapper) {
 		*	@override
 		*	@chainable
 		*	@method boolean
-		*	@param key {String} model's key reference
-		*	@param value {Object} model's value reference
-		*	@param callback {Function} function to be called on every dependency instance resolution
+		*	@param key {String} model key reference
+		*	@param value {Object} model value reference
 		*	@return com.spinal.ui.form.mapper.FactoryMapper
 		**/
-		boolean: function(key, value, callback) {
-			return this.push({
-				id: 'Checkbox',
+		boolean: function(key, value) {
+			return {
 				path: 'ui/form/controls/checkbox',
 				params: { autoId: true, name: key, value: value }
-			}, callback);
+			};
 		},
 
 		/**
@@ -90,17 +83,15 @@ define(['util/factories/factory-mapper'], function(FactoryMapper) {
 		*	@override
 		*	@chainable
 		*	@method object
-		*	@param key {String} model's key reference
-		*	@param value {Object} model's value reference
-		*	@param callback {Function} function to be called on every dependency instance resolution
+		*	@param key {String} model key reference
+		*	@param value {Object} model value reference
 		*	@return com.spinal.util.factories.FactoryMapper
 		**/
 		object: function(key, value, callback) {
-			return this.push({
-				id: value.type,
+			return {
 				path: 'ui/form/controls/' + value.type.toLowerCase(),
 				params: _.omit(value, 'type')
-			}, callback);
+			};
 		}
 
 	}, {

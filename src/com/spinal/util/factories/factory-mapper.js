@@ -2,13 +2,17 @@
 *	@module com.spinal.util.factories
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define(['util/factories/async-factory'], function(AsyncFactory) {
+define(['util/factories/async-factory',
+	'util/object'], function(AsyncFactory, ObjectUtil) {
 
 	/**
 	*	Class FactoryMapper
 	*	@namespace com.spinal.util.factories
 	*	@class com.spinal.util.factories.FactoryMapper
 	*	@extends com.spinal.util.factories.AsyncFactory
+	*
+	*	@requires com.spinal.util.factories.AsyncFactory
+	*	@requires com.spinal.util.ObjectUtil
 	**/
 	var FactoryMapper = Spinal.namespace('com.spinal.util.factories.FactoryMapper', AsyncFactory.inherit({
 
@@ -16,87 +20,77 @@ define(['util/factories/async-factory'], function(AsyncFactory) {
 		*	Initialize
 		*	@public
 		*	@method initialize
-		*	@param [opts] {Object} options
-		*	@return {com.spinal.util.factories.FactoryMapper}
+		*	@param [attrs] {Object} constructor attributes
+		*	@return com.spinal.util.factories.FactoryMapper
 		**/
-		initialize: function(opts) {
+		initialize: function(attrs) {
+			this.defaults();
 			return FactoryMapper.__super__.initialize.apply(this, arguments);
 		},
 
 		/**
 		*	Validate key value pair data structure
-		*	@private
-		*	@method _validate
-		*	@param key {String} model's key reference
-		*	@param value {Object} model's value reference
-		*	@param callback {Function}
+		*	@public
+		*	@method isValid
+		*	@param value {Object} model value reference
+		*	@param key {String} model key reference
 		*	@return Boolean
 		**/
-		_validate: function(key, value, callback) {
-			return (_.defined(key) && _.defined(value) && key !== '' && _.defined(callback) && _.isFunction(callback));
+		isValid: function(value, key) {
+			return _.defined(key) && key !== '' && _.defined(value);
 		},
 
 		/**
-		*	Feed the mapper with model data as an entry point to evaluate mapping rules
+		*	Feed Factory stack by retrieving mapping patterns defined by strategies defined on this factory mapper.
 		*	@public
 		*	@chainable
 		*	@method source
-		*	@param callback {Function} function to be called on every dependency instance resolution
 		*	@param model {Object} data model reference
 		*	@return com.spinal.util.factories.FactoryMapper
 		**/
-		source: function(callback, model) {
-			for(var key in model) {
-				var value = model[key];
-				if(!this._validate(key, value, callback)) continue;
-				if(this.byKey(key, value, callback)) continue;
-				this.byType(key, value, callback);
-			}
-			return this;
+		source: function(model) {
+			return this.set(_.compact(_.flatten(this.retrieve.apply(this, arguments))));
+		},
+
+		/**
+		*	Default retrieval strategy that maps key-value model pairs into complex resource types to be added
+		*	on this factory stack
+		*	@public
+		*	@method retrieve
+		*	@param model {Object} data model reference
+		*	@return Array
+		**/
+		retrieve: function(model) {
+			return _.map(model, function(value, key) {
+				if(!this.isValid.apply(this, arguments)) return null;
+				return this.byType(this.byKey({ key: key, value: value }));
+			}, this);
 		},
 
 		/**
 		*	Resolves strategy by key
 		*	@public
 		*	@method byKey
-		*	@param key {String} model's key reference
-		*	@param value {Object} model's value reference
-		*	@param callback {Function} function to be called on every dependency instance resolution
+		*	@param o {Object} single model property/value pair
 		*	@return com.spinal.util.factories.FactoryMapper
 		**/
-		byKey: function(key, value, callback) {
-			return (this[key] && _.isFunction(this[key])) ? this[key].apply(this, arguments) : null;
+		byKey: function(o) {
+			return (this[o.key] && _.isFunction(this[o.key])) ? this[o.key].apply(this, arguments) : o;
 		},
 
 		/**
 		*	Resolves strategy by type
 		*	@public
 		*	@method byType
-		*	@param key {String} model's key reference
-		*	@param value {Object} model's value reference
-		*	@param callback {Function} function to be called on every dependency instance resolution
+		*	@param o {Object} single model property/value pair
 		*	@return com.spinal.util.factories.FactoryMapper
 		**/
-		byType: function(key, value, callback) {
-			var type = typeof(value);
-			if(_.isObject(value)) type = 'object';
-			if(_.isArray(value)) type = 'array';
+		byType: function(o) {
+			if(!_.defined(o) || _.defined(o.path)) return o;
+			var type = typeof(o.value);
+			if(_.isObject(o.value)) type = 'object';
+			if(_.isArray(o.value)) type = 'array';
 			return this[type].apply(this, arguments);
-		},
-
-		/**
-		*	Inserts a resource into the factory stack
-		*	@public
-		*	@override
-		*	@chainable
-		*	@method push
-		*	@param resource {Object} resource
-		*	@return {com.spinal.util.factories.AsyncFactory}
-		**/
-		push: function(resource, callback) {
-			resource.callback = _.partial(callback, _.clone(resource.params));
-			delete resource.params;
-			return FactoryMapper.__super__.push.call(this, resource);
 		},
 
 		/**
@@ -104,10 +98,9 @@ define(['util/factories/async-factory'], function(AsyncFactory) {
 		*	@public
 		*	@chainable
 		*	@method defaults
-		*	@param [callback] {Function} optional callback for defaults
 		*	@return com.spinal.ui.form.mapper.FactoryMapper
 		**/
-		defaults: function(callback) {
+		defaults: function() {
 			return this;
 		},
 
@@ -115,65 +108,59 @@ define(['util/factories/async-factory'], function(AsyncFactory) {
 		*	Default String type handler
 		*	@public
 		*	@method string
-		*	@param key {String} model's key reference
-		*	@param value {Object} model's value reference
-		*	@param callback {Function} function to be called on every dependency instance resolution
+		*	@param o {Object} single model property/value pair
 		*	@return Object
 		**/
-		string: function(key, value, callback) {
-			return this;
+		string: function(o) {
+			return {};
 		},
 
 		/**
 		*	Default Number type handler
 		*	@public
 		*	@method number
-		*	@param key {String} model's key reference
-		*	@param value {Object} model's value reference
-		*	@param callback {Function} function to be called on every dependency instance resolution
+		*	@param o {Object} single model property/value pair
 		*	@return Object
 		**/
-		number: function(key, value, callback) {
-			return this;
+		number: function(o) {
+			return {};
 		},
 
 		/**
 		*	Default Boolean type handler
 		*	@public
 		*	@method boolean
-		*	@param key {String} model's key reference
-		*	@param value {Object} model's value reference
-		*	@param callback {Function} function to be called on every dependency instance resolution
+		*	@param o {Object} single model property/value pair
 		*	@return Object
 		**/
-		boolean: function(key, value, callback) {
-			return this;
+		boolean: function(o) {
+			return {};
 		},
 
 		/**
 		*	Default Object type handler
 		*	@public
 		*	@method object
-		*	@param key {String} model's key reference
-		*	@param value {Object} model's value reference
-		*	@param callback {Function} function to be called on every dependency instance resolution
-		*	@return com.spinal.util.factories.FactoryMapper
+		*	@param o {Object} single model property/value pair
+		*	@return Array
 		**/
-		object: function(key, value, callback) {
-			return this.source(callback, value);
+		object: function(o) {
+			var args = _.toArray(arguments).slice(1);
+			args.unshift(o.value);
+			return this.retrieve.apply(this, args);
 		},
 
 		/**
 		*	Default Array type handler
 		*	@public
 		*	@method array
-		*	@param key {String} model's key reference
-		*	@param value {Object} model's value reference
-		*	@param callback {Function} function to be called on every dependency instance resolution
-		*	@return com.spinal.util.factories.FactoryMapper
+		*	@param o {Object} single model property/value pair
+		*	@return Array
 		**/
-		array: function(key, value, callback) {
-			return this.source(callback, value);
+		array: function(o) {
+			var args = _.toArray(arguments).slice(1);
+			args.unshift(o.value);
+			return this.retrieve.apply(this, args);
 		}
 
 	}, {
