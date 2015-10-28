@@ -153,11 +153,9 @@ define(['libs/backbone'], function() {
 			return Child;
 		};
 
-		// If Backbone exists, expose new inherit method to Backbone Classes
-		if(Backbone) {
-			Backbone.View.inherit = Backbone.Collection.inherit =
-			Backbone.Model.inherit = Backbone.Router.inherit = _inherit;
-		}
+		// Expose new inherit method to Backbone Classes
+		Backbone.View.inherit = Backbone.Collection.inherit =
+		Backbone.Model.inherit = Backbone.Router.inherit = _inherit;
 
 		/**
 		*	Provides a generic Class with a generic interface to set and get properties

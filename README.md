@@ -11,8 +11,8 @@ Architectural ToolKit that unifies most of the common libraries used nowadays to
 If the following technology stack is your choice or you just simple love developing web-apps using these libraries, please checkout this project.
 
 * Backbone (_underscore_)
-* RequireJS
-* jQuery (of course everything depends on jQuery!)
+* RequireJS (text plugin)
+* jQuery
 * Bootstrap
 
 SpinalJS also, provides a minimalistic implementation of a Inversion of Control (IoC-like) pattern for Javascript running in the browser, to help you decouple business logic from his composition.

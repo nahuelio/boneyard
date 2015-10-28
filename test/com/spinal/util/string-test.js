@@ -67,6 +67,15 @@ define(['util/string',
 
 		});
 
+		describe('#escapeRegex()', function() {
+
+			it('Should escape Regular Expression character on a given string', function() {
+				expect(StringUtil.escapeRegex('-\^$*+?.,/')).to.be('\\-\\^\\$\\*\\+\\?\\.\\,/');
+				expect(StringUtil.escapeRegex({})).to.be.empty();
+			});
+
+		});
+
 		describe('static#toPrivate()', function() {
 
 			it('description', function() {
