@@ -49,24 +49,24 @@ define(['ui/view', 'util/string'], function(View, StringUtil) {
 		_text: 'default',
 
 		/**
-		*	Button's default type
+		*	Button's default style
 		*	@private
-		*	@property _type
+		*	@property _style
 		*	@type String
 		**/
-		_type: null,
+		_style: null,
 
 		/**
 		*	Initialize
 		*	@public
 		*	@method initialize
 		*	@param options {Object} view options
-		*	@return {com.spinal.ui.form.controls.Button}
+		*	@return com.spinal.ui.form.controls.Button
 		**/
 		initialize: function(options) {
 			options || (options = {});
 			if(options.text) this._text = options.text;
-			this._type = (options.type) ? options.type : UIButton.TYPES.standard;
+			this._style = (options.style) ? options.style : UIButton.TYPES.standard;
 			UIButton.__super__.initialize.apply(this, arguments);
 			return this;
 		},
@@ -82,7 +82,7 @@ define(['ui/view', 'util/string'], function(View, StringUtil) {
 		render: function(opts) {
 			UIButton.__super__.render.apply(this, arguments);
 			this.text(this._text);
-			this.type(this._type);
+			this.style(this._style);
 			return this;
 		},
 
@@ -115,16 +115,16 @@ define(['ui/view', 'util/string'], function(View, StringUtil) {
 		},
 
 		/**
-		*	Change button's type
+		*	Change button's style
 		*	@public
 		*	@chainable
-		*	@method type
-		*	@param name {String} button's type
+		*	@method style
+		*	@param name {String} button's style
 		*	@return {com.spinal.ui.form.controls.Button}
 		**/
-		type: function(name) {
-			if(!_.defined(name)) return this._type;
-			this.$el.removeClass(this._type).addClass((this._type = name));
+		style: function(name) {
+			if(!_.defined(name)) return this._style;
+			this.$el.removeClass(this._style).addClass((this._style = name));
 			return this;
 		},
 

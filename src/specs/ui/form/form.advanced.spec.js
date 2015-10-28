@@ -15,9 +15,28 @@ define([], function() {
 			{ password: '' }
 		]),
 
-		// form_advanced_mapper: {
-		// 	$module: 'ui/form/mapper/form-mapper'
-		// },
+		form_advanced_collection: new Backbone.Collection([{
+			type: 'Input',
+			value: 'johndoe',
+			placeholder: 'Enter Username...',
+			options: {
+				fieldset: { attrs: { cls: 'fieldset' } },
+				label: { content: 'Username' }
+			}
+		}, {
+			type: 'Password',
+			options: {
+				fieldset: { attrs: { cls: 'fieldset' } },
+				label: { content: 'Password' }
+			}
+		}, {
+			type: 'Checkbox',
+			value: true,
+			options: {
+				fieldset: { attrs: { cls: 'fieldset' } },
+				label: { content: 'Stay signed in' }
+			}
+		}]),
 
 		form_advanced: {
 			$module: 'ui/form/form',
@@ -25,7 +44,6 @@ define([], function() {
 				name: 'form_advanced',
 				action: 'http:/localhost:9393/',
 				collection: '$bone!form_advanced_collection'
-				//mapper: '$bone!form_advanced_mapper'
 			}
 		},
 

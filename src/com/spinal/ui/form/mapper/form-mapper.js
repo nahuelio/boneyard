@@ -8,7 +8,9 @@ define(['util/factories/factory-mapper'], function(FactoryMapper) {
 	*	Class FormMapper
 	*	@namespace com.spinal.ui.form.mapper
 	*	@class com.spinal.ui.form.mapper.FormMapper
-	*	@extends com.spinal.ui.form.mapper.FactoryMapper
+	*	@extends com.spinal.util.factories.FactoryMapper
+	*
+	*	@requires com.spinal.util.factories.FactoryMapper
 	**/
 	var FormMapper = Spinal.namespace('com.spinal.ui.form.mapper.FormMapper', FactoryMapper.inherit({
 
@@ -32,14 +34,13 @@ define(['util/factories/factory-mapper'], function(FactoryMapper) {
 		*	@override
 		*	@chainable
 		*	@method string
-		*	@param key {String} model key reference
-		*	@param value {Object} model value reference
+		*	@param o {Object} single model property/value pair
 		*	@return Object
 		**/
-		string: function(key, value) {
+		string: function(o) {
 			return {
 				path: 'ui/form/controls/input',
-				params: { autoId: true, name: key, value: value }
+				params: { autoId: true, name: o.key, value: o.value }
 			};
 		},
 
@@ -49,14 +50,13 @@ define(['util/factories/factory-mapper'], function(FactoryMapper) {
 		*	@override
 		*	@chainable
 		*	@method number
-		*	@param key {String} model key reference
-		*	@param value {Object} model value reference
+		*	@param o {Object} single model property/value pair
 		*	@return com.spinal.ui.form.mapper.FactoryMapper
 		**/
-		number: function(key, value) {
+		number: function(o) {
 			return {
 				path: 'ui/form/controls/input',
-				params: { type: 'number', name: key, autoId: true, value: value }
+				params: { autoId: true, type: 'text', name: o.key, value: o.value }
 			};
 		},
 
@@ -66,11 +66,10 @@ define(['util/factories/factory-mapper'], function(FactoryMapper) {
 		*	@override
 		*	@chainable
 		*	@method boolean
-		*	@param key {String} model key reference
-		*	@param value {Object} model value reference
+		*	@param o {Object} single model property/value pair
 		*	@return com.spinal.ui.form.mapper.FactoryMapper
 		**/
-		boolean: function(key, value) {
+		boolean: function(o) {
 			return {
 				path: 'ui/form/controls/checkbox',
 				params: { autoId: true, name: key, value: value }
@@ -83,14 +82,13 @@ define(['util/factories/factory-mapper'], function(FactoryMapper) {
 		*	@override
 		*	@chainable
 		*	@method object
-		*	@param key {String} model key reference
-		*	@param value {Object} model value reference
+		*	@param o {Object} single model property/value pair
 		*	@return com.spinal.util.factories.FactoryMapper
 		**/
-		object: function(key, value, callback) {
+		object: function(o) {
 			return {
-				path: 'ui/form/controls/' + value.type.toLowerCase(),
-				params: _.omit(value, 'type')
+				path: 'ui/form/controls/' + o.value.type.toLowerCase(),
+				params: _.omit(o.value, 'type')
 			};
 		}
 
