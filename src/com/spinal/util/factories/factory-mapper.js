@@ -66,9 +66,25 @@ define(['util/factories/async-factory',
 		retrieve: function(model, callback) {
 			return _.map(model, function(value, key) {
 				if(!this.isValid.apply(this, arguments)) return null;
-				var resource = this.byType(this.byKey({ key: key, value: value }));
-				return _.extend(resource, { callback: _.partial(callback, resource.params) });
+				var resource = this.byKey({ key: key, value: value }, callback);
+				return this.attachCallback(this.byType(resource, callback), callback);
 			}, this);
+		},
+
+		/**
+		*	Attaches a given callback into the resource passed by parameter for this factory stack.
+		*	If resource is null, this method will return null.
+		*	If the callback is null, no callback will be attached.
+		*	@public
+		*	@method attachCallback
+		*	@param resource {Object} resource reference
+		*	@param [callback] {Function} optional callback used on every resource to be called when resource is loaded
+		*	@return Object
+		**/
+		attachCallback: function(resource, callback) {
+			if(!_.defined(resource) || !_.defined(resource.path)) return null;
+			if(!_.defined(callback) || !_.isFunction(callback)) return resource;
+			return _.extend(resource, { callback: _.partial(callback, resource.params) });
 		},
 
 		/**
@@ -76,9 +92,10 @@ define(['util/factories/async-factory',
 		*	@public
 		*	@method byKey
 		*	@param o {Object} single model property/value pair
+		*	@param [callback] {Function} optional callback used on every resource to be called when resource is loaded
 		*	@return com.spinal.util.factories.FactoryMapper
 		**/
-		byKey: function(o) {
+		byKey: function(o, callback) {
 			return (this[o.key] && _.isFunction(this[o.key])) ? this[o.key].apply(this, arguments) : o;
 		},
 
