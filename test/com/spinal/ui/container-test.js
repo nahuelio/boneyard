@@ -5,7 +5,7 @@
 define(['core/spinal',
 		'ui/view',
 		'ui/container',
-		'util/exception/ui'], function(Spinal, View, Container, UIException) {
+		'util/exception/ui/ui'], function(Spinal, View, Container, UIException) {
 
 	describe('com.spinal.ui.Container', function() {
 

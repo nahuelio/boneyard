@@ -1,5 +1,5 @@
 /**
-*	@module com.spinal.util.exception
+*	@module com.spinal.util.exception.ui
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['core/spinal',
@@ -7,17 +7,17 @@ define(['core/spinal',
 
 	/**
 	*	UI Exception Type
-	*	@namespace com.spinal.util.exception
-	*	@class com.spinal.util.exception.UIException
+	*	@namespace com.spinal.util.exception.ui
+	*	@class com.spinal.util.exception.ui.UIException
 	*	@extends com.spinal.util.exception.Exception
 	**/
-	var UIException = Spinal.namespace('com.spinal.util.exception.UIException', Exception.inherit({
+	var UIException = Spinal.namespace('com.spinal.util.exception.ui.UIException', Exception.inherit({
 
 		/**
 		*	Initialize
 		*	@public
 		*	@method initialize
-		*	@return {com.spinal.util.exception.UIException}
+		*	@return {com.spinal.util.exception.ui.UIException}
 		**/
 		initialize: function() {
 			return UIException.__super__.initialize.apply(this, arguments);

@@ -4,7 +4,7 @@
 **/
 define(['ui/container',
 	'ui/form/mapper/form-mapper',
-	'util/exception/ui',
+	'util/exception/ui/ui',
 	'util/string'], function(Container, FormMapper, UIException, StringUtil) {
 
 	/**
@@ -15,7 +15,7 @@ define(['ui/container',
 	*
 	*	@requires com.spinal.ui.Container
 	*	@requires com.spinal.ui.form.mapper.FormMapper
-	*	@requires com.spianl.util.exception.UIException
+	*	@requires com.spianl.util.exception.ui.UIException
 	*	@requires com.spinal.util.StringUtil
 	**/
 	var UIForm = Spinal.namespace('com.spinal.ui.form.Form', Container.inherit({

@@ -3,7 +3,7 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['core/spinal',
-		'util/exception/factory',
+		'util/exception/util/factory',
 		'util/adt/collection'], function(Spinal, FactoryException, Collection) {
 
 	/**
@@ -13,7 +13,7 @@ define(['core/spinal',
 	*	@extends com.spinal.core.SpinalClass
 	*
 	*	@requires com.spinal.core.Spinal
-	*	@requires com.spinal.util.exception.FactoryException
+	*	@requires com.spinal.util.exception.util.FactoryException
 	*	@requires com.spinal.util.adt.Collection
 	**/
 	var Factory = Spinal.namespace('com.spinal.util.factories.Factory', Spinal.SpinalClass.inherit({
