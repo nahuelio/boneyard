@@ -1,5 +1,5 @@
 /**
-*	@module com.spinal.util.exception
+*	@module com.spinal.util.exception.util
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['core/spinal',
@@ -7,17 +7,17 @@ define(['core/spinal',
 
 	/**
 	*	Factory Exception Type
-	*	@namespace com.spinal.util.exception
-	*	@class com.spinal.util.exception.FactoryException
+	*	@namespace com.spinal.util.exception.util
+	*	@class com.spinal.util.exception.util.FactoryException
 	*	@extends com.spinal.util.exception.Exception
 	**/
-	var FactoryException = Spinal.namespace('com.spinal.util.exception.FactoryException', Exception.inherit({
+	var FactoryException = Spinal.namespace('com.spinal.util.exception.util.FactoryException', Exception.inherit({
 
 		/**
 		*	Initialize
 		*	@public
 		*	@method initialize
-		*	@return {com.spinal.util.exception.FactoryException}
+		*	@return {com.spinal.util.exception.util.FactoryException}
 		**/
 		initialize: function() {
 			return FactoryException.__super__.initialize.apply(this, arguments);

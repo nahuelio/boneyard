@@ -3,7 +3,7 @@
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['util/factories/async-factory',
-		'util/exception/factory',
+		'util/exception/util/factory',
 		'ui/view'], function(AsyncFactory, FactoryException, View) {
 
 	describe('com.spinal.util.factories.AsyncFactory', function() {
