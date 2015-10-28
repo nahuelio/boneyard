@@ -96,7 +96,7 @@ define(['core/spinal',
 		**/
 		escapeRegex: function(value) {
 			if(!_.isString(value)) return '';
-			return value.replace( /[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&" );
+			return value.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
 		},
 
 		/**
