@@ -37,13 +37,13 @@ define(['util/adt/collection'], function(Collection) {
 		*	@chainable
 		*	@method initialize
 		*	@param [attrs] {Object} constructor attributes
+		*	@param [opts] {Object} addtional options
 		*	@return com.spinal.ui.form.validator.Validator
 		**/
-		initialize: function(attrs) {
-			attrs || (attrs = {});
-			attrs.interface = null;
-			this.reset();
-			return Validator.__super__.initialize.apply(this, _.union([attrs], _.toArray(arguments).slice(1)));
+		initialize: function(initial, opts) {
+			opts || (opts = {});
+			opts.interface = null;
+			return Validator.__super__.initialize.apply(this, [initial, opts]);
 		},
 
 		/**
@@ -61,27 +61,13 @@ define(['util/adt/collection'], function(Collection) {
 		},
 
 		/**
-		*	Clears the collection
-		*	@public
-		*	@override
-		*	@chainable
-		*	@method reset
-		*	@param opts {Object} Options
-		*	@return com.spinal.ui.form.validator.Validator
-		**/
-		reset: function(opts) {
-			this.failures = [];
-			return Validator.__super__.reset.apply(this, arguments);
-		},
-
-		/**
 		*	Retrieves result information based on the latest evaluation
 		*	@public
 		*	@method getResult
 		*	@return Object
 		**/
 		getResult: function() {
-			return { success: (failures.length === 0), failures: failures };
+			return { success: (this.failures.length === 0), failures: this.failures };
 		},
 
 		/**
@@ -94,7 +80,36 @@ define(['util/adt/collection'], function(Collection) {
 		**/
 		setModel: function(model) {
 			this.model = (_.defined(model) && _.isArray(model)) ? model : [];
-			return this;
+			this.failures = [];
+			return this.trigger(Validator.EVENTS.clear, this);
+		},
+
+		/**
+		*	Retrieves a field from the model by a given rule name
+		*	@public
+		*	@method getRulesByFieldName
+		*	@param name {Object} rule name
+		*	@return Array
+		**/
+		getFieldByname: function(name) {
+			return _.find(this.model, function(field) { return (field.name === name); });
+		},
+
+		/**
+		*	Returns an object if the current model property being evaluated passes the validation against the matching
+		*	rule (if exists), otherwise it returns false.
+		*	returns false.
+		*	@public
+		*	@method isValid
+		*	@param model {Array} model reference
+		*	@param field {Object} current field reference to be evaluated
+		*	@return Object
+		**/
+		isValid: function(model, rule) {
+			var field = this.getFieldName(rule.name);
+			if(!_.defined(field)) return null;
+			var res = this[rule.type] ? this[rule.type](field) : null;
+			return _.defined(res) ? this[(res) ? 'onValid' : 'onInvalid'](rule) : null;
 		},
 
 		/**
@@ -121,22 +136,6 @@ define(['util/adt/collection'], function(Collection) {
 		},
 
 		/**
-		*	Returns an object if the current model property being evaluated passes the validation against the matching
-		*	rule (if exists), otherwise it returns false.
-		*	returns false.
-		*	@public
-		*	@method isValid
-		*	@param field {Object} model field reference
-		*	@return Object
-		**/
-		isValid: function(field) {
-			var rule = this.find(function(rule) { return (rule.name === field); }),
-			var res = (_.defined(rule) && this[rule.type]) ? this[rule.type].apply(this, arguments) : null;
-			if(!_.defined(res)) return null;
-			return this[(res) ? 'onValid' : 'onInvalid'](rule);
-		},
-
-		/**
 		*	Default Validator Strategy that evaluates rules defined against the current model set on this validator.
 		*	@public
 		*	@method validate
@@ -144,7 +143,7 @@ define(['util/adt/collection'], function(Collection) {
 		*	@return Boolean
 		**/
 		validate: function(callback) {
-			this.failures = _.compact(this.reset().invoke('isValid', this.model));
+			this.failures = this.map(this.isValid, this, this.model);
 			return this.done(callback);
 		},
 
@@ -261,7 +260,12 @@ define(['util/adt/collection'], function(Collection) {
 			/**
 			*	@event invalid
 			**/
-			invalid: 'com:spinal:ui:form:validator:rule:invalid'
+			invalid: 'com:spinal:ui:form:validator:rule:invalid',
+
+			/**
+			*	@event clear
+			**/
+			clear: 'com:spinal:ui:form:validator:clear'
 		},
 
 		/**

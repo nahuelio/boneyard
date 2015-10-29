@@ -305,7 +305,7 @@ define(['ui/container',
 			return this;
 		},
 
-		/**
+		/**f
 		*	Validates Form current state
 		*	@public
 		*	@method validate
@@ -323,7 +323,7 @@ define(['ui/container',
 		*	@return com.spinal.ui.form.Form
 		**/
 		submit: function(e) {
-			if(!this.validate()) e.preventDefault();
+			if(!this.validate()) e.preventDefault().stopProgagation();
 			return this;
 		},
 
