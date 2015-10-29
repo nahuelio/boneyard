@@ -312,7 +312,7 @@ define(['ui/container',
 		*	@return Boolean
 		**/
 		validate: function() {
-			return _.defined(this._validator) ? this._validator.set(this.resolve()).validate() : true;
+			return _.defined(this._validator) ? this._validator.setModel(this.$el.serializeArray()).validate() : true;
 		},
 
 		/**
@@ -335,7 +335,7 @@ define(['ui/container',
 		*	@return	com.spinal.ui.form.Form
 		**/
 		onValidate: function(validator) {
-			return this.trigger(UIForm.EVENTS.validate, validator);
+			return this.trigger(UIForm.EVENTS.validate, validator.getResult());
 		}
 
 	}, {
