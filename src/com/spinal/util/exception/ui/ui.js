@@ -43,6 +43,8 @@ define(['core/spinal',
 		*		InvalidModelType
 		*		UnsupportedRenderMethod
 		*		InvalidInterfaceType
+		*		InvalidMapperType
+		*		InvalidValidatorType
 		*	@static
 		*	@property TYPES
 		*	@type Object
@@ -55,7 +57,8 @@ define(['core/spinal',
 			InvalidModelType: _.template('\'model\' must be an instance of Backbone.Model.'),
 			UnsupportedRenderMethod: _.template('unsupported render method -> \'<%= method %>\'.'),
 			InvalidInterfaceType: _.template('Unsupported Interface Type Or Interface could not be resolved.'),
-			InvalidMapperType: _.template('Mapper must inherit or has same interface as com.spinal.ui.form.mapper.FormMapper')
+			InvalidMapperType: _.template('Mapper must be an instance or inherit from com.spinal.ui.form.mapper.FormMapper'),
+			InvalidValidatorType: _.template('Validator must be an instance of inherit from com.spinal.ui.form.validator.Validator')
 		}
 
 	}));

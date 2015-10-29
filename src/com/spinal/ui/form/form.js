@@ -4,8 +4,9 @@
 **/
 define(['ui/container',
 	'ui/form/mapper/form-mapper',
+	'ui/form/validator/validator',
 	'util/exception/ui/ui',
-	'util/string'], function(Container, FormMapper, UIException, StringUtil) {
+	'util/string'], function(Container, FormMapper, Validator, UIException, StringUtil) {
 
 	/**
 	*	Form Class
@@ -15,10 +16,21 @@ define(['ui/container',
 	*
 	*	@requires com.spinal.ui.Container
 	*	@requires com.spinal.ui.form.mapper.FormMapper
+	*	@requires com.spinal.ui.form.validator.Validator
 	*	@requires com.spianl.util.exception.ui.UIException
 	*	@requires com.spinal.util.StringUtil
 	**/
 	var UIForm = Spinal.namespace('com.spinal.ui.form.Form', Container.inherit({
+
+		/**
+		*	Form Events
+		*	@public
+		*	@property events
+		*	@type Object
+		**/
+		events: {
+			'submit': 'submit'
+		},
 
 		/**
 		*	Internal CSS className
@@ -62,7 +74,7 @@ define(['ui/container',
 			/**
 			*	Default Form's encoding type
 			*	@private
-			*	@property _options._enctype
+			*	@property _enctype
 			*	@type String
 			**/
 			_enctype: 'application/x-www-form-urlencoded',
@@ -70,7 +82,7 @@ define(['ui/container',
 			/**
 			*	Default Form's accept charset
 			*	@private
-			*	@property _options._acceptCharset
+			*	@property _acceptCharset
 			*	@type String
 			**/
 			_acceptCharset: null,
@@ -78,7 +90,7 @@ define(['ui/container',
 			/**
 			*	Default Form's autocomplete
 			*	@private
-			*	@property _options._autocomplete
+			*	@property _autocomplete
 			*	@type String
 			**/
 			_autocomplete: 'on',
@@ -86,7 +98,7 @@ define(['ui/container',
 			/**
 			*	Default Form's No validate
 			*	@private
-			*	@property _options._novalidate
+			*	@property _novalidate
 			*	@type String
 			**/
 			_novalidate: false,
@@ -94,7 +106,7 @@ define(['ui/container',
 			/**
 			*	Default Form's Target
 			*	@private
-			*	@property _options._target
+			*	@property _target
 			*	@type String
 			**/
 			_target: '_self'
@@ -109,10 +121,10 @@ define(['ui/container',
 		_name: null,
 
 		/**
-		*	Form's validator
+		*	Form validator
 		*	@private
 		*	@property _validator
-		*	@type {com.spinal.util.Validator}
+		*	@type com.spinal.ui.form.validator.Validator
 		**/
 		_validator: null,
 
@@ -125,10 +137,23 @@ define(['ui/container',
 		**/
 		initialize: function(opts) {
 			opts || (opts = {});
-			if(opts.mapper && !(opts.mapper instanceof FormMapper)) throw new UIException('InvalidMapperType');
-			_.extend(this, StringUtil.toPrivate(_.pick(opts, 'action', 'name', 'mapper', 'options', 'validator')));
 			UIForm.__super__.initialize.apply(this, arguments);
-			return (this._mapper) ? this.mapper() : this;
+			_.extend(this, StringUtil.toPrivate(_.pick(opts, 'action', 'name', 'mapper', 'options', 'validator')));
+			return this.validator().mapper();
+		},
+
+		/**
+		*	Validates parameters passed to the contructor function of this class.
+		*	@private
+		*	@override
+		*	@method _valid
+		*	@param attrs {Object} attributes
+		*	@return Boolean
+		**/
+		_valid: function(attrs) {
+			if(attrs.mapper && !(attrs.mapper instanceof FormMapper)) throw new UIException('InvalidMapperType');
+			if(attrs.validator && !(attrs.validator instanceof Validator)) throw new UIException('InvalidValidatorType');
+			return UIForm.__super__._valid.apply(this, arguments);
 		},
 
 		/**
@@ -142,16 +167,59 @@ define(['ui/container',
 		},
 
 		/**
-		*	Default Form's factory mapper that pulls dependencies and instanciate controls on demand before render
+		*	Default Form factory mapper setup that pulls dependencies and instanciate controls on demand.
 		*	@public
 		*	@chainable
 		*	@method create
 		*	@return com.spinal.ui.form.Form
 		**/
 		mapper: function() {
-			this._mapper.source(this.resolve(), _.bind(this.create, this))
-				.load(_.bind(this.update, this));
+			if(!_.defined(this._mapper)) return this;
+			this._mapper.source(this.resolve(), _.bind(this.create, this)).load(_.bind(this.update, this));
 			return this;
+		},
+
+		/**
+		*	Default Form validator setup that will trigger validation on form submit action.
+		*	@public
+		*	@chainable
+		*	@method create
+		*	@return com.spinal.ui.form.Form
+		**/
+		validator: function() {
+			if(!_.defined(this._validator)) return this;
+			this.listenTo(this._validator, Validator.EVENTS.validate, this.onValidate);
+			return this;
+		},
+
+		/**
+		*	Default create handler that adds controls to this form
+		*	@public
+		*	@method create
+		*	@param params {Object} additional parameters
+		*	@param id {String} factory id of the control
+		*	@param controls {Array} collection of factory ids
+		*	@return com.spinal.ui.form.Form
+		**/
+		create: function(params, path) {
+			params || (params = {});
+			return this.wrap(params.options).add(this._mapper.create(path, _.omit(params, 'options')));
+		},
+
+		/**
+		*	Decorate component by wraping it in a fieldset and adding a label if these options are defined
+		*	otherwise, the decorator will return the current form reference.
+		*	@public
+		*	@chainable
+		*	@method wrap
+		*	@param opts {Object} options
+		*	@return com.spinal.ui.Container
+		**/
+		wrap: function(opts) {
+			opts || (opts = {});
+			var ref = (opts.fieldset) ? this.fieldset(this, opts.fieldset) : this;
+			if(opts.label) this.label(ref, opts.label);
+			return ref;
 		},
 
 		/**
@@ -178,59 +246,18 @@ define(['ui/container',
 		},
 
 		/**
-		*	Decorate component by wraping it in a fieldset and adding a label if these options are defined
-		*	otherwise, the decorator will return the current form reference.
-		*	@public
-		*	@chainable
-		*	@method wrap
-		*	@param opts {Object} options
-		*	@return com.spinal.ui.Container
-		**/
-		wrap: function(opts) {
-			opts || (opts = {});
-			var ref = (opts.fieldset) ? this.fieldset(this, opts.fieldset) : this;
-			if(opts.label) this.label(ref, opts.label);
-			return ref;
-		},
-
-		/**
-		*	Default create handler that adds controls to this form
-		*	@public
-		*	@method create
-		*	@param params {Object} additional parameters
-		*	@param id {String} factory id of the control
-		*	@param controls {Array} collection of factory ids
-		*	@return com.spinal.ui.form.Form
-		**/
-		create: function(params, path) {
-			params || (params = {});
-			return this.wrap(params.options).add(this._mapper.create(path, _.omit(params, 'options')));
-		},
-
-		/**
-		*	Validates Form current state
-		*	@public
-		*	@method validate
-		*	@return Boolean
-		**/
-		validate: function() {
-			return (this._validator) ? this._validator.validate() : true;
-		},
-
-		/**
-		*	Render Form
+		*	Render View
 		*	@public
 		*	@override
 		*	@chainable
 		*	@method render
 		*	@param [opts] {Object} additional options
-		*	@return {com.spinal.ui.form.Form}
+		*	@return com.spinal.ui.form.Form
 		**/
 		render: function(opts) {
 			UIForm.__super__.render.apply(this, arguments);
 			this.name(this._name);
 			this.action(this._action);
-			this.validator(this._validator);
 			return this;
 		},
 
@@ -239,7 +266,7 @@ define(['ui/container',
 		*	@public
 		*	@chainable
 		*	@method update
-		*	@param model {Backbone.Model}
+		*	@param model {Backbone.Model} model reference
 		*	@param value {Object} value that has changed
 		*	@param [opts] {Object} additional options
 		*	@return com.spinal.ui.form.Form
@@ -255,7 +282,7 @@ define(['ui/container',
 		*	@public
 		*	@chainable
 		*	@method name
-		*	@param name {String} form's name
+		*	@param name {String} form name
 		*	@return com.spinal.ui.form.Form
 		**/
 		name: function(name) {
@@ -269,7 +296,7 @@ define(['ui/container',
 		*	@public
 		*	@chainable
 		*	@method action
-		*	@param action {String} form's action
+		*	@param action {String} form action
 		*	@return com.spinal.ui.form.Form
 		**/
 		action: function(action) {
@@ -279,28 +306,36 @@ define(['ui/container',
 		},
 
 		/**
-		*	Change the form's validator
+		*	Validates Form current state
 		*	@public
-		*	@chainable
-		*	@method validator
-		*	@param validator {com.spinal.util.Validator} form's validator
+		*	@method validate
+		*	@return Boolean
+		**/
+		validate: function() {
+			return _.defined(this._validator) ? this._validator.set(this.resolve()).validate() : true;
+		},
+
+		/**
+		*	Default Form submit strategy
+		*	@public
+		*	@method submit
+		*	@param e {Object} event reference
 		*	@return com.spinal.ui.form.Form
 		**/
-		validator: function(validator) {
-			if(!_.defined(validator)) return this._validator;
-			this._validator = validator;
+		submit: function(e) {
+			if(!this.validate()) e.preventDefault();
 			return this;
 		},
 
 		/**
-		*	Default Form's submission strategy
+		*	Default Validate Handler
 		*	@public
-		*	@overridable
-		*	@method submit
-		*	@return com.spinal.ui.form.Form
+		*	@method onValidate
+		*	@param validator {com.spinal.ui.form.validator.Validator} validator reference
+		*	@return	com.spinal.ui.form.Form
 		**/
-		submit: function() {
-			return this;
+		onValidate: function(validator) {
+			return this.trigger(UIForm.EVENTS.validate, validator);
 		}
 
 	}, {
