@@ -36,7 +36,7 @@ define(['util/adt/collection'], function(Collection) {
 		*	@public
 		*	@chainable
 		*	@method initialize
-		*	@param [attrs] {Object} constructor attributes
+		*	@param [initial] {Array} constructor attributes
 		*	@param [opts] {Object} addtional options
 		*	@return com.spinal.ui.form.validator.Validator
 		**/
@@ -91,7 +91,7 @@ define(['util/adt/collection'], function(Collection) {
 		*	@param name {Object} rule name
 		*	@return Array
 		**/
-		getFieldByname: function(name) {
+		getFieldByName: function(name) {
 			return _.find(this.model, function(field) { return (field.name === name); });
 		},
 
@@ -105,8 +105,8 @@ define(['util/adt/collection'], function(Collection) {
 		*	@param field {Object} current field reference to be evaluated
 		*	@return Object
 		**/
-		isValid: function(model, rule) {
-			var field = this.getFieldName(rule.name);
+		isValid: function(rule) {
+			var field = this.getFieldByName(rule.name);
 			if(!_.defined(field)) return null;
 			var res = this[rule.type] ? this[rule.type](field) : null;
 			return _.defined(res) ? this[(res) ? 'onValid' : 'onInvalid'](rule) : null;
@@ -143,7 +143,7 @@ define(['util/adt/collection'], function(Collection) {
 		*	@return Boolean
 		**/
 		validate: function(callback) {
-			this.failures = this.map(this.isValid, this, this.model);
+			this.failures = _.compact(this.map(this.isValid, this));
 			return this.done(callback);
 		},
 
@@ -154,7 +154,7 @@ define(['util/adt/collection'], function(Collection) {
 		*	@param [callback] {Object} optional callback
 		*	@return Boolean
 		**/
-		done: function() {
+		done: function(callback) {
 			var result = this.getResult();
 			this.trigger(Validator.EVENTS.validate, this);
 			if(_.defined(callback) && _.isFunction(callback)) callback(result);

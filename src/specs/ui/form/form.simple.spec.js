@@ -8,9 +8,6 @@ define([], function() {
 
 		$id: 'ui-form-simple',
 
-		message_required: 'This field is required',
-		message_onlyan: 'Only characters and numbers are allowed',
-
 		form_simple_model: new Backbone.Model({
 			username: {
 				type: 'input',
@@ -54,16 +51,13 @@ define([], function() {
 			$module: 'ui/form/validator/validator',
 			$params: [{
 					name: 'username',
-					type: 'onlyAlphanumeric',
-					message: '$bone!message_onlyan'
+					type: 'onlyAlphanumeric'
 				}, {
 					name: 'username',
-					type: 'required',
-					message: '$bone!message_required'
+					type: 'required'
 				}, {
 					name: 'password',
-					type: 'required',
-					message: 'Hello World'
+					type: 'required'
 			}]
 		},
 
@@ -76,7 +70,6 @@ define([], function() {
 			$module: 'ui/form/form',
 			$params: {
 				name: 'form_simple',
-				action: 'http:/localhost:9393/',
 				model: '$bone!form_simple_model',
 				mapper: '$bone!simple_form_mapper',
 				validator: '$bone!simple_validator'

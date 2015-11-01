@@ -194,7 +194,7 @@ define(['core/spinal',
 		*	Remove View
 		*	@public
 		*	@chainable
-		*	@method lookup
+		*	@method remove
 		*	@param view {com.spinal.ui.View} View instance
 		*	@param [opts] {Object} additional options
 		*	@return {com.spinal.ui.Container}
