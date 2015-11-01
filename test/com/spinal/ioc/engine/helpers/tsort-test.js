@@ -70,7 +70,7 @@ define(['ioc/engine/helpers/tsort'], function(TSort) {
 				expect(_.indexOf(result, 'content')).to.be.above(_.indexOf(result, 'simple'));
 			});
 
-			it.skip('Should throw an Error: Circular Dependency detected', function() {
+			it('Should throw an Error: Circular Dependency detected', function() {
 				expect(_.bind(function() {
 					var graphCD = new TSort();
 					var result = graphCD.add(this.boneA)
