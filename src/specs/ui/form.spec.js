@@ -2,22 +2,13 @@
 *	SpinalJS Form Spec
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 */
-define(['specs/ui/form/form.simple.spec',
-	'specs/ui/form/form.advanced.spec',
-	'specs/ui/form/form.controls.spec'], function(FormSimpleSpec, FormAdvancedSpec, FormControlsSpec) {
+define(['specs/ui/form/form.login.spec',
+	'specs/ui/form/form.controls.spec'], function(FormLoginSpec, FormControlsSpec) {
 
 	return {
 
 		$id: 'ui-form',
-		$specs: [FormSimpleSpec, FormControlsSpec],
-
-		form_controls_header: {
-			$module: 'ui/basic/header',
-			$params: {
-				content: 'Form Controls <small><kbd>com.spinal.ui.form.controls</kbd></small>',
-				heading: '2'
-			}
-		},
+		$specs: [FormLoginSpec, FormControlsSpec],
 
 		form_header: {
 			$module: 'ui/basic/header',
@@ -27,24 +18,27 @@ define(['specs/ui/form/form.simple.spec',
 			}
 		},
 
-		cform_controls: {
-			$module: 'ui/container',
-			$params: { id: 'cform_controls' }
+		p_form_login: {
+			$module: 'ui/misc/panel',
+			$params: { id: 'p_form_login', title: 'Login Form' }
 		},
 
 		cform: {
 			$module: 'ui/container',
-			$params: { id: 'form', views: ['$bone!p_form_simple', '$bone!p_form_advanced'] }
+			$params: { id: 'form', views: ['$bone!p_form_login'] }
 		},
 
-		p_form_simple: {
-			$module: 'ui/misc/panel',
-			$params: { id: 'p_form_simple', title: 'Simple Form' }
+		form_controls_header: {
+			$module: 'ui/basic/header',
+			$params: {
+				content: 'Form Controls <small><kbd>com.spinal.ui.form.controls</kbd></small>',
+				heading: '2'
+			}
 		},
 
-		p_form_advanced: {
-			$module: 'ui/misc/panel',
-			$params: { id: 'p_form_advanced', title: 'Advanced Form' }
+		cform_controls: {
+			$module: 'ui/container',
+			$params: { id: 'cform_controls' }
 		},
 
 		$actions: [

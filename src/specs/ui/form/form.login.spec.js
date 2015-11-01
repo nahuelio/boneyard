@@ -6,9 +6,9 @@ define([], function() {
 
 	return {
 
-		$id: 'ui-form-simple',
+		$id: 'ui-form-login',
 
-		form_simple_model: new Backbone.Model({
+		form_model: new Backbone.Model({
 			username: {
 				type: 'input',
 				name: 'username',
@@ -47,7 +47,7 @@ define([], function() {
 			}
 		}),
 
-		simple_validator: {
+		form_validator: {
 			$module: 'ui/form/validator/validator',
 			$params: [{
 					name: 'username',
@@ -61,23 +61,22 @@ define([], function() {
 			}]
 		},
 
-		simple_form_mapper: {
-			$module: 'ui/form/mapper/form-mapper',
-			$params: {}
+		form_mapper: {
+			$module: 'ui/form/mapper/form-mapper'
 		},
 
-		form_simple: {
+		form_login: {
 			$module: 'ui/form/form',
 			$params: {
-				name: 'form_simple',
-				model: '$bone!form_simple_model',
-				mapper: '$bone!simple_form_mapper',
-				validator: '$bone!simple_validator'
+				name: 'form_login',
+				model: '$bone!form_model',
+				mapper: '$bone!form_mapper',
+				validator: '$bone!form_validator'
 			}
 		},
 
 		$actions: [
-			{ '$bone!p_form_simple.addAll': [['$bone!form_simple']] }
+			{ '$bone!p_form_login.addAll': [['$bone!form_login']] }
 		]
 
 	};
