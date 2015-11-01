@@ -10,7 +10,8 @@ define(['ioc/engine/helpers/tsort'], function(TSort) {
 			this.bone1 = ['holder', 'subcontent'];
 			this.bone2 = ['content', 'simple', 'subcontent'];
 			this.bone3 = ['subcontent', 'advanced'];
-			this.bone4 = ['advanced', 'test'];
+			// 2 different properties that depends on advanced.
+			this.bone4 = ['advanced', 'test', 'test'];
 
 			this.boneA = ['boneA', 'boneB'];
 			this.boneB = ['boneB', 'boneC', 'boneD'];

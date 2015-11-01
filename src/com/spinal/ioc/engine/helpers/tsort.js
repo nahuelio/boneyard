@@ -55,6 +55,17 @@ define(['core/spinal'], function(Spinal) {
 		},
 
 		/**
+		*	Clean up duplicated dependencies except for the first one and return it.
+		*	@public
+		*	@method clean
+		*	@param nodes {Array} dependency graph reference
+		*	@return Array
+		**/
+		clean: function(nodes) {
+			return [_.first(nodes)].concat(_.unique(nodes.slice(1)));
+		},
+
+		/**
 		*	Adds dependency nodes into topological dependency graph
 		*	@public
 		*	@method add
@@ -62,6 +73,8 @@ define(['core/spinal'], function(Spinal) {
 		*	@return com.spinal.ioc.engine.helpers.TSort
 		**/
 		add: function(nodes) {
+			nodes || (nodes = []);
+			nodes = this.clean(nodes);
 			this.onAdd(nodes);
 			for(var i = 1; i < nodes.length; i++)
 				this.nodes[nodes[i]].push(nodes[i - 1]);
