@@ -78,8 +78,8 @@ define(['core/spinal',
 
             it('Should NOT set a new collection (undefined object with Interface)', function() {
                 expect(this.testInterface.set()).to.be.equal(false);
-                expect(this.testInterface.set([undefined])).to.be.equal(true);
-                expect(this.testInterface.size()).to.be.equal(0);
+                expect(this.testInterface.set([undefined])).to.be.equal(false);
+                expect(this.testInterface.size()).to.be.equal(1);
             });
 
     	});
@@ -111,9 +111,9 @@ define(['core/spinal',
                 var added = this.testInterface.add({ model: new Backbone.Model({ name: 'foo' }) });
                 expect(added).to.be.ok();
                 expect(this.testInterface._interface).to.be.ok();
-                expect(this.testInterface.get(0)).to.be.an(Backbone.View);
-                expect(this.testInterface.get(0).model).to.be.ok();
-                expect(this.testInterface.get(0).model.get('name')).to.be.equal('foo');
+                expect(this.testInterface.get(1)).to.be.an(Backbone.View);
+                expect(this.testInterface.get(1).model).to.be.ok();
+                expect(this.testInterface.get(1).model.get('name')).to.be.equal('foo');
             });
 
     		it('Should NOT add a new element', function() {

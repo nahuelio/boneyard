@@ -11,25 +11,28 @@ define([], function() {
 		form_simple_model: new Backbone.Model({
 			username: {
 				type: 'input',
+				name: 'username',
 				value: 'johndoe',
 				placeholder: 'Enter Username...',
 				options: {
-					fieldset: { attrs: { class: 'form-group' } },
+					fieldset: { cls: 'form-group' },
 					label: { content: 'Username' }
 				}
 			},
 			password: {
 				type: 'password',
+				name: 'password',
 				options: {
-					fieldset: { attrs: { class: 'form-group' } },
+					fieldset: { cls: 'form-group' },
 					label: { content: 'Password' }
 				}
 			},
 			signedin: {
 				type: 'checkbox',
+				name: 'signedin',
 				value: true,
 				options: {
-					fieldset: { attrs: { class: 'form-group' } },
+					fieldset: { cls: 'form-group' },
 					label: { content: 'Stay signed in &nbsp;' }
 				}
 			},
@@ -37,11 +40,26 @@ define([], function() {
 				type: 'button',
 				text: 'Sign In',
 				style: 'btn-primary',
+				attrs: { type: 'submit' },
 				options: {
-					fieldset: { attrs: { class: 'form-group' } }
+					fieldset: { cls: 'form-group' }
 				}
 			}
 		}),
+
+		simple_validator: {
+			$module: 'ui/form/validator/validator',
+			$params: [{
+					name: 'username',
+					type: 'onlyAlphanumeric'
+				}, {
+					name: 'username',
+					type: 'required'
+				}, {
+					name: 'password',
+					type: 'required'
+			}]
+		},
 
 		simple_form_mapper: {
 			$module: 'ui/form/mapper/form-mapper',
@@ -52,9 +70,9 @@ define([], function() {
 			$module: 'ui/form/form',
 			$params: {
 				name: 'form_simple',
-				action: 'http:/localhost:9393/',
 				model: '$bone!form_simple_model',
-				mapper: '$bone!simple_form_mapper'
+				mapper: '$bone!simple_form_mapper',
+				validator: '$bone!simple_validator'
 			}
 		},
 

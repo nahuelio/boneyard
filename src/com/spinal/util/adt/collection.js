@@ -13,14 +13,6 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 	var Collection = Spinal.namespace('com.spinal.util.adt.Collection', Spinal.SpinalClass.inherit({
 
 		/**
-		*	Internal Array
-		*	@public
-		*	@property collection
-		*	@type Array
-		**/
-		collection: null,
-
-		/**
 		*	Interface reference, usually a constructor function that identifies
 		*	the types of object that this collection can contain.
 		*	@private
@@ -66,7 +58,8 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 		*	@return Boolean
 		**/
 		set: function(arr) {
-			if(!this._valid(arr) || !_.isArray(arr)) return false;
+			if(!_.defined(arr) || !_.isArray(arr) || !_.every(Collection.__super__.invoke.call(this, '_valid', arr)))
+				return false;
 			this.reset({ silent: true });
 			if(!_.isNull(this._interface)) {
 				this.collection = _.compact(_.map(arr, function(ele) {

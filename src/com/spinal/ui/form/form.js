@@ -139,7 +139,7 @@ define(['ui/container',
 			opts || (opts = {});
 			UIForm.__super__.initialize.apply(this, arguments);
 			_.extend(this, StringUtil.toPrivate(_.pick(opts, 'action', 'name', 'mapper', 'options', 'validator')));
-			return this.validator().mapper();
+			return this.mapper();
 		},
 
 		/**
@@ -167,6 +167,19 @@ define(['ui/container',
 		},
 
 		/**
+		*	Default Form validator setup that binds validator events.
+		*	@public
+		*	@method validator
+		*	@return com.spinal.ui.form.Form
+		**/
+		validator: function() {
+			if(!this._validator) return this;
+			this.listenTo(this._validator, Validator.EVENTS.valid, this.onValid);
+			this.listenTo(this._validator, Validator.EVENTS.invalid, this.onInvalid);
+			return this;
+		},
+
+		/**
 		*	Default Form factory mapper setup that pulls dependencies and instanciate controls on demand.
 		*	@public
 		*	@chainable
@@ -176,19 +189,6 @@ define(['ui/container',
 		mapper: function() {
 			if(!_.defined(this._mapper)) return this;
 			this._mapper.source(this.resolve(), _.bind(this.create, this)).load(_.bind(this.update, this));
-			return this;
-		},
-
-		/**
-		*	Default Form validator setup that will trigger validation on form submit action.
-		*	@public
-		*	@chainable
-		*	@method create
-		*	@return com.spinal.ui.form.Form
-		**/
-		validator: function() {
-			if(!_.defined(this._validator)) return this;
-			this.listenTo(this._validator, Validator.EVENTS.validate, this.onValidate);
 			return this;
 		},
 
@@ -258,7 +258,7 @@ define(['ui/container',
 			UIForm.__super__.render.apply(this, arguments);
 			this.name(this._name);
 			this.action(this._action);
-			return this;
+			return this.validator();
 		},
 
 		/**
@@ -305,14 +305,14 @@ define(['ui/container',
 			return this;
 		},
 
-		/**
+		/**f
 		*	Validates Form current state
 		*	@public
 		*	@method validate
 		*	@return Boolean
 		**/
 		validate: function() {
-			return _.defined(this._validator) ? this._validator.set(this.resolve()).validate() : true;
+			return _.defined(this._validator) ? this._validator.setModel(this.$el.serializeArray()).validate() : true;
 		},
 
 		/**
@@ -323,19 +323,45 @@ define(['ui/container',
 		*	@return com.spinal.ui.form.Form
 		**/
 		submit: function(e) {
-			if(!this.validate()) e.preventDefault();
-			return this;
+			if(!this.validate()) {
+				e.preventDefault();
+				e.stopPropagation();
+			}
+			return this.trigger(UIForm.EVENTS.submit, this);
 		},
 
 		/**
-		*	Default Validate Handler
+		*	Default Valid handler
 		*	@public
-		*	@method onValidate
-		*	@param validator {com.spinal.ui.form.validator.Validator} validator reference
-		*	@return	com.spinal.ui.form.Form
+		*	@method onValid
+		*	@param rule {Object} rule reference
+		*	@return Object
 		**/
-		onValidate: function(validator) {
-			return this.trigger(UIForm.EVENTS.validate, validator);
+		onValid: function(rule) {
+			var fieldset = this.find(function(view) {
+				return _.defined(view.lookup(function(field) {
+					return (field.$el.attr('name') === rule.name);
+				}, Container.LOOKUP.descendant)) ? view : null;
+			}, this);
+			if(fieldset) fieldset.removeClass('has-error');
+			return rule;
+		},
+
+		/**
+		*	Default Invalid handler
+		*	@public
+		*	@method onInvalid
+		*	@param rule {Object} rule reference
+		*	@return Object
+		**/
+		onInvalid: function(rule) {
+			var fieldset = this.find(function(view) {
+				return _.defined(view.lookup(function(field) {
+					return (field.$el.attr('name') === rule.name);
+				}, Container.LOOKUP.descendant)) ? view : null;
+			}, this);
+			if(fieldset) fieldset.addClass('has-error');
+			return rule;
 		}
 
 	}, {
@@ -354,9 +380,9 @@ define(['ui/container',
 		**/
 		EVENTS: {
 			/**
-			*	@event validate
+			*	@event submit
 			**/
-			validate: 'com:spinal:ui:form:validate'
+			submit: 'com:spinal:ui:form:submit'
 		}
 
 	}));
