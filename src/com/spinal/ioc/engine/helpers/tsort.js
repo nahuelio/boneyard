@@ -62,6 +62,8 @@ define(['core/spinal'], function(Spinal) {
 		*	@return com.spinal.ioc.engine.helpers.TSort
 		**/
 		add: function(nodes) {
+			nodes || (nodes = []);
+			nodes = _.unique(nodes);
 			this.onAdd(nodes);
 			for(var i = 1; i < nodes.length; i++)
 				this.nodes[nodes[i]].push(nodes[i - 1]);
