@@ -50,7 +50,7 @@ define([], function() {
 		},
 
 		$actions: [{
-			'$bone!menu.add': ['$bone!affix', { renderOnAdd: true }]
+			'$bone!menu.add': ['$bone!affix']
 		}]
 
 	};

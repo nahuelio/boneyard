@@ -26,7 +26,7 @@ define(['specs/ui/list/list.spec'], function(ListSpec) {
 			'$bone!global.addAll': [[
 				'$bone!list_header',
 				'$bone!clist'
-			], { renderOnAdd: true }]
+			]]
 		}]
 
 	};

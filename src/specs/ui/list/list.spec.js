@@ -72,7 +72,7 @@ define(['ui/basic/image'], function(Image) {
 				'$bone!list_simple',
 				'$bone!list_p_a',
 				'$bone!list_advanced'
-			], { renderOnAdd: true }]
+			]]
 		}]
 
 	};

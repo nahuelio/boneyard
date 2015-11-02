@@ -26,7 +26,7 @@ define(['specs/ui/table/table.spec'], function(TableSpec) {
 			'$bone!global.addAll': [[
 				'$bone!table_header',
 				'$bone!ctable'
-			], { renderOnAdd: true }]
+			]]
 		}]
 
 	};

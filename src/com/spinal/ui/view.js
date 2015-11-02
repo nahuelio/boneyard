@@ -54,20 +54,20 @@ define(['core/spinal',
 		method: 'append',
 
 		/**
+		*	Internal HTML template
+		*	@private
+		*	@property html
+		*	@type String
+		**/
+		html: null,
+
+		/**
 		*	Parent Reference
 		*	@private
 		*	@property _parent
-		*	@type {com.spinal.ui.View}
+		*	@type com.spinal.ui.Container
 		**/
 		_parent: null,
-
-		/**
-		*	Internal Compiled template
-		*	@private
-		*	@property _tpl
-		*	@type Function
-		**/
-		_tpl: null,
 
 		/**
 		*	Constructor
@@ -96,7 +96,7 @@ define(['core/spinal',
 			if(options.el) this.addClass(this.className);
 			if(options.cls) this.addClass(options.cls);
 			if(options.method) this.method = options.method;
-			if(options.template) this._tpl = this._compile(options.template);
+			if(options.template) this.html = this.compile(options.template);
 			return (options.attrs) ? this.addAttr(options.attrs) : this;
 		},
 
@@ -111,7 +111,8 @@ define(['core/spinal',
 			attrs || (attrs = {});
 			if(attrs.id && !_.isString(attrs.id)) throw new UIException('InvalidIDType');
 			if(attrs.model && !(attrs.model instanceof Backbone.Model)) throw new UIException('InvalidModelType');
-			if(attrs.method && !(View.RENDER[attrs.method])) throw new UIException('UnsupportedRenderMethod', { method: 'non-existent-method' });
+			if(attrs.method && !(View.RENDER[attrs.method])) throw new UIException('UnsupportedRenderMethod', { method: attrs.method });
+			if(attrs.template && !_.isString(attrs.template)) throw new UIException('InvalidTemplateFormat');
 			return true;
 		},
 
@@ -147,22 +148,22 @@ define(['core/spinal',
 		*	@private
 		*	@method _method
 		*	@param [opts] {Object} additional options
-		*	@return String
+		*	@return com.spinal.io.View
 		**/
 		_method: function(opts) {
-			return (opts && opts.method && (View.RENDER[opts.method])) ? opts.method : this.method;
+			opts.method = (_.defined(opts.method) && View.RENDER[opts.method]) ? opts.method : this.method;
+			return this;
 		},
 
 		/**
-		*	Compiles and build the template function used by this view
-		*	@private
-		*	@method _compile
-		*	@param tpl {Function} template to be included as child inside the original view root DOM element
+		*	Compiles a given template into a function to be used by this view
+		*	@public
+		*	@method compile
+		*	@param html {String} template to be included as child inside the original view root DOM element
 		*	@return Function
 		**/
-		_compile: function(tpl) {
-			if(!tpl || (!_.isString(tpl) && !_.isFunction(tpl))) return null;
-			return (_.isString(tpl)) ? _.template(tpl) : tpl;
+		compile: function(html) {
+			return _.template(html);
 		},
 
 		/**
@@ -181,51 +182,40 @@ define(['core/spinal',
 		},
 
 		/**
-		*	Default strategy to setup data for templating
-		*	@TODO: Keep an eye on this one, to see if it's feasible to let the view automatically traverse the
-		*	the parent model when the current view model is not defined. Make it transparent to the end user when
-		*	dealing with large hierarcheries. If it's not, just use the current model if available and follow backbone.
+		*	Default strategy to setup data for templating.
+		*	Default implementation will pass any given data straight to the template function.
+		*	If end users want to transpose view's model or collection, they will need to override this method in
+		*	subclasses.
 		*	@public
-		*	@overridable
 		*	@method data
-		*	@param [o] {Object} default data to pass to the template
 		*	@return Object
 		**/
-		data: function(o) {
-			o || (o = {});
-			return (this.model) ? this.model.toJSON() :
-				((this._parent && this._parent.model) ? this._parent.model.toJSON() : o);
+		data: function() {
+			return {};
 		},
 
 		/**
-		*	Default strategy to project model's data onto the template to generates HTML content
-		*	@FIXME: This method in combination with data() need to be reviewed.
+		*	Default strategy to project model's data onto the template to generates HTML content.
 		*	@public
-		*	@overridable
 		*	@method template
-		*	@param [tpl] {String} HTML template
-		*	@param [data] {Object} template data
 		*	@return String
 		**/
-		template: function(tpl, data) {
-			if(_.isObject(tpl)) { data = tpl; tpl = null; }
-			tpl = (tpl) ? this._compile(tpl) : this._tpl;
-			return (tpl) ? this.$el.html(tpl(this.data(data))) : this.$el;
+		template: function() {
+			return _.defined(this.html) ? this.$el.html(this.html(this.data())) : this.$el;
 		},
 
 		/**
 		*	Render View
 		*	@public
 		*	@chainable
-		*	@overridable
 		*	@method render
 		*	@param [opts] {Object} additional options
-		*	@return {com.spinal.ui.View}
+		*	@return com.spinal.ui.View
 		**/
 		render: function(opts) {
 			opts || (opts = {});
-			this.beforeRender(opts);
-			this._parent._targetEl(this)[this._method.apply(this, arguments)](this.template(this._tpl));
+			this._method(opts).beforeRender(opts);
+			this._parent._targetEl(this, opts)[opts.method](this.template());
 			this.afterRender(opts);
 			return this;
 		},
@@ -439,31 +429,36 @@ define(['core/spinal',
 		*	@type Object
 		**/
 		RENDER: {
+
 			/**
-			*	@property APPEND
+			*	@property append
 			*	@type String
 			**/
 			append: 'append',
+
 			/**
-			*	@property PREPEND
+			*	@property after
+			*	@type string
+			**/
+			after: 'after',
+
+			/**
+			*	@property prepend
 			*	@type String
 			**/
 			prepend: 'prepend',
+
 			/**
-			*	@property APPENDTO
-			*	@type String
+			*	@property before
+			*	@type string
 			**/
-			appendTo: 'appendTo',
-			/**
-			*	@property PREPENDTO
-			*	@type String
-			**/
-			prependTo: 'prependTo',
+			before: 'before',
+
 			/**
 			*	@property HTML
 			*	@type String
 			**/
-			html: 'html',
+			html: 'html'
 		},
 
 		/**

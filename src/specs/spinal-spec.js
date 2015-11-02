@@ -34,7 +34,7 @@ define(['specs/ui/basic.spec',
 		},
 
 		$actions: [
-			{ '$bone!global.render': [] },
+			{ '$bone!global.render': [{ method: 'before', target: 'div#menu'}] },
 			{ '$bone!menu.render': [] }
 		],
 

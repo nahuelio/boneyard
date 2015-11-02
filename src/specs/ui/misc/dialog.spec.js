@@ -52,7 +52,7 @@ define([], function() {
 			{ '$bone!dialog_c_a.addAll': [['$bone!dialog_p_a', '$bone!dialog_b_a', '$bone!dialog_advanced']] },
 			{ '$bone!dialog_simple.add': ['$bone!dialog_content_s'] },
 			{ '$bone!dialog_advanced.add': ['$bone!dialog_list_simple'] },
-			{ '$bone!cdialog.addAll': [['$bone!dialog_c_s', '$bone!dialog_c_a'], { renderOnAdd: true }] }
+			{ '$bone!cdialog.addAll': [['$bone!dialog_c_s', '$bone!dialog_c_a']] }
 		]
 
 	};

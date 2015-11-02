@@ -53,7 +53,7 @@ define([], function() {
 				'$bone!panel_danger'
 			], { renderOnAdd: true }]
 		}, {
-			'$bone!panel_simple.add': ['$bone!panelContent', { renderOnAdd: true }]
+			'$bone!panel_simple.add': ['$bone!panelContent']
 		}]
 
 	};
