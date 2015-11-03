@@ -61,7 +61,7 @@ define([], function() {
 				'$bone!table_simple_striped',
 				'$bone!table_p_sh',
 				'$bone!table_simple_hover'
-			], { renderOnAdd: true }] },
+			]] },
 			{ '$bone!table_simple_striped.addClass': ['table-striped'] },
 			{ '$bone!table_simple_hover.addClass': ['table-striped table-hover'] }
 		]

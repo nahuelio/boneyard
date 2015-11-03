@@ -67,7 +67,7 @@ define(['ui/basic/image'], function(Image) {
 				'$bone!dropdown_simple',
 				'$bone!dropdown_p_a',
 				'$bone!dropdown_advanced'
-			], { renderOnAdd: true }]
+			]]
 		}]
 
 	};

@@ -122,10 +122,13 @@ define(['core/spinal',
 		*	@public
 		*	@method _targetEl
 		*	@param view {com.spinal.ui.View} current view reference
+		*	@param [opts] {Object} options
 		*	@return Object
 		**/
-		_targetEl: function(view) {
-			return this.$el;
+		_targetEl: function(view, opts) {
+			opts || (opts = {});
+			return (_.contains([View.RENDER.after, View.RENDER.before], opts.method) &&
+				_.defined(opts.target) && _.isString(opts.target)) ? this.$el.children(opts.target) : this.$el;
 		},
 
 		/**
@@ -133,12 +136,12 @@ define(['core/spinal',
 		*	@public
 		*	@chainable
 		*	@method render
-		*	@return {com.spinal.ui.Container}
+		*	@return com.spinal.ui.Container
 		**/
 		render: function() {
 			this._resolveSuccesor();
 			Container.__super__.render.apply(this, arguments);
-			this.invoke('render', arguments);
+			this.invoke('render');
 			return this;
 		},
 

@@ -45,6 +45,7 @@ define(['core/spinal',
 		*		InvalidInterfaceType
 		*		InvalidMapperType
 		*		InvalidValidatorType
+		*		InvalidTemplateFormat
 		*	@static
 		*	@property TYPES
 		*	@type Object
@@ -58,7 +59,8 @@ define(['core/spinal',
 			UnsupportedRenderMethod: _.template('unsupported render method -> \'<%= method %>\'.'),
 			InvalidInterfaceType: _.template('Unsupported Interface Type Or Interface could not be resolved.'),
 			InvalidMapperType: _.template('Mapper must be an instance or inherit from com.spinal.ui.form.mapper.FormMapper'),
-			InvalidValidatorType: _.template('Validator must be an instance of inherit from com.spinal.ui.form.validator.Validator')
+			InvalidValidatorType: _.template('Validator must be an instance of inherit from com.spinal.ui.form.validator.Validator'),
+			InvalidTemplateFormat: _.template('Template must be a String in order to work.')
 		}
 
 	}));
