@@ -2,13 +2,19 @@
 *	@module com.spinal.util.adt
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
-define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
+define(['core/spinal',
+	'util/adt/iterator',
+	'util/object'], function(Spinal, Iterator, ObjectUtil) {
 
 	/**
 	*	Define a generic interface of a Collection
 	*	@namespace com.spinal.util.adt
 	*	@class com.spinal.util.adt.Collection
 	*	@extends com.spinal.core.SpinalClass
+	*
+	*	@requires com.spinal.core.SpinalClass
+	*	@requires com.spinal.util.adt.Iterator
+	*	@requires com.spinal.util.ObjectUtil
 	**/
 	var Collection = Spinal.namespace('com.spinal.util.adt.Collection', Spinal.SpinalClass.inherit({
 
@@ -28,7 +34,7 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 		*	@method initialize
 		*	@param initial {Array} initial elements in the collection.
 		*	@param opts {Object} Additional options.
-		*	@return {com.spinal.util.adt.Collection}
+		*	@return com.spinal.util.adt.Collection
 		**/
 		initialize: function(initial, opts) {
 			opts || (opts = {});
@@ -61,13 +67,7 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 			if(!_.defined(arr) || !_.isArray(arr) || !_.every(Collection.__super__.invoke.call(this, '_valid', arr)))
 				return false;
 			this.reset({ silent: true });
-			if(!_.isNull(this._interface)) {
-				this.collection = _.compact(_.map(arr, function(ele) {
-					if(ele) return new this._interface(ele);
-				}, this));
-			} else {
-				this.collection = arr.slice(0);
-			}
+			Collection.__super__.invoke.call(this, 'add', arr);
 			return true;
 		},
 
@@ -95,7 +95,7 @@ define(['core/spinal', 'util/adt/iterator'], function(Spinal, Iterator) {
 		add: function(element, opts) {
 			opts || (opts = {});
 			if(!this._valid(element)) return null;
-			if(!_.isNull(this._interface)) {
+			if(_.defined(this._interface) && !(element instanceof this._interface)) {
 				element = new this._interface(element);
 				this.collection.push(element);
 			} else {

@@ -112,7 +112,7 @@ define(['core/spinal',
 			if(attrs.id && !_.isString(attrs.id)) throw new UIException('InvalidIDType');
 			if(attrs.model && !(attrs.model instanceof Backbone.Model)) throw new UIException('InvalidModelType');
 			if(attrs.method && !(View.RENDER[attrs.method])) throw new UIException('UnsupportedRenderMethod', { method: attrs.method });
-			if(attrs.template && !_.isString(attrs.template)) throw new UIException('InvalidTemplateFormat');
+			if(_.defined(attrs.template) && !_.isString(attrs.template)) throw new UIException('InvalidTemplateFormat');
 			return true;
 		},
 

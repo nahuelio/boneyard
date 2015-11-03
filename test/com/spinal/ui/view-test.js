@@ -42,20 +42,18 @@ define(['core/spinal',
 			it('Should return instance of View with inline template as String', function() {
 				this.testView = new View({ template: '<input class="test" />' });
 				expect(this.testView).to.be.ok();
-				expect(this.testView._tpl).to.be.a(Function);
+				expect(this.testView.html).to.be.a(Function);
 				expect(this.testView.$el[0].nodeName.toLowerCase()).to.be.equal('div');
 				this.testView.template();
 				expect(this.testView.$el.children()[0].nodeName.toLowerCase()).to.be.equal('input');
 			});
 
-			it('Should return instance of View with precompiled inline template as Function', function() {
-				this.testView = new View({ template: _.template('<input class="<%= className %>" />') });
-				expect(this.testView).to.be.ok();
-				expect(this.testView._tpl).to.be.a(Function);
-				expect(this.testView.$el[0].nodeName.toLowerCase()).to.be.equal('div');
-				var $result = this.testView.template({ className: 'test' });
-				expect($result.children()[0].nodeName.toLowerCase()).to.be.equal('input');
-				expect($($result.children()[0]).hasClass('test')).to.be.equal(true);
+			it('Should throw an Error: template passed as constructor param is not a string', function() {
+				expect(function() {
+					new View({ template: _.template('<input class="<%= className %>" />') });
+				}).to.throwException(function(e) {
+					expect(e.message).to.be(UIException.TYPES.InvalidTemplateFormat({}));
+				});
 			});
 
 			it('Should return instance of View passing a model)', function() {
@@ -68,10 +66,10 @@ define(['core/spinal',
 
 			it('Should return instance of View (successor + valid render method)', function() {
 				this.testView = new View({
-					method: View.RENDER.prependTo
+					method: View.RENDER.prepend
 				});
 				expect(this.testView).to.be.ok();
-				expect(this.testView.method).to.be.equal(View.RENDER.prependTo);
+				expect(this.testView.method).to.be.equal(View.RENDER.prepend);
 			});
 
 			it('Should throw an Error: new View() with id type number instead of string', function() {
@@ -149,39 +147,6 @@ define(['core/spinal',
 				expect(result.$el.find('input').hasClass('test')).to.be.equal(true);
 				expect(this.cglobal.$el.find('.ui-view').length).to.be.equal(1);
 				this.cglobal.removeAll();
-				delete view;
-			});
-
-			it('Should render a View instance with template + model data', function() {
-				this.testView = {
-					model: new Backbone.Model({ name: 'Hello Spinal!' }),
-					template: '<p><%= name %></p>'
-				};
-				var view = this.cglobal.add(this.testView);
-				var result = view.render();
-				expect(result).to.be.ok();
-				expect(result.model).to.be.a(Backbone.Model);
-				expect(result.template).to.be.a(Function);
-				expect(view.$el.find('p').text()).to.be.equal(view.model.get('name'));
-				this.cglobal.removeAll();
-				delete view;
-			});
-
-			it('Should render a View instance with template + model data provided by the successor', function() {
-				var temporalContainer = new Container({
-					id: 'global-temporal',
-					el: 'body',
-					model: new Backbone.Model({ name: 'Hello Spinal from successor!' }),
-					interface: View
-				});
-				this.testView = { template: '<p><%= name %></p>' };
-				var view = temporalContainer.add(this.testView);
-				var result = view.render();
-				expect(result).to.be.ok();
-				expect(result.model).not.be.ok();
-				expect(temporalContainer.model).to.be.ok();
-				expect(view.$el.find('p').text()).to.be.equal(temporalContainer.model.get('name'));
-				temporalContainer.removeAll();
 				delete view;
 			});
 
