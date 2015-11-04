@@ -52,11 +52,11 @@ It can be a tool to consider inside the development process to integrate it with
 
 ### Boneyard Composer screenshots
 
-![](http://3dimention.github.io/boneyard/images/composer-ss-1.jpg)
+![](http://3dimention.github.io/boneyard/images/composer-ss-1.png)
 
 <br/>
 
-![](http://3dimention.github.io/boneyard/images/composer-ss-2.jpg)
+![](http://3dimention.github.io/boneyard/images/composer-ss-2.png)
 
 Please, visit the documentation related to the usage of this tool.
 
