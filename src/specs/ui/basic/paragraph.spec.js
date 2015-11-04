@@ -1,5 +1,5 @@
 /**
-*	SpinalJS Paragraph Spec
+*	Boneyard Paragraph Spec
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 */
 define([], function() {

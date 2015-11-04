@@ -1,5 +1,5 @@
 /**
-*	SpinalJS Span Spec
+*	Boneyard Span Spec
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 */
 define([], function() {

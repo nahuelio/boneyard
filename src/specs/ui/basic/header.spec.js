@@ -1,5 +1,5 @@
 /**
-*	SpinalJS Heder Spec
+*	Boneyard Heder Spec
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 */
 define([], function() {

@@ -1,5 +1,5 @@
 /**
-*	SpinalJS Basic Spec
+*	Boneyard Basic Spec
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 */
 define(['specs/ui/basic/paragraph.spec',
@@ -18,7 +18,7 @@ define(['specs/ui/basic/paragraph.spec',
 		basic_header: {
 			$module: 'ui/basic/header',
 			$params: {
-				content: 'Basic <small><kbd>com.spinal.ui.basic</kbd></small>',
+				content: 'Basic <small><kbd>com.boneyard.ui.basic</kbd></small>',
 				heading: '2'
 			}
 		},

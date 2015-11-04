@@ -1,9 +1,9 @@
 {
-    "name": "SpinalJS",
+    "name": "Boneyard",
     "description": "Architectural Toolkit built on top of RequireJs & Backbone",
-    "version": "0.0.1",
-    "url": "http://3dimention.github.io/spinal",
-	"logo": "http://3dimention.github.io/spinal/images/logo.png",
+    "version": "0.1.0",
+    "url": "http://3dimention.github.io/boneyard",
+	"logo": "http://3dimention.github.io/boneyard/images/logo.png",
     "options": {
         "outdir": "apidocs"
     }

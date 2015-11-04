@@ -1,5 +1,5 @@
 /**
-*	SpinalJS Misc Spec
+*	Boneyard Misc Spec
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['specs/ui/misc/panel.spec',
@@ -16,7 +16,7 @@ define(['specs/ui/misc/panel.spec',
 		misc_header: {
 			$module: 'ui/basic/header',
 			$params: {
-				content: 'Miscellaneous <small><kbd>com.spinal.ui.misc</kbd></small>',
+				content: 'Miscellaneous <small><kbd>com.boneyard.ui.misc</kbd></small>',
 				heading: '2'
 			}
 		},

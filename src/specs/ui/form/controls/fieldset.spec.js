@@ -1,5 +1,5 @@
 /**
-*	SpinalJS Fieldset Component Spec
+*	Boneyard Fieldset Component Spec
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 */
 define([], function() {

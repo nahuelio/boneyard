@@ -1,5 +1,5 @@
 /**
-*	SpinalJS Form Controls Spec
+*	Boneyard Form Controls Spec
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 */
 define(['specs/ui/form/controls/button.spec',

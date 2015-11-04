@@ -1,5 +1,5 @@
 /**
-*	SpinalJS Form Simple Spec
+*	Boneyard Form Simple Spec
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 */
 define([], function() {

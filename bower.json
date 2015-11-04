@@ -1,12 +1,12 @@
 {
-	"name": "spinaljs",
+	"name": "boneyard",
 	"version": "0.1.0",
-	"homepage": "https://github.com/3dimention/spinal",
+	"homepage": "https://github.com/3dimention/boneyard",
 	"authors": [
-		"kuakman <3dimentionar@gmail.com>"
+		"Patricio Ferreira <3dimentionar@gmail.com>"
 	],
 	"description": "Architectural Toolkit built on top of RequireJS & BackboneJS",
-	"main": "dist/spinal.*",
+	"main": "dist/boneyard.*",
 	"dependencies": {
 		"require": "git@github.com:jrburke/requirejs-bower.git#2.1.20",
 		"text": "2.0.14",
@@ -16,13 +16,13 @@
 		"bootstrap": "3.3.1"
 	},
 	"keywords": [
-		"spinal",
-		"achitecture",
 		"toolkit",
-		"ioc",
-		"ui",
+		"architectural",
+		"backbone",
 		"requirejs",
-		"backbone"
+		"framework",
+		"ioc",
+		"ui"
 	],
 	"license": "MIT",
 	"private": true,

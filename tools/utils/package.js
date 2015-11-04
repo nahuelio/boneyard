@@ -21,7 +21,7 @@ var Package = {
 	*	@property prefix
 	*	@type String
 	**/
-	prefix: 'spinal-',
+	prefix: 'boneyard-',
 
 	/**
 	*	Base Path to perform package lookup

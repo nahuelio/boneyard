@@ -1,5 +1,5 @@
 /**
-*	SpinalJS Select Component Spec
+*	Boneyard Select Component Spec
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 */
 define([], function() {

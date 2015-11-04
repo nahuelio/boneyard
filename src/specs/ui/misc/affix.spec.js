@@ -1,5 +1,5 @@
 /**
-*	SpinalJS Affix Component Spec
+*	Boneyard Affix Component Spec
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define([], function() {

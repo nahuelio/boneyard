@@ -1,5 +1,5 @@
 /**
-*	SpinalJS Table Component Spec
+*	Boneyard Table Component Spec
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 */
 define([], function() {

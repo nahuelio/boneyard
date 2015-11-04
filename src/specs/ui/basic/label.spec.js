@@ -1,5 +1,5 @@
 /**
-*	SpinalJS Label Spec
+*	Boneyard Label Spec
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 */
 define([], function() {

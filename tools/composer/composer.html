@@ -1,19 +1,19 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title><%= name %> | SpinalJS Composer Tool v<%= version %></title>
+		<title><%= name %> | Boneyard Composer Tool v<%= version %></title>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link rel="shortcut icon" href="favicon.ico">
 		<link href='http://fonts.googleapis.com/css?family=Questrial' rel='stylesheet' type='text/css'>
 		<style type="text/css">
-			body.spinaljs-main { background-color: #eee; font-family: "Questrial", Helvetica, Arial; -webkit-font-smoothing: antialiased; }
-			ul.spinaljs-bar { background-color: #556270; list-style: none; width: 100%; height: 10px; }
-			ul.spinaljs-bar li { float: left; width: 10%; height: 10px;  }
-			ul.spinaljs-bar li.bar-a { background-color: #FAD089; }
-			ul.spinaljs-bar li.bar-b { background-color: #FF9C5B; }
-			ul.spinaljs-bar li.bar-c { background-color: #F5634A; }
-			ul.spinaljs-bar li.bar-d { background-color: #ED303C; }
-			ul.spinaljs-bar li.bar-e { background-color: #3B8183; }
+			body.boneyard-main { background-color: #eee; font-family: "Questrial", Helvetica, Arial; -webkit-font-smoothing: antialiased; }
+			ul.boneyard-bar { background-color: #556270; list-style: none; width: 100%; height: 10px; }
+			ul.boneyard-bar li { float: left; width: 10%; height: 10px;  }
+			ul.boneyard-bar li.bar-a { background-color: #FAD089; }
+			ul.boneyard-bar li.bar-b { background-color: #FF9C5B; }
+			ul.boneyard-bar li.bar-c { background-color: #F5634A; }
+			ul.boneyard-bar li.bar-d { background-color: #ED303C; }
+			ul.boneyard-bar li.bar-e { background-color: #3B8183; }
 			div.welcome { margin-bottom: 0px; }
 			div.footer { height: 30px; margin-top: 50px; border-top: 1px solid #d1d1d1; }
 			/** Affix Navigation **/
@@ -32,17 +32,17 @@
 			var socket = io.connect('http://<%= host %>:9494/', { 'sync disconnect on unload': true });
 			socket.on('reload', function() { document.location.reload(); });
 		</script>
-		<script type='text/javascript' src='<%= spinalCore %>' data-spec='<%= mainSpec %>'></script>
+		<script type='text/javascript' src='<%= core %>' data-spec='<%= mainSpec %>'></script>
 	</head>
 
-	<body class="spinaljs-main">
-		<ul class="spinaljs-bar"><li class="bar-a"></li><li class="bar-b"></li><li class="bar-c"></li><li class="bar-d"></li><li class="bar-e"></li></ul>
+	<body class="boneyard-main">
+		<ul class="boneyard-bar"><li class="bar-a"></li><li class="bar-b"></li><li class="bar-c"></li><li class="bar-d"></li><li class="bar-e"></li></ul>
 		<div class="jumbotron text-center container welcome">
-			<h1>Project <%= name %> | <small>SpinalJS v<%= version %></small></h1>
-			<p>Welcome to SpinalJS Composer Tool!<br />Make use of this page to preview your components, your custom implementation, Model, Controllers, services and more...</p>
+			<h1>Project <%= name %> | <small>Boneyard v<%= version %></small></h1>
+			<p>Welcome to Boneyard Composer Tool!<br />Make use of this page to preview your components, your custom implementation, Model, Controllers, services and more...</p>
 		</div>
 		<div id="composer-main"></div>
-		<div class="footer"><p class="text-center">SpinalJS Composer Tool &copy; 2015-2016. <a class="btn btn-link" href="https://3dimention.github.io/" target="_blank">3dimention</a></p></div>
+		<div class="footer"><p class="text-center">Boneyard Composer Tool &copy; 2015-2016. <a class="btn btn-link" href="https://3dimention.github.io/" target="_blank">3dimention</a></p></div>
 		<script type='text/javascript'>require(['<%= requireMain %>'], function() { require(['ioc/context']); });</script>
 	</body>
 </html>

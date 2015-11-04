@@ -1,5 +1,5 @@
 /**
-*	SpinalJS Table Spec
+*	Boneyard Table Spec
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 */
 define(['specs/ui/table/table.spec'], function(TableSpec) {
@@ -12,7 +12,7 @@ define(['specs/ui/table/table.spec'], function(TableSpec) {
 		table_header: {
 			$module: 'ui/basic/header',
 			$params: {
-				content: 'Table <small><kbd>com.spinal.ui.table</kbd></small>',
+				content: 'Table <small><kbd>com.boneyard.ui.table</kbd></small>',
 				heading: '2'
 			}
 		},

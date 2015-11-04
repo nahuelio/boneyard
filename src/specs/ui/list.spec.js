@@ -1,5 +1,5 @@
 /**
-*	SpinalJS List Spec
+*	Boneyard List Spec
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 */
 define(['specs/ui/list/list.spec'], function(ListSpec) {
@@ -12,7 +12,7 @@ define(['specs/ui/list/list.spec'], function(ListSpec) {
 		list_header: {
 			$module: 'ui/basic/header',
 			$params: {
-				content: 'List <small><kbd>com.spinal.ui.list</kbd></small>',
+				content: 'List <small><kbd>com.boneyard.ui.list</kbd></small>',
 				heading: '2'
 			}
 		},

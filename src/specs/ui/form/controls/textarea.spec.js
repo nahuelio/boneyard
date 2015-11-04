@@ -1,5 +1,5 @@
 /**
-*	SpinalJS Textarea Component Spec
+*	Boneyard Textarea Component Spec
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 */
 define([], function() {

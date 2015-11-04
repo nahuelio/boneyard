@@ -24,13 +24,13 @@ require.config({
         /** Rebase to point to specs folder **/
         'libs': 'src/libs',
         'text': 'src/libs/text',
-        'core': 'src/com/spinal/core',
-        'ioc': 'src/com/spinal/ioc',
-        'ui': 'src/com/spinal/ui',
-        'util': 'src/com/spinal/util',
+        'core': 'src/com/boneyard/core',
+        'ioc': 'src/com/boneyard/ioc',
+        'ui': 'src/com/boneyard/ui',
+        'util': 'src/com/boneyard/util',
 
         /** Configurable Resources by end-developer **/
-        'specs': 'test/com/spinal/ioc/specs',
+        'specs': 'test/com/boneyard/ioc/specs',
 
         /** Hack Backbone requirejs **/
         'underscore': 'src/libs/underscore',

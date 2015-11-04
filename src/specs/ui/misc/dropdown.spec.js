@@ -1,5 +1,5 @@
 /**
-*	SpinalJS Dropdown Component Spec
+*	Boneyard Dropdown Component Spec
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 */
 define(['ui/basic/image'], function(Image) {

@@ -1,5 +1,5 @@
 /**
-*	SpinalJS Image Spec
+*	Boneyard Image Spec
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 */
 define([], function() {

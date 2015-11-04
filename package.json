@@ -1,9 +1,9 @@
 {
-	"name": "spinaljs",
+	"name": "boneyard",
 	"version": "0.1.0",
 	"description": "Architectural Toolkit built on top of RequireJS & BackboneJS",
 	"main": "run.js",
-	"homepage": "http://3dimention.github.io/spinal",
+	"homepage": "http://3dimention.github.io/boneyard",
 	"dependencies": {
 		"connect": "2.13.x",
 		"compression": "1.2.2",
@@ -47,13 +47,15 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "git://github.com/3dimention/spinal.git"
+		"url": "git://github.com/3dimention/boneyard.git"
 	},
 	"keywords": [
-		"Spinal",
-		"UI",
-		"Framework",
-		"BackboneJS"
+		"toolkit",
+		"architectural",
+		"backbone",
+		"framework",
+		"ioc",
+		"ui"
 	],
 	"author": "Patricio Ferreira <3dimentionar@gmail.com>",
 	"license": {
@@ -62,7 +64,7 @@
     },
 	"readmeFilename": "README.md",
 	"bugs": {
-		"url": "https://github.com/3dimention/spinal/issues"
+		"url": "https://github.com/3dimention/boneyard/issues"
 	},
 	"engines": {
 		"node": ">=0.8.x"

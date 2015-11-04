@@ -30,8 +30,8 @@ var HTML = {
 	*	@property exportTpl
 	*	@type String
 	**/
-	exportTpl: "define(['core/spinal'], function(Spinal) { " +
-		"return Spinal.namespace('templates', <%= tpls %>); });",
+	exportTpl: "define(['core/boneyard'], function(Boneyard) { " +
+		"return Boneyard.namespace('templates', <%= tpls %>); });",
 
 	/**
 	*	Initialize HTML Util
