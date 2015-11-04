@@ -1,5 +1,5 @@
 /**
-*	SpinalJS Dialog Component Spec
+*	Boneyard Dialog Component Spec
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 */
 define([], function() {

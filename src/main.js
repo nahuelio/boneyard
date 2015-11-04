@@ -1,5 +1,5 @@
 /**
-*	SpinalJS Main File
+*	Boneyard Main File
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 requirejs.config({
@@ -9,10 +9,10 @@ requirejs.config({
 	paths: {
 		'libs': 'libs',
 		'text': 'libs/text',
-		'core': 'com/spinal/core',
-		'ioc': 'com/spinal/ioc',
-		'ui': 'com/spinal/ui',
-		'util': 'com/spinal/util'
+		'core': 'com/boneyard/core',
+		'ioc': 'com/boneyard/ioc',
+		'ui': 'com/boneyard/ui',
+		'util': 'com/boneyard/util'
 	},
 
 	shim: {

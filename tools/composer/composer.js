@@ -1,5 +1,5 @@
 /**
-*	Spinal Composer Tool
+*	Boneyard Composer Tool
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 var fs = require('fs'),
@@ -111,7 +111,7 @@ var Composer = {
 	**/
 	exec: function(cfg) {
 		cfg || (cfg = {});
-		Logger.log('Spinal Composer Tool', { nl: true });
+		Logger.log('Boneyard Composer Tool', { nl: true });
 		this.loadConfig().loadCustomConfig(cfg);
 		this.setup(cfg).export().output(cfg);
 		this.spinUpServer();
@@ -215,7 +215,7 @@ var Composer = {
 				name: this.name, version: pkg.version, host: this.host,
 				requireMain: Utils.getFilename(this.main, true),
 				mainSpec: (this.uPath) ? this.config.mainSpec : this.defaults.config.mainSpec,
-				spinalCore: this.spinalCore
+				core: this.core
 			});
 		Utils.createFile(resolve(this.target, './index.html'), output);
 		Logger.warn('[COMPOSER] Composer Environment [Ready]');

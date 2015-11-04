@@ -1,5 +1,5 @@
 /**
-*	SpinalJS | Libs Module Package
+*	Boneyard | Libs Module Package
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['libs/jquery',

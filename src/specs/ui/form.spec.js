@@ -1,5 +1,5 @@
 /**
-*	SpinalJS Form Spec
+*	Boneyard Form Spec
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 */
 define(['specs/ui/form/form.login.spec',
@@ -13,7 +13,7 @@ define(['specs/ui/form/form.login.spec',
 		form_header: {
 			$module: 'ui/basic/header',
 			$params: {
-				content: 'Form <small><kbd>com.spinal.ui.form</kbd></small>',
+				content: 'Form <small><kbd>com.boneyard.ui.form</kbd></small>',
 				heading: '2'
 			}
 		},
@@ -31,7 +31,7 @@ define(['specs/ui/form/form.login.spec',
 		form_controls_header: {
 			$module: 'ui/basic/header',
 			$params: {
-				content: 'Form Controls <small><kbd>com.spinal.ui.form.controls</kbd></small>',
+				content: 'Form Controls <small><kbd>com.boneyard.ui.form.controls</kbd></small>',
 				heading: '2'
 			}
 		},

@@ -21,7 +21,7 @@ clean-build:
 install-dependencies:
 	@rm -fr src/libs
 	@bower install
-	@node ./tools/spinal/build -m libs
+	@node ./tools/build/build -m libs
 
 ## Test & CodeCoverage via Karma
 
@@ -40,10 +40,10 @@ doc:
 ## Build
 
 build:
-	@echo "\nBuilding SpinalJS..."
+	@echo "\nBuilding Boneyard..."
 	@make test && make doc
 	@make clean-build
-	@node ./tools/spinal/build
+	@node ./tools/build/build
 
 ## Composer
 

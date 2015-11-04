@@ -1,8 +1,8 @@
 {
-	"name": "SpinalJS",
+	"name": "Boneyard",
 	"host": "localhost",
 	"source": "./src",
 	"target": "./composer-app",
-	"spinalCore": "libs/require.js",
-	"mainSpec": "specs/spinal-spec"
+	"core": "libs/require.js",
+	"mainSpec": "specs/boneyard-spec"
 }

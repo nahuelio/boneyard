@@ -1,5 +1,5 @@
 /**
-*	SpinalJS Basic Component Spec
+*	Boneyard Basic Component Spec
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 */
 define([], function() {

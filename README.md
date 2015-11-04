@@ -1,4 +1,4 @@
- [![SpinalJS UI framework](http://3dimention.github.io/spinal/images/logo.png)](http://3dimention.github.io/spinal)
+# Boneyard
 
 ### Overall Project Status: In Progress
 
@@ -6,26 +6,26 @@
 
 # Introduction
 
-Architectural ToolKit that unifies most of the common libraries used nowadays to simplify project setup and code development in general.
+Architectural Toolkit that unifies most of the common libraries used nowadays to simplify project setup and code development in general.
 
 If the following technology stack is your choice or you just simple love developing web-apps using these libraries, please checkout this project.
 
 * Backbone (_underscore_)
-* RequireJS (text plugin)
+* RequireJS (_text_ plugin)
 * jQuery
 * Bootstrap
 
-SpinalJS also, provides a minimalistic implementation of a Inversion of Control (IoC-like) pattern for Javascript running in the browser, to help you decouple business logic from his composition.
+Boneyard also, provides a minimalistic implementation of a Inversion of Control (IoC-like) pattern for Javascript running in the browser, to help you decouple business logic from his composition.
 
 While I personally consider it experimental, because most of the logic implemented and the internal mechanisms to solve dependency injection need to be tested directly in the field with real web-apps, the usage of this package is optional either, if your decide to use it to wire all the pieces completely or partially.
 
-Also, this IoC package was inspired by the module `wire.js` of [CujoJS Project](http://github.com/cujojs). It essentially establishes a good architectural foundation for your project and keeps the separation of concerns as clean as possible. So, you will find some similarities while declaring specs using SpinalJS.
+Also, this IoC package was inspired by the module `wire.js` of [CujoJS Project](http://github.com/cujojs). It essentially establishes a good architectural foundation for your project and keeps the separation of concerns as clean as possible. So, you will find some similarities while declaring specs using Boneyard.
 
-Lastly, Spinal provides 2 more additional packages, `ui` and `util`.
+Lastly, Boneyard provides 2 more additional packages, `ui` and `util`.
 
-* Spinal UI package offers a list of common reusable components, easy to extend and easy customize. These components are in essence, "classes" that extend the original ```Backbone.View``` to get the best of backbone's binding mechanisms, plus all the styling capabilities provided by bootstrap to skin and render those components.
+* Boneyard UI package offers a list of common reusable components, easy to extend and easy customize. These components are in essence, "classes" that extend the original ```Backbone.View``` to get the best of backbone's binding mechanisms, plus all the styling capabilities provided by bootstrap to skin and render those components.
 
-* Spinal Util package, provides a set of utilities that may help you to perform some common tasks.
+* Boneyard Util package, provides a set of utilities that may help you to perform some common tasks.
 
 ## Requirements
 
@@ -35,28 +35,28 @@ Lastly, Spinal provides 2 more additional packages, `ui` and `util`.
 
 The library itself is distributed on bower. So, to get the distribution you run:
 
-`bower install spinaljs`
+`bower install boneyard`
 
-However, SpinalJS also ships with an optional tool called **Spinal Composer** that is only published on the NPM registry (See 'Usage' section below). This tool is a simple utility that you may run only in development mode. In your project root folder, you simply run:
+However, Boneyard also ships with an optional tool called **Boneyard Composer** that is only published on the NPM registry (See 'Usage' section below). This tool is a simple utility that you may run only in development mode. In your project root folder, you simply run:
 
-`npm install --save-dev spinaljs`
+`npm install --save-dev boneyard`
 
 ## Usage
 
-If you've decided to give **Spinal Composer** a shot, this tool may help you with the development process.
+If you've decided to give **Boneyard Composer** a shot, this tool may help you with the development process.
 
-**Spinal Composer**, is a simple command line tool that allows you to test your modules/components code in real time. Just by using a config json file, it will generate a temporal folder and spin up a server to serve all your source code so you can access it with a browser to check the results.
+**Boneyard Composer**, is a simple command line tool that allows you to test your modules/components code in real time. Just by using a config json file, it will generate a temporal folder and spin up a server to serve all your source code so you can access it with a browser to check the results.
 
-Also, the server will be listening for code changes (whenever the source code changes, the browser will reload automatically). This should be very useful, especially while building spec configurations file from the Spinal IoC package.
+Also, the server will be listening for code changes (whenever the source code changes, the browser will reload automatically). This should be very useful, especially while building spec configurations file from the Boneyard IoC package.
 It can be a tool to consider inside the development process to integrate it with Unit Test frameworks, Test runners, less or sass compilation and so on.
 
-### Spinal Composer screenshots
+### Boneyard Composer screenshots
 
-![](http://3dimention.github.io/spinal/images/composer-ss-1.jpg)
+![](http://3dimention.github.io/boneyard/images/composer-ss-1.jpg)
 
 <br/>
 
-![](http://3dimention.github.io/spinal/images/composer-ss-2.jpg)
+![](http://3dimention.github.io/boneyard/images/composer-ss-2.jpg)
 
 Please, visit the documentation related to the usage of this tool.
 
@@ -71,9 +71,9 @@ If you want to provide feedback, suggest changes or simply check the source code
 * Run ```npm install```
 * Run ```make build```
 
-### Running Composer Tool on Spinal Core Project
+### Running Composer Tool on Boneyard Core Project
 
-* Once spinal has been installed via ```npm install``` (step 3)
+* Once boneyard has been installed via ```npm install``` (step 3)
 * By running ```make composer``` you will have access to hit ```localhost:9393/index.html```
 
 ### API Documentation
@@ -86,14 +86,14 @@ If you want to provide feedback, suggest changes or simply check the source code
 
 # Development Roadmap
 
-* Spinal UI package development: Finalizing ```Form Class``` as the last component implementation requirement to upload this toolkit to the public npm.org repository.
+* Boneyard UI package development: Finalizing ```Form Class``` as the last component implementation requirement to upload this toolkit to the public npm.org repository.
 
-* Spinal IoC Engine: A new project started a few weeks ago in a different repo at [3dimention/spinal-ioc-annotation](https://github.com/3dimention/spinal-ioc-annotation) and the goal is to automate specs generation via annotations. At his core, it will instrument component source code by scanning annotations located inside block comments and convert them into specs automatically without the necessity for the developer to create those manually. Development and the final manifesto are still in progress.
+* Boneyard IoC Engine: A new project started a few weeks ago in a different repo at [3dimention/boneyard-ioc-annotation](https://github.com/3dimention/boneyard-ioc-annotation) and the goal is to automate specs generation via annotations. At his core, it will instrument component source code by scanning annotations located inside block comments and convert them into specs automatically without the necessity for the developer to create those manually. Development and the final manifesto are still in progress.
 
 ### Development Stretch Goals
 
 * IoC API support for destroying Specs or Individual bones. This may need to be integrated with the persistent layer functionality.
-* There are plans of doing a complete rewrite of this library to use ES6 standard (ES2015) instead. By using babeljs for transpiling code to ES5, will help us to clean up spinal core and his dependencies to reduce complexity.
+* There are plans of doing a complete rewrite of this library to use ES6 standard (ES2015) instead. By using babeljs for transpiling code to ES5, will help us to clean up boneyard core and his dependencies to reduce complexity.
 Current API will be reviewed, but not major changes are predicted so far on the way the classes or components are used. More information about this topic will be available.
 
 ### Documentation Roadmap
@@ -105,7 +105,7 @@ Current API will be reviewed, but not major changes are predicted so far on the 
 
 In this first personal project, I found myself learning a lot about the javascript world, the history behind the language and particularly the big challenges that browsers present nowadays.
 
-You will probably notice that even though I decided to ship Spinal with a spinal ui package (Simple Backbone.View "classes" that spits out some html chunks, in combination with some bootstrap css styling rules and a basic api, I'm definitely not a big fan of the DOM implementation and the HTML declarative format at all as a creational pattern.
+You will probably notice that even though I decided to ship Boneyard with a boneyard-ui package (Simple Backbone.View "classes" that spits out some html chunks, in combination with some bootstrap css styling rules and a basic api, I'm definitely not a big fan of the DOM implementation and the HTML declarative format at all as a creational pattern.
 With that being said and along with the development of this library, I found completely **unnecessary** (and annoying) for the sake of a good development process, to have to check some `<dom-tell-the-browser-to-create-a-combobox>` format to figure if a component was rendered and interpreted properly by the browser, when in fact this level of creational format details should be at least optional and encapsulated by the browser itself with a simple `new Combobox()` javascript before hand.
 
 I think that javascript as a programming language can transcend the browser, it can be "detached" from the concept of the DOM as that was its primarily usage back in the old days.

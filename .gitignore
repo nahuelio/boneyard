@@ -1,7 +1,6 @@
 src/libs
 coverage
 dist/build.txt
-benchmark/spinal-*.html
 apidocs
 composer-app
 test/templates

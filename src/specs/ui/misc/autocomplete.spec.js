@@ -1,5 +1,5 @@
 /**
-*	SpinalJS Autocomplete Component Spec
+*	Boneyard Autocomplete Component Spec
 *	@author Patricio Ferreira <3dimentionar@gmail.com>
 **/
 define(['ui/basic/image'], function(Image) {
