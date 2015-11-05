@@ -27,6 +27,9 @@ Lastly, Boneyard provides 2 more additional packages, `ui` and `util`.
 
 * Boneyard Util package, provides a set of utilities that may help you to perform some common tasks.
 
+#### Important Note
+Boneyard was empirically crafted by following common good practices discovered while developing web apps using backbone/requirejs libraries. However, **boneyard is still not recommended to be ran in production environments but for experimental purposes only**, due to the fact that the patterns and decisions that made up this toolbox are going to be subjected to change over time. As long as the community will provide feedback based on their experiences using this toolkit to keep improving the original idea until the tool itself will reach a certain level of maturity to consider it _production ready_.
+
 ## Requirements
 
 * Node And NPM installed
@@ -37,7 +40,7 @@ The library itself is distributed on bower. So, to get the distribution you run:
 
 `bower install boneyard`
 
-However, Boneyard also ships with an optional tool called **Boneyard Composer** that is only published on the NPM registry (See 'Usage' section below). This tool is a simple utility that you may run only in development mode. In your project root folder, you simply run:
+However, Boneyard also ships with an optional tool called **Boneyard Composer** that is only published on the NPM registry (See 'Usage' section below). This tool is a simple utility that in general you will run only in development mode. In your project root folder, you simply run:
 
 `npm install --save-dev boneyard`
 
@@ -45,10 +48,10 @@ However, Boneyard also ships with an optional tool called **Boneyard Composer** 
 
 If you've decided to give **Boneyard Composer** a shot, this tool may help you with the development process.
 
-**Boneyard Composer**, is a simple command line tool that allows you to test your modules/components code in real time. Just by using a config json file, it will generate a temporal folder and spin up a server to serve all your source code so you can access it with a browser to check the results.
+**Boneyard Composer**, is a simple command line tool that allows you to test your modules/components code in real time. Just by using a config json file, it will generate a temporal folder and spin up a server to serve all your source code so you can access it withint a browser to check the results.
 
 Also, the server will be listening for code changes (whenever the source code changes, the browser will reload automatically). This should be very useful, especially while building spec configurations file from the Boneyard IoC package.
-It can be a tool to consider inside the development process to integrate it with Unit Test frameworks, Test runners, less or sass compilation and so on.
+It can be a tool to consider inside the development process to integrate it with Unit Test frameworks, less/sass based themes development, HTML template packages compilation and so on.
 
 ### Boneyard Composer screenshots
 
@@ -86,9 +89,9 @@ If you want to provide feedback, suggest changes or simply check the source code
 
 # Development Roadmap
 
-* Boneyard UI package development: Finalizing ```Form Class``` as the last component implementation requirement to upload this toolkit to the public npm.org repository.
+* Boneyard IoC: Dependency injection of a single instances on multiple targets (one to many). This will wrap up the IoC/DI full functionality. This is a **must have** for the next few releases of the library.
 
-* Boneyard IoC Engine: A new project started a few weeks ago in a different repo at [3dimention/boneyard-ioc-annotation](https://github.com/3dimention/boneyard-ioc-annotation) and the goal is to automate specs generation via annotations. At his core, it will instrument component source code by scanning annotations located inside block comments and convert them into specs automatically without the necessity for the developer to create those manually. Development and the final manifesto are still in progress.
+* Boneyard Annotation Engine: A new project started a few weeks ago in a different repo at [3dimention/boneyard-annotation](https://github.com/3dimention/boneyard-annotation) and the goal is to automate specs generation via annotations. At his core, it will instrument component source code by scanning annotations located inside block comments and convert them into specs automatically without the necessity for the developer to write them manually. Development and the final manifesto are still in progress. Contributors are very welcome!.
 
 ### Development Stretch Goals
 
@@ -99,17 +102,19 @@ Current API will be reviewed, but not major changes are predicted so far on the 
 ### Documentation Roadmap
 
 * High Level documentation
-* Examples usage, simple applications (Classic TODO application, IoC important use cases).
+* Examples of usage, simple applications (Classic TODO application, IoC important use cases).
 
 # About the author
 
 In this first personal project, I found myself learning a lot about the javascript world, the history behind the language and particularly the big challenges that browsers present nowadays.
 
 You will probably notice that even though I decided to ship Boneyard with a boneyard-ui package (Simple Backbone.View "classes" that spits out some html chunks, in combination with some bootstrap css styling rules and a basic api, I'm definitely not a big fan of the DOM implementation and the HTML declarative format at all as a creational pattern.
-With that being said and along with the development of this library, I found completely **unnecessary** (and annoying) for the sake of a good development process, to have to check some `<dom-tell-the-browser-to-create-a-combobox>` format to figure if a component was rendered and interpreted properly by the browser, when in fact this level of creational format details should be at least optional and encapsulated by the browser itself with a simple `new Combobox()` javascript before hand.
+
+With that being said and along with the development of this library, I found completely **difficult** (and annoying) for the sake of a good development process, to let a declarative format resolve the concept of **child > parent relationship structures** of a web app `<div><dom-tell-the-browser-to-create-a-combobox-inside-this-div></div>`, when in fact this level
+of details makes different moving parts very hard to keep track. De-structuring probably was one of the major goals on this project, by providing techniques on how a developer can efficiently wire or establish structural relationships between elements.
 
 I think that javascript as a programming language can transcend the browser, it can be "detached" from the concept of the DOM as that was its primarily usage back in the old days.
-As time passes, we've been realizing that the concept of a web app has started to become more and more complex, so thinking of the DOM as a simple "interface" (one way to describe web apps) should release Javascript from all assumptions to let it evolve  into something different with multiple possibilities.
+As time passes, we've been realizing that the concept of a web app has started to become more and more complex, so thinking of the DOM as a simple "interface" (one way to describe web apps) should release Javascript from all assumptions to let it evolve into something different with multiple possibilities.
 Its best to put abstraction, good practices and design patterns in place right from the beginning when defining your project's specific scope, instead of starting from something that was meant to be too verbose and plus, relying on a third-party organization to define a standard to follow.
 
 I strongly believe that the web development experience could be a more enjoyable place.
