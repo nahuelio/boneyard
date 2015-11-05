@@ -1,8 +1,6 @@
-# Boneyard
+<img src="http://3dimention.github.io/boneyard/images/boneyard/boneyard-logo-v1.png" width="500" />
 
-### Overall Project Status: In Progress
-
-**Note: This toolkit was not published into the public NPM registry and bower repo yet. It's still under development, trying to hit the first release coming soon.**
+**Overall Project Status: 0.1.0 release is coming...**
 
 # Introduction
 
@@ -48,7 +46,7 @@ However, Boneyard also ships with an optional tool called **Boneyard Composer** 
 
 If you've decided to give **Boneyard Composer** a shot, this tool may help you with the development process.
 
-**Boneyard Composer**, is a simple command line tool that allows you to test your modules/components code in real time. Just by using a config json file, it will generate a temporal folder and spin up a server to serve all your source code so you can access it withint a browser to check the results.
+**Boneyard Composer**, is a simple command line tool that allows you to test your modules/components code in real time. Just by using a config json file, it will generate a temporal folder and spin up a server to serve all your source code so you can access it within a browser to check the results.
 
 Also, the server will be listening for code changes (whenever the source code changes, the browser will reload automatically). This should be very useful, especially while building spec configurations file from the Boneyard IoC package.
 It can be a tool to consider inside the development process to integrate it with Unit Test frameworks, less/sass based themes development, HTML template packages compilation and so on.
