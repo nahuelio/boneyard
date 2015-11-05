@@ -15,6 +15,9 @@
 			ul.boneyard-bar li.bar-d { background-color: #ED303C; }
 			ul.boneyard-bar li.bar-e { background-color: #3B8183; }
 			div.welcome { margin-bottom: 0px; }
+			div.logo { margin-bottom: 15px; text-align: center; }
+			div.logo .info { position: relative; width: 500px; margin: 0 auto; }
+			div.version { position: absolute; bottom: 5px; right: 5px; padding: 5px 10px; }
 			div.footer { height: 30px; margin-top: 50px; border-top: 1px solid #d1d1d1; }
 			/** Affix Navigation **/
 			nav.ui-affix { float: left; }
@@ -38,8 +41,13 @@
 	<body class="boneyard-main">
 		<ul class="boneyard-bar"><li class="bar-a"></li><li class="bar-b"></li><li class="bar-c"></li><li class="bar-d"></li><li class="bar-e"></li></ul>
 		<div class="jumbotron text-center container welcome">
-			<h1>Project <%= name %> | <small>Boneyard v<%= version %></small></h1>
-			<p>Welcome to Boneyard Composer Tool!<br />Make use of this page to preview your components, your custom implementation, Model, Controllers, services and more...</p>
+			<div class="logo col-xs-12">
+				<div class="info">
+					<img src="http://3dimention.github.io/boneyard/images/boneyard/boneyard-logo-v1.png" width="500" />
+					<div class="version small">v<%= version %></div>
+				</div>
+			</div>
+			<p class="col-xs-12">Project Name: <%= name %></p>
 		</div>
 		<div id="composer-main"></div>
 		<div class="footer"><p class="text-center">Boneyard Composer Tool &copy; 2015-2016. <a class="btn btn-link" href="https://3dimention.github.io/" target="_blank">3dimention</a></p></div>
