@@ -30,6 +30,14 @@ define(['core/boneyard',
 				expect(this.testView.$el.attr('id')).to.be.equal(undefined);
 			});
 
+			it('Should return an instance of View with autoId strategy on', function() {
+				var testViewWithAutoIdOn = new View({ autoId: true });
+				expect(testViewWithAutoIdOn).to.be.a(View);
+				expect(testViewWithAutoIdOn.className).to.be.equal('ui-view');
+				expect(testViewWithAutoIdOn.tagName).to.be.equal('div');
+				expect(testViewWithAutoIdOn.$el.attr('id')).to.be.a('string');
+			});
+
 			it('Should return an instance of View with el specified as part of the constructor', function() {
 				this.testView = new View({ el: 'body' });
 				expect(this.testView).to.be.ok();
@@ -46,6 +54,14 @@ define(['core/boneyard',
 				expect(this.testView.$el[0].nodeName.toLowerCase()).to.be.equal('div');
 				this.testView.template();
 				expect(this.testView.$el.children()[0].nodeName.toLowerCase()).to.be.equal('input');
+			});
+
+			it('Should return an instance of View with attributes passed to the constructor', function() {
+				var testView = new View({ attrs: { myattr: 'Hello' } });
+				expect(testView).to.be.a(View);
+				expect(testView.className).to.be.equal('ui-view');
+				expect(testView.tagName).to.be.equal('div');
+				expect(testView.$el.attr('myattr')).to.be('Hello');
 			});
 
 			it('Should throw an Error: template passed as constructor param is not a string', function() {
@@ -97,6 +113,26 @@ define(['core/boneyard',
 					expect(e).to.be.ok();
 					expect(e.message).to.be.equal(UIException.getMessage('UnsupportedRenderMethod', { method: 'non-existent-method' }));
 				});
+			});
+
+		});
+
+		describe('#listenTo()', function() {
+
+			it('Should listenTo a model property', function(done) {
+				var mycallback = _.bind(function() { this.cglobal.removeAll(); done(); }, this);
+				var mymodel = new Backbone.Model({ property: 'initial' }),
+					testView = this.cglobal.add({ model: mymodel }, { renderOnAdd: true });
+				expect(testView.listenTo(mymodel, 'change:property', mycallback)).to.be(testView);
+				mymodel.set({ property: 'value' });
+			});
+
+			it('Should use listenTo shortcut to automatically listen for current model on the view', function(done) {
+				var mycallback = _.bind(function() { this.cglobal.removeAll(); done(); }, this);
+				var mymodel = new Backbone.Model({ property: 'initial' }),
+					testView = this.cglobal.add({ model: mymodel }, { renderOnAdd: true });
+				expect(testView.listenTo('change:property', mycallback)).to.be(testView);
+				mymodel.set({ property: 'value' });
 			});
 
 		});
@@ -196,7 +232,7 @@ define(['core/boneyard',
 				});
 				var result = view.update();
 				expect(result).to.be.a(View);
-				result = view.update({ silent: true });
+				result = view.update(null, null, { silent: true });
 				this.cglobal.removeAll();
 				delete view;
 			});
@@ -225,6 +261,72 @@ define(['core/boneyard',
 				expect(result).to.be.equal(null);
 				this.cglobal.removeAll();
 				delete view;
+			});
+
+		});
+
+		describe('#addClass()', function() {
+
+			it('Should add a new css class into a View element', function() {
+				var testView = new View();
+				expect(testView.addClass('myclass')).to.be(testView);
+				expect(testView.$el.hasClass('myclass')).to.be(true);
+			});
+
+			it('Should NOT add a new css class into a View element (parameter undefined)', function() {
+				var testView = new View();
+				expect(testView.addClass()).to.be(testView);
+				expect(testView.$el.hasClass('myclass')).to.be(false);
+			});
+
+		});
+
+		describe('#removeClass()', function() {
+
+			it('Should remove existing css class from a View element', function() {
+				var testView = new View({ cls: 'myclass' });
+				expect(testView.removeClass('myclass')).to.be(testView);
+				expect(testView.$el.hasClass('myclass')).to.be(false);
+				expect(testView.$el.hasClass('ui-view')).to.be(true);
+			});
+
+			it('Should NOT remove existing css class from a View element (parameter undefined or not existent)', function() {
+				var testView = new View();
+				expect(testView.removeClass()).to.be(testView);
+				expect(testView.$el.hasClass('ui-view')).to.be(true);
+				expect(testView.removeClass('myclass')).to.be(testView);
+			});
+
+		});
+
+		describe('#addAttr()', function() {
+
+			it('Should add a new attribute into a View element', function() {
+				var testView = new View();
+				expect(testView.addAttr('myattr', 'value')).to.be(testView);
+				expect(testView.$el.attr('myattr')).to.be('value');
+			});
+
+			it('Should NOT add a new attribute into a View element (parameter undefined)', function() {
+				var testView = new View();
+				expect(testView.addAttr()).to.be(testView);
+			});
+
+		});
+
+		describe('#removeAttr()', function() {
+
+			it('Should add a new css class into a View element', function() {
+				var testView = new View();
+				testView.addAttr('myattr', 'value');
+				expect(testView.$el.attr('myattr')).to.be('value');
+				expect(testView.removeAttr('myattr')).to.be(testView);
+				expect(testView.$el.attr('myattr')).to.be(undefined);
+			});
+
+			it('Should NOT add a new css class into a View element (parameter undefined)', function() {
+				var testView = new View();
+				expect(testView.removeAttr()).to.be(testView);
 			});
 
 		});

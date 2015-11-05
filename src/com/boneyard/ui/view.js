@@ -107,7 +107,6 @@ define(['core/boneyard',
 		*	@return Boolean
 		**/
 		_valid: function(attrs) {
-			attrs || (attrs = {});
 			if(attrs.id && !_.isString(attrs.id)) throw new UIException('InvalidIDType');
 			if(attrs.model && !(attrs.model instanceof Backbone.Model)) throw new UIException('InvalidModelType');
 			if(attrs.method && !(View.RENDER[attrs.method])) throw new UIException('UnsupportedRenderMethod', { method: attrs.method });
@@ -251,7 +250,7 @@ define(['core/boneyard',
 		*	@public
 		*	@chainable
 		*	@method update
-		*	@param model {Backbone.Model}
+		*	@param model {Backbone.Model} model reference
 		*	@param value {Object} value that has changed
 		*	@param [opts] {Object} additional options
 		*	@return com.boneyard.ui.View
@@ -316,6 +315,7 @@ define(['core/boneyard',
 		*	@return com.boneyard.ui.View
 		**/
 		addAttr: function(key, value) {
+			if(!key) return this;
 			this.$el.attr.apply(this.$el, arguments);
 			return this;
 		},
@@ -330,6 +330,7 @@ define(['core/boneyard',
 		*	@return com.boneyard.ui.View
 		**/
 		removeAttr: function(key) {
+			if(!key) return this;
 			this.$el.removeAttr.apply(this.$el, arguments);
 			return this;
 		},
