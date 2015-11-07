@@ -13,7 +13,6 @@ deploy:
   email: 3dimentionar@gmail.com
   skip_cleanup: true
   on:
-    branch: master
     node: '0.12'
     tags: true
   api_key:
