@@ -96,9 +96,9 @@ var Build = {
 		this.bowerpkg = require(resolve(this.basePath, './bower.json'));
 		var libPath = Utils.createDir(resolve(this.basePath, './src/libs')),
 			bowerDepPath = resolve(this.basePath, './bower_components');
-		_.each(this.bowerpkg.dependencies, function(version, name) {
+		_.each(this.bowerpkg.deploy, function(file, name) {
 			var filename = libPath + '/' + name + '.js',
-				files = Utils.findFiles((bowerDepPath + '/**/' + name + '.js'), {});
+				files = Utils.findFiles((bowerDepPath + '/**/' + file), {});
 			if(files.length > 0) {
 				var o = fs.readFileSync(files[0], 'utf8');
 				Utils.createFile(filename, Utils.minify(o));

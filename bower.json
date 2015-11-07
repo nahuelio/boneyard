@@ -8,12 +8,20 @@
 	"description": "Architectural Toolkit built on top of RequireJS & BackboneJS",
 	"main": "dist/boneyard.*",
 	"dependencies": {
-		"require": "git@github.com:jrburke/requirejs-bower.git#2.1.20",
+		"requirejs-bower": "2.1.20",
 		"text": "2.0.14",
 		"backbone": "1.2.3",
 		"underscore": "1.8.3",
 		"jquery": "2.1.1",
 		"bootstrap": "3.3.1"
+	},
+	"deploy": {
+		"require": "require.js",
+		"text": "text.js",
+		"backbone": "backbone.js",
+		"underscore": "underscore.js",
+		"jquery": "dist/jquery.js",
+		"bootstrap": "dist/js/bootstrap.js"
 	},
 	"keywords": [
 		"toolkit",
