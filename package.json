@@ -1,7 +1,7 @@
 {
   "name": "boneyard",
   "version": "0.1.0",
-  "description": "Architectural Toolkit built on top of RequireJS & BackboneJS",
+  "description": "Architectural Toolkit for Web Development",
   "main": "run.js",
   "homepage": "http://3dimention.github.io/boneyard",
   "dependencies": {
@@ -58,16 +58,13 @@
     "ui"
   ],
   "author": "Patricio Ferreira <3dimentionar@gmail.com>",
-  "license": {
-    "type": "MIT",
-    "url": "http://www.opensource.org/licenses/mit-license.php"
-  },
+  "license": "MIT",
   "readmeFilename": "README.md",
   "bugs": {
     "url": "https://github.com/3dimention/boneyard/issues"
   },
   "engines": {
-    "node": ">=0.8.x"
+    "node": ">0.10"
   },
   "files": [
     "bin",

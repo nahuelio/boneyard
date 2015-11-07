@@ -1,7 +1,5 @@
 <img src="http://3dimention.github.io/boneyard/images/boneyard/boneyard-logo-v1.png" width="500" />
 
-**Overall Project Status: 0.1.0 release is coming...**
-
 [![Build Status](https://travis-ci.org/3dimention/boneyard.svg?branch=master)](https://travis-ci.org/3dimention/boneyard)
 [![Coverage Status](https://coveralls.io/repos/3dimention/boneyard/badge.svg?branch=master&service=github)](https://coveralls.io/github/3dimention/boneyard?branch=master)
 
