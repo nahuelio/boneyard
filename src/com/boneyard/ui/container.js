@@ -170,7 +170,7 @@ define(['core/boneyard',
 		add: function(view, opts) {
 			opts || (opts = {});
 			var exists = (view.id) ? this.findById(view.id) : this.findByCID(view.cid);
-			if(!exists) {
+			if(!_.defined(exists)) {
 				var newView = this.views.add(view);
 				newView._parent = this;
 				if(opts.renderOnAdd) newView.render(opts);
@@ -205,7 +205,7 @@ define(['core/boneyard',
 		remove: function(view, opts) {
 			opts || (opts = {});
 			var pos = this.getPos(view);
-			if(!_.isNull(pos)) {
+			if(_.defined(pos) && pos !== -1) {
 				this.views.remove(pos);
 				view._parent = null;
 				if(opts.detachOnRemove) view.detach();
