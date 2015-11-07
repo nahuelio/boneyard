@@ -119,6 +119,23 @@ define(['core/boneyard',
 				delete this.testContainer.removeAll();
 			});
 
+			it('Should not perform a lookup (finder null or not defined)', function() {
+				this.testContainer = new Container({ id: 'main' });
+				this.A = new Container({ id: 'cA', interface: View });
+				this.B = new Container({ id: 'cB' });
+				this.C = new Container({ id: 'cC', interface: View });
+				// Build Parent-Child relationship
+				this.A.addAll([this.viewA, this.viewD]);
+				this.B.add(this.C);
+				this.C.addAll([this.viewB, this.viewC]);
+				this.testContainer.addAll([this.A, this.B], { renderOnAdd: true });
+
+				var result = this.testContainer.findDeep(undefined, Container.LOOKUP.descendant);
+				expect(result).not.be.ok();
+
+				delete this.testContainer.removeAll();
+			});
+
 		});
 
 		describe('#add()', function() {
@@ -217,6 +234,72 @@ define(['core/boneyard',
 				delete this.testContainer.detach();
 				delete viewA;
 				delete viewB;
+			});
+
+		});
+
+		describe('#find()', function() {
+
+			it('Should find a view by predicate', function() {
+				this.testContainer = new Container({ id: 'main', interface: View });
+				var viewA = this.testContainer.add(this.viewA);
+				var viewB = this.testContainer.add(this.viewB);
+				var viewC = this.testContainer.add(this.viewC);
+
+				var result = this.testContainer.find(function(view) { return (view.id === 'B') ? view : null; });
+				expect(result).to.be.a(View);
+				expect(result.id).to.be('B');
+				this.testContainer.removeAll();
+			});
+
+			it('Should NOT find a view by predicate (predicate null or not defined)', function() {
+				this.testContainer = new Container({ id: 'main', interface: View });
+				var viewA = this.testContainer.add(this.viewA);
+				var viewB = this.testContainer.add(this.viewB);
+				var viewC = this.testContainer.add(this.viewC);
+
+				var result = this.testContainer.find();
+				expect(result).not.be.ok();
+				this.testContainer.removeAll({ silent: true });
+			});
+
+		});
+
+		describe('#findById', function() {
+
+			it('Should NOT find by id (id is null or not defined)', function() {
+				this.testContainer = new Container({ id: 'main', interface: View });
+				var viewA = this.testContainer.add(this.viewA);
+				var viewB = this.testContainer.add(this.viewB);
+				var viewC = this.testContainer.add(this.viewC);
+
+				var result = this.testContainer.findById();
+				expect(result).not.be.ok();
+				this.testContainer.removeAll();
+			});
+
+		});
+
+		describe('#_targetEl()', function() {
+
+			it('Should resolver target when method after or before are used with target', function() {
+				this.testContainer = new Container({ id: 'container' });
+				this.testViewA = new View({ id: 'A' });
+				this.testViewB = new View({ id: 'B' });
+				this.testContainer.addAll([this.testViewA, this.testViewB]);
+				this.testContainer.render();
+				expect(this.testContainer._targetEl(this.testContainer, {
+					target: 'div#B', method: View.RENDER.before
+				}).attr('id')).to.be('B');
+				expect(this.testContainer._targetEl(this.testContainer, {
+					target: 'div#A', method: View.RENDER.after
+				}).attr('id')).to.be('A');
+			});
+
+			it('Should NOT resolve target when method after or before are used with no target (or options)', function() {
+				// No options
+				this.testContainer = new Container({ id: 'main', method: View.RENDER.before });
+				expect(this.testContainer._targetEl(this.testContainer).attr('id')).to.be('main');
 			});
 
 		});
