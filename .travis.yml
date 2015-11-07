@@ -14,6 +14,7 @@ deploy:
   skip_cleanup: true
   on:
     branch: master
+    node: '0.12'
     tags: true
   api_key:
     secure: NW3wkiImQTNJbBL3y0fAtpRIuXBKwyvWAwomkvKzKHOdoHtEi9DX+SqnS2O/wtEpE57T0wObPTbKwheYKBx5VX4zifhGjGoHYgkuvGZAfN+hPKSsxrzLCAZxh8EpbnoDG5bhy72T4V3IkqlFlLZ7vbvjAEax891oulClznInuiKaX8zVwAvPM58uJ3ApLGY3vd/PGK+J3igYRPSx6zuDYzYRjz9cKWIgjldpIf4H9XqrC5zowc2OxveUzE6SybjxwHTgKNwMxjvhGrN2azREGcIY8zc+KkNDtQwrf0i2lphvfARdZlIQT+JRGdVlIxskBfcBAQpa5m5KKOFAXoWEHa33NtPh4hDoDbtoLtIYzKsaZtnIUrcu4rGgeRA4loVTuqFGs4ojy6LzvNeD+eElAH52ZW7PU26sLZPOhgurDsNmkHv2mlMwVlBVrU16a+FAolZndYOBzVpz8DXdhoksCXMEAVpRia9BY11gpv6Jd8uB9WBsASQd2vu+JL8QpqOJFb0iW2bdS4c47EKC14rkbAq+wU6ESmEOKTh4Z4zQNg6mhCHDtE/MsLvTsKato8DuJRtJT0o6FpnUyZYauWpzNdQQMpGWtPc/Qqdp8EKP7GgOY3en0sPO2khDeU6+jctiXrcTe2pql8PXFoeFQTPYd/7xSkh1N56LWe/wbTc/QV8=

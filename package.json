@@ -1,6 +1,6 @@
 {
   "name": "boneyard",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Architectural Toolkit for Web Development",
   "main": "run.js",
   "homepage": "http://3dimention.github.io/boneyard",
