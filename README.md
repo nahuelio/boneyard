@@ -87,7 +87,7 @@ If you want to provide feedback, suggest changes or simply check the source code
 
 # Development Roadmap
 
-* Boneyard IoC: Dependency injection of a single instances on multiple targets (one to many). This will wrap up the IoC/DI full functionality. This is a **must have** for the next few releases of the library.
+* Boneyard IoC: Dependency injection of single instances on multiple targets (one to many). This will wrap up the IoC/DI full functionality. This is a **must have** for the next few releases of the library.
 
 * Boneyard Annotation Engine: A new project started a few weeks ago in a different repo at [3dimention/boneyard-annotation](https://github.com/3dimention/boneyard-annotation) and the goal is to automate specs generation via annotations. At his core, it will instrument component source code by scanning annotations located inside block comments and convert them into specs automatically without the necessity for the developer to write them manually. Development and the final manifesto are still in progress. Contributors are very welcome!.
 
