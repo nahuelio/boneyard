@@ -1,7 +1,10 @@
 language: node_js
 node_js:
-  - "0.12"
-  - "4.0"
-  - "iojs"
+- '0.12'
+- '4.0'
+- iojs
 before_script:
-  - npm install -g bower
+- npm install -g bower
+env:
+  global:
+    secure: 3wIfc7xAk2LVX5Y4YDzqUxYbBFagRt0XhkHiT0JLGDG3lvyC6VFIjzsBjHS9bQUUvnlntvRAI7ztGUkIgkBDXpcTbGnIJ8X7rPdCyt6e+Nj5DSMRk6or8mTyhhIJUBsOnDi9PyA7YI9mz+ma2fh477ImWSfi0thGZBq9PaQpoBfPeIJ4QJOul/ZjmPnWlEEmuaFgxviaZznNRTsIWmK+PImxCyzuDopmujQbbZI31aoYFty8mcE9zYfaV9+kjChcIROFHqSxo/7x6qS5nZP11X+smj1w5Y6qdnyaB3PM2p8t4qMrjSclgbdA8VRKZWEVv3NthMR4+dolCFOmNKG5f0rT8+6hdo8Y232TwNSCZgBqSk8q8PUka9OiZyWkv5LH/x3iV1B9glRkHOiS+WENbSnf7D6jPmWQV4OGH9aud0SkyLLnqlVVr8ctEkw6XNrIfn638foeo4hMHV+uAUMz4GbXGBySD2fHvFs1zD4k+uSu3h/5jeqDZEbXxk4oDLsjcanmOFu1Gkwd5+JuxdLc1fwAhVCZYWRos/PlQStnKdkWjL57ewvCyOHmzqt1foSSpAsTFMuUJ+NioTm+wsiebHbj6YLhTK541DB4q6whqhV9poZ39AA4yWVQ4paO9p7Xqr5GZiTR599jKdXafWojIkHrBoKAAdJgyfuJCbFvmOA=

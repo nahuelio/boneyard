@@ -2,6 +2,9 @@
 
 **Overall Project Status: 0.1.0 release is coming...**
 
+[![Build Status](https://travis-ci.org/3dimention/boneyard.svg?branch=master)](https://travis-ci.org/3dimention/boneyard)
+[![Coverage Status](https://coveralls.io/repos/3dimention/boneyard/badge.svg?branch=master&service=github)](https://coveralls.io/github/3dimention/boneyard?branch=master)
+
 # Introduction
 
 Architectural Toolkit that unifies most of the common libraries used nowadays to simplify project setup and code development in general.

@@ -1,76 +1,77 @@
 {
-	"name": "boneyard",
-	"version": "0.1.0",
-	"description": "Architectural Toolkit built on top of RequireJS & BackboneJS",
-	"main": "run.js",
-	"homepage": "http://3dimention.github.io/boneyard",
-	"dependencies": {
-		"connect": "2.13.x",
-		"compression": "1.2.2",
-		"commander": "2.0.0",
-		"glob": "3.2.9",
-		"fs-extra": "0.12.0",
-		"requirejs": "2.1.11",
-		"underscore": "1.6.x",
-		"underscore.string": "2.3.x",
-		"watch": "~0.11.x",
-		"uglify-js": "1.3.5",
-		"socket.io": "~1.2",
-		"colors": "~0.6.2"
-	},
-	"devDependencies": {
-		"mocha": "1.10.x",
-		"sinon": "1.16.x",
-		"jscoverage": "0.3.7",
-		"yuidocjs": "0.3.x",
-		"karma": "~0.12.x",
-		"karma-mocha": "*",
-		"karma-mocha-reporter": "0.2.2",
-		"karma-spec-reporter": "0.0.12",
-		"karma-nyan-reporter": "0.2.2",
-		"karma-expect": "*",
-		"karma-coverage": "*",
-	    "karma-requirejs": "~0.2.2",
-		"karma-phantomjs-launcher": "~0.1",
-		"karma-script-launcher": "0.1.0",
-		"karma-chrome-launcher": "0.1.2",
-		"karma-firefox-launcher": "0.1.3",
-		"karma-safari-launcher": "0.1.1",
-		"karma-html2js-preprocessor": "0.1.0"
-	},
-	"bin": {
-		"composer": "./bin/composer"
-	},
-	"scripts": {
-		"test": "make test"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git://github.com/3dimention/boneyard.git"
-	},
-	"keywords": [
-		"toolkit",
-		"architectural",
-		"backbone",
-		"framework",
-		"ioc",
-		"ui"
-	],
-	"author": "Patricio Ferreira <3dimentionar@gmail.com>",
-	"license": {
-		"type": "MIT",
-		"url": "http://www.opensource.org/licenses/mit-license.php"
-    },
-	"readmeFilename": "README.md",
-	"bugs": {
-		"url": "https://github.com/3dimention/boneyard/issues"
-	},
-	"engines": {
-		"node": ">=0.8.x"
-	},
-	"files": [
-		"bin",
-		"dist",
-		"tools"
-	]
+  "name": "boneyard",
+  "version": "0.1.0",
+  "description": "Architectural Toolkit built on top of RequireJS & BackboneJS",
+  "main": "run.js",
+  "homepage": "http://3dimention.github.io/boneyard",
+  "dependencies": {
+    "connect": "2.13.x",
+    "compression": "1.2.2",
+    "commander": "2.0.0",
+    "glob": "3.2.9",
+    "fs-extra": "0.12.0",
+    "requirejs": "2.1.11",
+    "underscore": "1.6.x",
+    "underscore.string": "2.3.x",
+    "watch": "~0.11.x",
+    "uglify-js": "1.3.5",
+    "socket.io": "~1.2",
+    "colors": "~0.6.2"
+  },
+  "devDependencies": {
+    "jscoverage": "0.3.7",
+    "karma": "~0.12.x",
+    "karma-chrome-launcher": "0.1.2",
+    "karma-coverage": "*",
+    "karma-coveralls": "^1.1.2",
+    "karma-expect": "*",
+    "karma-firefox-launcher": "0.1.3",
+    "karma-html2js-preprocessor": "0.1.0",
+    "karma-mocha": "*",
+    "karma-mocha-reporter": "0.2.2",
+    "karma-nyan-reporter": "0.2.2",
+    "karma-phantomjs-launcher": "~0.1",
+    "karma-requirejs": "~0.2.2",
+    "karma-safari-launcher": "0.1.1",
+    "karma-script-launcher": "0.1.0",
+    "karma-spec-reporter": "0.0.12",
+    "mocha": "1.10.x",
+    "sinon": "1.16.x",
+    "yuidocjs": "0.3.x"
+  },
+  "bin": {
+    "composer": "./bin/composer"
+  },
+  "scripts": {
+    "test": "make test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/3dimention/boneyard.git"
+  },
+  "keywords": [
+    "toolkit",
+    "architectural",
+    "backbone",
+    "framework",
+    "ioc",
+    "ui"
+  ],
+  "author": "Patricio Ferreira <3dimentionar@gmail.com>",
+  "license": {
+    "type": "MIT",
+    "url": "http://www.opensource.org/licenses/mit-license.php"
+  },
+  "readmeFilename": "README.md",
+  "bugs": {
+    "url": "https://github.com/3dimention/boneyard/issues"
+  },
+  "engines": {
+    "node": ">=0.8.x"
+  },
+  "files": [
+    "bin",
+    "dist",
+    "tools"
+  ]
 }
