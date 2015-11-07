@@ -31,7 +31,7 @@ define(['core/boneyard',
 
 		describe('#new()', function() {
 
-			it('Should return a new instance of com.boneyard.ui.Container', function() {
+			it('Should return a new instance of a Container', function() {
 				this.testContainer = new Container({ id: 'main' });
 				this.cglobal.add(this.testContainer);
 				expect(this.testContainer).to.be.ok();
@@ -42,11 +42,17 @@ define(['core/boneyard',
 				this.cglobal.removeAll();
 			});
 
-			it('Should return a new instance of com.boneyard.ui.Container (with Custom Interface)', function() {
+			it('Should return a new instance of a Container (with Custom Interface)', function() {
 				this.testContainer = new Container({ id: 'main', interface: View });
 				expect(this.testContainer).to.be.ok();
 				expect(this.testContainer.views._interface).to.be.equal(View);
 				delete this.testContainer.removeAll();
+			});
+
+			it('Should return a new instance of a Container (with model argument)', function() {
+				var testContainer = new Container({ id: 'main', model: new Backbone.Model() });
+				expect(testContainer).to.be(testContainer);
+				expect(testContainer.model).to.be.a(Backbone.Model);
 			});
 
 			it('Should return a new instance of com.boneyard.ui.Container (No Arguments)', function() {
@@ -64,14 +70,26 @@ define(['core/boneyard',
 				});
 			});
 
+			it('Should throw an error: collection model is not Backbone.Collection type', function() {
+				expect(_.bind(function() {
+					new Container({ id: 'main', collection: new Backbone.Model() });
+				}, this)).to.throwException(_.bind(function(e) {
+					expect(e.message).to.be(UIException.TYPES.InvalidModelType());
+				}, this));
+			});
+
 		});
 
 		describe('#_valid()', function() {
 
-			it('Should Validate the attributes', function() {
+			it('Should throw an Error: Validate undefined attributes', function() {
 				this.testContainer = new Container({ id: 'main', interface: View });
-				var result = this.testContainer._valid();
-				delete this.testContainer.removeAll();
+				expect(_.bind(function() {
+					this.testContainer._valid();
+				}, this)).to.throwException(_.bind(function(e) {
+					expect(e).to.be.ok();
+					delete this.testContainer.removeAll();
+				}, this));
 			});
 
 		});
