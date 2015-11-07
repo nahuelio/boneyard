@@ -120,6 +120,6 @@ I strongly believe that the web development experience could be a more enjoyable
 
 # License
 
-Copyright (c) 2015 Patricio Ferreira
+Copyright (c) 2015-2016 Patricio Ferreira
 
 Licensed under the MIT License
