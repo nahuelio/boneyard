@@ -9,7 +9,7 @@ var program = require('commander'),
 	composer = require(lib + 'tools/composer/composer'),
 	args = Array.prototype.slice.call(process.argv, 2);
 
-// SpinalJS version
+// Boneyard version
 if(_.contains(args, '-l')) return composer.exec();
 
 program
@@ -23,7 +23,7 @@ program
 		console.log('\tcomposer -c ./myapp.json [-e]\n');
 	})
 	.parse(process.argv)
-	.name = 'Spinal Composer Tool';
+	.name = 'Boneyard Composer Tool';
 
 // End-User version
 if(!program.config) return program.help();

@@ -1,12 +1,22 @@
 {
 	"name": "boneyard",
-	"version": "0.1.0",
 	"homepage": "https://github.com/3dimention/boneyard",
 	"authors": [
-		"Patricio Ferreira <3dimentionar@gmail.com>"
+		"Patricio Ferreira <3dimentionar@gmail.com> (https://3dimention.github.io/)"
 	],
-	"description": "Architectural Toolkit built on top of RequireJS & BackboneJS",
-	"main": "dist/boneyard.*",
+	"description": "Architectural Toolkit for Web Development",
+	"main": [
+		"dist/boneyard-core.js",
+		"dist/boneyard-ioc.js",
+		"dist/boneyard-ui.js",
+		"dist/boneyard-util.js",
+		"dist/libs.js"
+	],
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/3dimention/boneyard.git"
+	},
+	"moduleType": ["amd", "globals"],
 	"dependencies": {
 		"requirejs-bower": "2.1.20",
 		"text": "2.0.14",
@@ -33,12 +43,23 @@
 		"ui"
 	],
 	"license": "MIT",
-	"private": true,
 	"ignore": [
 		"**/.*",
+		"**/build.txt",
+		"dist/themes/**/*.*",
 		"node_modules",
 		"bower_components",
+		"coverage",
+		"composer-app",
+		"bin",
+		"apidocs",
+		"docs",
+		"src",
 		"test",
-		"tests"
+		"tools",
+		"karma.conf.js",
+		"Makefile",
+		"run.js",
+		"yuidoc.json"
 	]
 }
