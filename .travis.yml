@@ -5,9 +5,6 @@ node_js:
 - iojs
 before_script:
 - npm install -g bower
-branches:
-  only:
-  - master
 deploy:
   provider: npm
   email: 3dimentionar@gmail.com
