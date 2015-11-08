@@ -17,7 +17,7 @@
 		"url": "git://github.com/3dimention/boneyard.git"
 	},
 	"moduleType": ["amd", "globals"],
-	"dependencies": {
+	"devDependencies": {
 		"requirejs-bower": "2.1.20",
 		"text": "2.0.14",
 		"backbone": "1.2.3",
