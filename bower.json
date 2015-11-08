@@ -45,8 +45,7 @@
 	"license": "MIT",
 	"ignore": [
 		"**/.*",
-		"**/build.txt",
-		"dist/themes/**/*.*",
+		"**/*.txt",
 		"node_modules",
 		"bower_components",
 		"coverage",
