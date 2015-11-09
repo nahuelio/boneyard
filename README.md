@@ -2,6 +2,11 @@
 
 [![Build Status](https://travis-ci.org/3dimention/boneyard.svg?branch=master)](https://travis-ci.org/3dimention/boneyard)
 [![Coverage Status](https://coveralls.io/repos/3dimention/boneyard/badge.svg?branch=master&service=github)](https://coveralls.io/github/3dimention/boneyard?branch=master)
+[![npm version](https://badge.fury.io/js/boneyard.svg)](https://www.npmjs.com/package/boneyard)
+[![Bower](https://img.shields.io/bower/v/boneyard.svg)](http://bower.io/search/?q=boneyard)
+[![node](https://img.shields.io/node/v/boneyard.svg)](https://nodejs.org/en/download/releases/)
+[![npm](https://img.shields.io/npm/dt/boneyard.svg)](https://www.npmjs.com/package/boneyard)
+[![npm](https://img.shields.io/npm/l/boneyard.svg)](https://opensource.org/licenses/MIT)
 
 # Introduction
 
@@ -27,7 +32,7 @@ Lastly, Boneyard provides 2 more additional packages, `ui` and `util`.
 * Boneyard Util package, provides a set of utilities that may help you to perform some common tasks.
 
 #### Important Note
-Boneyard was empirically crafted by following common good practices discovered while developing web apps using backbone/requirejs libraries. However, **boneyard is still not recommended to be ran in production environments but for experimental purposes only**, due to the fact that the patterns and decisions that made up this toolbox are going to be subjected to change over time. As long as the community will provide feedback based on their experiences using this toolkit to keep improving the original idea until the tool itself will reach a certain level of maturity to consider it _production ready_.
+Boneyard was empirically crafted by following common good practices discovered while developing web apps using backbone/requirejs libraries. However, **boneyard is still not recommended to be ran in production environments but for experimental purposes only**, due to the fact that the patterns and decisions that made up this toolbox are going to be subjected to change over time. As long as the community will provide feedback based on their experiences using this toolkit to keep improving the original idea until the tool itself will reach a certain level of maturity to consider it _production ready_. Be aware of possible bugs or missing functionality, specially in the bootstrap-ui module. I will be fixing those as soon as I can.
 
 ## Requirements
 
@@ -102,6 +107,7 @@ Current API will be reviewed, but not major changes are predicted so far on the 
 
 * High Level documentation
 * Examples of usage, simple applications (Classic TODO application, IoC important use cases).
+* API Docs need a better template that match branding (YUIDoc)
 
 # About the author
 
