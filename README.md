@@ -1,1 +1,0 @@
-## Boneyard Official Documentation
