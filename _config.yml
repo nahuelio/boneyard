@@ -14,8 +14,10 @@ sass:
     style: compressed
 
 # Jekyll doesn't support globs?
+include:
+  - .nojekyll
+
 exclude:
-  - README.md
   - bower.json
   - libs/jquery/src
   - libs/jquery/dist/jquery.js
