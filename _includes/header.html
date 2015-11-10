@@ -2,12 +2,5 @@
     <div class="logo col-xs-3">
         <img src="{{ "/images/boneyard/boneyard-logo-small-v1.png" | prepend: site.baseurl }}"/>
     </div>
-    <!-- <a class="title" href="{{ site.baseurl }}/">{{ site.title }}</a> -->
-    <!-- <nav>
-        {% for my_page in site.pages %}
-            {% if my_page.title %}
-                <a href="{{ my_page.url | prepend: site.baseurl }}">{{ my_page.title }}</a>
-            {% endif %}
-        {% endfor %}
-    </nav> -->
+    {% include header/menu.html %}
 </header>
