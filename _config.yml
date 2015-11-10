@@ -13,10 +13,10 @@ markdown: kramdown
 sass:
     style: compressed
 
-# Jekyll doesn't support globs?
 include:
   - .nojekyll
 
+# Jekyll doesn't support globs?
 exclude:
   - bower.json
   - libs/jquery/src
@@ -35,3 +35,10 @@ exclude:
   - libs/bootstrap/package.js
   - libs/bootstrap/package.json
   - libs/bootstrap/README.md
+  - libs/fontawesome/less
+  - libs/fontawesome/scss
+  - libs/fontawesome/.bower.json
+  - libs/fontawesome/.gitignore
+  - libs/fontawesome/.npmignore
+  - libs/fontawesome/bower.json
+  - libs/fontawesome/HELP-US-OUT.txt
