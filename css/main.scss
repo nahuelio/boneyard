@@ -23,9 +23,18 @@ $content-width:    800px;
 $on-palm:          600px;
 $on-laptop:        800px;
 
+// Palette
+$colorA: #556270;
+$colorB: #FAD089;
+$colorC: #FF9C5B;
+$colorD: #F5634A;
+$colorE: #ED303C;
+$colorF: #3B8183;
+
 body {
     font-family: $base-font-family;
-    background-color: $grey-color-light;
+    background-color: $background-color;
+    font-size: $base-font-size;
 }
 
 @mixin media-query($device) {

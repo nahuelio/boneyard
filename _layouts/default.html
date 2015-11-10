@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html>
     {% include head.html %}
-    <body class="container">
+    <body>
+        {% include topbar.html %}
         {% include header.html %}
-        <div class="content col-xs-12">{{ content }}</div>
+        <div class="container">{{ content }}</div>
         {% include footer.html %}
     </body>
 </html>
