@@ -1,4 +1,24 @@
 @charset "utf-8";
 
-.footer {
+footer {
+
+	.copyright {
+
+		font-size: 75%;
+		line-height: 20px;
+
+		a.btn-link {
+
+			color: $colorD;
+			font-weight: 700;
+
+			&:hover {
+				color: lighten($colorD, 5%);
+				text-decoration: none;
+			}
+
+		}
+
+	}
+
 }
