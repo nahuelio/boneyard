@@ -2,30 +2,42 @@
 
 ul.social {
 
-	margin: 0 auto;
+	margin: 10px auto;
 	list-style: none;
+	vertical-align: middle;
+	padding: 5px 0;
 
-	li.social-link {
+	li {
 
 		float: right;
-		background-color: transparent;
-		border-color: transparent;
-		margin: 8px;
-		line-height: 30px;
-		height: 25px;
+		padding: 8px;
 
-		i.fa {
-			font-size: 1.8em;
-			color: transparentize(white, 0.7);
-		}
+		&.social-link {
 
-		i.fa.fa-npm {
-			font-size: 1.6em;
-		}
+			background-color: transparent;
+			border-color: transparent;
 
-		&:hover i.fa {
-			-webkit-transition: color 0.3s;
-			color: transparentize(white, 0.8);
+			i {
+				vertical-align: top;
+				width: 20px;
+				height: 20px;
+			}
+
+			i.fa {
+				font-size: 1.5em;
+				color: transparentize(white, 0.7);
+			}
+
+			i.fa.fa-npm {
+				padding-top: 1px;
+				font-size: 1.25em;
+			}
+
+			&:hover i.fa {
+				-webkit-transition: color 0.3s;
+				color: transparentize(white, 0.8);
+			}
+
 		}
 
 	}

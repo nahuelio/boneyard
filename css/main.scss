@@ -13,15 +13,8 @@ $spacing-unit:     30px;
 
 $text-color:       #555;
 $background-color: #fdfdfd;
+$bg-color:         #32323c;
 $brand-color:      #2a7ae2;
-
-$grey-color:       #828282;
-$grey-color-light: lighten($grey-color, 40%);
-$grey-color-dark:  darken($grey-color, 25%);
-
-$content-width:    800px;
-$on-palm:          600px;
-$on-laptop:        800px;
 
 // Palette
 $colorA: #556270;
@@ -30,6 +23,14 @@ $colorC: #FF9C5B;
 $colorD: #F5634A;
 $colorE: #ED303C;
 $colorF: #3B8183;
+
+$grey-color:       #828282;
+$grey-color-light: lighten($grey-color, 40%);
+$grey-color-dark:  darken($grey-color, 25%);
+
+$content-width:    800px;
+$on-palm:          600px;
+$on-laptop:        800px;
 
 html, body {
     height: 100%;
@@ -46,7 +47,6 @@ body {
         padding: 0;
         min-height: 100%;
     	height: 100%;
-        padding-top: 40px;
     	margin: 0 auto -60px; /* the bottom margin is the negative value of the footer's height */
     }
 
@@ -61,4 +61,5 @@ body {
 @import
     "icons",
     "header",
+    "content",
     "footer";

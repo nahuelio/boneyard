@@ -4,17 +4,36 @@
 
 	position: absolute;
 	top: 0;
-	background-color: $colorD;
+	background-color: $bg-color;
 	width: 100%;
 	margin: 0 auto;
-	height: 40px;
+	height: 70px;
+
+	ul.stripes {
+		position: relative;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		top: 65px;
+		li {
+			float: left;
+			height: 5px;
+			&.ca { background-color: $colorB; width: 20%; }
+			&.cb { background-color: $colorC; width: 20%; }
+			&.cc { background-color: $colorD; width: 20%; }
+			&.cd { background-color: $colorE; width: 20%; }
+			&.ce { background-color: $colorF; width: 20%; }
+		}
+	}
 
 }
 
 header {
-	margin: 20px 0;
+
+	height: 70px;
 
 	.logo {
+		margin: 10px 0 ;
 		padding: 0;
 	}
 

@@ -2,8 +2,9 @@
 
 ul.nav {
 
-	margin: 12px 0;
+	margin: 10px 0;
 	font-size: 85%;
+	padding: 5px 0px;
 
 	&.nav-pills > li {
 		float: right;
@@ -12,19 +13,20 @@ ul.nav {
 
 	&.nav-pills > li > a {
 		padding: 7px 10px;
-		color: $text-color;
+		color: white;
+		background-color: transparent;
 	}
 
 	&.nav-pills > li.active > a,
 	&.nav-pills > li.active > a:hover,
 	&.nav-pills > li.active > a:focus {
-		color: white;
-		background-color: $colorD;
+		color: $colorC;
+		background-color: transparent;
 	}
 
 	&.nav-pills > li > a:hover,
 	&.nav-pills > li > a:focus {
-		color: $colorD;
+		color: $colorC;
 		background-color: transparent;
 	}
 

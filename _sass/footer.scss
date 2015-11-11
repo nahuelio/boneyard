@@ -2,14 +2,9 @@
 
 footer {
 
-	background-color: darken($colorA, 20%);
+	background-color: $bg-color;
 	height: 60px;
 	padding: 10px 0;
-
-	.push {
-		margin: 0 auto;
-		width: 60%;
-	}
 
 	.copyright {
 
@@ -39,7 +34,7 @@ footer {
 
 	.hosted {
 
-		img { width: 100px; }
+		img { width: 100px; opacity: 0.5; }
 
 	}
 

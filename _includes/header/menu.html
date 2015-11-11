@@ -1,4 +1,4 @@
-<ul class="nav nav-pills col-xs-8">
+<ul class="nav nav-pills col-xs-8 pull-right">
 	{% assign pages = site.pages | sort: "weight" %}
 	{% for p in pages %}
 		{% if p.title and p.parent == nil %}
