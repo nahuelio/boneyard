@@ -2,18 +2,29 @@
 
 footer {
 
+	background-color: darken($colorA, 20%);
+	height: 60px;
+	padding: 10px 0;
+
 	.copyright {
 
 		font-size: 75%;
 		line-height: 20px;
+		margin: 0;
+		color: transparentize(white, 0.7);
+
+		i.fa-heart {
+			color: $colorE;
+			padding: 0 3px;
+		}
 
 		a.btn-link {
 
-			color: $colorD;
+			color: inherit;
 			font-weight: 700;
 
 			&:hover {
-				color: lighten($colorD, 5%);
+				color: transparentize(white, 0.6);
 				text-decoration: none;
 			}
 

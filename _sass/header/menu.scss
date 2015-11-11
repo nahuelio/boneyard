@@ -1,0 +1,15 @@
+@charset "utf-8";
+
+ul.nav {
+
+	&.nav-pills > li.active > a,
+	&.nav-pills > li.active > a:hover,
+	&.nav-pills > li.active > a:focus {
+		background-color: $colorD;
+	}
+
+	li a {
+		padding: 5px 10px;
+	}
+
+}

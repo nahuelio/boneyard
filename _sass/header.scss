@@ -2,49 +2,23 @@
 
 .bar {
 
-	float: left;
+	position: absolute;
+	top: 0;
 	background-color: $colorD;
 	width: 100%;
 	margin: 0 auto;
-
-	ul.social {
-
-		margin: 0 auto;
-		list-style: none;
-
-		li.social-link {
-
-			float: right;
-			background-color: transparent;
-			border-color: transparent;
-			margin: 8px;
-			line-height: 30px;
-			height: 25px;
-
-			i.fa {
-				font-size: 1.8em;
-				color: transparentize(white, 0.7);
-			}
-
-			i.fa.fa-npm {
-				font-size: 1.6em;
-			}
-
-			&:hover i.fa {
-				-webkit-transition: color 0.3s;
-				color: transparentize(white, 0.8);
-			}
-
-		}
-
-	}
+	height: 40px;
 
 }
 
 header {
+	margin: 20px 0;
 
-	float: left;
-	margin: 0 auto;
-	width: 100%;
+	.logo {
+		padding: 0;
+	}
 
 }
+
+@import 'header/social',
+	'header/menu';
