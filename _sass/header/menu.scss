@@ -2,14 +2,30 @@
 
 ul.nav {
 
+	margin: 12px 0;
+	font-size: 85%;
+
+	&.nav-pills > li {
+		float: right;
+		margin: 0 10px;
+	}
+
+	&.nav-pills > li > a {
+		padding: 7px 10px;
+		color: $text-color;
+	}
+
 	&.nav-pills > li.active > a,
 	&.nav-pills > li.active > a:hover,
 	&.nav-pills > li.active > a:focus {
+		color: white;
 		background-color: $colorD;
 	}
 
-	li a {
-		padding: 5px 10px;
+	&.nav-pills > li > a:hover,
+	&.nav-pills > li > a:focus {
+		color: $colorD;
+		background-color: transparent;
 	}
 
 }

@@ -1,9 +1,10 @@
 <ul class="nav nav-pills col-xs-8">
-	{% for page in site.pages %}
-		{% if page.title and page.parent == null %}
-		<li class="{% if forloop.first == true %}active{% endif %}">
-			<a href="{{ page.url | prepend: site.baseurl }}">{{ page.title }}</a>
-		</li>
+	{% assign pages = site.pages | sort: "weight" %}
+	{% for p in pages %}
+		{% if p.title and p.parent == nil %}
+			<li class="{% if p.url == page.url %}active{% endif %}">
+				<a href="{{ p.url | prepend: site.baseurl }}">{{ p.title }}</a>
+			</li>
 		{% endif %}
 	{% endfor %}
 </ul>
