@@ -1,0 +1,17 @@
+@charset "utf-8";
+
+@font-face {
+	font-family: 'npm';
+    src: url('/boneyard/fonts/npm/npm.eot');
+    src: url('/boneyard/fonts/npm/npm.eot#iefix') format('embedded-opentype'),
+        url('/boneyard/fonts/npm/npm.woff') format('woff'),
+        url('/boneyard/fonts/npm/npm.ttf') format('truetype'),
+        url('/boneyard/fonts/npm/npm.svg#npm') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.fa-npm:before {
+	font-family: npm;
+	content: '\f281';
+}

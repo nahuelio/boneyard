@@ -2,13 +2,14 @@
 ---
 @charset "utf-8";
 
-@import "global";
+@import "global/global";
 
 .welcome {
 
 	font-family: "Questrial";
 
 	&.jumbotron {
+		padding: 15px;
 		border-radius: 0;
 		box-shadow: inset 0px 2px 3px rgba(0,0,0,0.2);
 		background: $colorC; /* Old browsers */
@@ -19,6 +20,10 @@
 		color: white;
 	}
 
+	header {
+		margin-top: 20px;
+	}
+
 	p.header {
 		font-size: 250%;
 		line-height: 1.1em;
@@ -26,7 +31,15 @@
 	}
 
 	p.description {
+		font-family: "Open Sans";
 		font-size: 90%;
+		line-height: 2em;
+		color: transparentize(white, 0.2);
+	}
+
+	.imagery {
+		text-align: center;
+		img { width: 400px; }
 	}
 
 }

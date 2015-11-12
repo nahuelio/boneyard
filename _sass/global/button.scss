@@ -1,0 +1,19 @@
+@charset "utf-8";
+
+a {
+    color: $colorB;
+    &:hover,
+    &:focus {
+        color: lighten($colorB, 10%);
+    }
+}
+
+a.btn-primary {
+	border-color: darken($colorA, 5%);
+	background-color: $colorA;
+	&:hover, &:focus {
+		-webkit-transition: background-color 0.3s;
+		border-color: lighten($colorA, 1%);
+		background-color: lighten($colorA, 3%);
+	}
+}

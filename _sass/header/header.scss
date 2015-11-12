@@ -28,7 +28,7 @@
 
 }
 
-header {
+.main > header {
 
 	font-family: "Questrial", Helvetica, Arial, sans-serif;
 	height: 70px;
@@ -40,5 +40,5 @@ header {
 
 }
 
-@import 'header/social',
-	'header/menu';
+@import 'social',
+	'menu';
