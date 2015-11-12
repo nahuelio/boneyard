@@ -2,13 +2,14 @@
 
 footer {
 
+	font-family: "Questrial", Helvetica, Arial, sans-serif;
+	font-size: 85%;
 	background-color: $bg-color;
 	height: 60px;
 	padding: 10px 0;
 
 	.copyright {
 
-		font-size: 75%;
 		line-height: 20px;
 		margin: 0;
 		color: transparentize(white, 0.7);
@@ -20,11 +21,12 @@ footer {
 
 		a.btn-link {
 
-			color: inherit;
+			color: $colorC;
 			font-weight: 700;
 
 			&:hover {
-				color: transparentize(white, 0.6);
+				-webkit-transition: color 0.3s;
+				color: lighten($colorC, 10%);
 				text-decoration: none;
 			}
 
@@ -34,6 +36,10 @@ footer {
 
 	.hosted {
 
+		height: 40px;
+		padding: 5px 0;
+
+		span { vertical-align: middle; margin-right: 15px; margin-top: 5px; display: inline-block; }
 		img { width: 100px; opacity: 0.5; }
 
 	}
