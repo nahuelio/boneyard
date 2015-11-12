@@ -5,6 +5,7 @@ permalink: /getting-started/
 weight: 4
 ---
 
-#### Getting Started
-
-*TODO Getting Started*
+<div class="container">
+	<h2>Getting Started</h2>
+	<p class="text-muted">TODO</p>
+</div>

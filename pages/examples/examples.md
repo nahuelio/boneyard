@@ -5,6 +5,7 @@ permalink: /examples/
 weight: 2
 ---
 
-#### Examples
-
-*TODO Examples*
+<div class="container">
+	<h2>Examples</h2>
+	<p class="text-muted">TODO</p>
+</div>

@@ -7,9 +7,6 @@
 .welcome {
 
 	font-family: "Questrial";
-	position: fixed;
-	left: 0;
-	width: 100%;
 
 	&.jumbotron {
 		border-radius: 0;
@@ -30,6 +27,25 @@
 
 	p.description {
 		font-size: 90%;
+	}
+
+}
+
+table.attributes {
+
+	thead, tbody {
+
+		td {
+
+			padding: 15px;
+			border-top: none;
+
+			p {
+				font-size: 85%;
+			}
+
+		}
+
 	}
 
 }
