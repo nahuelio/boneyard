@@ -93,9 +93,7 @@ If you want to provide feedback, suggest changes or simply check the source code
 
 # Development Roadmap
 
-* Boneyard IoC: Dependency injection of single instances on multiple targets (one to many). This will wrap up the IoC/DI full functionality. This is a **must have** for the next few releases of the library.
-
-* Boneyard Annotation Engine: A new project started a few weeks ago in a different repo at [3dimention/boneyard-annotation](https://github.com/3dimention/boneyard-annotation) and the goal is to automate specs generation via annotations. At his core, it will instrument component source code by scanning annotations located inside block comments and convert them into specs automatically without the necessity for the developer to write them manually. Development and the final manifesto are still in progress. Contributors are very welcome!.
+* Boneyard Annotation Engine: A new project started a few weeks ago in a different repo at [3dimention/boneyard-annotation](https://github.com/3dimention/boneyard-annotation) and the goal is to automate specs generation via annotations. At his core, it will instrument component source code by scanning annotations located inside block comments and convert them into specs automatically without the necessity for the developer to write them manually. Development and the final manifesto are still in progress (work in progress can be visualized [here](https://github.com/3dimention/boneyard-annotation/blob/master/MANIFESTO.md)). Contributors are very welcome!.
 
 ### Development Stretch Goals
 
@@ -105,7 +103,7 @@ Current API will be reviewed, but not major changes are predicted so far on the 
 
 ### Documentation Roadmap
 
-* High Level documentation
+* High Level documentation (Work in progress can be visualized [here](http://3dimention.github.io/boneyard))
 * Examples of usage, simple applications (Classic TODO application, IoC important use cases).
 * API Docs need a better template that match branding (YUIDoc)
 
