@@ -3,7 +3,7 @@
     "description": "Architectural Toolkit built on top of RequireJs & Backbone",
     "version": "0.1.0",
     "url": "http://3dimention.github.io/boneyard",
-	"logo": "http://3dimention.github.io/boneyard/images/logo.png",
+	"logo": "http://3dimention.github.io/boneyard/images/boneyard/boneyard-logo-v1.png",
     "options": {
         "outdir": "apidocs"
     }
