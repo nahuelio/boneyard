@@ -1,3 +1,8 @@
+# Jekyll
+_site
+.sass-cache
+libs
+
 src/libs
 coverage
 dist/build.txt
