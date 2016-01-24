@@ -1,9 +1,9 @@
 {
     "name": "Boneyard",
-    "description": "Architectural Toolkit built on top of RequireJs & Backbone",
-    "version": "0.1.0",
-    "url": "http://3dimention.github.io/boneyard",
-	"logo": "http://3dimention.github.io/boneyard/images/boneyard/boneyard-logo-v1.png",
+    "description": "Architectural Toolkit for Web Development",
+    "version": "0.1.4",
+    "url": "http://boneyard.nahuel.io",
+	"logo": "http://boneyard.nahuel.io/images/boneyard/boneyard-logo-v1.png",
     "options": {
         "outdir": "apidocs"
     }
