@@ -1,8 +1,8 @@
 {
 	"name": "boneyard",
-	"homepage": "https://github.com/3dimention/boneyard",
+	"homepage": "https://github.com/nahuelio/boneyard",
 	"authors": [
-		"Patricio Ferreira <3dimentionar@gmail.com> (https://3dimention.github.io/)"
+		"Patricio Ferreira <3dimentionar@gmail.com> (http://nahuel.io/)"
 	],
 	"description": "Architectural Toolkit for Web Development",
 	"main": [
@@ -14,7 +14,7 @@
 	],
 	"repository": {
 		"type": "git",
-		"url": "git://github.com/3dimention/boneyard.git"
+		"url": "git://github.com/nahuelio/boneyard.git"
 	},
 	"moduleType": ["amd", "globals"],
 	"devDependencies": {

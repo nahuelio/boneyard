@@ -1,7 +1,7 @@
-<img src="http://3dimention.github.io/boneyard/images/boneyard/boneyard-logo-v1.png" width="500" />
+<img src="http://boneyard.nahuel.io/images/boneyard/boneyard-logo-v1.png" width="500" />
 
-[![Build Status](https://travis-ci.org/3dimention/boneyard.svg?branch=master)](https://travis-ci.org/3dimention/boneyard)
-[![Coverage Status](https://coveralls.io/repos/3dimention/boneyard/badge.svg?branch=master&service=github)](https://coveralls.io/github/3dimention/boneyard?branch=master)
+[![Build Status](https://travis-ci.org/nahuelio/boneyard.svg?branch=master)](https://travis-ci.org/nahuelio/boneyard)
+[![Coverage Status](https://coveralls.io/repos/nahuelio/boneyard/badge.svg?branch=master&service=github)](https://coveralls.io/github/nahuelio/boneyard?branch=master)
 [![npm version](https://badge.fury.io/js/boneyard.svg)](https://www.npmjs.com/package/boneyard)
 [![Bower](https://img.shields.io/bower/v/boneyard.svg)](http://bower.io/search/?q=boneyard)
 [![node](https://img.shields.io/node/v/boneyard.svg)](https://nodejs.org/en/download/releases/)
@@ -59,11 +59,11 @@ It can be a tool to consider inside the development process to integrate it with
 
 ### Boneyard Composer screenshots
 
-![](http://3dimention.github.io/boneyard/images/composer-ss-1.png)
+![](http://boneyard.nahuel.io/images/composer-ss-1.png)
 
 <br/>
 
-![](http://3dimention.github.io/boneyard/images/composer-ss-2.png)
+![](http://boneyard.nahuel.io/images/composer-ss-2.png)
 
 Please, visit the documentation related to the usage of this tool.
 
@@ -93,7 +93,7 @@ If you want to provide feedback, suggest changes or simply check the source code
 
 # Development Roadmap
 
-* Boneyard Annotation Engine: A new project started a few weeks ago in a different repo at [3dimention/boneyard-annotation](https://github.com/3dimention/boneyard-annotation) and the goal is to automate specs generation via annotations. At his core, it will instrument component source code by scanning annotations located inside block comments and convert them into specs automatically without the necessity for the developer to write them manually. Development and the final manifesto are still in progress (work in progress can be visualized [here](https://github.com/3dimention/boneyard-annotation/blob/master/MANIFESTO.md)). Contributors are very welcome!.
+* Boneyard Annotation Engine: A new project started a few weeks ago in a different repo at [3dimention/boneyard-annotation](https://github.com/nahuelio/boneyard-annotation) and the goal is to automate specs generation via annotations. At his core, it will instrument component source code by scanning annotations located inside block comments and convert them into specs automatically without the necessity for the developer to write them manually. Development and the final manifesto are still in progress (work in progress can be visualized [here](https://github.com/nahuelio/boneyard-annotation/blob/master/MANIFESTO.md)). Contributors are very welcome!.
 
 ### Development Stretch Goals
 
@@ -103,7 +103,7 @@ Current API will be reviewed, but not major changes are predicted so far on the 
 
 ### Documentation Roadmap
 
-* High Level documentation (Work in progress can be visualized [here](http://3dimention.github.io/boneyard))
+* High Level documentation (Work in progress can be visualized [here](http://boneyard.nahuel.io))
 * Examples of usage, simple applications (Classic TODO application, IoC important use cases).
 * API Docs need a better template that match branding (YUIDoc)
 

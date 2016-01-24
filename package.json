@@ -1,9 +1,9 @@
 {
   "name": "boneyard",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Architectural Toolkit for Web Development",
   "main": "run.js",
-  "homepage": "http://3dimention.github.io/boneyard",
+  "homepage": "http://nahuelio.github.io/boneyard",
   "dependencies": {
     "connect": "2.13.x",
     "compression": "1.2.2",
@@ -47,7 +47,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/3dimention/boneyard.git"
+    "url": "git://github.com/nahuelio/boneyard.git"
   },
   "keywords": [
     "toolkit",
@@ -61,7 +61,7 @@
   "license": "MIT",
   "readmeFilename": "README.md",
   "bugs": {
-    "url": "https://github.com/3dimention/boneyard/issues"
+    "url": "https://github.com/nahuelio/boneyard/issues"
   },
   "engines": {
     "node": ">0.10"

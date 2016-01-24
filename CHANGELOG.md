@@ -10,8 +10,8 @@
 
 ### 0.1.3 / 2015-11-08
 * Few fixes on build process and bower.json deployment: Bootstrap assets now are in place.
-
-### 0.1.4 / 2015-11-08
 * Added extra status badges into README.md
 * Added TODO.md file.
-* 
+
+### 0.1.4 / 2016-01-24
+* Fixed Company name
