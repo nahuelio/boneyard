@@ -2,8 +2,8 @@
 title: Boneyard Documentation
 email: 3dimentionar@gmail.com
 description: Architectural Toolkit for Web Development
-baseurl: "/boneyard"
-url: "http://3dimention.github.io/boneyard" # the base hostname & protocol for your site
+baseurl: ""
+url: "http://boneyard.nahuel.io/" # the base hostname & protocol for your site
 twitter_username: patokuakman
 github_username:  3dimention/boneyard
 
