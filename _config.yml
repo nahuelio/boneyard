@@ -5,7 +5,7 @@ description: Architectural Toolkit for Web Development
 baseurl: ""
 url: "http://boneyard.nahuel.io/" # the base hostname & protocol for your site
 twitter_username: patokuakman
-github_username:  3dimention/boneyard
+github_username:  nahuelio/boneyard
 
 # Build settings
 markdown: kramdown
